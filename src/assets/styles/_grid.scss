@@ -1,0 +1,19 @@
+#root {
+  display: grid;
+  height: 100vh;
+  width: 100vw;
+  grid-template-columns: 75px 1fr;
+  grid-template-rows: 100px 1fr;
+  grid-template-areas:
+    'aside topbar'
+    'aside wraper';
+
+  @media (max-width: 768px) {
+    grid-template-columns: 1fr;
+    grid-template-rows: 100px 1fr 60px;
+    grid-template-areas:
+      'topbar'
+      'wraper'
+      'aside';
+  }
+}

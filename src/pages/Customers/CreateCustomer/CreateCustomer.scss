@@ -1,0 +1,13 @@
+.formCustomer{
+  display: grid;
+  grid-template-columns: 1fr 1fr;
+  gap: 1rem;
+  align-items: flex-end;
+  &__buttons{
+    grid-column: 2;
+    justify-self: flex-end;
+    button{
+      margin-right: 10px;
+    }
+  }
+}

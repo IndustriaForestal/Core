@@ -1,0 +1,91 @@
+.btn {
+  cursor: pointer;
+  font-weight: 400;
+  letter-spacing: 0.03em;
+  font-size: 14px;
+  min-width: 2.375rem;
+  display: inline-block;
+  text-align: center;
+  white-space: nowrap;
+  vertical-align: middle;
+  -webkit-user-select: none;
+  -moz-user-select: none;
+  -ms-user-select: none;
+  user-select: none;
+  padding: 10px 25px;
+  line-height: 1.84615385;
+  border-radius: 3px;
+  color: var(--white);
+  background-color: var(--primary);
+  color: var(--white);
+  border: 1px solid var(--primary);
+  transition: color 0.15s ease-in-out, background-color 0.15s ease-in-out,
+    border-color 0.15s ease-in-out, box-shadow 0.15s ease-in-out;
+  &:hover {
+    background-color: var(--white);
+    color: var(--primary);
+  }
+  &:focus {
+    outline-color: var(--primary);
+  }
+  &.--warning {
+    background-color: var(--warning);
+    color: var(--dark);
+    border: 1px solid var(--warning);
+    &:focus {
+      outline-color: var(--warning);
+    }
+    &:hover {
+      background-color: var(--white);
+      color: var(--warning);
+    }
+  }
+  &.--warning {
+    background-color: var(--warning);
+    color: var(--white);
+    border: 1px solid var(--warning);
+    &:focus {
+      outline-color: var(--warning);
+    }
+    &:hover {
+      background-color: var(--white);
+      color: var(--warning);
+    }
+  }
+  &.--success {
+    background-color: var(--success);
+    color: var(--white);
+    border: 1px solid var(--success);
+    &:focus {
+      outline-color: var(--success);
+    }
+    &:hover {
+      background-color: var(--white);
+      color: var(--success);
+    }
+  }
+  &.--info {
+    background-color: var(--info);
+    color: var(--white);
+    border: 1px solid var(--info);
+    &:focus {
+      outline-color: var(--info);
+    }
+    &:hover {
+      background-color: var(--white);
+      color: var(--info);
+    }
+  }
+  &.--danger {
+    background-color: var(--danger);
+    color: var(--white);
+    border: 1px solid var(--danger);
+    &:focus {
+      outline-color: var(--danger);
+    }
+    &:hover {
+      background-color: var(--white);
+      color: var(--danger);
+    }
+  }
+}

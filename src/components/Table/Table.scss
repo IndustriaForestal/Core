@@ -1,0 +1,29 @@
+.table {
+  padding: 1rem;
+  width: 100%;
+  text-align: center;
+  overflow-x: scroll;
+  background-color: var(--white);
+  box-shadow: var(--boxShadow);
+  border-radius: 15px;
+  &__head {
+    tr {
+      th {
+        padding: 1rem;
+      }
+    }
+    border-bottom: 1px solid var(--light);
+    background-color: var(--primary);
+    color: var(--white);
+  }
+  &__body {
+    tr {
+      td {
+        padding: 0.8rem;
+      }
+    }
+    tr:nth-child(2n) {
+      background-color: var(--bodyBackground);
+    }
+  }
+}

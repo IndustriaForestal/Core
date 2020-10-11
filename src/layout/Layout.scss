@@ -1,0 +1,7 @@
+@import '../assets/styles/_variables.scss';
+@import '../assets/styles/_grid.scss';
+@import '../assets/styles/_normalize.scss';
+
+body{
+  background-color: var(--background);
+}

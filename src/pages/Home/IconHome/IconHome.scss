@@ -1,0 +1,40 @@
+.iconHome {
+  width: auto;
+  height: 170px;
+  display: flex;
+  justify-content: center;
+  align-items: center;
+  margin: 1rem auto;
+  a {
+    text-decoration: none;
+
+    div:first-of-type {
+      background-color: var(--white);
+      box-shadow: var(--boxShadow);
+      height: 130px;
+      width: 130px;
+      border-radius: 15px;
+      display: flex;
+      justify-content: center;
+      align-items: center;
+
+      svg {
+        color: var(--dark);
+        font-size: 2rem;
+      }
+    }
+    div:last-of-type {
+      text-align: center;
+      color: var(--dark);
+      padding-top: 0.5rem;
+    }
+  }
+  &:hover {
+    transform: scale(1.1);
+    a {
+      div:first-of-type {
+        box-shadow: var(--boxShadowHover);
+      }
+    }
+  }
+}
