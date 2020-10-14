@@ -7,6 +7,9 @@ import Login from '../pages/Login'
 import Customers from '../pages/Customers'
 import CreateCustomer from '../pages/Customers/CreateCustomer'
 import EditCustomer from '../pages/Customers/EditCustomer'
+import Nails from '../pages/Nails'
+import CreateNail from '../pages/Nails/CreateNail'
+import UpdateNail from '../pages/Nails/UpdateNail'
 
 const App = ({ loggedIn }) => {
   if (loggedIn) {
@@ -18,6 +21,10 @@ const App = ({ loggedIn }) => {
             <Route exact path="/customers" component={Customers} />
             <Route exact path="/customers/create" component={CreateCustomer} />
             <Route exact path="/customers/:id" component={EditCustomer} />
+            <Route exact path="/nails" component={Nails} />
+            <Route exact path="/nails/" component={CreateNail} />
+            <Route exact path="/nails/:id" component={UpdateNail} />
+
             <Route exact path="/login" component={Login} />
             <Route component={NotFound} />
           </Switch>

@@ -16,6 +16,7 @@ const Home = props => {
   return (
     <div className="Home">
       <IconHome icon={<BsCardImage />} url="/customers" text="Clientes" />
+      <IconHome icon={<BsCardImage />} url="/nails" text="Clavos" />
     </div>
   )
 }

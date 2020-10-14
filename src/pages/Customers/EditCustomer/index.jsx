@@ -15,6 +15,7 @@ const EditCustomers = props => {
   const typeAction = 'GET_CUSTOMER'
   useEffect(() => {
     props.get(endPoint, typeAction)
+    // eslint-disable-next-line
   }, [])
   const { customer } = props
   const handlerInput = event => {

@@ -9,54 +9,42 @@ import Button from '../../components/Button/Button'
 import AddButton from '../../components/AddButton/AddButton'
 import './styles.scss'
 
-const Customers = props => {
-  const { customers, setTitle } = props
+const Nails = props => {
+  const { nails, setTitle } = props
 
   useEffect(() => {
     const topbar = {
-      title: 'Clientes',
-      menu: { Clientes: '/customers' },
+      title: 'Clavos',
+      menu: { Clavos: '/nails' },
     }
     setTitle(topbar)
-    props.getAll('customers', 'GET_CUSTOMERS')
+    props.getAll('nails', 'GET_NAILS')
     // eslint-disable-next-line
   }, [])
 
-  const tableHeader = [
-    '#',
-    'Nombre',
-    'Dirección',
-    'Email',
-    'Teléfono',
-    'Embarques Semana',
-    'Acciones',
-  ]
+  const tableHeader = ['Nombre', 'Stock', 'Acciones']
 
-  const handlerDeleteCustomer = customerID => {
-    props.deleted(`customers/${customerID}`, 'DELETE_CUSTOMER')
+  const handleDeleteNail = nailId => {
+    props.deleted(`nails/${nailId}`, 'DELETE_NAIL')
   }
 
   return (
     <>
       <Table head={tableHeader}>
-        {customers.length > 0 ? (
-          customers.map(customer => (
-            <tr key={customer._id}>
-              <td>{customer._id}</td>
-              <td>{customer.name}</td>
-              <td>{customer.address}</td>
-              <td>{customer.email}</td>
-              <td>{customer.phone}</td>
-              <td>{customer.shipment}</td>
+        {nails ? (
+          nails.map((nail) => (
+            <tr key={nail._id}>
+              <td>{nail.name}</td>
+              <td>{nail.stock}</td>
               <td>
-                <Link to={`customers/${customer._id}`}>
+                <Link to={`nails/${nail._id}`}>
                   <Button className="btn --warning">
                     <AiOutlineEdit />
                   </Button>
                 </Link>
                 <Button
                   className="btn --danger"
-                  onClick={() => handlerDeleteCustomer(customer._id)}
+                  onClick={() => handleDeleteNail(nail._id)}
                 >
                   <AiOutlineDelete />
                 </Button>
@@ -69,7 +57,7 @@ const Customers = props => {
           </tr>
         )}
       </Table>
-      <Link to="/customers/create">
+      <Link to="/nails/create">
         <AddButton>
           <BsPlus />
         </AddButton>
@@ -80,7 +68,7 @@ const Customers = props => {
 
 const mapStateToProps = state => {
   return {
-    customers: state.customers,
+    nails: state.nails,
   }
 }
 
@@ -90,4 +78,4 @@ const mapDispatchToProps = {
   deleted,
 }
 
-export default connect(mapStateToProps, mapDispatchToProps)(Customers)
+export default connect(mapStateToProps, mapDispatchToProps)(Nails)

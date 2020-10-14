@@ -32,7 +32,7 @@ const reducer = (state, action) => {
       }
     case 'UPDATE_CUSTOMER':
       return {
-        ...state
+        ...state,
       }
     case 'DELETE_CUSTOMER':
       return {
@@ -41,7 +41,30 @@ const reducer = (state, action) => {
           customer => customer._id !== action.payload
         ),
       }
-
+    case 'GET_NAILS':
+      return {
+        ...state,
+        nails: action.payload.data,
+      }
+    case 'GET_NAIL':
+      return {
+        ...state,
+        nail: action.payload,
+      }
+    case 'CREATE_NAILS':
+      return {
+        ...state,
+        nails: [...state.nails, action.payload],
+      }
+    case 'UPDATE_NAIL':
+      return {
+        ...state,
+      }
+    case 'DELETE_NAIL':
+      return {
+        ...state,
+        nails: state.nails.filter(nail => nail._id !== action.payload),
+      }
     default:
       return state
   }

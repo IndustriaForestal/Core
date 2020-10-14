@@ -162,11 +162,26 @@ export const deleted = (endpoint, typeAction) => async dispatch => {
       headers: { Authorization: `Bearer ${Cookies.get('token')}` },
       method: 'delete',
     })
-    dispatch({
-      type: typeAction,
-      payload: res.data.data,
+    Swal.fire({
+      title: '¿Estás seguro?',
+      text: 'Este proceso no se puede revertir',
+      icon: 'warning',
+      showCancelButton: true,
+      confirmButtonColor: '#3085d6',
+      cancelButtonColor: '#d33',
+      confirmButtonText: 'Si, borrar',
     })
-    Swal.fire('Borrado!', 'Borrado con exito.', 'success')
+      .then(result => {
+        if (result.isConfirmed) {
+          dispatch({
+            type: typeAction,
+            payload: res.data.data,
+          })
+        }
+      })
+      .then(() => {
+        Swal.fire('Borrado!', 'Borrado con exito.', 'success')
+      })
   } catch (error) {
     console.log(error)
   }
