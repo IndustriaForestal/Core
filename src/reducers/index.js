@@ -113,6 +113,31 @@ const reducer = (state, action) => {
           process => process._id !== action.payload
         ),
       }
+    case 'GET_PLATFORMS':
+      return {
+        ...state,
+        platforms: action.payload.data,
+      }
+    case 'GET_PLATFORM':
+      return {
+        ...state,
+        platform: action.payload,
+      }
+    case 'CREATE_PLATFORM':
+      return {
+        ...state,
+      }
+    case 'UPDATE_PLATFORM':
+      return {
+        ...state,
+      }
+    case 'DELETE_PLATFORM':
+      return {
+        ...state,
+        platforms: state.platforms.filter(
+          platform => platform._id !== action.payload
+        ),
+      }
     default:
       return state
   }

@@ -4,6 +4,7 @@ import { connect } from 'react-redux'
 import { AiOutlineEdit, AiOutlineDelete } from 'react-icons/ai'
 import { BsPlus } from 'react-icons/bs'
 import { setTitle, getAll, deleted } from '../../actions/app'
+import Swal from 'sweetalert2'
 import Table from '../../components/Table/Table'
 import Button from '../../components/Button/Button'
 import AddButton from '../../components/AddButton/AddButton'
@@ -25,14 +26,27 @@ const Processes = props => {
   const tableHeader = ['Nombre', 'Acciones']
 
   const handleDeleteProcess = processId => {
-    props.deleted(`processes/${processId}`, 'DELETE_PROCESS')
+    Swal.fire({
+      title: '¿Estás seguro?',
+      text: 'Este proceso no se puede revertir',
+      icon: 'warning',
+      showCancelButton: true,
+      confirmButtonColor: '#3085d6',
+      cancelButtonColor: '#d33',
+      confirmButtonText: 'Si, borrar',
+    }).then(result => {
+      if (result.isConfirmed) {
+        props.deleted(`processes/${processId}`, 'DELETE_PROCESS')
+        Swal.fire('Borrado!', 'Borrado con exito.', 'success')
+      }
+    })
   }
 
   return (
     <>
       <Table head={tableHeader}>
         {processes ? (
-          processes.map((process) => (
+          processes.map(process => (
             <tr key={process._id}>
               <td>{process.name}</td>
               <td>

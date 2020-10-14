@@ -10,22 +10,22 @@ import Button from '../../components/Button/Button'
 import AddButton from '../../components/AddButton/AddButton'
 import './styles.scss'
 
-const Nails = props => {
-  const { nails, setTitle } = props
+const Platforms = props => {
+  const { platforms, setTitle } = props
 
   useEffect(() => {
     const topbar = {
-      title: 'Clavos',
-      menu: { Clavos: '/nails' },
+      title: 'Plataformas',
+      menu: { Plataformas: '/platforms' },
     }
     setTitle(topbar)
-    props.getAll('nails', 'GET_NAILS')
+    props.getAll('platforms', 'GET_PLATFORMS')
     // eslint-disable-next-line
   }, [])
 
-  const tableHeader = ['Nombre', 'Stock', 'Acciones']
+  const tableHeader = ['Nombre', 'Acciones']
 
-  const handleDeleteNail = nailId => {
+  const handleDeletePlatform = platformId => {
     Swal.fire({
       title: '¿Estás seguro?',
       text: 'Este proceso no se puede revertir',
@@ -37,30 +37,29 @@ const Nails = props => {
     })
       .then(result => {
         if (result.isConfirmed) {
-          props.deleted(`nails/${nailId}`, 'DELETE_NAIL')
+          props.deleted(`platforms/${platformId}`, 'DELETE_PLATFORM')
           Swal.fire('Borrado!', 'Borrado con exito.', 'success')
         }
       })
-    
+   
   }
 
   return (
     <>
       <Table head={tableHeader}>
-        {nails ? (
-          nails.map(nail => (
-            <tr key={nail._id}>
-              <td>{nail.name}</td>
-              <td>{nail.stock}</td>
+        {platforms ? (
+          platforms.map(platform => (
+            <tr key={platform._id}>
+              <td>{platform.name}</td>
               <td>
-                <Link to={`nails/${nail._id}`}>
+                <Link to={`platforms/${platform._id}`}>
                   <Button className="btn --warning">
                     <AiOutlineEdit />
                   </Button>
                 </Link>
                 <Button
                   className="btn --danger"
-                  onClick={() => handleDeleteNail(nail._id)}
+                  onClick={() => handleDeletePlatform(platform._id)}
                 >
                   <AiOutlineDelete />
                 </Button>
@@ -73,7 +72,7 @@ const Nails = props => {
           </tr>
         )}
       </Table>
-      <Link to="/nails/create">
+      <Link to="/platforms/create">
         <AddButton>
           <BsPlus />
         </AddButton>
@@ -84,7 +83,7 @@ const Nails = props => {
 
 const mapStateToProps = state => {
   return {
-    nails: state.nails,
+    platforms: state.platforms,
   }
 }
 
@@ -94,4 +93,4 @@ const mapDispatchToProps = {
   deleted,
 }
 
-export default connect(mapStateToProps, mapDispatchToProps)(Nails)
+export default connect(mapStateToProps, mapDispatchToProps)(Platforms)

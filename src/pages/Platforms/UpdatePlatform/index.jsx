@@ -8,26 +8,26 @@ import Input from '../../../components/Input/Input'
 import Button from '../../../components/Button/Button'
 import Loading from '../../../components/Loading/Loading'
 
-const UpdateNail = props => {
+const UpdatePlatform = props => {
   const { register, handleSubmit } = useForm()
   const { id } = useParams()
-  const { nail } = props
+  const { platform } = props
 
   useEffect(() => {
-    props.get(`nails/${id}`, 'GET_NAIL')
+    props.get(`platforms/${id}`, 'GET_PLATFORM')
     // eslint-disable-next-line
   }, [])
 
   const onSubmit = data => {
-    props.update(`nails/${id}`, 'UPDATE_NAIL', data)
-    window.location.href = '/nails'
+    props.update(`platforms/${id}`, 'UPDATE_PLATFORM', data)
+    window.location.href = '/platforms'
   }
-  if (nail) {
+  if (platform) {
     return (
-      <Card title="Editar Clavo" className="card -warning">
+      <Card title="Editar Plataforma" className="card -warning">
         <form
-          id="formNail"
-          className="formNail"
+          id="formPlatform"
+          className="formPlatform"
           onSubmit={handleSubmit(onSubmit)}
         >
           <Input
@@ -35,20 +35,13 @@ const UpdateNail = props => {
             name="name"
             title="Nombre"
             passRef={register}
-            value={nail.name}
-          />
-          <Input
-            type="number"
-            name="stock"
-            title="Inventario"
-            passRef={register}
-            value={nail.stock}
+            value={platform.name}
           />
           <div className="formCustomer__buttons">
             <Button type="submit" className="btn --warning">
               Guardar
             </Button>
-            <Link to="/nails">
+            <Link to="/platforms">
               <Button className="btn --danger">Cancelar</Button>
             </Link>
           </div>
@@ -62,7 +55,7 @@ const UpdateNail = props => {
 
 const mapStateToProps = state => {
   return {
-    nail: state.nail,
+    platform: state.platform,
   }
 }
 
@@ -71,8 +64,4 @@ const mapDispatchToProps = {
   update,
 }
 
-export default connect(mapStateToProps, mapDispatchToProps)(UpdateNail)
-
-/* Terminar materiales  */
-
-console.log('Terminar material(Update), this comment is in UpdateMaterial')
+export default connect(mapStateToProps, mapDispatchToProps)(UpdatePlatform)

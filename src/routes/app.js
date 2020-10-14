@@ -15,6 +15,9 @@ import CreateMaterial from '../pages/Material/CreateMaterial'
 import Processes from '../pages/Processes'
 import CreateProcess from '../pages/Processes/CreateProcess'
 import UpdateProcess from '../pages/Processes/UpdateProcess'
+import Platforms from '../pages/Platforms'
+import CreatePlatform from '../pages/Platforms/CreatePlatform'
+import UpdatePlatform from '../pages/Platforms/UpdatePlatform'
 
 const App = ({ loggedIn }) => {
   if (loggedIn) {
@@ -34,6 +37,9 @@ const App = ({ loggedIn }) => {
             <Route exact path="/processes" component={Processes} />
             <Route exact path="/processes/create" component={CreateProcess} />
             <Route exact path="/processes/:id" component={UpdateProcess} />
+            <Route exact path="/platforms" component={Platforms} />
+            <Route exact path="/platforms/create" component={CreatePlatform} />
+            <Route exact path="/platforms/:id" component={UpdatePlatform} />
 
             <Route exact path="/login" component={Login} />
             <Route component={NotFound} />

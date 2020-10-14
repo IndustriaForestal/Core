@@ -140,7 +140,7 @@ export const create = (endPoint, typeAction, data) => async dispatch => {
 
 export const update = (endpoint, typeAction, data) => async dispatch => {
   try {
-   await axios({
+    await axios({
       url: `${process.env.REACT_APP_API}${endpoint}`,
       headers: { Authorization: `Bearer ${Cookies.get('token')}` },
       method: 'put',
@@ -162,26 +162,10 @@ export const deleted = (endpoint, typeAction) => async dispatch => {
       headers: { Authorization: `Bearer ${Cookies.get('token')}` },
       method: 'delete',
     })
-    Swal.fire({
-      title: '¿Estás seguro?',
-      text: 'Este proceso no se puede revertir',
-      icon: 'warning',
-      showCancelButton: true,
-      confirmButtonColor: '#3085d6',
-      cancelButtonColor: '#d33',
-      confirmButtonText: 'Si, borrar',
+    dispatch({
+      type: typeAction,
+      payload: res.data.data,
     })
-      .then(result => {
-        if (result.isConfirmed) {
-          dispatch({
-            type: typeAction,
-            payload: res.data.data,
-          })
-        }
-      })
-      .then(() => {
-        Swal.fire('Borrado!', 'Borrado con exito.', 'success')
-      })
   } catch (error) {
     console.log(error)
   }
