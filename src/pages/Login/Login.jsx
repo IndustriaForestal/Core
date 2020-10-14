@@ -1,6 +1,6 @@
 import React, { useState } from 'react'
 import { connect } from 'react-redux'
-import { loginRequest } from './actions'
+import { setUser } from '../../actions/app'
 import logoFull from '../../assets/static/logoFull.svg'
 import './Login.scss'
 import Title from '../../components/Title/Title'
@@ -12,13 +12,11 @@ const Login = props => {
     setUser({
       ...user,
       [event.target.name]: event.target.value,
-      position: 'Dev',
     })
   }
   const hanlderSubmit = event => {
     event.preventDefault()
-    props.loginRequest(user)
-    props.history.push('/')
+    props.setUser(user, '/')
   }
   return (
     <div className="login">
@@ -52,7 +50,7 @@ const Login = props => {
 }
 
 const mapDispatchToProps = {
-  loginRequest,
+  setUser,
 }
 
 export default connect(null, mapDispatchToProps)(Login)

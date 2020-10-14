@@ -1,59 +1,63 @@
-import React, { useState } from 'react'
+import React from 'react'
 import { connect } from 'react-redux'
 import { Link } from 'react-router-dom'
-import { createCustomer } from '../actions'
+import { create } from '../../../actions/app'
+import { useForm } from 'react-hook-form'
 import Card from '../../../components/Card/Card'
 import Input from '../../../components/Input/Input'
 import Button from '../../../components/Button/Button'
-import './CreateCustomer.scss'
 
 const CreateCustomer = props => {
-  const [form, setValues] = useState()
+  const { register, handleSubmit, errors } = useForm()
+  const endPoint = 'customers'
+  const typeAction = 'CREATE_CUSTOMER'
 
-  const handlerInput = event => {
-    setValues({
-      ...form,
-      [event.target.name]: event.target.value,
-    })
-  }
-
-  const handlerSubmit = event => {
-    event.preventDefault()
-    if (props.createCustomer(form)) {
-      console.log('Wevos')
-    } else {
-      console.log('nowevos')
-    }
+  const onSubmit = data => {
+    props.create(endPoint, typeAction, data)
     document.getElementById('formCustomer').reset()
   }
 
   return (
     <Card title="Crear Cliente">
-      <form id="formCustomer" className="formCustomer" onSubmit={handlerSubmit}>
-        <Input onChange={handlerInput} type="text" name="name" title="Nombre" />
+      <form
+        id="formCustomer"
+        className="formCustomer"
+        onSubmit={handleSubmit(onSubmit)}
+      >
         <Input
-          onChange={handlerInput}
+          type="text"
+          name="name"
+          title="Nombre"
+          passRef={register({ required: true })}
+          placeholder={errors.name && 'Campo requerido'}
+        />
+        <Input
           type="text"
           name="address"
           title="Dirección"
+          passRef={register({ required: true })}
+          placeholder={errors.address && 'Campo requerido'}
         />
         <Input
-          onChange={handlerInput}
           type="email"
           name="email"
           title="Email"
+          passRef={register({ required: true })}
+          placeholder={errors.email && 'Campo requerido'}
         />
         <Input
-          onChange={handlerInput}
           type="tel"
           name="phone"
           title="Teléfono"
+          passRef={register({ required: true })}
+          placeholder={errors.phone && 'Campo requerido'}
         />
         <Input
-          onChange={handlerInput}
           type="number"
-          name="numberShipments"
+          name="shipment"
           title="Embarques por semana"
+          passRef={register({ required: true })}
+          placeholder={errors.shipment && 'Campo requerido'}
         />
         <div className="formCustomer__buttons">
           <Button type="submit" className="btn --success">
@@ -69,7 +73,7 @@ const CreateCustomer = props => {
 }
 
 const mapDispatchToProps = {
-  createCustomer,
+  create
 }
 
 export default connect(null, mapDispatchToProps)(CreateCustomer)

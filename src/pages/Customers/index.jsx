@@ -1,24 +1,30 @@
 import React, { useEffect } from 'react'
 import { Link } from 'react-router-dom'
 import { connect } from 'react-redux'
+import Swal from 'sweetalert2'
 import { AiOutlineEdit, AiOutlineDelete } from 'react-icons/ai'
 import { BsPlus } from 'react-icons/bs'
-import Swal from 'sweetalert2'
-import { deleteCustomer } from './actions'
-import { setTitle } from '../../actions/app'
+import { setTitle, getAll, deleted } from '../../actions/app'
 import Table from '../../components/Table/Table'
 import Button from '../../components/Button/Button'
 import AddButton from '../../components/AddButton/AddButton'
+import './styles.scss'
 
 const Customers = props => {
-  const { customers } = props
+  const { customers, setTitle } = props
+
   useEffect(() => {
     const topbar = {
       title: 'Clientes',
       menu: { Clientes: '/customers' },
     }
-    props.setTitle(topbar)
+    setTitle(topbar)
   })
+
+  useEffect(() => {
+    props.getAll('customers', 'GET_CUSTOMERS')
+  }, [])
+
   const tableHeader = [
     '#',
     'Nombre',
@@ -40,8 +46,7 @@ const Customers = props => {
       confirmButtonText: 'Si, borrar',
     }).then(result => {
       if (result.isConfirmed) {
-        props.deleteCustomer(customerID)
-        Swal.fire('Borrado!', 'El cliente fue borrado.', 'success')
+        props.deleted(`customers/${customerID}`, 'DELETE_CUSTOMER')
       }
     })
   }
@@ -49,24 +54,35 @@ const Customers = props => {
   return (
     <>
       <Table head={tableHeader}>
-        {customers.map(customer => (
-          <tr key={customer.id}>
-            <td>{customer.id}</td>
-            <td>{customer.name}</td>
-            <td>{customer.address}</td>
-            <td>{customer.email}</td>
-            <td>{customer.phone}</td>
-            <td>{customer.numberShipments}</td>
-            <td>
-              <Button className="btn --warning">
-                <AiOutlineEdit />
-              </Button>
-              <Button className="btn --danger" onClick={() => handlerDeleteCustomer(customer.id)}>
-                <AiOutlineDelete />
-              </Button>
-            </td>
+        {customers.length > 0 ? (
+          customers.map(customer => (
+            <tr key={customer._id}>
+              <td>{customer._id}</td>
+              <td>{customer.name}</td>
+              <td>{customer.address}</td>
+              <td>{customer.email}</td>
+              <td>{customer.phone}</td>
+              <td>{customer.shipment}</td>
+              <td>
+                <Link to={`customers/${customer._id}`}>
+                  <Button className="btn --warning">
+                    <AiOutlineEdit />
+                  </Button>
+                </Link>
+                <Button
+                  className="btn --danger"
+                  onClick={() => handlerDeleteCustomer(customer._id)}
+                >
+                  <AiOutlineDelete />
+                </Button>
+              </td>
+            </tr>
+          ))
+        ) : (
+          <tr>
+            <td colSpan="7">No hay registros</td>
           </tr>
-        ))}
+        )}
       </Table>
       <Link to="/customers/create">
         <AddButton>
@@ -84,8 +100,9 @@ const mapStateToProps = state => {
 }
 
 const mapDispatchToProps = {
-  deleteCustomer,
   setTitle,
+  getAll,
+  deleted,
 }
 
 export default connect(mapStateToProps, mapDispatchToProps)(Customers)

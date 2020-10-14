@@ -1,14 +1,25 @@
 import React from 'react'
 import { Link, useLocation } from 'react-router-dom'
 import { connect } from 'react-redux'
-import { AiOutlineMail, AiOutlineBell, AiOutlineUser } from 'react-icons/ai'
+import { AiOutlineMail, AiOutlineBell } from 'react-icons/ai'
+import { FiLogOut } from 'react-icons/fi'
 import { BiLogInCircle } from 'react-icons/bi'
+import Cookies from 'js-cookie'
+import { logOut } from '../../actions/app'
 import Title from '../Title/Title'
 import './Topbar.scss'
 
 const Topbar = props => {
-  const { topbar, user } = props
+  const { topbar } = props
   const location = useLocation()
+  const handleLogOut = () => {
+    document.cookie = `user=`
+    document.cookie = `name=`
+    document.cookie = `id=`
+    document.cookie = `token=`
+    props.logOut({})
+    window.location.href = '/login'
+  }
   if (location.pathname !== '/login') {
     return (
       <div className="topbar">
@@ -19,12 +30,10 @@ const Topbar = props => {
           <div className="topbar__right">
             <AiOutlineMail />
             <AiOutlineBell />
-            <Link to="/login">
-              <AiOutlineUser />
-            </Link>
+            <FiLogOut onClick={handleLogOut} />
             <div className="topbar__user">
-              <p>{user.user}</p>
-              <p>{user.position}</p>
+              <p>{Cookies.get('user')}</p>
+              <p>{Cookies.get('name')}</p>
             </div>
           </div>
         </div>
@@ -35,7 +44,11 @@ const Topbar = props => {
                 <li key={url} className="topbar__item">
                   <Link
                     to={url}
-                    className={url === location.pathname ? 'topbar__link --active' : 'topbar__link'}
+                    className={
+                      url === location.pathname
+                        ? 'topbar__link --active'
+                        : 'topbar__link'
+                    }
                   >
                     <BiLogInCircle />
                     {li}
@@ -51,11 +64,14 @@ const Topbar = props => {
   return null
 }
 
-const mapStateToProps = state => {
+const mapStateToProps = (state) => {
   return {
     topbar: state.topbar,
-    user: state.user,
   }
 }
 
-export default connect(mapStateToProps, null)(Topbar)
+const mapDispatchToProps = {
+  logOut,
+}
+
+export default connect(mapStateToProps, mapDispatchToProps)(Topbar)
