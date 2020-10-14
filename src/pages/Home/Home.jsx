@@ -17,6 +17,8 @@ const Home = props => {
     <div className="Home">
       <IconHome icon={<BsCardImage />} url="/customers" text="Clientes" />
       <IconHome icon={<BsCardImage />} url="/nails" text="Clavos" />
+      <IconHome icon={<BsCardImage />} url="/material" text="Material" />
+      <IconHome icon={<BsCardImage />} url="/processes" text="Procesos" />
     </div>
   )
 }

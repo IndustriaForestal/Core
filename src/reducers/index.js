@@ -28,7 +28,6 @@ const reducer = (state, action) => {
     case 'CREATE_CUSTOMER':
       return {
         ...state,
-        customers: [...state.customers, action.payload],
       }
     case 'UPDATE_CUSTOMER':
       return {
@@ -54,7 +53,6 @@ const reducer = (state, action) => {
     case 'CREATE_NAILS':
       return {
         ...state,
-        nails: [...state.nails, action.payload],
       }
     case 'UPDATE_NAIL':
       return {
@@ -64,6 +62,56 @@ const reducer = (state, action) => {
       return {
         ...state,
         nails: state.nails.filter(nail => nail._id !== action.payload),
+      }
+    case 'GET_MATERIAL':
+      return {
+        ...state,
+        material: action.payload.data,
+      }
+    case 'GET_MATERIAL_ONE':
+      return {
+        ...state,
+        materialOne: action.payload,
+      }
+    case 'CREATE_MATERIAL':
+      return {
+        ...state,
+      }
+    case 'UPDATE_MATERIAL':
+      return {
+        ...state,
+      }
+    case 'DELETE_MATERIAL':
+      return {
+        ...state,
+        material: state.material.filter(
+          materialOne => materialOne._id !== action.payload
+        ),
+      }
+    case 'GET_PROCESSES':
+      return {
+        ...state,
+        processes: action.payload.data,
+      }
+    case 'GET_PROCESS':
+      return {
+        ...state,
+        process: action.payload,
+      }
+    case 'CREATE_PROCESS':
+      return {
+        ...state,
+      }
+    case 'UPDATE_PROCESS':
+      return {
+        ...state,
+      }
+    case 'DELETE_PROCESS':
+      return {
+        ...state,
+        processes: state.processes.filter(
+          process => process._id !== action.payload
+        ),
       }
     default:
       return state

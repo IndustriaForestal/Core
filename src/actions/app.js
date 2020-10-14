@@ -79,6 +79,7 @@ export const getAll = (endPoint, typeAction) => async dispatch => {
       headers: { Authorization: `Bearer ${Cookies.get('token')}` },
       method: 'get',
     })
+    console.log(res.data)
     dispatch({
       type: typeAction,
       payload: res.data,
@@ -106,16 +107,14 @@ export const get = (endPoint, typeAction) => async dispatch => {
 
 export const create = (endPoint, typeAction, data) => async dispatch => {
   try {
-    const res = await axios({
+    await axios({
       url: `${process.env.REACT_APP_API}${endPoint}`,
       headers: { Authorization: `Bearer ${Cookies.get('token')}` },
       method: 'post',
       data: data,
     })
-    console.log(res.config)
     dispatch({
       type: typeAction,
-      data: res.config.data,
     })
     const Toast = Swal.mixin({
       toast: true,
@@ -128,6 +127,7 @@ export const create = (endPoint, typeAction, data) => async dispatch => {
       title: 'Se guardo correctamente',
     })
   } catch (error) {
+    console.log(error)
     Swal.fire({
       title: 'Error!',
       text: 'Ah ocurrido un error',
@@ -140,7 +140,7 @@ export const create = (endPoint, typeAction, data) => async dispatch => {
 
 export const update = (endpoint, typeAction, data) => async dispatch => {
   try {
-    const res = await axios({
+   await axios({
       url: `${process.env.REACT_APP_API}${endpoint}`,
       headers: { Authorization: `Bearer ${Cookies.get('token')}` },
       method: 'put',
@@ -148,7 +148,7 @@ export const update = (endpoint, typeAction, data) => async dispatch => {
     })
     dispatch({
       type: typeAction,
-      payload: res.data.data,
+      payload: data,
     })
   } catch (error) {
     console.log(error)
