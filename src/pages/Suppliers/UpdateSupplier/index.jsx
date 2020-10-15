@@ -8,24 +8,24 @@ import Input from '../../../components/Input/Input'
 import Button from '../../../components/Button/Button'
 import Loading from '../../../components/Loading/Loading'
 
-const UpdatedMaterialIne = props => {
+const UpdateMaterialOne = props => {
   const { register, handleSubmit } = useForm()
   const { id } = useParams()
-  const { materialOne, processes } = props
-
+  const { supplier, material } = props
+  console.log(supplier)
   useEffect(() => {
-    props.get(`material/${id}`, 'GET_MATERIAL_ONE')
-    props.getAll(`processes`, 'GET_PROCESSES')
+    props.get(`suppliers/${id}`, 'GET_SUPPLIER')
+    props.getAll(`material`, 'GET_MATERIAL')
     // eslint-disable-next-line
   }, [])
 
   const onSubmit = data => {
-    props.update(`material/${id}`, 'UPDATE_MATERIAL_ONE', data)
-    window.location.href = '/material'
+    props.update(`suppliers/${id}`, 'UPDATE_SUPPLIER', data)
+    window.location.href = '/suppliers'
   }
-  if (materialOne && processes) {
+  if (supplier && material) {
     return (
-      <Card title="Editar Clavo" className="card -warning">
+      <Card title="Editar Proveedor" className="card -warning">
         <form
           id="formNail"
           className="formNail"
@@ -36,21 +36,28 @@ const UpdatedMaterialIne = props => {
             name="name"
             title="Nombre"
             passRef={register}
-            value={materialOne[0].name}
+            value={supplier[0].name}
+          />
+          <Input
+            type="number"
+            name="capacity"
+            title="Capacidad Semanal"
+            passRef={register}
+            value={supplier[0].capacity}
           />
           <div className="inputGroup">
-            <label htmlFor="processId">
+            <label htmlFor="materialId">
               <span>Inicia su proceso en:</span>
-              <select name="processId" ref={register}>
-                <option value={materialOne[0].processId}>
-                  {materialOne[0].processes[0].name}
+              <select name="materialId" ref={register}>
+                <option value={supplier[0].materialId}>
+                  {supplier[0].material[0].name}
                 </option>
-                {processes
-                  .filter(process => process._id !== materialOne[0].processId)
-                  .map(process => {
+                {material
+                  .filter(material => material._id !== supplier[0].materialId)
+                  .map(materialOne => {
                     return (
-                      <option key={process._id} value={process._id}>
-                        {process.name}
+                      <option key={materialOne._id} value={materialOne._id}>
+                        {materialOne.name}
                       </option>
                     )
                   })}
@@ -75,8 +82,8 @@ const UpdatedMaterialIne = props => {
 
 const mapStateToProps = state => {
   return {
-    processes: state.processes,
-    materialOne: state.materialOne,
+    material: state.material,
+    supplier: state.supplier,
   }
 }
 
@@ -86,4 +93,4 @@ const mapDispatchToProps = {
   update,
 }
 
-export default connect(mapStateToProps, mapDispatchToProps)(UpdatedMaterialIne)
+export default connect(mapStateToProps, mapDispatchToProps)(UpdateMaterialOne)

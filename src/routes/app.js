@@ -22,6 +22,9 @@ import UpdatePlatform from '../pages/Platforms/UpdatePlatform'
 import Items from '../pages/Items'
 import CreateItem from '../pages/Items/CreateItem'
 import UpdateItem from '../pages/Items/UpdateItem'
+import Suppliers from '../pages/Suppliers'
+import CreateSupplier from '../pages/Suppliers/CreateSupplier'
+import UpdateSupplier from '../pages/Suppliers/UpdateSupplier'
 
 const App = ({ loggedIn }) => {
   if (loggedIn) {
@@ -48,7 +51,9 @@ const App = ({ loggedIn }) => {
             <Route exact path="/items" component={Items} />
             <Route exact path="/items/create" component={CreateItem} />
             <Route exact path="/items/:id" component={UpdateItem} />
-
+            <Route exact path="/suppliers" component={Suppliers} />
+            <Route exact path="/suppliers/create" component={CreateSupplier} />
+            <Route exact path="/suppliers/:id" component={UpdateSupplier} />
 
             <Route exact path="/login" component={Login} />
             <Route component={NotFound} />
