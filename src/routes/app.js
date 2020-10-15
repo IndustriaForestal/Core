@@ -12,6 +12,7 @@ import CreateNail from '../pages/Nails/CreateNail'
 import UpdateNail from '../pages/Nails/UpdateNail'
 import Material from '../pages/Material'
 import CreateMaterial from '../pages/Material/CreateMaterial'
+import UpdateMaterial from '../pages/Material/UpdateMaterial'
 import Processes from '../pages/Processes'
 import CreateProcess from '../pages/Processes/CreateProcess'
 import UpdateProcess from '../pages/Processes/UpdateProcess'
@@ -34,6 +35,7 @@ const App = ({ loggedIn }) => {
             <Route exact path="/nails/:id" component={UpdateNail} />
             <Route exact path="/material" component={Material} />
             <Route exact path="/material/create" component={CreateMaterial} />
+            <Route exact path="/material/:id" component={UpdateMaterial} />
             <Route exact path="/processes" component={Processes} />
             <Route exact path="/processes/create" component={CreateProcess} />
             <Route exact path="/processes/:id" component={UpdateProcess} />

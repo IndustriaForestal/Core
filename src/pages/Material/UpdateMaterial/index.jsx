@@ -1,7 +1,7 @@
 import React, { useEffect } from 'react'
 import { connect } from 'react-redux'
 import { Link, useParams } from 'react-router-dom'
-import { get, update } from '../../../actions/app'
+import { get, update, getAll } from '../../../actions/app'
 import { useForm } from 'react-hook-form'
 import Card from '../../../components/Card/Card'
 import Input from '../../../components/Input/Input'
@@ -11,18 +11,19 @@ import Loading from '../../../components/Loading/Loading'
 const UpdateNail = props => {
   const { register, handleSubmit } = useForm()
   const { id } = useParams()
-  const { nail } = props
+  const { materialOne, processes } = props
 
   useEffect(() => {
-    props.get(`nails/${id}`, 'GET_NAIL')
+    props.get(`material/${id}`, 'GET_MATERIAL_ONE')
+    props.getAll(`processes`, 'GET_PROCESSES')
     // eslint-disable-next-line
   }, [])
 
   const onSubmit = data => {
-    props.update(`nails/${id}`, 'UPDATE_NAIL', data)
-    window.location.href = '/nails'
+    props.update(`material/${id}`, 'UPDATE_MATERIAL_ONE', data)
+    window.location.href = '/material'
   }
-  if (nail) {
+  if (materialOne && processes) {
     return (
       <Card title="Editar Clavo" className="card -warning">
         <form
@@ -35,15 +36,27 @@ const UpdateNail = props => {
             name="name"
             title="Nombre"
             passRef={register}
-            value={nail.name}
+            value={materialOne[0].name}
           />
-          <Input
-            type="number"
-            name="stock"
-            title="Inventario"
-            passRef={register}
-            value={nail.stock}
-          />
+          <div className="inputGroup">
+            <label htmlFor="processId">
+              <span>Inicia su proceso en:</span>
+              <select name="processId" ref={register}>
+                <option value={materialOne[0].processId}>
+                  {materialOne[0].processes[0].name}
+                </option>
+                {processes
+                  .filter(process => process._id !== materialOne[0].processId)
+                  .map(process => {
+                    return (
+                      <option key={process._id} value={process._id}>
+                        {process.name}
+                      </option>
+                    )
+                  })}
+              </select>
+            </label>
+          </div>
           <div className="formCustomer__buttons">
             <Button type="submit" className="btn --warning">
               Guardar
@@ -62,12 +75,14 @@ const UpdateNail = props => {
 
 const mapStateToProps = state => {
   return {
-    nail: state.nail,
+    processes: state.processes,
+    materialOne: state.materialOne,
   }
 }
 
 const mapDispatchToProps = {
   get,
+  getAll,
   update,
 }
 

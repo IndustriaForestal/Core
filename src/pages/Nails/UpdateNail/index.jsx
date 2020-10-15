@@ -72,7 +72,3 @@ const mapDispatchToProps = {
 }
 
 export default connect(mapStateToProps, mapDispatchToProps)(UpdateNail)
-
-/* Terminar materiales  */
-
-console.log('Terminar material(Update), this comment is in UpdateMaterial')
