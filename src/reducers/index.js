@@ -5,6 +5,11 @@ const reducer = (state, action) => {
         ...state,
         topbar: action.payload,
       }
+    case 'SET_WRAPER':
+      return {
+        ...state,
+        wraper: action.payload,
+      }
     case 'LOGIN_REQUEST':
       return {
         ...state,
@@ -137,6 +142,29 @@ const reducer = (state, action) => {
         platforms: state.platforms.filter(
           platform => platform._id !== action.payload
         ),
+      }
+    case 'GET_ITEMS':
+      return {
+        ...state,
+        items: action.payload.data,
+      }
+    case 'GET_ITEM':
+      return {
+        ...state,
+        item: action.payload,
+      }
+    case 'CREATE_ITEM':
+      return {
+        ...state,
+      }
+    case 'UPDATE_ITEM':
+      return {
+        ...state,
+      }
+    case 'DELETE_ITEM':
+      return {
+        ...state,
+        items: state.items.filter(item => item._id !== action.payload),
       }
     default:
       return state

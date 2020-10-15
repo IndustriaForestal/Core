@@ -34,6 +34,11 @@ export const setTitle = payload => ({
   payload,
 })
 
+export const setWraper = payload => ({
+  type: 'SET_WRAPER',
+  payload,
+})
+
 export const setUser = (payload, redirectionUrl) => async dispatch => {
   const { user, password } = payload
   try {

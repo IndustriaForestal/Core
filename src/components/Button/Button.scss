@@ -13,12 +13,14 @@
   -ms-user-select: none;
   user-select: none;
   padding: 10px 25px;
+  margin: 5px;
   line-height: 1.84615385;
   border-radius: 3px;
   color: var(--white);
   background-color: var(--primary);
   color: var(--white);
   border: 1px solid var(--primary);
+  box-sizing: border-box;
   transition: color 0.15s ease-in-out, background-color 0.15s ease-in-out,
     border-color 0.15s ease-in-out, box-shadow 0.15s ease-in-out;
   &:hover {

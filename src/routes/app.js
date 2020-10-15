@@ -19,6 +19,9 @@ import UpdateProcess from '../pages/Processes/UpdateProcess'
 import Platforms from '../pages/Platforms'
 import CreatePlatform from '../pages/Platforms/CreatePlatform'
 import UpdatePlatform from '../pages/Platforms/UpdatePlatform'
+import Items from '../pages/Items'
+import CreateItem from '../pages/Items/CreateItem'
+import UpdateItem from '../pages/Items/UpdateItem'
 
 const App = ({ loggedIn }) => {
   if (loggedIn) {
@@ -42,6 +45,10 @@ const App = ({ loggedIn }) => {
             <Route exact path="/platforms" component={Platforms} />
             <Route exact path="/platforms/create" component={CreatePlatform} />
             <Route exact path="/platforms/:id" component={UpdatePlatform} />
+            <Route exact path="/items" component={Items} />
+            <Route exact path="/items/create" component={CreateItem} />
+            <Route exact path="/items/:id" component={UpdateItem} />
+
 
             <Route exact path="/login" component={Login} />
             <Route component={NotFound} />
