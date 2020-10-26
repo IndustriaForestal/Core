@@ -3,7 +3,7 @@ import Swal from 'sweetalert2'
 import Cookies from 'js-cookie'
 
 const API_KEY_TOKEN =
-  '370f3f01fbebd2269599f25237ff9fedb923acf081de39f470b3afaa9cadb7dd'
+  '77a5f9501bfc62140ff0402fdc9bd9cdf60c269fd9c909ee43971b3885a4ac69'
 
 axios.interceptors.response.use(
   function (response) {

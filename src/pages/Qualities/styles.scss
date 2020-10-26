@@ -1,0 +1,27 @@
+.cardQuality {
+  background-color: var(--white);
+  border-radius: 15px;
+  padding: 1rem;
+  margin: 1rem 0;
+  &__head {
+    display: flex;
+    align-items: center;
+    justify-content: space-between;
+  }
+  &__title {
+    margin: 0;
+  }
+  &__tools {
+    svg {
+      padding: 0.5rem;
+      border: 1px solid transparent;
+      &:hover {
+        border: 1px solid var(--gray);
+        border-radius: 5px;
+        cursor: pointer;
+      }
+    }
+  }
+}
+
+

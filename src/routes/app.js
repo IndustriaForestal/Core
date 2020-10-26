@@ -25,6 +25,10 @@ import UpdateItem from '../pages/Items/UpdateItem'
 import Suppliers from '../pages/Suppliers'
 import CreateSupplier from '../pages/Suppliers/CreateSupplier'
 import UpdateSupplier from '../pages/Suppliers/UpdateSupplier'
+import Qualities from '../pages/Qualities'
+import CreateQuality from '../pages/Qualities/CreateQuality'
+import AddProcess from '../pages/Qualities/AddProcess'
+import EditProcess from '../pages/Qualities/EditProcess'
 
 const App = ({ loggedIn }) => {
   if (loggedIn) {
@@ -54,7 +58,10 @@ const App = ({ loggedIn }) => {
             <Route exact path="/suppliers" component={Suppliers} />
             <Route exact path="/suppliers/create" component={CreateSupplier} />
             <Route exact path="/suppliers/:id" component={UpdateSupplier} />
-
+            <Route exact path="/qualities" component={Qualities} />
+            <Route exact path="/qualities/create" component={CreateQuality} />
+            <Route exact path="/qualities/add/:id" component={AddProcess} />
+            <Route exact path="/qualities/edit/:qualityId/:processId" component={EditProcess} />
             <Route exact path="/login" component={Login} />
             <Route component={NotFound} />
           </Switch>

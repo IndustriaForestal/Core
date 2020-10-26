@@ -27,6 +27,18 @@
 
         box-shadow: rgba(69, 90, 100, 0.3) 0px 10px 10px 0px;
         transform: scale(1.05);
+        &.--success {
+          color: var(--success);
+          border-color: var(--success);
+        }
+        &.--warning {
+          color: var(--warning);
+          border-color: var(--warning);
+        }
+        &.--danger {
+          color: var(--danger);
+          border-color: var(--danger);
+        }
       }
     }
   }

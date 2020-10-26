@@ -22,6 +22,7 @@ const Home = props => {
       <IconHome icon={<BsCardImage />} url="/platforms" text="Plataformas" />
       <IconHome icon={<BsCardImage />} url="/items" text="Complementos" />
       <IconHome icon={<BsCardImage />} url="/suppliers" text="Proveedores" />
+      <IconHome icon={<BsCardImage />} url="/qualities" text="Calidades" />
     </div>
   )
 }

@@ -56,22 +56,22 @@ const Customers = props => {
       <Table head={tableHeader}>
         {customers.length > 0 ? (
           customers.map(customer => (
-            <tr key={customer._id}>
-              <td>{customer._id}</td>
+            <tr key={customer.id}>
+              <td>{customer.id}</td>
               <td>{customer.name}</td>
               <td>{customer.address}</td>
               <td>{customer.email}</td>
               <td>{customer.phone}</td>
               <td>{customer.shipment}</td>
               <td>
-                <Link to={`customers/${customer._id}`}>
+                <Link to={`customers/${customer.id}`}>
                   <Button className="btn --warning">
                     <AiOutlineEdit />
                   </Button>
                 </Link>
                 <Button
                   className="btn --danger"
-                  onClick={() => handlerDeleteCustomer(customer._id)}
+                  onClick={() => handlerDeleteCustomer(customer.id)}
                 >
                   <AiOutlineDelete />
                 </Button>
