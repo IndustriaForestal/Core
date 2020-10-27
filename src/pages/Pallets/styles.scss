@@ -1,0 +1,41 @@
+.palletsContainer {
+  display: grid;
+  grid-template-columns: repeat(2, 1fr);
+}
+
+.palletCard {
+  &__body {
+    display: flex;
+  }
+  &__info {
+    width: 100%;
+    text-align: center;
+  }
+  &__img {
+    height: 300px;
+    width: 50%;
+    object-fit: contain;
+    box-shadow: var(--neumorphism);
+    margin-bottom: 15px;
+    border-radius: 50px;
+  }
+  &__title {
+    text-align: center;
+  }
+  &__subtitle {
+    text-align: center;
+  }
+  &__specs {
+    display: flex;
+    justify-content: space-around;
+    padding-top: 1rem;
+  }
+  &__list {
+    margin: 0;
+    list-style: none;
+    padding: 0;
+  }
+  &__item {
+    padding: 5px;
+  }
+}

@@ -225,6 +225,31 @@ const reducer = (state, action) => {
       return {
         ...state,
       }
+    case 'GET_PALLETS':
+      return {
+        ...state,
+        pallets: action.payload.data,
+      }
+    case 'GET_PALLET':
+      return {
+        ...state,
+        pallet: action.payload,
+      }
+    case 'CREATE_PALLET':
+      return {
+        ...state,
+      }
+    case 'UPDATE_PALLET':
+      return {
+        ...state,
+      }
+    case 'DELETE_PALLET':
+      return {
+        ...state,
+        pallets: state.pallets.filter(
+          pallet => pallet._id !== action.payload
+        ),
+      }
     default:
       return state
   }

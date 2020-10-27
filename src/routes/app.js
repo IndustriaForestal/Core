@@ -29,6 +29,9 @@ import Qualities from '../pages/Qualities'
 import CreateQuality from '../pages/Qualities/CreateQuality'
 import AddProcess from '../pages/Qualities/AddProcess'
 import EditProcess from '../pages/Qualities/EditProcess'
+import Pallets from '../pages/Pallets'
+import CreatePallet from '../pages/Pallets/CreatePallet'
+import UpdatePallet from '../pages/Pallets/UpdatePallet'
 
 const App = ({ loggedIn }) => {
   if (loggedIn) {
@@ -41,7 +44,7 @@ const App = ({ loggedIn }) => {
             <Route exact path="/customers/create" component={CreateCustomer} />
             <Route exact path="/customers/:id" component={EditCustomer} />
             <Route exact path="/nails" component={Nails} />
-            <Route exact path="/nails/" component={CreateNail} />
+            <Route exact path="/nails/create" component={CreateNail} />
             <Route exact path="/nails/:id" component={UpdateNail} />
             <Route exact path="/material" component={Material} />
             <Route exact path="/material/create" component={CreateMaterial} />
@@ -62,6 +65,10 @@ const App = ({ loggedIn }) => {
             <Route exact path="/qualities/create" component={CreateQuality} />
             <Route exact path="/qualities/add/:id" component={AddProcess} />
             <Route exact path="/qualities/edit/:qualityId/:processId" component={EditProcess} />
+            <Route exact path="/pallets" component={Pallets} />
+            <Route exact path="/pallets/create" component={CreatePallet} />
+            <Route exact path="/pallets/:id" component={UpdatePallet} />
+
             <Route exact path="/login" component={Login} />
             <Route component={NotFound} />
           </Switch>
