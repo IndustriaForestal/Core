@@ -29,9 +29,16 @@ import Qualities from '../pages/Qualities'
 import CreateQuality from '../pages/Qualities/CreateQuality'
 import AddProcess from '../pages/Qualities/AddProcess'
 import EditProcess from '../pages/Qualities/EditProcess'
+import SpecialProcesses from '../pages/SpecialProcesses'
+import CreateSpecialProcess from '../pages/SpecialProcesses/CreateSpecialProcess'
+import UpdateSpecialProcess from '../pages/SpecialProcesses/UpdateSpecialProcess'
 import Pallets from '../pages/Pallets'
 import CreatePallet from '../pages/Pallets/CreatePallet'
 import UpdatePallet from '../pages/Pallets/UpdatePallet'
+import AddNail from '../pages/Pallets/AddNail'
+import AddItem from '../pages/Pallets/AddItem'
+import AddPlatform from '../pages/Pallets/AddPlatform'
+import AddSpecialProcess from '../pages/Pallets/AddSpecialProcess'
 
 const App = ({ loggedIn }) => {
   if (loggedIn) {
@@ -65,9 +72,16 @@ const App = ({ loggedIn }) => {
             <Route exact path="/qualities/create" component={CreateQuality} />
             <Route exact path="/qualities/add/:id" component={AddProcess} />
             <Route exact path="/qualities/edit/:qualityId/:processId" component={EditProcess} />
+            <Route exact path="/specialProcesses" component={SpecialProcesses} />
+            <Route exact path="/specialProcesses/create" component={CreateSpecialProcess} />
+            <Route exact path="/specialProcesses/:id" component={UpdateSpecialProcess} />
             <Route exact path="/pallets" component={Pallets} />
             <Route exact path="/pallets/create" component={CreatePallet} />
             <Route exact path="/pallets/:id" component={UpdatePallet} />
+            <Route exact path="/pallets/add/:id" component={AddNail} />
+            <Route exact path="/pallets/item/:id" component={AddItem} />
+            <Route exact path="/pallets/platform/:id" component={AddPlatform} />
+            <Route exact path="/pallets/specialProcess/:id" component={AddSpecialProcess} />
 
             <Route exact path="/login" component={Login} />
             <Route component={NotFound} />

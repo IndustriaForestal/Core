@@ -24,7 +24,7 @@ const UpdatePallet = props => {
     props.update(`pallets/${id}`, 'UPDATE_PALLET', data)
     window.location.href = '/pallets'
   }
-  if (customers && qualities) {
+  if (customers && qualities && pallet) {
     return (
       <Card title="Editar Clavo" className="card -warning">
         <form
@@ -103,7 +103,7 @@ const UpdatePallet = props => {
             <Button type="submit" className="btn --warning">
               Guardar
             </Button>
-            <Link to="/nails">
+            <Link to="/pallets">
               <Button className="btn --danger">Cancelar</Button>
             </Link>
           </div>

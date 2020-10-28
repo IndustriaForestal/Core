@@ -225,6 +225,31 @@ const reducer = (state, action) => {
       return {
         ...state,
       }
+    case 'GET_SPECIAL_PROCESSES':
+      return {
+        ...state,
+        specialProcesses: action.payload.data,
+      }
+    case 'GET_SPECIAL_PROCESS':
+      return {
+        ...state,
+        specialProcess: action.payload,
+      }
+    case 'CREATE_SPECIAL_PROCESS':
+      return {
+        ...state,
+      }
+    case 'UPDATE_SPECIAL_PROCESS':
+      return {
+        ...state,
+      }
+    case 'DELETE_SPECIAL_PROCESS':
+      return {
+        ...state,
+        specialProcesses: state.specialProcesses.filter(
+          specialProcess => specialProcess._id !== action.payload
+        ),
+      }
     case 'GET_PALLETS':
       return {
         ...state,
@@ -246,10 +271,21 @@ const reducer = (state, action) => {
     case 'DELETE_PALLET':
       return {
         ...state,
-        pallets: state.pallets.filter(
-          pallet => pallet._id !== action.payload
-        ),
+        pallets: state.pallets.filter(pallet => pallet._id !== action.payload),
       }
+    case 'ADD_NAIL_PALLET':
+      return {
+        ...state,
+      }
+    case 'ADD_ITEM_PALLET':
+      return {
+        ...state,
+      }
+    case 'ADD_PLATFORM_PALLET':
+      return {
+        ...state,
+      }
+
     default:
       return state
   }

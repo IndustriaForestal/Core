@@ -37,5 +37,15 @@
   }
   &__item {
     padding: 5px;
+    &:hover {
+      color: var(--danger);
+      cursor: pointer;
+    }
+    &.--nonDelete {
+      &:hover {
+        color: black;
+        cursor: default;
+      }
+    }
   }
 }

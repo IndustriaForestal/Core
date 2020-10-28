@@ -10,30 +10,22 @@ import Button from '../../components/Button/Button'
 import AddButton from '../../components/AddButton/AddButton'
 import './styles.scss'
 
-const Customers = props => {
-  const { customers, setTitle } = props
+const SpecialProcesses = props => {
+  const { specialProcesses, setTitle } = props
 
   useEffect(() => {
     const topbar = {
-      title: 'Clientes',
-      menu: { Clientes: '/customers' },
+      title: 'Procesos Especiales',
+      menu: { 'Procesos Especiales': '/specialProcesses' },
     }
     setTitle(topbar)
-    props.getAll('customers', 'GET_CUSTOMERS')
+    props.getAll('specialProcesses', 'GET_SPECIAL_PROCESSES')
     // eslint-disable-next-line
   }, [])
 
-  const tableHeader = [
-    '#',
-    'Nombre',
-    'Dirección',
-    'Email',
-    'Teléfono',
-    'Embarques Semana',
-    'Acciones',
-  ]
+  const tableHeader = ['Nombre', 'Capacidad', 'Personal', 'Duración', 'Acciones']
 
-  const handlerDeleteCustomer = customerID => {
+  const handleDeleteSpecialProcess = specialProcessId => {
     Swal.fire({
       title: '¿Estás seguro?',
       text: 'Este proceso no se puede revertir',
@@ -45,33 +37,32 @@ const Customers = props => {
     })
       .then(result => {
         if (result.isConfirmed) {
-          props.deleted(`customers/${customerID}`, 'DELETE_CUSTOMER')
+          props.deleted(`specialProcesses/${specialProcessId}`, 'DELETE_SPECIAL_PROCESS')
           Swal.fire('Borrado!', 'Borrado con exito.', 'success')
         }
       })
+    
   }
 
   return (
     <>
       <Table head={tableHeader}>
-        {customers.length > 0 ? (
-          customers.map(customer => (
-            <tr key={customer._id}>
-              <td>{customer.id}</td>
-              <td>{customer.name}</td>
-              <td>{customer.address}</td>
-              <td>{customer.email}</td>
-              <td>{customer.phone}</td>
-              <td>{customer.shipment}</td>
+        {specialProcesses ? (
+          specialProcesses.map(specialProcess => (
+            <tr key={specialProcess._id}>
+              <td>{specialProcess.name}</td>
+              <td>{specialProcess.capacity}</td>
+              <td>{specialProcess.people}</td>
+              <td>{specialProcess.duration}</td>
               <td>
-                <Link to={`customers/${customer.id}`}>
+                <Link to={`specialProcesses/${specialProcess._id}`}>
                   <Button className="btn --warning">
                     <AiOutlineEdit />
                   </Button>
                 </Link>
                 <Button
                   className="btn --danger"
-                  onClick={() => handlerDeleteCustomer(customer.id)}
+                  onClick={() => handleDeleteSpecialProcess(specialProcess._id)}
                 >
                   <AiOutlineDelete />
                 </Button>
@@ -84,7 +75,7 @@ const Customers = props => {
           </tr>
         )}
       </Table>
-      <Link to="/customers/create">
+      <Link to="/specialProcesses/create">
         <AddButton>
           <BsPlus />
         </AddButton>
@@ -95,7 +86,7 @@ const Customers = props => {
 
 const mapStateToProps = state => {
   return {
-    customers: state.customers,
+    specialProcesses: state.specialProcesses,
   }
 }
 
@@ -105,4 +96,4 @@ const mapDispatchToProps = {
   deleted,
 }
 
-export default connect(mapStateToProps, mapDispatchToProps)(Customers)
+export default connect(mapStateToProps, mapDispatchToProps)(SpecialProcesses)

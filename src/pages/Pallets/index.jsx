@@ -5,6 +5,7 @@ import { AiOutlineEdit, AiOutlineDelete } from 'react-icons/ai'
 import { GiHammerNails, GiWoodPile, GiProcessor, GiTruck } from 'react-icons/gi'
 import { BsPlus } from 'react-icons/bs'
 import { setTitle, getAll, deleted } from '../../actions/app'
+import { deleteObjectPallet } from './actions'
 import Swal from 'sweetalert2'
 import AddButton from '../../components/AddButton/AddButton'
 import Card from '../../components/Card/Card'
@@ -32,6 +33,84 @@ const Pallets = props => {
     })
   }
 
+  const handleDeleteNail = (palletId, nailId) => {
+    Swal.fire({
+      title: '¿Estás seguro?',
+      text: 'Este proceso no se puede revertir',
+      icon: 'warning',
+      showCancelButton: true,
+      confirmButtonColor: '#3085d6',
+      cancelButtonColor: '#d33',
+      confirmButtonText: 'Si, borrar',
+    }).then(result => {
+      if (result.isConfirmed) {
+        props.deleteObjectPallet(
+          `pallets/delete/${palletId}/${nailId}`,
+          'DELETE_NAIL_PALLET'
+        )
+        Swal.fire('Borrado!', 'Borrado con exito.', 'success')
+      }
+    })
+  }
+
+  const handleDeleteItem = (palletId, itemId) => {
+    Swal.fire({
+      title: '¿Estás seguro?',
+      text: 'Este proceso no se puede revertir',
+      icon: 'warning',
+      showCancelButton: true,
+      confirmButtonColor: '#3085d6',
+      cancelButtonColor: '#d33',
+      confirmButtonText: 'Si, borrar',
+    }).then(result => {
+      if (result.isConfirmed) {
+        props.deleteObjectPallet(
+          `pallets/item/delete/${palletId}/${itemId}`,
+          'DELETE_ITEM_PALLET'
+        )
+        Swal.fire('Borrado!', 'Borrado con exito.', 'success')
+      }
+    })
+  }
+  const handleDeletePlatform = (palletId, platformId) => {
+    Swal.fire({
+      title: '¿Estás seguro?',
+      text: 'Este proceso no se puede revertir',
+      icon: 'warning',
+      showCancelButton: true,
+      confirmButtonColor: '#3085d6',
+      cancelButtonColor: '#d33',
+      confirmButtonText: 'Si, borrar',
+    }).then(result => {
+      if (result.isConfirmed) {
+        props.deleteObjectPallet(
+          `pallets/platform/delete/${palletId}/${platformId}`,
+          'DELETE_PLATFORM_PALLET'
+        )
+        Swal.fire('Borrado!', 'Borrado con exito.', 'success')
+      }
+    })
+  }
+  const handleDeleteSpecialProcess = (palletId, specialProcessId) => {
+    Swal.fire({
+      title: '¿Estás seguro?',
+      text: 'Este proceso no se puede revertir',
+      icon: 'warning',
+      showCancelButton: true,
+      confirmButtonColor: '#3085d6',
+      cancelButtonColor: '#d33',
+      confirmButtonText: 'Si, borrar',
+    }).then(result => {
+      if (result.isConfirmed) {
+        props.deleteObjectPallet(
+          `pallets/specialProcess/delete/${palletId}/${specialProcessId}`,
+          'DELETE_PLATFORM_PALLET'
+        )
+        Swal.fire('Borrado!', 'Borrado con exito.', 'success')
+      }
+    })
+  }
+
   useEffect(() => {
     const topbar = {
       title: 'Tarimas',
@@ -54,16 +133,16 @@ const Pallets = props => {
                   title={pallet.customerId.name}
                   tools={
                     <div>
-                      <Link to={`pallets`}>
+                      <Link to={`pallets/add/${pallet._id}`}>
                         <GiHammerNails className="--success" />
                       </Link>
-                      <Link to={`pallets`}>
+                      <Link to={`pallets/item/${pallet._id}`}>
                         <GiWoodPile className="--success" />
                       </Link>
-                      <Link to={`pallets`}>
+                      <Link to={`pallets/specialProcess/${pallet._id}`}>
                         <GiProcessor className="--success" />
                       </Link>
-                      <Link to={`pallets`}>
+                      <Link to={`pallets/platform/${pallet._id}`}>
                         <GiTruck className="--success" />
                       </Link>
                       <Link to={`pallets/${pallet._id}`}>
@@ -98,13 +177,23 @@ const Pallets = props => {
                         {pallet.specialProcess &&
                         pallet.specialProcess.length > 0 ? (
                           <ul className="palletCard__list">
-                            <li className="palletCard__item">Lista de cosas</li>
-                            <li className="palletCard__item">Lista de cosas</li>
-                            <li className="palletCard__item">Lista de cosas</li>
+                            {pallet.specialProcess.map(special => {
+                              return (
+                                <li
+                                  className="palletCard__item"
+                                  key={special._id}
+                                  onClick={() =>
+                                    handleDeleteSpecialProcess(pallet._id, special._id)
+                                  }
+                                >
+                                  {special.name}
+                                </li>
+                              )
+                            })}
                           </ul>
                         ) : (
                           <ul className="palletCard__list">
-                            <li className="palletCard__item">
+                            <li className="palletCard__item --nonDelete">
                               Sin procesos especiales
                             </li>
                           </ul>
@@ -116,13 +205,21 @@ const Pallets = props => {
                         {pallet.items[0].id ? (
                           pallet.items.map(item => {
                             return (
-                              <li key={item.id} className="palletCard__item">
+                              <li
+                                key={item.id}
+                                className="palletCard__item"
+                                onClick={() =>
+                                  handleDeleteItem(pallet._id, item.id)
+                                }
+                              >
                                 {item.name}: {item.amount}
                               </li>
                             )
                           })
                         ) : (
-                          <li className="palletCard__item">Sin complementos</li>
+                          <li className="palletCard__item --nonDelete">
+                            Sin complementos
+                          </li>
                         )}
                       </ul>
                       <ul className="palletCard__list">
@@ -132,13 +229,18 @@ const Pallets = props => {
                               <li
                                 key={nail.nailId}
                                 className="palletCard__item"
+                                onClick={() =>
+                                  handleDeleteNail(pallet._id, nail.nailId)
+                                }
                               >
                                 {nail.name}: {nail.amount}
                               </li>
                             )
                           })
                         ) : (
-                          <li className="palletCard__item">Sin clavos</li>
+                          <li className="palletCard__item --nonDelete">
+                            Sin clavos
+                          </li>
                         )}
                       </ul>
                       <ul className="palletCard__list">
@@ -148,13 +250,16 @@ const Pallets = props => {
                               <li
                                 key={platform._id}
                                 className="palletCard__item"
+                                onClick={() =>
+                                  handleDeletePlatform(pallet._id, platform._id)
+                                }
                               >
                                 {platform.name}: {platform.capacity}
                               </li>
                             )
                           })
                         ) : (
-                          <li className="palletCard__item">
+                          <li className="palletCard__item --nonDelete">
                             Sin capacidad de carga
                           </li>
                         )}
@@ -190,6 +295,7 @@ const mapDispatchToProps = {
   setTitle,
   getAll,
   deleted,
+  deleteObjectPallet,
 }
 
 export default connect(mapStateToProps, mapDispatchToProps)(Pallets)
