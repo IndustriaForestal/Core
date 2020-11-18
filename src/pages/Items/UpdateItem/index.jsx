@@ -50,7 +50,7 @@ const UpdateItem = props => {
             step="any"
             title="Largo"
             passRef={register}
-            value={item.size.length}
+            value={item.length}
           />
           <Input
             type="number"
@@ -58,7 +58,7 @@ const UpdateItem = props => {
             step="any"
             title="Ancho"
             passRef={register}
-            value={item.size.width}
+            value={item.width}
           />
           <Input
             type="number"
@@ -66,7 +66,7 @@ const UpdateItem = props => {
             step="any"
             title="Alto"
             passRef={register}
-            value={item.size.height}
+            value={item.height}
           />
           <Input
             type="number"

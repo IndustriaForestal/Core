@@ -37,6 +37,24 @@ const UpdateProcess = props => {
             passRef={register}
             value={process.name}
           />
+          <div className="inputGroup">
+            <label htmlFor="type">
+              <span>Ocupa:</span>
+              <select name="type" ref={register}>
+                {process.type === 1 ? (
+                  <>
+                    <option value="1">Tarima</option>
+                    <option value="0">Pie Tabla</option>
+                  </>
+                ) : (
+                  <>
+                    <option value="0">Pie Tabla</option>
+                    <option value="1">Tarima</option>
+                  </>
+                )}
+              </select>
+            </label>
+          </div>
           <div className="formCustomer__buttons">
             <Button type="submit" className="btn --warning">
               Guardar

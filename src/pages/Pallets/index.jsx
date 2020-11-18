@@ -175,18 +175,19 @@ const Pallets = props => {
                           Calidad: {pallet.qualityId[0]}
                         </h4>
                         {pallet.specialProcess &&
-                        pallet.specialProcess.length > 0 ? (
+                        pallet.specialProcess.length > 1 ? (
                           <ul className="palletCard__list">
                             {pallet.specialProcess.map(special => {
+                              console.log(special[0])
                               return (
                                 <li
                                   className="palletCard__item"
-                                  key={special._id}
+                                  key={special[0]._id}
                                   onClick={() =>
-                                    handleDeleteSpecialProcess(pallet._id, special._id)
+                                    handleDeleteSpecialProcess(pallet._id, special[0]._id)
                                   }
                                 >
-                                  {special.name}
+                                  {special[0].name}
                                 </li>
                               )
                             })}

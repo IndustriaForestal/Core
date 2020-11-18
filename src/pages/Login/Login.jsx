@@ -20,11 +20,17 @@ const Login = props => {
   }
   return (
     <div className="login">
-      <div>
-        <div>
-          <img src={logoFull} alt="" />
+      <div className="login__container">
+        <div className="login__container__left">
+          <img
+            src={logoFull}
+            alt=""
+            onClick={() => {
+              window.location.href = 'https://marathongroup.mx'
+            }}
+          />
         </div>
-        <div>
+        <div className="login__container__right">
           <form onSubmit={hanlderSubmit}>
             <Title className="-small">Bienvenido</Title>
             <label htmlFor="user">
@@ -34,10 +40,6 @@ const Login = props => {
             <label htmlFor="password">
               <span>Password</span>
               <input type="password" name="password" onChange={handlerInput} />
-            </label>
-            <label htmlFor="remeber">
-              <span>Recordarme</span>
-              <input type="checkbox" name="remeber" />
             </label>
             <Button className="btn btn__primary --flat" type="submit">
               Iniciar Sesión

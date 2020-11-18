@@ -90,4 +90,13 @@
       color: var(--danger);
     }
   }
+  &.--disabled{
+    opacity: .9;
+    cursor: not-allowed;
+    &:hover{
+      background-color: var(--gray);
+      color: var(--white);
+      border-color: var(--gray);
+    }
+  }
 }

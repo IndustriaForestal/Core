@@ -84,7 +84,7 @@ const EditProcess = props => {
             value={processEdited[0].duration}
             passRef={register}
           />
-          <div className="inputGroup">
+        {/*   <div className="inputGroup">
             <label htmlFor="materialId">
               <span>Inicia su proceso en:</span>
               <select name="materialId" ref={register}>
@@ -105,7 +105,7 @@ const EditProcess = props => {
                   })}
               </select>
             </label>
-          </div>
+          </div> */}
           <div className="formProcess__buttons">
             <Button type="submit" className="btn --warning">
               Actualizar

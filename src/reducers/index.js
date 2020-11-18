@@ -285,7 +285,86 @@ const reducer = (state, action) => {
       return {
         ...state,
       }
-
+    case 'GET_ORDERS':
+      return {
+        ...state,
+        orders: action.payload.data,
+      }
+    case 'GET_ORDER':
+      return {
+        ...state,
+        orderDetails: action.payload[0],
+        order: null,
+      }
+    case 'CREATE_ORDER':
+      return {
+        ...state,
+        order: action.payload.data,
+      }
+    case 'DELETE_ORDER':
+      return {
+        ...state,
+        orders: state.orders.filter(order => order._id !== action.payload),
+      }
+    case 'CREATE_PURCHASE':
+      return {
+        ...state,
+      }
+    case 'CREATE_ORDERS_PRODUCTION':
+      return {
+        ...state,
+      }
+    case 'GET_CAPACITIES':
+      return {
+        ...state,
+        capacities: action.payload.data,
+      }
+    case 'GET_RAWS':
+      return {
+        ...state,
+        raws: action.payload.data,
+      }
+    case 'GET_RAW':
+      return {
+        ...state,
+        raw: action.payload,
+      }
+    case 'CREATE_RAW':
+      return {
+        ...state,
+      }
+    case 'UPDATE_RAW':
+      return {
+        ...state,
+      }
+    case 'DELETE_RAW':
+      return {
+        ...state,
+        raws: state.raws.filter(raw => raw._id !== action.payload),
+      }
+      case 'GET_USERS':
+        return {
+          ...state,
+          users: action.payload.data,
+        }
+      case 'GET_USER':
+        return {
+          ...state,
+          user: action.payload,
+        }
+      case 'CREATE_USER':
+        return {
+          ...state,
+        }
+      case 'UPDATE_USER':
+        return {
+          ...state,
+        }
+      case 'DELETE_USER':
+        return {
+          ...state,
+          users: state.users.filter(user => user._id !== action.payload),
+        }
     default:
       return state
   }

@@ -31,11 +31,20 @@ const CreateProcess = props => {
           passRef={register({ required: true })}
           placeholder={errors.name && 'Campo requerido'}
         />
+        <div className="inputGroup">
+          <label htmlFor="type">
+            <span>Ocupa:</span>
+            <select name="type" ref={register}>
+              <option value="1">Tarima</option>
+              <option value="0">Pie Tabla</option>
+            </select>
+          </label>
+        </div>
         <div className="formProcess__buttons">
           <Button type="submit" className="btn --success">
             Crear
           </Button>
-          <Link to="/processs">
+          <Link to="/process">
             <Button className="btn --danger">Cancelar</Button>
           </Link>
         </div>

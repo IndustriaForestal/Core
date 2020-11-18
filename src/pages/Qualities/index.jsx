@@ -73,7 +73,7 @@ const Qualities = props => {
     'Capacidad',
     'Duración',
     'Personal',
-    'Material',
+    'Usa',
     'Acciones',
   ]
 
@@ -107,7 +107,7 @@ const Qualities = props => {
                         <td>{process.capacity}</td>
                         <td>{process.duration}</td>
                         <td>{process.people}</td>
-                        <td>{process.materialName}</td>
+                        <td>{process.type === '1' ? 'Tarima' : 'P/T'}</td>
                         <td>
                           <Link to={`qualities/edit/${quality._id}/${process.processId}`}>
                             <Button className="btn --warning">

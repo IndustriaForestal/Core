@@ -59,9 +59,9 @@ const Items = props => {
             <tr key={item._id}>
               <td>{item.name}</td>
               <td>{item.description}</td>
-              <td>{item.size.length}</td>
-              <td>{item.size.width}</td>
-              <td>{item.size.height}</td>
+              <td>{item.length}</td>
+              <td>{item.width}</td>
+              <td>{item.height}</td>
               <td>{item.stock}</td>
               <td>
                 <Link to={`items/${item._id}`}>

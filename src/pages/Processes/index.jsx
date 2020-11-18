@@ -23,7 +23,7 @@ const Processes = props => {
     // eslint-disable-next-line
   }, [])
 
-  const tableHeader = ['Nombre', 'Acciones']
+  const tableHeader = ['Nombre', 'Usa', 'Acciones']
 
   const handleDeleteProcess = processId => {
     Swal.fire({
@@ -49,6 +49,7 @@ const Processes = props => {
           processes.map(process => (
             <tr key={process._id}>
               <td>{process.name}</td>
+              <td>{process.type === '1' ? 'Tarima' : 'P/T'}</td>
               <td>
                 <Link to={`processes/${process._id}`}>
                   <Button className="btn --warning">

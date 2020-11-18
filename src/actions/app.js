@@ -53,10 +53,12 @@ export const setUser = (payload, redirectionUrl) => async dispatch => {
         apiKeyToken: API_KEY_TOKEN,
       },
     })
+
     document.cookie = `user=${res.data.user.user}`
     document.cookie = `name=${res.data.user.name}`
     document.cookie = `id=${res.data.user.id}`
     document.cookie = `token=${res.data.token}`
+    document.cookie = `role=${res.data.user.role}`
     window.location.href = redirectionUrl
 
     dispatch({
@@ -84,7 +86,6 @@ export const getAll = (endPoint, typeAction) => async dispatch => {
       headers: { Authorization: `Bearer ${Cookies.get('token')}` },
       method: 'get',
     })
-    console.log(res.data)
     dispatch({
       type: typeAction,
       payload: res.data,
@@ -112,7 +113,7 @@ export const get = (endPoint, typeAction) => async dispatch => {
 
 export const create = (endPoint, typeAction, data) => async dispatch => {
   try {
-    await axios({
+    const res = await axios({
       url: `${process.env.REACT_APP_API}${endPoint}`,
       headers: { Authorization: `Bearer ${Cookies.get('token')}` },
       method: 'post',
@@ -120,6 +121,7 @@ export const create = (endPoint, typeAction, data) => async dispatch => {
     })
     dispatch({
       type: typeAction,
+      payload: res.data,
     })
     const Toast = Swal.mixin({
       toast: true,
