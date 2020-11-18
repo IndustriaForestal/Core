@@ -90,6 +90,8 @@ const Order = props => {
       return comparison
     }
 
+    let itemsList = []
+
     const searchOrderProduction = date => {
       let ordersProduction = []
       let itemsVolume = 0
@@ -98,7 +100,6 @@ const Order = props => {
       const capacityCharge = pallet[0].capacityCharge.filter(
         charge => orderDetails.platformId === charge._id
       )
-
       pallet[0].items.map(item => {
         const pietabla =
           parseInt(item.amount) *
@@ -107,7 +108,13 @@ const Order = props => {
             parseFloat(item.width)) /
             144)
         itemsVolume = itemsVolume + pietabla
+        itemsList.push({
+          itemName: item.name[0],
+          amount: item.amount,
+          completed: 0,
+        })
       })
+
       itemsVolume = parseInt(itemsVolume * capacityCharge[0].capacity)
 
       searchOrderProduction.map(order => {
@@ -123,12 +130,14 @@ const Order = props => {
                 date: startDate,
                 use: order.capacity,
                 ...order,
+                itemsList,
               })
             } else {
               ordersProduction.push({
                 date: startDate,
                 use: itemsVolume,
                 ...order,
+                itemsList,
               })
             }
             itemsVolume = itemsVolume - order.capacity
@@ -213,15 +222,22 @@ const Order = props => {
             parseFloat(item.width)) /
             144)
         itemsVolume = itemsVolume + pietabla
+        itemsList.push({
+          itemName: item.name[0],
+          amount: item.amount,
+          completed: 0,
+        })
       })
       itemsVolume = parseInt(itemsVolume * capacityCharge[0].capacity)
+
+      props.update(`orders/itemsList/${id}`, 'DEFAULT', itemsList)
 
       // * Crea la orden de compra de ser necesaria
 
       if (materialId === '5fa07756ce9a4996368fb090') {
         const stock = raws.filter(raw => raw.name === 'Trozo')
         let amount = 0
-
+        itemsList.material = 'Trozo'
         stock[0].stock = parseFloat(stock[0].stock)
         if (itemsVolume > stock[0].stock) {
           amount = itemsVolume - stock[0].stock
@@ -233,12 +249,11 @@ const Order = props => {
             amount,
           }
           props.create('orders/purchase', rawOrder)
-          console.log(rawOrder)
         }
       } else if (materialId === '5fa0721ace9a4996368fb08b') {
         const stock = raws.filter(raw => raw.name === 'Cuarton')
         let amount = 0
-
+        itemsList.material = 'Cuarton'
         stock[0].stock = parseFloat(stock[0].stock)
         if (itemsVolume > stock[0].stock) {
           amount = itemsVolume - stock[0].stock
@@ -249,8 +264,8 @@ const Order = props => {
             date: moment().format('YYYY-MM-DDT06:00:00') + 'Z',
             amount,
           }
+
           props.create('orders/purchase', 'CREATE_PURCHASE', rawOrder)
-          console.log(rawOrder)
         }
       }
     }
@@ -268,7 +283,7 @@ const Order = props => {
           orderId: orderDetails._id,
         })
       })
-      console.log(ordersProduction)
+
       Swal.fire({
         title: '¿Estás seguro?',
         text: 'Este proceso no se puede revertir',
@@ -385,4 +400,3 @@ const mapDispatchToProps = {
 }
 
 export default connect(mapStateToProps, mapDispatchToProps)(Order)
-

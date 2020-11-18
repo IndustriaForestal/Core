@@ -43,42 +43,78 @@ const OrderProduction = props => {
   const tableHeaderFast = ['Proceso', 'Dato']
 
   if (orders && processes) {
-    console.log(orders)
     if (role === 'Administrador') {
       return (
         <Card title={`Ordenes de producción`}>
           {orders.map(order => {
             if (order.orderType === 0) {
+              const aserrio = order.ordersProduction.filter(
+                op => op.processId === '5f99cbda74cd296d5bb5b744'
+              )
+              const startAserrio = moment(aserrio[0].date).format('DD-MM-YYYY')
+              const endAserrio = moment(
+                aserrio[aserrio.length - 1].date
+              ).format('DD-MM-YYYY')
+              console.log(aserrio)
               return (
                 <React.Fragment key={order._id}>
                   <Title>{`Pedido #${order.orderNumber}`}</Title>
                   <Table head={tableHeader}>
                     {order.ordersProduction.map((production, index) => {
-                      return (
-                        <tr key={index}>
-                          <td>
-                            {production.processName
-                              ? production.processName
-                              : production.name}
-                          </td>
-                          <td>
-                            {moment(production.date).format('DD-MM-YYYY')}
-                          </td>
-                          <td>
-                            {moment(production.date).isBefore(moment(), 'day')
-                              ? 'Vencido'
-                              : 'En tiempo'}
-                          </td>
-                          <td>
-                            {order.completed === 1 ? (
-                              <AiOutlineCheckCircle className="--success" />
-                            ) : (
-                              <AiOutlineClose className="--danger" />
-                            )}
-                          </td>
-                        </tr>
-                      )
+                      if (production.type !== '0') {
+                        return (
+                          <tr key={index}>
+                            <td>
+                              {production.processName
+                                ? production.processName
+                                : production.name}
+                            </td>
+                            <td>
+                              {moment(production.date).format('DD-MM-YYYY')}
+                            </td>
+                            <td>
+                              {moment(production.date).isBefore(moment(), 'day')
+                                ? 'Vencido'
+                                : 'En tiempo'}
+                            </td>
+                            <td>
+                              {order.completed === 1 ? (
+                                <AiOutlineCheckCircle className="--success" />
+                              ) : (
+                                <AiOutlineClose className="--danger" />
+                              )}
+                            </td>
+                          </tr>
+                        )
+                      } else {
+                        return null
+                      }
                     })}
+                    {order.itemsList
+                      ? order.itemsList.map((item, index) => {
+                          return (
+                            <tr key={index}>
+                              <td>{item.itemName}</td>
+                              <td>{`${startAserrio} - ${endAserrio}`}</td>
+                              <td>
+                                {moment(aserrio[0].date).isBefore(
+                                  moment(),
+                                  'day'
+                                )
+                                  ? 'Vencido'
+                                  : 'En tiempo'}
+                              </td>
+                              <td>
+                                {item.completed === 1 ? (
+                                  <AiOutlineCheckCircle className="--success" />
+                                ) : (
+                                  <AiOutlineClose className="--danger" />
+                                )}
+                              </td>
+                            </tr>
+                          )
+                        })
+                      : null}
                   </Table>
                 </React.Fragment>
               )
@@ -135,6 +171,13 @@ const OrderProduction = props => {
         <Card title={`Ordenes de producción`}>
           {orders.map(order => {
             if (order.orderType === 0) {
+              const aserrio = order.ordersProduction.filter(
+                op => op.processId === '5f99cbda74cd296d5bb5b744'
+              )
+              const startAserrio = moment(aserrio[0].date).format('DD-MM-YYYY')
+              const endAserrio = moment(
+                aserrio[aserrio.length - 1].date
+              ).format('DD-MM-YYYY')
               return (
                 <React.Fragment key={order._id}>
                   <Title>{`Pedido #${order.orderNumber}`}</Title>
@@ -143,7 +186,8 @@ const OrderProduction = props => {
                       .filter(
                         production =>
                           production.processId === processId[0]._id &&
-                          production.completed === 0
+                          production.completed === 0 &&
+                          production.processId !== '5f99cbda74cd296d5bb5b744'
                       )
                       .map((production, index) => {
                         return (
@@ -162,7 +206,9 @@ const OrderProduction = props => {
                                 : 'En tiempo'}
                             </td>
                             <td>
-                              <Link to={`orderProduction/${order._id}/${index}`}>
+                              <Link
+                                to={`orderProduction/${order._id}/${index}`}
+                              >
                                 <Button className="btn --warning">
                                   <AiOutlineEdit />
                                 </Button>
@@ -171,6 +217,33 @@ const OrderProduction = props => {
                           </tr>
                         )
                       })}
+                    {order.itemsList
+                      ? order.itemsList.map((item, index) => {
+                          return (
+                            <tr key={index}>
+                              <td>{item.itemName}</td>
+                              <td>{`${startAserrio} - ${endAserrio}`}</td>
+                              <td>
+                                {moment(aserrio[0].date).isBefore(
+                                  moment(),
+                                  'day'
+                                )
+                                  ? 'Vencido'
+                                  : 'En tiempo'}
+                              </td>
+                              <td>
+                                <Link
+                                  to={`orderProduction/${order._id}/${index}?itemsList=true`}
+                                >
+                                  <Button className="btn --warning">
+                                    <AiOutlineEdit />
+                                  </Button>
+                                </Link>
+                              </td>
+                            </tr>
+                          )
+                        })
+                      : null}
                   </Table>
                 </React.Fragment>
               )

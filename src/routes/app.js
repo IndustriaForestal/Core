@@ -56,6 +56,7 @@ import Users from '../pages/Users'
 import CreateUser from '../pages/Users/CreateUser'
 import UpdateUser from '../pages/Users/UpdateUser'
 import OrderProductionList from '../pages/OrderProduction'
+import OrderProductionItem from '../pages/OrderProduction/OrderProductionItem'
 
 const App = ({ loggedIn }) => {
   const role = Cookies.get('role')
@@ -319,6 +320,11 @@ const App = ({ loggedIn }) => {
               exact
               path="/orderProduction"
               component={OrderProductionList}
+            />
+            <Route
+              exact
+              path="/orderProduction/:orderId/:index"
+              component={OrderProductionItem}
             />
 
             <Route exact path="/login" component={Login} />

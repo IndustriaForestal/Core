@@ -8,6 +8,7 @@ import Swal from 'sweetalert2'
 import Table from '../../components/Table/Table'
 import Button from '../../components/Button/Button'
 import AddButton from '../../components/AddButton/AddButton'
+import Loading from '../../components/Loading/Loading'
 import './styles.scss'
 
 const Orders = props => {
@@ -34,53 +35,55 @@ const Orders = props => {
       confirmButtonColor: '#3085d6',
       cancelButtonColor: '#d33',
       confirmButtonText: 'Si, borrar',
+    }).then(result => {
+      if (result.isConfirmed) {
+        props.deleted(`orders/${orderId}`, 'DELETE_ORDER')
+        Swal.fire('Borrado!', 'Borrado con exito.', 'success')
+      }
     })
-      .then(result => {
-        if (result.isConfirmed) {
-          props.deleted(`orders/${orderId}`, 'DELETE_ORDER')
-          Swal.fire('Borrado!', 'Borrado con exito.', 'success')
-        }
-      })
-    
   }
 
-  return (
-    <>
-      <Table head={tableHeader}>
-        {orders ? (
-          orders.map(order => (
-            <tr key={order._id}>
-              <td>{order.orderNumber}</td>
-              <td>{order.customer[0].name}</td>
-              <td>{order.pallet[0].model}</td>
-              <td>
-                <Link to={`orders/details/${order._id}`}>
-                  <Button className="btn --info">
-                    <AiOutlineFileSearch />
+  if (orders) {
+    return (
+      <>
+        <Table head={tableHeader}>
+          {orders ? (
+            orders.map(order => (
+              <tr key={order._id}>
+                <td>{order.orderNumber}</td>
+                <td>{order.customer[0].name}</td>
+                <td>{order.pallet[0].model}</td>
+                <td>
+                  <Link to={`orders/details/${order._id}`}>
+                    <Button className="btn --info">
+                      <AiOutlineFileSearch />
+                    </Button>
+                  </Link>
+                  <Button
+                    className="btn --danger"
+                    onClick={() => handleDeleteNail(order._id)}
+                  >
+                    <AiOutlineDelete />
                   </Button>
-                </Link>
-                <Button
-                  className="btn --danger"
-                  onClick={() => handleDeleteNail(order._id)}
-                >
-                  <AiOutlineDelete />
-                </Button>
-              </td>
+                </td>
+              </tr>
+            ))
+          ) : (
+            <tr>
+              <td colSpan="7">No hay registros</td>
             </tr>
-          ))
-        ) : (
-          <tr>
-            <td colSpan="7">No hay registros</td>
-          </tr>
-        )}
-      </Table>
-      <Link to="/orders/create">
-        <AddButton>
-          <BsPlus />
-        </AddButton>
-      </Link>
-    </>
-  )
+          )}
+        </Table>
+        <Link to="/orders/create">
+          <AddButton>
+            <BsPlus />
+          </AddButton>
+        </Link>
+      </>
+    )
+  } else {
+    return <Loading />
+  }
 }
 
 const mapStateToProps = state => {
