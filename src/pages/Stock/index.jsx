@@ -1,10 +1,12 @@
 import React, { useEffect } from 'react'
 import { Link } from 'react-router-dom'
 import { connect } from 'react-redux'
+import { AiOutlineEdit } from 'react-icons/ai'
 import { BsPlus } from 'react-icons/bs'
 import { setTitle, getAll, deleted } from '../../actions/app'
 import Table from '../../components/Table/Table'
 import AddButton from '../../components/AddButton/AddButton'
+import Button from '../../components/Button/Button'
 import './styles.scss'
 
 const Nails = props => {
@@ -25,7 +27,14 @@ const Nails = props => {
     // eslint-disable-next-line
   }, [])
 
-  const tableHeader = ['Nombre', '1 Verdes', '1 Secas', '2 Verdes', '2 Secas']
+  const tableHeader = [
+    'Nombre',
+    '1 Verdes',
+    '1 Secas',
+    '2 Verdes',
+    '2 Secas',
+    'Acciones',
+  ]
 
   return (
     <>
@@ -38,6 +47,13 @@ const Nails = props => {
               <td>{pallet.stock[0].dry}</td>
               <td>{pallet.stock[1].green}</td>
               <td>{pallet.stock[1].dry}</td>
+              <td>
+                <Link to={`stock/update/${pallet._id}?type=pallet`}>
+                  <Button className="btn --warning">
+                    <AiOutlineEdit />
+                  </Button>
+                </Link>
+              </td>
             </tr>
           ))
         ) : (

@@ -1,13 +1,6 @@
-import React, { useEffect } from 'react'
+import React, { useEffect, useState } from 'react'
 import { useParams, useLocation } from 'react-router-dom'
 import { connect } from 'react-redux'
-import { Link } from 'react-router-dom'
-import Cookies from 'js-cookie'
-import {
-  AiOutlineCheckCircle,
-  AiOutlineClose,
-  AiOutlineEdit,
-} from 'react-icons/ai'
 import 'react-datepicker/dist/react-datepicker.css'
 import moment from 'moment'
 import {
@@ -18,7 +11,7 @@ import {
   create,
   update,
 } from '../../../actions/app'
-import Table from '../../../components/Table/Table'
+import { updateItemList, updateOrderProduction } from '../actions'
 import Input from '../../../components/Input/Input'
 import Button from '../../../components/Button/Button'
 import Title from '../../../components/Title/Title'
@@ -29,8 +22,10 @@ import './styles.scss'
 const OrderProductionItem = props => {
   const { orderId, index } = useParams()
   const query = new URLSearchParams(useLocation().search)
-  const tableHeader = ['Proceso', 'Solicitados', 'Restantes', 'Ingresar']
   const { orderDetails, pallet } = props
+  const [saveValue, setSaveValue] = useState(0)
+  const [saveObservations, setSaveObservations] = useState()
+
   useEffect(() => {
     const topbar = {
       title: 'Orden de producción',
@@ -48,26 +43,71 @@ const OrderProductionItem = props => {
     // eslint-disable-next-line
   }, [orderDetails])
 
+  const handleSave = index => {
+    if (query.get('itemsList')) {
+      const item = pallet[0].items.filter(item => {
+        return item.name[0] === orderDetails.itemsList[index].itemName
+      })
+      const itemVol =
+        item[0].height[0] *
+        item[0].length[0] *
+        item[0].width[0] *
+        parseInt(saveValue)
+      console.log(item)
+      console.log(itemVol)
+    } else {
+      console.log('Order List')
+    }
+  }
+
+  const handleCompleteItem = () => {}
+
+  const handleComplete = () => {}
+
   if (orderDetails && pallet) {
     if (query.get('itemsList')) {
       console.log(orderDetails)
+      const aserrio = orderDetails.ordersProduction.filter(
+        op => op.processId === '5f99cbda74cd296d5bb5b744'
+      )
+      const startAserrio = moment(aserrio[0].date).format('DD-MM-YYYY')
+      const endAserrio = moment(aserrio[aserrio.length - 1].date).format(
+        'DD-MM-YYYY'
+      )
+
       if (orderDetails.itemsList) {
         return (
-          <Card title="Orden Aserrio">
-            <Table head={tableHeader}>
-              {orderDetails.itemsList.map((item, index) => {
-                return (
-                  <tr key={index}>
-                    <td>{item.itemName}</td>
-                    <td>{item.amount}</td>
-                    <td>{item.ready ? item.amount - item.ready : item.amount}</td>
-                    <td><Input type="text"  /></td>
-                    <td><Input type="text"  /></td>
-                  </tr>
-                )
-              })}
-            </Table>
-          </Card>
+          <>
+            <Card title="Aserrio">
+              <Title className="title --small">{`${startAserrio} - ${endAserrio}`}</Title>
+            </Card>
+            {orderDetails.itemsList.map((item, index) => {
+              return (
+                <Card title="Orden Aserrio" key={index}>
+                  <Title className="title --small">{item.itemName}</Title>
+                  <Title>Cantidad: {item.amount}</Title>
+                  <p>
+                    Restantes:
+                    {item.ready ? item.amount - item.ready : item.amount}
+                  </p>
+                  <Input
+                    type="number"
+                    title="Agregar"
+                    onChange={e => setSaveValue(parseInt(e.target.value))}
+                  />
+                  <Input
+                    type="text"
+                    title="Observaciones"
+                    onChange={e => setSaveObservations(e.target.value)}
+                  />
+                  <Button onClick={() => handleSave(index)}>Guardar</Button>
+                  {item.ready && item.amount - item.ready === 0 ? (
+                    <Button>Completado</Button>
+                  ) : null}
+                </Card>
+              )
+            })}
+          </>
         )
       } else {
         return <h2>Loading</h2>
@@ -93,8 +133,30 @@ const OrderProductionItem = props => {
               )}
             </Title>
             <Title>Cantidad: {capacity[0].capacity}</Title>
-            <Input title="Observaciones" type="text" name="obsercations" />
-            <Button>Completado</Button>
+            <p>
+              Restantes:
+              {orderDetails.ordersProduction[index].ready
+                ? capacity[0].capacity -
+                  orderDetails.ordersProduction[index].ready
+                : capacity[0].capacity}
+            </p>
+            <Input
+              type="number"
+              title="Agregar"
+              onChange={e => setSaveValue(parseInt(e.target.value))}
+            />
+            <Input
+              type="text"
+              title="Observaciones"
+              onChange={e => setSaveObservations(e.target.value)}
+            />
+            <Button onClick={() => handleSave(index)}>Guardar</Button>
+            {orderDetails.ordersProduction[index].ready &&
+            capacity[0].capacity -
+              orderDetails.ordersProduction[index].ready ===
+              0 ? (
+              <Button>Completado</Button>
+            ) : null}
           </Card>
         )
       } else {
@@ -120,6 +182,8 @@ const mapDispatchToProps = {
   get,
   create,
   update,
+  updateItemList,
+  updateOrderProduction,
 }
 
 export default connect(mapStateToProps, mapDispatchToProps)(OrderProductionItem)

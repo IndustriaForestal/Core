@@ -166,10 +166,11 @@ const OrderProduction = props => {
       )
     } else {
       const processId = processes.filter(process => process.name === role)
-      console.log(processId)
+      console.log(processId[0], 'process')
       return (
         <Card title={`Ordenes de producción`}>
           {orders.map(order => {
+            console.log(order)
             if (order.orderType === 0) {
               const aserrio = order.ordersProduction.filter(
                 op => op.processId === '5f99cbda74cd296d5bb5b744'
@@ -217,33 +218,26 @@ const OrderProduction = props => {
                           </tr>
                         )
                       })}
-                    {order.itemsList
-                      ? order.itemsList.map((item, index) => {
-                          return (
-                            <tr key={index}>
-                              <td>{item.itemName}</td>
-                              <td>{`${startAserrio} - ${endAserrio}`}</td>
-                              <td>
-                                {moment(aserrio[0].date).isBefore(
-                                  moment(),
-                                  'day'
-                                )
-                                  ? 'Vencido'
-                                  : 'En tiempo'}
-                              </td>
-                              <td>
-                                <Link
-                                  to={`orderProduction/${order._id}/${index}?itemsList=true`}
-                                >
-                                  <Button className="btn --warning">
-                                    <AiOutlineEdit />
-                                  </Button>
-                                </Link>
-                              </td>
-                            </tr>
-                          )
-                        })
-                      : null}
+                    {order.itemsList && role === 'Aserrio' ? (
+                      <tr>
+                        <td>Aserrio</td>
+                        <td>{`${startAserrio} - ${endAserrio}`}</td>
+                        <td>
+                          {moment(aserrio[0].date).isBefore(moment(), 'day')
+                            ? 'Vencido'
+                            : 'En tiempo'}
+                        </td>
+                        <td>
+                          <Link
+                            to={`orderProduction/${order._id}/0?itemsList=true`}
+                          >
+                            <Button className="btn --warning">
+                              <AiOutlineEdit />
+                            </Button>
+                          </Link>
+                        </td>
+                      </tr>
+                    ) : null}
                   </Table>
                 </React.Fragment>
               )

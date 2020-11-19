@@ -44,6 +44,7 @@ import Stock from '../pages/Stock'
 import StockItems from '../pages/Stock/StockItems'
 import StockMaterial from '../pages/Stock/StockMaterial'
 import StockNails from '../pages/Stock/StockNails'
+import StockUpdate from '../pages/Stock/StockUpdate'
 import Orders from '../pages/Orders'
 import OrderProduction from '../pages/Orders/OrderProduction'
 import CreateOrder from '../pages/Orders/CreateOrder'
@@ -260,6 +261,11 @@ const App = ({ loggedIn }) => {
               exact
               path="/stockMaterial"
               component={role === 'Administrador' ? StockMaterial : Home}
+            />
+            <Route
+              exact
+              path="/stock/update/:id"
+              component={role === 'Administrador' ? StockUpdate : Home}
             />
             <Route
               exact
