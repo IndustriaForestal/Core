@@ -2,6 +2,7 @@ import React, { useEffect } from 'react'
 import { Link, useParams, useLocation } from 'react-router-dom'
 import { connect } from 'react-redux'
 import { useForm } from 'react-hook-form'
+import Swal from 'sweetalert2'
 import {
   setTitle,
   getAll,
@@ -38,16 +39,34 @@ const StockEdit = props => {
   }, [])
 
   const onSubmitPallet = data => {
-    console.log(data)
-    const newPallet = {
-      0: {
-        green: parseInt(data.stock01),
-        dry: parseInt(data.stock02),
-      },
-      1: { green: parseInt(data.stock11), dry: parseInt(data.stock12) },
+    if (data.option === '0') {
+      const newPallet = {
+        0: {
+          green: parseInt(data.stock01),
+          dry: parseInt(data.stock02),
+        },
+        1: { green: parseInt(data.stock11), dry: parseInt(data.stock12) },
+      }
+      props
+        .update(`pallets/stock/${id}`, 'UPDATE_PALLET_STOCK', newPallet)
+        .then(() => {
+          const Toast = Swal.mixin({
+            toast: true,
+            position: 'top-end',
+            showConfirmButton: false,
+            timer: 1500,
+          })
+          Toast.fire({
+            icon: 'success',
+            title: 'Se guardo correctamente',
+          })
+        })
+        .then(() => {
+          props.history.push('/stock')
+        })
+    }else{
+      console.log(data.option)
     }
-    console.log(newPallet, pallet)
-    props.update(`pallets/stock/${id}`, 'UPDATE_PALLET_STOCK', newPallet)
   }
 
   if (pallet && id === pallet[0]._id) {
@@ -93,7 +112,7 @@ const StockEdit = props => {
                 <span>Inventario</span>
                 <select name="option" ref={register({ required: true })}>
                   <option value="0">No descontar</option>
-                  <option value="1">Descontar</option>
+                  {/* <option value="1">Descontar</option> */}
                 </select>
               </label>
               <Button type="submit">Guardar</Button>

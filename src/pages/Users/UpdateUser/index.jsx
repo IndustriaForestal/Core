@@ -14,7 +14,7 @@ const UpdateMaterialOne = props => {
   const { user, processes } = props
   const [passwordVerify, setPasswordVerify] = useState(true)
   const [password, setPassword] = useState(true)
-  console.log(user)
+
   useEffect(() => {
     props.get(`users/one/${id}`, 'GET_USER')
     props.getAll(`processes`, 'GET_PROCESSES')
@@ -35,7 +35,6 @@ const UpdateMaterialOne = props => {
   }
 
   if (user && processes) {
-    console.log(user)
     return (
       <Card title="Editar Usuario" className="card -warning">
         <form

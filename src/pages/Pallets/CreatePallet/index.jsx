@@ -98,7 +98,7 @@ const CreatePallet = props => {
             <Button type="submit" className="btn --success">
               Crear
             </Button>
-            <Link to="/nails">
+            <Link to="/pallets">
               <Button className="btn --danger">Cancelar</Button>
             </Link>
           </div>

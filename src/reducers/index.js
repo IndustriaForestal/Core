@@ -314,6 +314,10 @@ const reducer = (state, action) => {
       return {
         ...state,
       }
+    case 'UPDATE_ITEMLIST_ONE':
+      return {
+        ...state,
+      }
     case 'GET_CAPACITIES':
       return {
         ...state,
@@ -342,29 +346,30 @@ const reducer = (state, action) => {
         ...state,
         raws: state.raws.filter(raw => raw._id !== action.payload),
       }
-      case 'GET_USERS':
-        return {
-          ...state,
-          users: action.payload.data,
-        }
-      case 'GET_USER':
-        return {
-          ...state,
-          user: action.payload,
-        }
-      case 'CREATE_USER':
-        return {
-          ...state,
-        }
-      case 'UPDATE_USER':
-        return {
-          ...state,
-        }
-      case 'DELETE_USER':
-        return {
-          ...state,
-          users: state.users.filter(user => user._id !== action.payload),
-        }
+    case 'GET_USERS':
+      return {
+        ...state,
+        users: action.payload.data,
+        user: null,
+      }
+    case 'GET_USER':
+      return {
+        ...state,
+        user: action.payload,
+      }
+    case 'CREATE_USER':
+      return {
+        ...state,
+      }
+    case 'UPDATE_USER':
+      return {
+        ...state,
+      }
+    case 'DELETE_USER':
+      return {
+        ...state,
+        users: state.users.filter(user => user._id !== action.payload),
+      }
     default:
       return state
   }

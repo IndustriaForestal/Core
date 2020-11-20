@@ -179,6 +179,11 @@ const OrderProduction = props => {
               const endAserrio = moment(
                 aserrio[aserrio.length - 1].date
               ).format('DD-MM-YYYY')
+              const counter = order.ordersProduction.filter(
+                op =>
+                  op.processId === '5f99cbda74cd296d5bb5b744' &&
+                  op.completed === 0
+              ).length
               return (
                 <React.Fragment key={order._id}>
                   <Title>{`Pedido #${order.orderNumber}`}</Title>
@@ -218,7 +223,7 @@ const OrderProduction = props => {
                           </tr>
                         )
                       })}
-                    {order.itemsList && role === 'Aserrio' ? (
+                    {order.itemsList && role === 'Aserrio' && counter > 0 ? (
                       <tr>
                         <td>Aserrio</td>
                         <td>{`${startAserrio} - ${endAserrio}`}</td>

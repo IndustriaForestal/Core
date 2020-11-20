@@ -281,8 +281,10 @@ const Order = props => {
           count: order.use,
           completed: 0,
           orderId: orderDetails._id,
+          materialId
         })
       })
+
 
       Swal.fire({
         title: '¿Estás seguro?',
