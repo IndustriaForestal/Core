@@ -1,7 +1,12 @@
 import React, { useEffect } from 'react'
 import { Link } from 'react-router-dom'
 import { connect } from 'react-redux'
-import { AiOutlineFileSearch, AiOutlineDelete } from 'react-icons/ai'
+import {
+  AiOutlineFileSearch,
+  AiOutlineDelete,
+  AiOutlineCheck,
+} from 'react-icons/ai'
+import { updatePalletsStock, completeOrder } from './actions'
 import { BsPlus } from 'react-icons/bs'
 import { setTitle, getAll, deleted } from '../../actions/app'
 import Swal from 'sweetalert2'
@@ -12,7 +17,7 @@ import Loading from '../../components/Loading/Loading'
 import './styles.scss'
 
 const Orders = props => {
-  const { orders, setTitle } = props
+  const { orders, setTitle, pallets } = props
 
   useEffect(() => {
     const topbar = {
@@ -21,6 +26,7 @@ const Orders = props => {
     }
     setTitle(topbar)
     props.getAll('orders', 'GET_ORDERS')
+    props.getAll('pallets', 'GET_PALLETS')
     // eslint-disable-next-line
   }, [])
 
@@ -43,17 +49,39 @@ const Orders = props => {
     })
   }
 
+  const handleCompleteOrder = orderId => {
+    const order = orders.filter(order => order._id === orderId)
+    const pallet = pallets.filter(pallet => order[0].palletId === pallet._id)
+
+    const capacity = pallet[0].capacityCharge.filter(
+      cp => cp._id === order[0].platformId
+    )
+
+    props.updatePalletsStock(capacity[0].capacity * -1, pallet[0]._id, 'dry').then(() => {
+      props.completeOrder(orderId)
+    })
+  }
+
   if (orders) {
     return (
       <>
         <Table head={tableHeader}>
           {orders ? (
-            orders.map(order => (
+            orders.filter(order => !order.completed && order.completed === 0).map(order => (
               <tr key={order._id}>
                 <td>{order.orderNumber}</td>
                 <td>{order.customer[0].name}</td>
                 <td>{order.pallet[0].model}</td>
                 <td>
+                  {order.ordersProduction.find(op => op.completed === 0) ===
+                  undefined ? (
+                    <Button
+                      className="btn --success"
+                      onClick={() => handleCompleteOrder(order._id)}
+                    >
+                      <AiOutlineCheck />
+                    </Button>
+                  ) : null}
                   <Link to={`orders/details/${order._id}`}>
                     <Button className="btn --info">
                       <AiOutlineFileSearch />
@@ -89,11 +117,14 @@ const Orders = props => {
 const mapStateToProps = state => {
   return {
     orders: state.orders,
+    pallets: state.pallets,
   }
 }
 
 const mapDispatchToProps = {
   setTitle,
+  updatePalletsStock,
+  completeOrder,
   getAll,
   deleted,
 }

@@ -22,6 +22,7 @@ import {
   updateItemListOne,
   updateItemListReady,
   completeOrderProduction,
+  addReadyToOrderProduction,
 } from '../actions'
 import Input from '../../../components/Input/Input'
 import Button from '../../../components/Button/Button'
@@ -33,7 +34,7 @@ import './styles.scss'
 const OrderProductionItem = props => {
   const { orderId, index } = useParams()
   const query = new URLSearchParams(useLocation().search)
-  const { orderDetails, pallet, raws, processes } = props
+  const { orderDetails, pallet, raws, processes, items, nails } = props
   const [saveValue, setSaveValue] = useState(0)
   const [saveObservations, setSaveObservations] = useState()
 
@@ -46,6 +47,8 @@ const OrderProductionItem = props => {
     props.get(`orders/${orderId}`, 'GET_ORDER')
     props.getAll(`raws`, 'GET_RAWS')
     props.getAll('processes', 'GET_PROCESSES')
+    props.getAll('items', 'GET_ITEMS')
+    props.getAll('nails', 'GET_NAILS')
     // eslint-disable-next-line
   }, [])
 
@@ -81,6 +84,31 @@ const OrderProductionItem = props => {
       }
     } else {
       if (raws[1].stock >= parseFloat(volumenToDiscount)) {
+        return true
+      } else {
+        return false
+      }
+    }
+  }
+
+  const verifyStock = (collection, id, amount, pallet) => {
+    const stockItem = collection.filter(item => item._id === id)
+
+    console.log(stockItem, id, amount)
+    if (pallet && pallet === 'verdes') {
+      if (stockItem[0].stock[0].green >= amount) {
+        return true
+      } else {
+        return false
+      }
+    } else if (pallet && pallet === 'secas') {
+      if (stockItem[0].stock[0].dry >= amount) {
+        return true
+      } else {
+        return false
+      }
+    } else {
+      if (stockItem[0].stock >= amount) {
         return true
       } else {
         return false
@@ -149,13 +177,103 @@ const OrderProductionItem = props => {
     } else {
       //5f99cbd474cd296d5bb5b742 Aramdo
       //5f99cbd374cd296d5bb5b741 Estufado
+      index = parseInt(index)
       console.log('Order List')
-      console.log(index)
-      console.log(orderDetails.ordersProduction[parseInt(index + 1)])
-      if (orderDetails.ordersProduction[parseInt(index + 1)].completed === 1) {
-        console.log(true)
+      if (orderDetails.ordersProduction[index + 1].completed === 1) {
+        //Camparando si el proceso es de aramdo o estufado
+        if (
+          orderDetails.ordersProduction[index].processId ===
+            '5f99cbd474cd296d5bb5b742' ||
+          orderDetails.ordersProduction[index].processId ===
+            '5f99cbd374cd296d5bb5b741'
+        ) {
+          //Modificar Stocks de Pallets
+          console.log('Modificar Stocks')
+          if (
+            orderDetails.ordersProduction[index].processId ===
+            '5f99cbd474cd296d5bb5b742'
+          ) {
+            console.log('Armado')
+            let status
+            pallet[0].items.map(item => {
+              if (
+                verifyStock(items, item.id, item.amount * saveValue) === true
+              ) {
+                return (status = true)
+              } else {
+                return (status = false)
+              }
+            })
+            pallet[0].nails.map(nail => {
+              if (
+                verifyStock(nails, nail.nailId, nail.amount * saveValue) ===
+                true
+              ) {
+                return (status = true)
+              } else {
+                return (status = false)
+              }
+            })
+
+            if (status) {
+              pallet[0].items.map(item =>
+                props.updateItemsStock(item.amount * saveValue * -1, item.id)
+              )
+              pallet[0].nails.map(nail =>
+                props.updateNailsStock(
+                  nail.amount * saveValue * -1,
+                  nail.nailId
+                )
+              )
+              const capacity = pallet[0].capacityCharge.filter(
+                cp => cp._id === orderDetails.platformId
+              )
+              props.updatePalletsStock(capacity, pallet[0]._id, 'green')
+              props
+                .addReadyToOrderProduction(index, orderId, saveValue)
+                .then(() => {
+                  props.get(`orders/${orderId}`, 'GET_ORDER')
+                })
+                .then(() => console.log('Proceso terminado'))
+                .catch(err => console.log(err))
+            } else {
+              Swal.fire({
+                title: 'Error!',
+                text: 'No hay suficiente material',
+                icon: 'error',
+                confirmButtonColor: '#3085d6',
+                confirmButtonText: 'Aceptar',
+              })
+            }
+
+            console.log(status)
+          } else {
+            const capacity = pallet[0].capacityCharge.filter(
+              cp => cp._id === orderDetails.platformId
+            )
+            if(verifyStock(pallet, pallet[0]._id, capacity[0].capacity, 'verdes') === true){
+              props.updatePalletsStock(capacity[0].capacity * -1, pallet[0]._id, 'green')
+              props.updatePalletsStock(capacity[0].capacity, pallet[0]._id, 'dry')
+              handleComplete('Estufado')
+            }else{
+              Swal.fire({
+                title: 'Error!',
+                text: 'No hay suficiente material',
+                icon: 'error',
+                confirmButtonColor: '#3085d6',
+                confirmButtonText: 'Aceptar',
+              })
+            }
+          }
+        }
       } else {
-        console.log(false)
+        Swal.fire({
+          title: 'Error!',
+          text: 'El proceso anterior aún no finaliza',
+          icon: 'error',
+          confirmButtonColor: '#3085d6',
+          confirmButtonText: 'Aceptar',
+        })
       }
     }
   }
@@ -180,10 +298,16 @@ const OrderProductionItem = props => {
       })
   }
 
-  const handleComplete = processName => {
-    const orderReady = processes.filter(process => process.name === processName)
+  const handleComplete = processId => {
+    // const orderReady = processes.filter(process => process.name === processName)
     const arrayIndex = orderDetails.ordersProduction.map((op, index) => {
-      if (op.processId === orderReady[0]._id) {
+      if (op.processId === processId) {
+        /* if(op.processName === 'Estufado'){
+          const capacity = pallet[0].capacityCharge.filter(
+            cp => cp._id === orderDetails.platformId
+          )
+          props.updatePalletsStock(capacity[0].capacity * -1, pallet[0]._id, 'dry')
+        } */
         return index
       } else {
         return null
@@ -192,6 +316,26 @@ const OrderProductionItem = props => {
     const arrayIndexHack = arrayIndex.filter(a => a !== null)
     props
       .completeOrderProduction(arrayIndexHack, orderId)
+      .then(() => {
+        const Toast = Swal.mixin({
+          toast: true,
+          position: 'top-end',
+          showConfirmButton: false,
+          timer: 1500,
+        })
+        Toast.fire({
+          icon: 'success',
+          title: 'Se guardo correctamente',
+        })
+      })
+      .then(() => {
+        props.history.goBack()
+      })
+  }
+
+  const handleCompleteOrderProduction = index => {
+    props
+      .completeOrderProduction(index, orderId)
       .then(() => {
         const Toast = Swal.mixin({
           toast: true,
@@ -246,14 +390,14 @@ const OrderProductionItem = props => {
                       title="Agregar"
                       onChange={e => setSaveValue(parseInt(e.target.value))}
                     />
-                    <Input
+                    {/*   <Input
                       type="text"
                       title="Observaciones"
                       onChange={e => setSaveObservations(e.target.value)}
-                    />
+                    /> */}
 
                     {item.ready && item.amount - item.ready === 0 ? (
-                      <Button onClick={() => handleCompleteItem(index)}>
+                      <Button onClick={() => handleComplete(index)}>
                         Completado
                       </Button>
                     ) : (
@@ -288,33 +432,47 @@ const OrderProductionItem = props => {
                 'DD-MM-YYYY'
               )}
             </Title>
-            <Title>Cantidad: {capacity[0].capacity}</Title>
-            <p>
-              Restantes:
-              {orderDetails.ordersProduction[index].ready
-                ? capacity[0].capacity -
-                  orderDetails.ordersProduction[index].ready
-                : capacity[0].capacity}
-            </p>
-            <Input
-              type="number"
-              title="Agregar"
-              onChange={e => setSaveValue(parseInt(e.target.value))}
-            />
-            <Input
-              type="text"
-              title="Observaciones"
-              onChange={e => setSaveObservations(e.target.value)}
-            />
-            {orderDetails.ordersProduction[index].ready &&
-            capacity[0].capacity -
-              orderDetails.ordersProduction[index].ready ===
-              0 ? (
-              <Button onClick={() => handleCompleteItem(index)}>
+
+            {(orderDetails.ordersProduction[index].ready &&
+              capacity[0].capacity -
+                orderDetails.ordersProduction[index].ready ===
+                0) ||
+            (orderDetails.ordersProduction[index].processId !==
+              '5f99cbd474cd296d5bb5b742' &&
+              orderDetails.ordersProduction[index].processId !==
+                '5f99cbd374cd296d5bb5b741') ? (
+              <Button
+                onClick={() =>
+                  handleComplete(
+                    orderDetails.ordersProduction[index].processId
+                  )
+                }
+              >
                 Completado
               </Button>
             ) : (
-              <Button onClick={() => handleSave(index)}>Guardar</Button>
+              <>
+                <Title>Cantidad: {capacity[0].capacity}</Title>
+                <p>
+                  Restantes:
+                  {orderDetails.ordersProduction[index].ready
+                    ? capacity[0].capacity -
+                      orderDetails.ordersProduction[index].ready
+                    : capacity[0].capacity}
+                </p>
+                {}
+                <Input
+                  type="number"
+                  title="Agregar"
+                  onChange={e => setSaveValue(parseInt(e.target.value))}
+                />
+                {/*     <Input
+            type="text"
+            title="Observaciones"
+            onChange={e => setSaveObservations(e.target.value)}
+          /> */}
+                <Button onClick={() => handleSave(index)}>Guardar</Button>{' '}
+              </>
             )}
           </Card>
         )
@@ -333,6 +491,8 @@ const mapStateToProps = state => {
     pallet: state.pallet,
     raws: state.raws,
     processes: state.processes,
+    items: state.items,
+    nails: state.nails,
   }
 }
 
@@ -352,6 +512,7 @@ const mapDispatchToProps = {
   updateItemListOne,
   updateItemListReady,
   completeOrderProduction,
+  addReadyToOrderProduction,
 }
 
 export default connect(mapStateToProps, mapDispatchToProps)(OrderProductionItem)

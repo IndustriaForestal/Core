@@ -26,6 +26,7 @@ import './styles.scss'
 
 const OrderProduction = props => {
   const role = Cookies.get('role')
+  console.log(role)
   const { orders, setTitle, processes } = props
 
   useEffect(() => {
@@ -55,13 +56,15 @@ const OrderProduction = props => {
               const endAserrio = moment(
                 aserrio[aserrio.length - 1].date
               ).format('DD-MM-YYYY')
-              console.log(aserrio)
+
               return (
                 <React.Fragment key={order._id}>
                   <Title>{`Pedido #${order.orderNumber}`}</Title>
                   <Table head={tableHeader}>
                     {order.ordersProduction.map((production, index) => {
-                      if (production.type !== '0') {
+
+                        console.log(production.completed)
+                      if (production.type !== '3') {
                         return (
                           <tr key={index}>
                             <td>
@@ -78,7 +81,7 @@ const OrderProduction = props => {
                                 : 'En tiempo'}
                             </td>
                             <td>
-                              {order.completed === 1 ? (
+                              {production.completed === 1 ? (
                                 <AiOutlineCheckCircle className="--success" />
                               ) : (
                                 <AiOutlineClose className="--danger" />
@@ -90,7 +93,7 @@ const OrderProduction = props => {
                         return null
                       }
                     })}
-                    {order.itemsList
+                 {/*    {order.itemsList
                       ? order.itemsList.map((item, index) => {
                           return (
                             <tr key={index}>
@@ -114,7 +117,7 @@ const OrderProduction = props => {
                             </tr>
                           )
                         })
-                      : null}
+                      : null} */}
                   </Table>
                 </React.Fragment>
               )
@@ -166,11 +169,9 @@ const OrderProduction = props => {
       )
     } else {
       const processId = processes.filter(process => process.name === role)
-      console.log(processId[0], 'process')
       return (
         <Card title={`Ordenes de producción`}>
           {orders.map(order => {
-            console.log(order)
             if (order.orderType === 0) {
               const aserrio = order.ordersProduction.filter(
                 op => op.processId === '5f99cbda74cd296d5bb5b744'
@@ -188,14 +189,12 @@ const OrderProduction = props => {
                 <React.Fragment key={order._id}>
                   <Title>{`Pedido #${order.orderNumber}`}</Title>
                   <Table head={tableHeader}>
-                    {order.ordersProduction
-                      .filter(
-                        production =>
-                          production.processId === processId[0]._id &&
-                          production.completed === 0 &&
-                          production.processId !== '5f99cbda74cd296d5bb5b744'
+                    {order.ordersProduction.map((production, index) => {
+                      if (
+                        production.processId === processId[0]._id &&
+                        production.completed === 0 &&
+                        production.processId !== '5f99cbda74cd296d5bb5b744'
                       )
-                      .map((production, index) => {
                         return (
                           <tr key={index}>
                             <td>
@@ -222,7 +221,7 @@ const OrderProduction = props => {
                             </td>
                           </tr>
                         )
-                      })}
+                    })}
                     {order.itemsList && role === 'Aserrio' && counter > 0 ? (
                       <tr>
                         <td>Aserrio</td>

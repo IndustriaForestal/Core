@@ -17,7 +17,7 @@ import Button from '../../../components/Button/Button'
 import Loading from '../../../components/Loading/Loading'
 
 const StockEdit = props => {
-  const { setTitle, pallet } = props
+  const { setTitle, pallet, raw } = props
   const { id } = useParams()
   const query = new URLSearchParams(useLocation().search)
   const { register, handleSubmit } = useForm()
@@ -35,6 +35,7 @@ const StockEdit = props => {
     setTitle(topbar)
 
     props.get(`pallets/${id}`, 'GET_PALLET')
+    props.get(`raws/${id}`, 'GET_RAW')
     // eslint-disable-next-line
   }, [])
 
@@ -64,12 +65,35 @@ const StockEdit = props => {
         .then(() => {
           props.history.push('/stock')
         })
-    }else{
+    } else {
       console.log(data.option)
     }
   }
 
-  if (pallet && id === pallet[0]._id) {
+  const onSubmitRaw = data => {
+    const newRaw = {
+      stock: parseFloat(data.stock),
+    }
+    props
+      .update(`raws/${id}`, 'UPDATE_STOCK', newRaw)
+      .then(() => {
+        const Toast = Swal.mixin({
+          toast: true,
+          position: 'top-end',
+          showConfirmButton: false,
+          timer: 1500,
+        })
+        Toast.fire({
+          icon: 'success',
+          title: 'Se guardo correctamente',
+        })
+      })
+      .then(() => {
+        props.history.push('/stockMaterial')
+      })
+  }
+
+  if (pallet && raw) {
     switch (query.get('type')) {
       case 'pallet':
         return (
@@ -124,8 +148,34 @@ const StockEdit = props => {
             </form>
           </Card>
         )
+      case 'raw':
+        return (
+          <Card title="Materia Prima">
+            <h1>{raw.name}</h1>
+            <form
+              id="formPallet"
+              className="formPallet"
+              onSubmit={handleSubmit(onSubmitRaw)}
+            >
+              <Input
+                type="number"
+                step="any"
+                title="Stock"
+                name="stock"
+                value={raw.stock}
+                passRef={register({ required: true })}
+              />
+              <Button type="submit">Guardar</Button>
+              <Link to="/stock">
+                <Button type="button" className="btn --danger">
+                  Cancelar
+                </Button>
+              </Link>
+            </form>
+          </Card>
+        )
       default:
-        return <h1>No</h1>
+        return <Loading />
     }
   } else {
     return <Loading />
@@ -136,6 +186,7 @@ const mapStateToProps = state => {
   return {
     orderDetails: state.orderDetails,
     pallet: state.pallet,
+    raw: state.raw,
     item: state.item,
   }
 }

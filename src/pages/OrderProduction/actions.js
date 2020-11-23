@@ -57,31 +57,31 @@ export const updateRawStock = (volumen, rawId) => async dispatch => {
   }
 }
 
-export const updateNailsStock = (volume, index) => async dispatch => {
+export const updateNailsStock = (amount, nailId) => async dispatch => {
   try {
     await axios({
-      url: `${process.env.REACT_APP_API}orders/updateRaw/${index}`,
+      url: `${process.env.REACT_APP_API}orders/updateNail/${nailId}`,
       headers: { Authorization: `Bearer ${Cookies.get('token')}` },
       method: 'put',
-      data: volume,
+      data: { amount },
     })
     dispatch({
-      type: 'UPDATE_RAW_STOCK',
+      type: 'UPDATE_NAIL_STOCK',
     })
   } catch (error) {
     console.log(error)
   }
 }
-export const updatePalletsStock = (volume, index) => async dispatch => {
+export const updatePalletsStock = (amount, palletId, type) => async dispatch => {
   try {
     await axios({
-      url: `${process.env.REACT_APP_API}orders/updateRaw/${index}`,
+      url: `${process.env.REACT_APP_API}orders/updatePallet/${palletId}`,
       headers: { Authorization: `Bearer ${Cookies.get('token')}` },
       method: 'put',
-      data: volume,
+      data: { amount, type },
     })
     dispatch({
-      type: 'UPDATE_RAW_STOCK',
+      type: 'UPDATE_PALLET_STOCK',
     })
   } catch (error) {
     console.log(error)
@@ -152,7 +152,27 @@ export const completeOrderProduction = (
       url: `${process.env.REACT_APP_API}orders/completeOrderProduction/${orderId}`,
       headers: { Authorization: `Bearer ${Cookies.get('token')}` },
       method: 'put',
-      data: arrayIndexHack
+      data: arrayIndexHack,
+    })
+    dispatch({
+      type: 'UPDATE_ORDER_PRODUCTION',
+    })
+  } catch (error) {
+    console.log(error)
+  }
+}
+
+export const addReadyToOrderProduction = (
+  index,
+  orderId,
+  amount
+) => async dispatch => {
+  try {
+    await axios({
+      url: `${process.env.REACT_APP_API}orders/addReadyToOrderProduction/${orderId}/${index}`,
+      headers: { Authorization: `Bearer ${Cookies.get('token')}` },
+      method: 'put',
+      data: { amount },
     })
     dispatch({
       type: 'UPDATE_ORDER_PRODUCTION',
