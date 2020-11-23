@@ -57,9 +57,11 @@ const Orders = props => {
       cp => cp._id === order[0].platformId
     )
 
-    props.updatePalletsStock(capacity[0].capacity * -1, pallet[0]._id, 'dry').then(() => {
-      props.completeOrder(orderId)
-    })
+    props
+      .updatePalletsStock(capacity[0].capacity * -1, pallet[0]._id, 'dry')
+      .then(() => {
+        props.completeOrder(orderId)
+      })
   }
 
   if (orders) {
@@ -67,35 +69,40 @@ const Orders = props => {
       <>
         <Table head={tableHeader}>
           {orders ? (
-            orders.filter(order => !order.completed && order.completed === 0).map(order => (
-              <tr key={order._id}>
-                <td>{order.orderNumber}</td>
-                <td>{order.customer[0].name}</td>
-                <td>{order.pallet[0].model}</td>
-                <td>
-                  {order.ordersProduction.find(op => op.completed === 0) ===
-                  undefined ? (
-                    <Button
-                      className="btn --success"
-                      onClick={() => handleCompleteOrder(order._id)}
-                    >
-                      <AiOutlineCheck />
-                    </Button>
-                  ) : null}
-                  <Link to={`orders/details/${order._id}`}>
-                    <Button className="btn --info">
-                      <AiOutlineFileSearch />
-                    </Button>
-                  </Link>
-                  <Button
-                    className="btn --danger"
-                    onClick={() => handleDeleteNail(order._id)}
-                  >
-                    <AiOutlineDelete />
-                  </Button>
-                </td>
-              </tr>
-            ))
+            orders.map(order => {
+              if (!order.completed) {
+                return (
+                  <tr key={order._id}>
+                    <td>{order.orderNumber}</td>
+                    <td>{order.customer[0].name}</td>
+                    <td>{order.pallet[0].model}</td>
+                    <td>
+                      {order.ordersProduction &&
+                      order.ordersProduction.find(op => op.completed === 0) ===
+                        undefined ? (
+                        <Button
+                          className="btn --success"
+                          onClick={() => handleCompleteOrder(order._id)}
+                        >
+                          <AiOutlineCheck />
+                        </Button>
+                      ) : null}
+                      <Link to={`orders/details/${order._id}`}>
+                        <Button className="btn --info">
+                          <AiOutlineFileSearch />
+                        </Button>
+                      </Link>
+                      <Button
+                        className="btn --danger"
+                        onClick={() => handleDeleteNail(order._id)}
+                      >
+                        <AiOutlineDelete />
+                      </Button>
+                    </td>
+                  </tr>
+                )
+              }
+            })
           ) : (
             <tr>
               <td colSpan="7">No hay registros</td>
