@@ -147,6 +147,7 @@ const reducer = (state, action) => {
       return {
         ...state,
         items: action.payload.data,
+        item: null,
       }
     case 'GET_ITEM':
       return {

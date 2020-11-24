@@ -2,8 +2,10 @@ import React, { useEffect } from 'react'
 import { Link } from 'react-router-dom'
 import { connect } from 'react-redux'
 import { BsPlus } from 'react-icons/bs'
+import { AiOutlineEdit } from 'react-icons/ai'
 import { setTitle, getAll, deleted } from '../../../actions/app'
 import Table from '../../../components/Table/Table'
+import Button from '../../../components/Button/Button'
 import AddButton from '../../../components/AddButton/AddButton'
 import './styles.scss'
 
@@ -35,6 +37,13 @@ const Nails = props => {
             <tr key={nail._id}>
               <td>{nail.name}</td>
               <td>{nail.stock}</td>
+              <td>
+                <Link to={`stock/update/${nail._id}?type=nail`}>
+                  <Button className="btn --warning">
+                    <AiOutlineEdit />
+                  </Button>
+                </Link>
+              </td>
             </tr>
           ))
         ) : (

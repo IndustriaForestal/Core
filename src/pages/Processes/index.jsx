@@ -56,12 +56,12 @@ const Processes = props => {
                     <AiOutlineEdit />
                   </Button>
                 </Link>
-                <Button
+                {/* <Button
                   className="btn --danger"
                   onClick={() => handleDeleteProcess(process._id)}
                 >
                   <AiOutlineDelete />
-                </Button>
+                </Button> */}
               </td>
             </tr>
           ))
