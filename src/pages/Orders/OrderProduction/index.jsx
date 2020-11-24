@@ -305,7 +305,7 @@ const Order = props => {
               ordersProduction
             )
             .then(() => {
-              createNotificationManual({
+              props.createNotificationManual({
                 text: 'Nuevo Pedido Producción',
                 link: `/orders/details/${orderDetails._id}`,
                 date: moment().format('YYYY-MM-DDThh:mm:ss') + 'Z',
@@ -408,6 +408,7 @@ const mapDispatchToProps = {
   create,
   update,
   updateNotification,
+  createNotificationManual,
 }
 
 export default connect(mapStateToProps, mapDispatchToProps)(Order)

@@ -49,14 +49,14 @@ const OrderProduction = props => {
         <Card title={`Ordenes de producción`}>
           {orders.map(order => {
             if (order.orderType === 0) {
-              const aserrio = order.ordersProduction.filter(
+             /*  const aserrio = order.ordersProduction.filter(
                 op => op.processId === '5f99cbda74cd296d5bb5b744'
               )
               const startAserrio = moment(aserrio[0].date).format('DD-MM-YYYY')
               const endAserrio = moment(
                 aserrio[aserrio.length - 1].date
               ).format('DD-MM-YYYY')
-
+ */
               return (
                 <React.Fragment key={order._id}>
                   <Title>{`Pedido #${order.orderNumber}`}</Title>

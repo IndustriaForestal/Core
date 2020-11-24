@@ -14,7 +14,7 @@ import {
   deleted,
   create,
   update,
-  createNotification,
+  createNotificationManual,
 } from '../../../actions/app'
 import Table from '../../../components/Table/Table'
 import Button from '../../../components/Button/Button'
@@ -124,7 +124,6 @@ const OrderIntern = props => {
       value = 1
     }
     const newTime = (timeCleanTemp * peopleClean) / value
-    console.log(newTime)
     setTimeClean(newTime)
   }
 
@@ -159,7 +158,7 @@ const OrderIntern = props => {
           .format('YYYY-MM-DDTHH:mm:00') + 'Z',
       timeBake,
     }
-    console.log(orderFast)
+
     Swal.fire({
       title: '¿Estás seguro?',
       text: 'Este proceso no se puede revertir',
@@ -177,13 +176,13 @@ const OrderIntern = props => {
             orderFast
           )
           .then(() => {
-            createNotification({
+            props.createNotificationManual({
               text: 'Nuevo Pedido Rapido',
               link: `/orders/details/${orderDetails._id}`,
-              typeAction: 'CREATE_ORDERS_PRODUCTION',
               date: moment().format('YYYY-MM-DDThh:mm:ss') + 'Z',
             })
           })
+
           .then(() => {
             props.history.push('/')
           })
@@ -287,7 +286,7 @@ const mapDispatchToProps = {
   update,
   deleted,
   searchCapacities,
-  createNotification,
+  createNotificationManual,
 }
 
 export default connect(mapStateToProps, mapDispatchToProps)(OrderIntern)

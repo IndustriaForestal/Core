@@ -6,8 +6,8 @@ import {
   AiOutlineExclamationCircle,
   AiOutlineClose,
 } from 'react-icons/ai'
-import { FaSpinner } from 'react-icons/fa'
 import io from 'socket.io-client'
+import { FaSpinner } from 'react-icons/fa'
 import moment from 'moment'
 import { getAll, update } from '../../actions/app'
 import './styles.scss'
@@ -16,15 +16,16 @@ const Notifications = props => {
   const { notifications } = props
   const [toggle, setToggle] = useState(false)
   const history = useHistory()
-
+  const socket = io(process.env.REACT_APP_WEBSOCKET, {
+    transport: ['websocket'],
+  })
   useEffect(() => {
     props.getAll('notifications', 'GET_NOTIFICATIONS')
 
-    const socket = io(process.env.REACT_APP_WEBSOCKET, {
-      transport: ['websocket'],
+    socket.on('notification', () => {
+      props.getAll('notifications', 'GET_NOTIFICATIONS')
     })
 
-    console.log('Socket')
     // eslint-disable-next-line
   }, [])
 
