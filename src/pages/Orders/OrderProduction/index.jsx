@@ -14,6 +14,8 @@ import {
   deleted,
   create,
   update,
+  updateNotification,
+  createNotificationManual,
 } from '../../../actions/app'
 import Table from '../../../components/Table/Table'
 import Button from '../../../components/Button/Button'
@@ -281,10 +283,9 @@ const Order = props => {
           count: order.use,
           completed: 0,
           orderId: orderDetails._id,
-          materialId
+          materialId,
         })
       })
-
 
       Swal.fire({
         title: '¿Estás seguro?',
@@ -303,7 +304,14 @@ const Order = props => {
               'CREATE_ORDERS_PRODUCTION',
               ordersProduction
             )
-            .then(res => {
+            .then(() => {
+              createNotificationManual({
+                text: 'Nuevo Pedido Producción',
+                link: `/orders/details/${orderDetails._id}`,
+                date: moment().format('YYYY-MM-DDThh:mm:ss') + 'Z',
+              })
+            })
+            .then(() => {
               props.history.push('/')
             })
         }
@@ -399,6 +407,7 @@ const mapDispatchToProps = {
   searchCapacities,
   create,
   update,
+  updateNotification,
 }
 
 export default connect(mapStateToProps, mapDispatchToProps)(Order)

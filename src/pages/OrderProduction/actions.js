@@ -166,7 +166,7 @@ export const completeOrderProduction = (
       createNotification({
         text: 'Orden de Producción Completada',
         typeAction: 'UPDATE_ORDER_PRODUCTION',
-        date: moment().format('YYYY-MM-DDT06:00:00') + 'Z',
+        date: moment().format('YYYY-MM-DDThh:mm:ss') + 'Z',
       })
     )
     dispatch({

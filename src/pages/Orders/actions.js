@@ -1,5 +1,7 @@
 import axios from 'axios'
 import Cookies from 'js-cookie'
+import moment from 'moment'
+import { createNotification } from '../../actions/app'
 
 export const searchCapacities = data => async dispatch => {
   try {
@@ -41,6 +43,14 @@ export const completeOrder = (orderId) => async dispatch => {
       headers: { Authorization: `Bearer ${Cookies.get('token')}` },
       method: 'put',
     })
+    dispatch(
+      createNotification({
+        text: 'Pedido completado',
+        typeAction: 'UPDATE_ORDER_PRODUCTION',
+        date: moment().format('YYYY-MM-DDTHH:mm:ss') + 'Z',
+        link: `/history/orders/${orderId}`
+      })
+    )
     dispatch({
       type: 'COMPLETE_ORDER',
     })

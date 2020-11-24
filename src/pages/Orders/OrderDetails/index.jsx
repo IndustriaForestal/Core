@@ -4,7 +4,8 @@ import { connect } from 'react-redux'
 import { AiOutlineCheckCircle, AiOutlineClose } from 'react-icons/ai'
 import 'react-datepicker/dist/react-datepicker.css'
 import moment from 'moment'
-import { searchCapacities } from '../actions'
+import Swal from 'sweetalert2'
+import { searchCapacities, completeOrder, updatePalletsStock } from '../actions'
 import {
   setTitle,
   getAll,
@@ -42,6 +43,32 @@ const OrderDetails = props => {
   }, [orderDetails])
 
   const tableHeader = ['Proceso', 'Fecha', 'Estatus']
+
+  const handleComplete = id => {
+    const capacity = pallet[0].capacityCharge.filter(
+      cp => cp._id === orderDetails.platformId
+    )
+
+    Swal.fire({
+      title: '¿Estás seguro?',
+      text: 'Este proceso no se puede revertir',
+      icon: 'warning',
+      showCancelButton: true,
+      confirmButtonColor: '#3085d6',
+      cancelButtonColor: '#d33',
+      confirmButtonText: 'Si',
+    }).then(result => {
+      if (result.isConfirmed) {
+        props
+          .updatePalletsStock(capacity[0].capacity * -1, pallet[0]._id, 'dry')
+          .then(() => props.completeOrder(id))
+          .then(() =>
+            Swal.fire('Completado!', 'Guardado con exito.', 'success')
+          )
+          .then(() => props.history.push('/orders'))
+      }
+    })
+  }
 
   if (orderDetails && pallet) {
     if (orderDetails.orderType === 0) {
@@ -93,7 +120,9 @@ const OrderDetails = props => {
               {moment(orderDetails.orderFast.bake).format('L LT')}
             </p>
             <p>Tiempo estufado: {orderDetails.orderFast.timeBake}</p>
-            <Button>Completado</Button>
+            <Button onClick={() => handleComplete(orderDetails._id)}>
+              Completado
+            </Button>
           </Card>
         )
       } else {
@@ -122,6 +151,8 @@ const mapDispatchToProps = {
   deleted,
   get,
   searchCapacities,
+  completeOrder,
+  updatePalletsStock,
   create,
   update,
 }

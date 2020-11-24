@@ -14,6 +14,7 @@ import {
   deleted,
   create,
   update,
+  createNotification,
 } from '../../../actions/app'
 import Table from '../../../components/Table/Table'
 import Button from '../../../components/Button/Button'
@@ -175,7 +176,15 @@ const OrderIntern = props => {
             'CREATE_ORDERS_PRODUCTION',
             orderFast
           )
-          .then(res => {
+          .then(() => {
+            createNotification({
+              text: 'Nuevo Pedido Rapido',
+              link: `/orders/details/${orderDetails._id}`,
+              typeAction: 'CREATE_ORDERS_PRODUCTION',
+              date: moment().format('YYYY-MM-DDThh:mm:ss') + 'Z',
+            })
+          })
+          .then(() => {
             props.history.push('/')
           })
       }
@@ -278,6 +287,7 @@ const mapDispatchToProps = {
   update,
   deleted,
   searchCapacities,
+  createNotification,
 }
 
 export default connect(mapStateToProps, mapDispatchToProps)(OrderIntern)

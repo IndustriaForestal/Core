@@ -371,6 +371,30 @@ const reducer = (state, action) => {
         ...state,
         users: state.users.filter(user => user._id !== action.payload),
       }
+    case 'GET_NOTIFICATIONS':
+      return {
+        ...state,
+        notifications: action.payload.data,
+        notification: null,
+      }
+    case 'GET_NOTIFICATION':
+      return {
+        ...state,
+        notification: action.payload,
+      }
+    case 'CREATE_NOTIFICATION':
+      return {
+        ...state,
+      }
+    case 'UPDATE_NOTIFICATION':
+      return {
+        ...state,
+      }
+    case 'DELETE_NOTIFICATION':
+      return {
+        ...state,
+        notifications: state.notifications.filter(notification => notification._id !== action.payload),
+      }
     default:
       return state
   }

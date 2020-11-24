@@ -55,7 +55,7 @@ const CreateMaterial = props => {
             <Button type="submit" className="btn --success">
               Crear
             </Button>
-            <Link to="/nails">
+            <Link to="/material">
               <Button className="btn --danger">Cancelar</Button>
             </Link>
           </div>

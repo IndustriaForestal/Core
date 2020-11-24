@@ -30,7 +30,7 @@ const Orders = props => {
     // eslint-disable-next-line
   }, [])
 
-  const tableHeader = ['#', 'Cliente', 'Model', 'Acciones']
+  const tableHeader = ['#', 'Cliente', 'Tipo OC', 'Modelo', 'Acciones']
 
   const handleDeleteNail = orderId => {
     Swal.fire({
@@ -70,11 +70,15 @@ const Orders = props => {
         <Table head={tableHeader}>
           {orders ? (
             orders.map(order => {
+              console.log(order)
               if (!order.completed) {
                 return (
                   <tr key={order._id}>
                     <td>{order.orderNumber}</td>
                     <td>{order.customer[0].name}</td>
+                    <td>
+                      {order.orderType === 1 ? 'Pedido Rapido' : 'Producción'}
+                    </td>
                     <td>{order.pallet[0].model}</td>
                     <td>
                       {order.ordersProduction &&

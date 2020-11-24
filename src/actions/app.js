@@ -189,6 +189,8 @@ export const createNotification = data => async dispatch => {
       data: {
         userId: Cookies.get('id'),
         text: data.text,
+        link: data.link,
+        date: data.date,
         read: 0,
       },
     })
@@ -213,6 +215,28 @@ export const updateNotification = (data, notificationId) => async dispatch => {
     dispatch({
       type: data.typeAction,
       payload: res.data.data,
+    })
+  } catch (error) {
+    console.log(error)
+  }
+}
+
+export const createNotificationManual = data => async dispatch => {
+  try {
+    await axios({
+      url: `${process.env.REACT_APP_API}notifications`,
+      headers: { Authorization: `Bearer ${Cookies.get('token')}` },
+      method: 'post',
+      data: {
+        userId: Cookies.get('id'),
+        text: data.text,
+        link: data.link,
+        date: data.date,
+        read: 0,
+      },
+    })
+    dispatch({
+      type: 'NEW_NOTIFICATION',
     })
   } catch (error) {
     console.log(error)

@@ -7,6 +7,7 @@ import { BiLogInCircle } from 'react-icons/bi'
 import Cookies from 'js-cookie'
 import { logOut } from '../../actions/app'
 import Title from '../Title/Title'
+import Notifications from '../Notifications'
 import './Topbar.scss'
 
 const Topbar = props => {
@@ -29,7 +30,7 @@ const Topbar = props => {
           </div>
           <div className="topbar__right">
             <AiOutlineMail />
-            <AiOutlineBell />
+            <Notifications />
             <FiLogOut onClick={handleLogOut} />
             <div className="topbar__user">
               <p>{Cookies.get('user')}</p>
@@ -64,7 +65,7 @@ const Topbar = props => {
   return null
 }
 
-const mapStateToProps = (state) => {
+const mapStateToProps = state => {
   return {
     topbar: state.topbar,
   }
