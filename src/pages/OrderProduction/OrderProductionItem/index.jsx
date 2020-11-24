@@ -251,11 +251,26 @@ const OrderProductionItem = props => {
             const capacity = pallet[0].capacityCharge.filter(
               cp => cp._id === orderDetails.platformId
             )
-            if(verifyStock(pallet, pallet[0]._id, capacity[0].capacity, 'verdes') === true){
-              props.updatePalletsStock(capacity[0].capacity * -1, pallet[0]._id, 'green')
-              props.updatePalletsStock(capacity[0].capacity, pallet[0]._id, 'dry')
+            if (
+              verifyStock(
+                pallet,
+                pallet[0]._id,
+                capacity[0].capacity,
+                'verdes'
+              ) === true
+            ) {
+              props.updatePalletsStock(
+                capacity[0].capacity * -1,
+                pallet[0]._id,
+                'green'
+              )
+              props.updatePalletsStock(
+                capacity[0].capacity,
+                pallet[0]._id,
+                'dry'
+              )
               handleComplete('Estufado')
-            }else{
+            } else {
               Swal.fire({
                 title: 'Error!',
                 text: 'No hay suficiente material',
@@ -370,7 +385,9 @@ const OrderProductionItem = props => {
               <Title className="title --small">{`${startAserrio} - ${endAserrio}`}</Title>
               {orderDetails.itemsList.filter(item => item.completed === 0)
                 .length === 0 ? (
-                <Button onClick={() => handleComplete('Aserrio')}>
+                <Button
+                  onClick={() => handleComplete('5f99cbda74cd296d5bb5b744')}
+                >
                   Completar
                 </Button>
               ) : null}
@@ -397,7 +414,7 @@ const OrderProductionItem = props => {
                     /> */}
 
                     {item.ready && item.amount - item.ready === 0 ? (
-                      <Button onClick={() => handleComplete(index)}>
+                      <Button onClick={() => handleCompleteItem(index)}>
                         Completado
                       </Button>
                     ) : (
@@ -415,6 +432,7 @@ const OrderProductionItem = props => {
         return <h2>Loading</h2>
       }
     } else {
+      // ! CAMBIAR PROCESOS DE CAPTURA DESDE EL INICIO SE ESTA REDUNDANDO EN PROCESOS
       if (orderDetails.orderType === 0) {
         const capacity = pallet[0].capacityCharge.filter(
           cp => cp._id === orderDetails.platformId
@@ -443,9 +461,7 @@ const OrderProductionItem = props => {
                 '5f99cbd374cd296d5bb5b741') ? (
               <Button
                 onClick={() =>
-                  handleComplete(
-                    orderDetails.ordersProduction[index].processId
-                  )
+                  handleComplete(orderDetails.ordersProduction[index].processId)
                 }
               >
                 Completado

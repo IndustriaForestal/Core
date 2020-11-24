@@ -62,8 +62,7 @@ const OrderProduction = props => {
                   <Title>{`Pedido #${order.orderNumber}`}</Title>
                   <Table head={tableHeader}>
                     {order.ordersProduction.map((production, index) => {
-
-                        console.log(production.completed)
+                      console.log(production.completed)
                       if (production.type !== '3') {
                         return (
                           <tr key={index}>
@@ -93,7 +92,7 @@ const OrderProduction = props => {
                         return null
                       }
                     })}
-                 {/*    {order.itemsList
+                    {/*    {order.itemsList
                       ? order.itemsList.map((item, index) => {
                           return (
                             <tr key={index}>
@@ -122,47 +121,55 @@ const OrderProduction = props => {
                 </React.Fragment>
               )
             } else {
-              return (
-                <React.Fragment key={order._id}>
-                  <Title>{`Pedido #${order.orderNumber}`}</Title>
-                  <Table head={tableHeaderFast}>
-                    <tr>
-                      <td>Fecha de entrega</td>
-                      <td>
-                        {moment(order.orderFast.deliveryDate).format(
-                          'DD-MM-YYYY LT'
-                        )}
-                      </td>
-                    </tr>
-                    <tr>
-                      <td>Inicio viaje</td>
-                      <td>
-                        {moment(order.orderFast.travel).format('DD-MM-YYYY LT')}
-                      </td>
-                    </tr>
-                    <tr>
-                      <td> Inicio Limpieza</td>
-                      <td>
-                        {moment(order.orderFast.clean).format('DD-MM-YYYY LT')}
-                      </td>
-                    </tr>
-                    <tr>
-                      <td> Personal Limpieza</td>
-                      <td>{order.orderFast.peopleClean}</td>
-                    </tr>
-                    <tr>
-                      <td> Inicio estufado</td>
-                      <td>
-                        {moment(order.orderFast.bake).format('DD-MM-YYYY LT')}
-                      </td>
-                    </tr>
-                    <tr>
-                      <td> Tiempo estufado</td>
-                      <td>{order.orderFast.timeBake}</td>
-                    </tr>
-                  </Table>
-                </React.Fragment>
-              )
+              if (order.orderFast) {
+                return (
+                  <React.Fragment key={order._id}>
+                    <Title>{`Pedido #${order.orderNumber}`}</Title>
+                    <Table head={tableHeaderFast}>
+                      <tr>
+                        <td>Fecha de entrega</td>
+                        <td>
+                          {moment(order.orderFast.deliveryDate).format(
+                            'DD-MM-YYYY LT'
+                          )}
+                        </td>
+                      </tr>
+                      <tr>
+                        <td>Inicio viaje</td>
+                        <td>
+                          {moment(order.orderFast.travel).format(
+                            'DD-MM-YYYY LT'
+                          )}
+                        </td>
+                      </tr>
+                      <tr>
+                        <td> Inicio Limpieza</td>
+                        <td>
+                          {moment(order.orderFast.clean).format(
+                            'DD-MM-YYYY LT'
+                          )}
+                        </td>
+                      </tr>
+                      <tr>
+                        <td> Personal Limpieza</td>
+                        <td>{order.orderFast.peopleClean}</td>
+                      </tr>
+                      <tr>
+                        <td> Inicio estufado</td>
+                        <td>
+                          {moment(order.orderFast.bake).format('DD-MM-YYYY LT')}
+                        </td>
+                      </tr>
+                      <tr>
+                        <td> Tiempo estufado</td>
+                        <td>{order.orderFast.timeBake}</td>
+                      </tr>
+                    </Table>
+                  </React.Fragment>
+                )
+              }else{
+                return null
+              }
             }
           })}
         </Card>

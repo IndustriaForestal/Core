@@ -177,3 +177,44 @@ export const deleted = (endpoint, typeAction) => async dispatch => {
     console.log(error)
   }
 }
+
+//Notifications
+
+export const createNotification = data => async dispatch => {
+  try {
+    await axios({
+      url: `${process.env.REACT_APP_API}notifications`,
+      headers: { Authorization: `Bearer ${Cookies.get('token')}` },
+      method: 'post',
+      data: {
+        userId: Cookies.get('id'),
+        text: data.text,
+        read: 0,
+      },
+    })
+    dispatch({
+      type: data.typeAction,
+    })
+  } catch (error) {
+    console.log(error)
+  }
+}
+
+export const updateNotification = (data, notificationId) => async dispatch => {
+  try {
+    const res = await axios({
+      url: `${process.env.REACT_APP_API}notification/${notificationId}`,
+      headers: { Authorization: `Bearer ${Cookies.get('token')}` },
+      method: 'put',
+      data: {
+        userId: Cookies.get('id'),
+      },
+    })
+    dispatch({
+      type: data.typeAction,
+      payload: res.data.data,
+    })
+  } catch (error) {
+    console.log(error)
+  }
+}

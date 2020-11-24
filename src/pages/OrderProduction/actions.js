@@ -1,5 +1,7 @@
 import axios from 'axios'
 import Cookies from 'js-cookie'
+import moment from 'moment'
+import { createNotification } from '../../actions/app'
 
 export const updateOrderProduction = (
   endpoint,
@@ -30,6 +32,7 @@ export const updateItemList = (data, index, orderId) => async dispatch => {
       method: 'put',
       data: data,
     })
+
     dispatch({
       type: 'UPDATE_ITEMLIST',
       payload: data,
@@ -49,6 +52,7 @@ export const updateRawStock = (volumen, rawId) => async dispatch => {
         0: volumen,
       },
     })
+
     dispatch({
       type: 'UPDATE_RAW_STOCK',
     })
@@ -72,7 +76,11 @@ export const updateNailsStock = (amount, nailId) => async dispatch => {
     console.log(error)
   }
 }
-export const updatePalletsStock = (amount, palletId, type) => async dispatch => {
+export const updatePalletsStock = (
+  amount,
+  palletId,
+  type
+) => async dispatch => {
   try {
     await axios({
       url: `${process.env.REACT_APP_API}orders/updatePallet/${palletId}`,
@@ -114,6 +122,7 @@ export const updateItemListOne = (index, orderId) => async dispatch => {
       headers: { Authorization: `Bearer ${Cookies.get('token')}` },
       method: 'put',
     })
+
     dispatch({
       type: 'UPDATE_ITEMLIST_ONE',
     })
@@ -142,7 +151,6 @@ export const updateItemListReady = (
     console.log(error)
   }
 }
-
 export const completeOrderProduction = (
   arrayIndexHack,
   orderId
@@ -154,6 +162,13 @@ export const completeOrderProduction = (
       method: 'put',
       data: arrayIndexHack,
     })
+    dispatch(
+      createNotification({
+        text: 'Orden de Producción Completada',
+        typeAction: 'UPDATE_ORDER_PRODUCTION',
+        date: moment().format('YYYY-MM-DDT06:00:00') + 'Z',
+      })
+    )
     dispatch({
       type: 'UPDATE_ORDER_PRODUCTION',
     })
@@ -174,6 +189,12 @@ export const addReadyToOrderProduction = (
       method: 'put',
       data: { amount },
     })
+    dispatch(
+      createNotification({
+        text: 'Orden de Producción Completada',
+        typeAction: 'UPDATE_ORDER_PRODUCTION',
+      })
+    )
     dispatch({
       type: 'UPDATE_ORDER_PRODUCTION',
     })

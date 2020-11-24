@@ -72,8 +72,6 @@ const OrderIntern = props => {
     'Hrs. Estufado',
   ]
 
-  const deliveryDate = moment(startDate).format('L LT')
-
   const handleTravel = e => {
     let value = e.target.value
     if (value === '') {

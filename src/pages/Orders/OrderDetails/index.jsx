@@ -70,30 +70,35 @@ const OrderDetails = props => {
         </Card>
       )
     } else {
-      return (
-        <Card title={`Pedido Rapido #${orderDetails.orderNumber}`}>
-          <Title>{pallet[0].model}</Title>
-          <Title className="title --small">{pallet[0].customerId.name}</Title>
-          <p>
-            Fecha de entrega:{' '}
-            {moment(orderDetails.orderFast.deliveryDate).format('L LT')}
-          </p>
-          <p>
-            Inicio viaje: {moment(orderDetails.orderFast.travel).format('L LT')}
-          </p>
-          <p>
-            Inicio Limpieza:{' '}
-            {moment(orderDetails.orderFast.clean).format('L LT')}
-          </p>
-          <p>Personal Limpieza: {orderDetails.orderFast.peopleClean}</p>
-          <p>
-            Inicio estufado:{' '}
-            {moment(orderDetails.orderFast.bake).format('L LT')}
-          </p>
-          <p>Tiempo estufado: {orderDetails.orderFast.timeBake}</p>
-          <Button>Completado</Button>
-        </Card>
-      )
+      if (orderDetails.orderFast) {
+        return (
+          <Card title={`Pedido Rapido #${orderDetails.orderNumber}`}>
+            <Title>{pallet[0].model}</Title>
+            <Title className="title --small">{pallet[0].customerId.name}</Title>
+            <p>
+              Fecha de entrega:{' '}
+              {moment(orderDetails.orderFast.deliveryDate).format('L LT')}
+            </p>
+            <p>
+              Inicio viaje:{' '}
+              {moment(orderDetails.orderFast.travel).format('L LT')}
+            </p>
+            <p>
+              Inicio Limpieza:{' '}
+              {moment(orderDetails.orderFast.clean).format('L LT')}
+            </p>
+            <p>Personal Limpieza: {orderDetails.orderFast.peopleClean}</p>
+            <p>
+              Inicio estufado:{' '}
+              {moment(orderDetails.orderFast.bake).format('L LT')}
+            </p>
+            <p>Tiempo estufado: {orderDetails.orderFast.timeBake}</p>
+            <Button>Completado</Button>
+          </Card>
+        )
+      } else {
+        return <h1>Error al crear el pedido rapido.</h1>
+      }
     }
   } else {
     return <Loading />

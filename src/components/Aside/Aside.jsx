@@ -23,19 +23,19 @@ const Aside = () => {
             <li className="aside__nav__item">
               <Link to="/" className="aside__nav__link">
                 <AiOutlineHome className="aside__nav__icon" />
-                <span className="aside__nav__text">Home</span>
+                <span className="aside__nav__text">Ord. Prod</span>
               </Link>
             </li>
             <li className="aside__nav__item">
               <Link to="/" className="aside__nav__link">
                 <AiOutlineHome className="aside__nav__icon" />
-                <span className="aside__nav__text">Home</span>
+                <span className="aside__nav__text">Inventarios</span>
               </Link>
             </li>
             <li className="aside__nav__item">
-              <Link to="/settings" className="aside__nav__link">
+              <Link to="/users" className="aside__nav__link">
                 <AiOutlineSetting className="aside__nav__icon" />
-                <span className="aside__nav__text">Configuración</span>
+                <span className="aside__nav__text">Usuarios</span>
               </Link>
             </li>
           </ul>
