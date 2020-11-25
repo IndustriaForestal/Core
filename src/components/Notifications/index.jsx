@@ -16,14 +16,16 @@ const Notifications = props => {
   const { notifications } = props
   const [toggle, setToggle] = useState(false)
   const history = useHistory()
-  const socket = io(process.env.REACT_APP_WEBSOCKET, {
-    transport: ['websocket'],
-  })
   useEffect(() => {
     props.getAll('notifications', 'GET_NOTIFICATIONS')
+    
+    const socket = io(process.env.REACT_APP_WEBSOCKET, {
+      transport: ['websocket'],
+    })
 
     socket.on('notification', () => {
       props.getAll('notifications', 'GET_NOTIFICATIONS')
+      console.log('From Node Js')
     })
 
     // eslint-disable-next-line

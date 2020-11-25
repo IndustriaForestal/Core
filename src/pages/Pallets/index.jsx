@@ -21,7 +21,12 @@ const Pallets = props => {
   useEffect(() => {
     const topbar = {
       title: 'Tarimas',
-      menu: { Tarimas: '/pallets', Complementos: '/items', Clavos: '/nails', Calidades: '/qualities' },
+      menu: {
+        Tarimas: '/pallets',
+        Complementos: '/items',
+        Clavos: '/nails',
+        Calidades: '/qualities',
+      },
     }
     setTitle(topbar)
     props.getAll('pallets', 'GET_PALLETS')
@@ -197,21 +202,22 @@ const Pallets = props => {
                           pallet.specialProcess.length > 1 ? (
                             <ul className="palletCard__list">
                               {pallet.specialProcess.map(special => {
-                                console.log(special[0])
-                                return (
-                                  <li
-                                    className="palletCard__item"
-                                    key={special[0]._id}
-                                    onClick={() =>
-                                      handleDeleteSpecialProcess(
-                                        pallet._id,
-                                        special[0]._id
-                                      )
-                                    }
-                                  >
-                                    {special[0].name}
-                                  </li>
-                                )
+                                if (special.length > 0) {
+                                  return (
+                                    <li
+                                      className="palletCard__item"
+                                      key={special[0]._id}
+                                      onClick={() =>
+                                        handleDeleteSpecialProcess(
+                                          pallet._id,
+                                          special[0]._id
+                                        )
+                                      }
+                                    >
+                                      {special[0].name}
+                                    </li>
+                                  )
+                                }
                               })}
                             </ul>
                           ) : (
