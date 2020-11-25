@@ -49,7 +49,7 @@ const OrderProduction = props => {
         <Card title={`Ordenes de producción`}>
           {orders.map(order => {
             if (order.orderType === 0) {
-             /*  const aserrio = order.ordersProduction.filter(
+              /*  const aserrio = order.ordersProduction.filter(
                 op => op.processId === '5f99cbda74cd296d5bb5b744'
               )
               const startAserrio = moment(aserrio[0].date).format('DD-MM-YYYY')
@@ -61,37 +61,49 @@ const OrderProduction = props => {
                 <React.Fragment key={order._id}>
                   <Title>{`Pedido #${order.orderNumber}`}</Title>
                   <Table head={tableHeader}>
-                    {order.ordersProduction.map((production, index) => {
-                      console.log(production.completed)
-                      if (production.type !== '3') {
-                        return (
-                          <tr key={index}>
-                            <td>
-                              {production.processName
-                                ? production.processName
-                                : production.name}
-                            </td>
-                            <td>
-                              {moment(production.date).format('DD-MM-YYYY')}
-                            </td>
-                            <td>
-                              {moment(production.date).isBefore(moment(), 'day')
-                                ? 'Vencido'
-                                : 'En tiempo'}
-                            </td>
-                            <td>
-                              {production.completed === 1 ? (
-                                <AiOutlineCheckCircle className="--success" />
-                              ) : (
-                                <AiOutlineClose className="--danger" />
-                              )}
-                            </td>
-                          </tr>
-                        )
-                      } else {
-                        return null
-                      }
-                    })}
+                    {order.ordersProduction ? (
+                      order.ordersProduction.map((production, index) => {
+                        console.log(production.completed)
+                        if (production.type !== '3') {
+                          return (
+                            <tr key={index}>
+                              <td>
+                                {production.processName
+                                  ? production.processName
+                                  : production.name}
+                              </td>
+                              <td>
+                                {moment(production.date).format('DD-MM-YYYY')}
+                              </td>
+                              <td>
+                                {moment(production.date).isBefore(
+                                  moment(),
+                                  'day'
+                                )
+                                  ? 'Vencido'
+                                  : 'En tiempo'}
+                              </td>
+                              <td>
+                                {production.completed === 1 ? (
+                                  <AiOutlineCheckCircle className="--success" />
+                                ) : (
+                                  <AiOutlineClose className="--danger" />
+                                )}
+                              </td>
+                            </tr>
+                          )
+                        } else {
+                          return null
+                        }
+                      })
+                    ) : (
+                      <tr>
+                        <td>Error: La tarima esta incompleta </td>
+                        <td>Error: La tarima esta incompleta </td>
+                        <td>Error: La tarima esta incompleta </td>
+                        <td>Error: La tarima esta incompleta </td>
+                      </tr>
+                    )}
                     {/*    {order.itemsList
                       ? order.itemsList.map((item, index) => {
                           return (
@@ -167,7 +179,7 @@ const OrderProduction = props => {
                     </Table>
                   </React.Fragment>
                 )
-              }else{
+              } else {
                 return null
               }
             }

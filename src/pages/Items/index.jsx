@@ -16,7 +16,7 @@ const Items = props => {
   useEffect(() => {
     const topbar = {
       title: 'Complementos',
-      menu: { Complementos: '/items' },
+      menu: { Tarimas: '/pallets', Complementos: '/items', Clavos: '/nails', Calidades: '/qualities' },
     }
     setTitle(topbar)
     props.getAll('items', 'GET_ITEMS')

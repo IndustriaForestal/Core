@@ -1,4 +1,4 @@
-import React, { useEffect } from 'react'
+import React, { useEffect, useState } from 'react'
 import { Link } from 'react-router-dom'
 import { connect } from 'react-redux'
 import { AiOutlineEdit, AiOutlineDelete } from 'react-icons/ai'
@@ -8,15 +8,18 @@ import Swal from 'sweetalert2'
 import Table from '../../components/Table/Table'
 import Button from '../../components/Button/Button'
 import AddButton from '../../components/AddButton/AddButton'
+import SearchBar from '../../components/SearchBar/SearchBar'
 import './styles.scss'
 
 const Nails = props => {
   const { nails, setTitle } = props
+  const [filter, setFilter] = useState([])
 
   useEffect(() => {
     const topbar = {
       title: 'Clavos',
-      menu: { Clavos: '/nails' },
+      menu: { Tarimas: '/pallets', Complementos: '/items', Clavos: '/nails', Calidades: '/qualities' },
+
     }
     setTitle(topbar)
     props.getAll('nails', 'GET_NAILS')
@@ -34,21 +37,35 @@ const Nails = props => {
       confirmButtonColor: '#3085d6',
       cancelButtonColor: '#d33',
       confirmButtonText: 'Si, borrar',
+    }).then(result => {
+      if (result.isConfirmed) {
+        props.deleted(`nails/${nailId}`, 'DELETE_NAIL')
+        Swal.fire('Borrado!', 'Borrado con exito.', 'success')
+      }
     })
-      .then(result => {
-        if (result.isConfirmed) {
-          props.deleted(`nails/${nailId}`, 'DELETE_NAIL')
-          Swal.fire('Borrado!', 'Borrado con exito.', 'success')
-        }
-      })
-    
+  }
+
+  const handleSearch = e => {
+    const searchWord = e.target.value.toLowerCase()
+    const filterPallets = nails.filter(nail =>
+      nail.name.toLowerCase().includes(searchWord)
+    )
+    setFilter(filterPallets)
+  }
+
+  let tableData
+  if (filter.length > 0) {
+    tableData = filter
+  } else {
+    tableData = nails
   }
 
   return (
     <>
+      <SearchBar onChange={handleSearch} />
       <Table head={tableHeader}>
         {nails ? (
-          nails.map(nail => (
+          tableData.map(nail => (
             <tr key={nail._id}>
               <td>{nail.name}</td>
               <td>{nail.stock}</td>

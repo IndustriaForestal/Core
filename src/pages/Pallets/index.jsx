@@ -21,7 +21,7 @@ const Pallets = props => {
   useEffect(() => {
     const topbar = {
       title: 'Tarimas',
-      menu: { Tarimas: '/pallets' },
+      menu: { Tarimas: '/pallets', Complementos: '/items', Clavos: '/nails', Calidades: '/qualities' },
     }
     setTitle(topbar)
     props.getAll('pallets', 'GET_PALLETS')
@@ -124,8 +124,9 @@ const Pallets = props => {
   }
 
   const handleSearch = e => {
+    const searchWord = e.target.value.toLowerCase()
     const filterPallets = pallets.filter(pallet =>
-      pallet.model.toLowerCase().includes(e.target.value)
+      pallet.model.toLowerCase().includes(searchWord)
     )
     setFilter(filterPallets)
   }

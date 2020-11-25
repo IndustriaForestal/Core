@@ -1,4 +1,4 @@
-import React, { useEffect } from 'react'
+import React, { useEffect, useState } from 'react'
 import { Link } from 'react-router-dom'
 import { connect } from 'react-redux'
 import { AiOutlineEdit, AiOutlineDelete } from 'react-icons/ai'
@@ -8,10 +8,12 @@ import Swal from 'sweetalert2'
 import Table from '../../components/Table/Table'
 import Button from '../../components/Button/Button'
 import AddButton from '../../components/AddButton/AddButton'
+import SearchBar from '../../components/SearchBar/SearchBar'
 import './styles.scss'
 
 const Customers = props => {
   const { customers, setTitle } = props
+  const [filter, setFilter] = useState([])
 
   useEffect(() => {
     const topbar = {
@@ -42,22 +44,36 @@ const Customers = props => {
       confirmButtonColor: '#3085d6',
       cancelButtonColor: '#d33',
       confirmButtonText: 'Si, borrar',
+    }).then(result => {
+      if (result.isConfirmed) {
+        props.deleted(`customers/${customerID}`, 'DELETE_CUSTOMER')
+        Swal.fire('Borrado!', 'Borrado con exito.', 'success')
+      }
     })
-      .then(result => {
-        if (result.isConfirmed) {
-          props.deleted(`customers/${customerID}`, 'DELETE_CUSTOMER')
-          Swal.fire('Borrado!', 'Borrado con exito.', 'success')
-        }
-      })
+  }
+
+  const handleSearch = e => {
+    const searchWord = e.target.value.toLowerCase()
+    const filterPallets = customers.filter(customer =>
+      customer.name.toLowerCase().includes(searchWord)
+    )
+    setFilter(filterPallets)
+  }
+
+  let tableData
+  if (filter.length > 0) {
+    tableData = filter
+  } else {
+    tableData = customers
   }
 
   return (
     <>
+      <SearchBar onChange={handleSearch} />
       <Table head={tableHeader}>
         {customers.length > 0 ? (
-          customers.map(customer => (
+          tableData.map(customer => (
             <tr key={customer._id}>
-              <td>{customer.id}</td>
               <td>{customer.name}</td>
               <td>{customer.address}</td>
               <td>{customer.email}</td>

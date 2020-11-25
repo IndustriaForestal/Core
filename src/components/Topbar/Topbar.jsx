@@ -1,7 +1,7 @@
 import React from 'react'
 import { Link, useLocation } from 'react-router-dom'
 import { connect } from 'react-redux'
-import { AiOutlineMail, AiOutlineBell } from 'react-icons/ai'
+import { AiOutlineMail } from 'react-icons/ai'
 import { FiLogOut } from 'react-icons/fi'
 import { BiLogInCircle } from 'react-icons/bi'
 import Cookies from 'js-cookie'

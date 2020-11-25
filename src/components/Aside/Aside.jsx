@@ -1,6 +1,7 @@
 import React from 'react'
 import { Link, useLocation } from 'react-router-dom'
-import { AiOutlineHome, AiOutlineSetting } from 'react-icons/ai'
+import { AiOutlineHome, AiOutlineSetting, AiOutlineFileAdd } from 'react-icons/ai'
+import { FiBox } from 'react-icons/fi'
 import './Aside.scss'
 import logo from '../../assets/static/logo.svg'
 
@@ -21,14 +22,14 @@ const Aside = () => {
               </Link>
             </li>
             <li className="aside__nav__item">
-              <Link to="/" className="aside__nav__link">
-                <AiOutlineHome className="aside__nav__icon" />
+              <Link to="/orderProduction" className="aside__nav__link">
+                <AiOutlineFileAdd className="aside__nav__icon" />
                 <span className="aside__nav__text">Ord. Prod</span>
               </Link>
             </li>
             <li className="aside__nav__item">
-              <Link to="/" className="aside__nav__link">
-                <AiOutlineHome className="aside__nav__icon" />
+              <Link to="/stock" className="aside__nav__link">
+                <FiBox className="aside__nav__icon" />
                 <span className="aside__nav__text">Inventarios</span>
               </Link>
             </li>

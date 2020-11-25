@@ -77,22 +77,32 @@ const OrderDetails = props => {
           <Title>{pallet[0].model}</Title>
           <Title className="title --small">{pallet[0].customerId.name}</Title>
           <Table head={tableHeader}>
-            {orderDetails.ordersProduction.map((order, index) => {
-              console.log(order)
-              return (
-                <tr key={index}>
-                  <td>{order.processName ? order.processName : order.name}</td>
-                  <td>{moment(order.date).format('L')}</td>
-                  <td>
-                    {order.completed === 1 ? (
-                      <AiOutlineCheckCircle className="--success" />
-                    ) : (
-                      <AiOutlineClose className="--danger" />
-                    )}
-                  </td>
-                </tr>
-              )
-            })}
+            {orderDetails.ordersProduction ? (
+              orderDetails.ordersProduction.map((order, index) => {
+                console.log(order)
+                return (
+                  <tr key={index}>
+                    <td>
+                      {order.processName ? order.processName : order.name}
+                    </td>
+                    <td>{moment(order.date).format('L')}</td>
+                    <td>
+                      {order.completed === 1 ? (
+                        <AiOutlineCheckCircle className="--success" />
+                      ) : (
+                        <AiOutlineClose className="--danger" />
+                      )}
+                    </td>
+                  </tr>
+                )
+              })
+            ) : (
+              <tr>
+                <td>Error: La tarima esta incompleta </td>
+                <td>Error: La tarima esta incompleta </td>
+                <td>Error: La tarima esta incompleta </td>
+              </tr>
+            )}
           </Table>
         </Card>
       )
@@ -103,20 +113,20 @@ const OrderDetails = props => {
             <Title>{pallet[0].model}</Title>
             <Title className="title --small">{pallet[0].customerId.name}</Title>
             <p>
-              Fecha de entrega:{' '}
+              Fecha de entrega:
               {moment(orderDetails.orderFast.deliveryDate).format('L LT')}
             </p>
             <p>
-              Inicio viaje:{' '}
+              Inicio viaje:
               {moment(orderDetails.orderFast.travel).format('L LT')}
             </p>
             <p>
-              Inicio Limpieza:{' '}
+              Inicio Limpieza:
               {moment(orderDetails.orderFast.clean).format('L LT')}
             </p>
             <p>Personal Limpieza: {orderDetails.orderFast.peopleClean}</p>
             <p>
-              Inicio estufado:{' '}
+              Inicio estufado:
               {moment(orderDetails.orderFast.bake).format('L LT')}
             </p>
             <p>Tiempo estufado: {orderDetails.orderFast.timeBake}</p>

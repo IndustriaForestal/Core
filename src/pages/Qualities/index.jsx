@@ -23,7 +23,8 @@ const Qualities = props => {
   useEffect(() => {
     const topbar = {
       title: 'Calidades',
-      menu: { Calidades: '/qualities' },
+      menu: { Tarimas: '/pallets', Complementos: '/items', Clavos: '/nails', Calidades: '/qualities' },
+
     }
     setTitle(topbar)
     props.getAll('qualities', 'GET_QUALITIES')
