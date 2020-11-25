@@ -1,14 +1,9 @@
 import axios from 'axios'
 import Swal from 'sweetalert2'
 import Cookies from 'js-cookie'
-import io from 'socket.io-client'
 
 const API_KEY_TOKEN =
   '77a5f9501bfc62140ff0402fdc9bd9cdf60c269fd9c909ee43971b3885a4ac69'
-
-const socket = io(process.env.REACT_APP_WEBSOCKET, {
-  transport: ['websocket'],
-})
 
 axios.interceptors.response.use(
   function (response) {
@@ -41,6 +36,11 @@ export const setTitle = payload => ({
 
 export const setWraper = payload => ({
   type: 'SET_WRAPER',
+  payload,
+})
+
+export const setSocket = payload => ({
+  type: 'SET_SOCKET',
   payload,
 })
 
@@ -217,7 +217,7 @@ export const updateNotification = (data, notificationId) => async dispatch => {
         userId: Cookies.get('id'),
       },
     })
-    socket.emit('notification')
+
     dispatch({
       type: data.typeAction,
       payload: res.data.data,
@@ -241,7 +241,7 @@ export const createNotificationManual = data => async dispatch => {
         read: 0,
       },
     })
-    socket.emit('notification')
+
     dispatch({
       type: 'CREATE_NOTIFICATION',
     })
@@ -249,21 +249,3 @@ export const createNotificationManual = data => async dispatch => {
     console.log(error)
   }
 }
-
-/* socket.on('notification', () => {
-  console.log('From Node Js')
-  const algo = async dispatch => {
-    try {
-      const res = await axios({
-        url: `${process.env.REACT_APP_API}notifications`,
-        headers: { Authorization: `Bearer ${Cookies.get('token')}` },
-        method: 'get',
-      })
-      
-    } catch (error) {
-      console.log(error)
-    }
-  }
-
-  algo()
-}) */

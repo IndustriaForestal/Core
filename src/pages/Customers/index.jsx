@@ -70,6 +70,7 @@ const Customers = props => {
   return (
     <>
       <SearchBar onChange={handleSearch} />
+
       <Table head={tableHeader}>
         {customers.length > 0 ? (
           tableData.map(customer => (

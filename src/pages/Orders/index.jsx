@@ -17,7 +17,7 @@ import Loading from '../../components/Loading/Loading'
 import './styles.scss'
 
 const Orders = props => {
-  const { orders, setTitle, pallets } = props
+  const { orders, setTitle, pallets, socket } = props
 
   useEffect(() => {
     const topbar = {
@@ -61,6 +61,9 @@ const Orders = props => {
       .updatePalletsStock(capacity[0].capacity * -1, pallet[0]._id, 'dry')
       .then(() => {
         props.completeOrder(orderId)
+      })
+      .then(() => {
+        socket.emit('notification')
       })
   }
 
@@ -129,6 +132,7 @@ const mapStateToProps = state => {
   return {
     orders: state.orders,
     pallets: state.pallets,
+    socket: state.socket
   }
 }
 

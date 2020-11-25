@@ -16,6 +16,7 @@ import {
   update,
   updateNotification,
   createNotificationManual,
+  setSocket
 } from '../../../actions/app'
 import Table from '../../../components/Table/Table'
 import Button from '../../../components/Button/Button'
@@ -33,6 +34,7 @@ const Order = props => {
     capacities,
     material,
     raws,
+    socket
   } = props
   const [startDate, setStartDate] = useState(new Date())
   const [materialId, setMaterialId] = useState(0)
@@ -314,6 +316,9 @@ const Order = props => {
             .then(() => {
               props.history.push('/')
             })
+            .then(() => {
+              socket.emit('notification')
+            })
         }
       })
     }
@@ -396,6 +401,7 @@ const mapStateToProps = state => {
     capacities: state.capacities,
     material: state.material,
     raws: state.raws,
+    socket: state.socket
   }
 }
 
@@ -409,6 +415,7 @@ const mapDispatchToProps = {
   update,
   updateNotification,
   createNotificationManual,
+  setSocket,
 }
 
 export default connect(mapStateToProps, mapDispatchToProps)(Order)

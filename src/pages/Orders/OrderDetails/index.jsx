@@ -13,6 +13,7 @@ import {
   deleted,
   create,
   update,
+  setSocket,
 } from '../../../actions/app'
 import Table from '../../../components/Table/Table'
 import Button from '../../../components/Button/Button'
@@ -22,7 +23,7 @@ import Loading from '../../../components/Loading/Loading'
 import './styles.scss'
 
 const OrderDetails = props => {
-  const { orderDetails, setTitle, pallet } = props
+  const { orderDetails, setTitle, pallet, socket } = props
   const { id } = useParams()
 
   useEffect(() => {
@@ -65,6 +66,7 @@ const OrderDetails = props => {
           .then(() =>
             Swal.fire('Completado!', 'Guardado con exito.', 'success')
           )
+          .then(() => socket.emit('notification'))
           .then(() => props.history.push('/orders'))
       }
     })
@@ -152,6 +154,7 @@ const mapStateToProps = state => {
     capacities: state.capacities,
     material: state.material,
     raws: state.raws,
+    socket: state.stocket,
   }
 }
 
@@ -165,6 +168,7 @@ const mapDispatchToProps = {
   updatePalletsStock,
   create,
   update,
+  setSocket,
 }
 
 export default connect(mapStateToProps, mapDispatchToProps)(OrderDetails)

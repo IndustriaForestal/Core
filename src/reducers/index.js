@@ -10,6 +10,11 @@ const reducer = (state, action) => {
         ...state,
         wraper: action.payload,
       }
+    case 'SET_SOCKET':
+      return {
+        ...state,
+        socket: action.payload,
+      }
     case 'LOGIN_REQUEST':
       return {
         ...state,

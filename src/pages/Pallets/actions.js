@@ -44,9 +44,7 @@ export const deleteObjectPallet = (endpoint, typeAction) => async dispatch => {
     dispatch({
       type: typeAction,
     })
-    dispatch(
-      getAll('pallets', 'GET_PALLETS')
-    )
+    dispatch(getAll('pallets', 'GET_PALLETS'))
   } catch (error) {
     console.log(error)
   }

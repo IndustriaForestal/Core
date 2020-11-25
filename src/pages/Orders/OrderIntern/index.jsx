@@ -15,6 +15,7 @@ import {
   create,
   update,
   createNotificationManual,
+  setSocket,
 } from '../../../actions/app'
 import Table from '../../../components/Table/Table'
 import Button from '../../../components/Button/Button'
@@ -26,7 +27,7 @@ import './styles.scss'
 
 const OrderIntern = props => {
   const { id } = useParams()
-  const { orderDetails, pallet, quality, setTitle } = props
+  const { orderDetails, pallet, quality, setTitle, socket } = props
   const [startDate, setStartDate] = useState(new Date())
   const [hoursLeft, setHoursLeft] = useState(12)
   const [checkedClean, setCheckedClean] = useState(false)
@@ -182,7 +183,9 @@ const OrderIntern = props => {
               date: moment().format('YYYY-MM-DDThh:mm:ss') + 'Z',
             })
           })
-
+          .then(() => {
+            socket.emit('notification')
+          })
           .then(() => {
             props.history.push('/')
           })
@@ -275,6 +278,7 @@ const mapStateToProps = state => {
     capacities: state.capacities,
     material: state.material,
     raws: state.raws,
+    socket: state.socket,
   }
 }
 
@@ -287,6 +291,7 @@ const mapDispatchToProps = {
   deleted,
   searchCapacities,
   createNotificationManual,
+  setSocket,
 }
 
 export default connect(mapStateToProps, mapDispatchToProps)(OrderIntern)
