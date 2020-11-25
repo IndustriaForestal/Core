@@ -100,11 +100,12 @@ const Pallets = props => {
       confirmButtonText: 'Si, borrar',
     }).then(result => {
       if (result.isConfirmed) {
-        props.deleteObjectPallet(
-          `pallets/platform/delete/${palletId}/${platformId}`,
-          'DELETE_PLATFORM_PALLET'
-        )
-        Swal.fire('Borrado!', 'Borrado con exito.', 'success')
+        props
+          .deleteObjectPallet(
+            `pallets/platform/delete/${palletId}/${platformId}`,
+            'DELETE_PLATFORM_PALLET'
+          )
+          .then(() => Swal.fire('Borrado!', 'Borrado con exito.', 'success'))
       }
     })
   }
@@ -142,6 +143,8 @@ const Pallets = props => {
   } else {
     tableData = pallets
   }
+
+  console.log(tableData)
 
   return (
     <>
@@ -199,7 +202,7 @@ const Pallets = props => {
                             Calidad: {pallet.qualityId[0]}
                           </h4>
                           {pallet.specialProcess &&
-                          pallet.specialProcess.length > 1 ? (
+                          pallet.specialProcess.length > 0 ? (
                             <ul className="palletCard__list">
                               {pallet.specialProcess.map(special => {
                                 if (special.length > 0) {
@@ -302,7 +305,7 @@ const Pallets = props => {
                 )
               })
             ) : (
-              <h2>No hay tarimas en la base de datos</h2>
+              <h2>Sin registros</h2>
             )}
           </div>
         </>

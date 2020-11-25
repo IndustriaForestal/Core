@@ -286,6 +286,11 @@ const reducer = (state, action) => {
       return {
         ...state,
       }
+    case 'DELETE_PLATFORM_PALLET':
+      return {
+        ...state,
+        pallets: [],
+      }
     case 'GET_ORDERS':
       return {
         ...state,
@@ -393,7 +398,9 @@ const reducer = (state, action) => {
     case 'DELETE_NOTIFICATION':
       return {
         ...state,
-        notifications: state.notifications.filter(notification => notification._id !== action.payload),
+        notifications: state.notifications.filter(
+          notification => notification._id !== action.payload
+        ),
       }
     default:
       return state

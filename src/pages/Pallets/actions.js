@@ -3,7 +3,11 @@ import Cookies from 'js-cookie'
 import Swal from 'sweetalert2'
 import { getAll } from '../../actions/app'
 
-export const addObjectPallet = (endpoint, typeAction, data) => async dispatch => {
+export const addObjectPallet = (
+  endpoint,
+  typeAction,
+  data
+) => async dispatch => {
   try {
     await axios({
       url: `${process.env.REACT_APP_API}${endpoint}`,
@@ -30,17 +34,19 @@ export const addObjectPallet = (endpoint, typeAction, data) => async dispatch =>
   }
 }
 
-export const deleteObjectPallet = (
-  endpoint,
-  typeAction
-) => async dispatch => {
+export const deleteObjectPallet = (endpoint, typeAction) => async dispatch => {
   try {
     await axios({
       url: `${process.env.REACT_APP_API}${endpoint}`,
       headers: { Authorization: `Bearer ${Cookies.get('token')}` },
       method: 'delete',
     })
-    dispatch(getAll('pallets', 'GET_PALLETS'))
+    dispatch({
+      type: typeAction,
+    })
+    dispatch(
+      getAll('pallets', 'GET_PALLETS')
+    )
   } catch (error) {
     console.log(error)
   }
