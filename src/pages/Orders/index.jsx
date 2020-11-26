@@ -6,6 +6,7 @@ import {
   AiOutlineDelete,
   AiOutlineCheck,
 } from 'react-icons/ai'
+import moment from 'moment'
 import { updatePalletsStock, completeOrder } from './actions'
 import { BsPlus } from 'react-icons/bs'
 import { setTitle, getAll, deleted } from '../../actions/app'
@@ -30,7 +31,14 @@ const Orders = props => {
     // eslint-disable-next-line
   }, [])
 
-  const tableHeader = ['#', 'Cliente', 'Tipo OC', 'Modelo', 'Acciones']
+  const tableHeader = [
+    '#',
+    'Cliente',
+    'Tipo OC',
+    'Fecha Entrega',
+    'Modelo',
+    'Acciones',
+  ]
 
   const handleDeleteNail = orderId => {
     Swal.fire({
@@ -82,6 +90,13 @@ const Orders = props => {
                     <td>
                       {order.orderType === 1 ? 'Pedido Rapido' : 'Producción'}
                     </td>
+                    <td>
+                      {order.orderType === 1
+                        ? moment(order.orderFast.deliveryDate).format('DD/MM/YY LT')
+                        : order.orderType === 0 && order.ordersProduction
+                        ? moment(order.ordersProduction[0].date).format('DD/MM/YY')
+                        : 'Sin datos disponibles'}
+                    </td>
                     <td>{order.pallet[0].model}</td>
                     <td>
                       {order.ordersProduction &&
@@ -132,7 +147,7 @@ const mapStateToProps = state => {
   return {
     orders: state.orders,
     pallets: state.pallets,
-    socket: state.socket
+    socket: state.socket,
   }
 }
 
