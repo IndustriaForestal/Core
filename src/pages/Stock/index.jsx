@@ -36,6 +36,9 @@ const Nails = props => {
     '1 Secas',
     '2 Verdes',
     '2 Secas',
+    'Total Verdes',
+    'Total Secas',
+    'Total',
     'Acciones',
   ]
   const handleSearch = e => {
@@ -65,6 +68,14 @@ const Nails = props => {
               <td>{pallet.stock[0].dry}</td>
               <td>{pallet.stock[1].green}</td>
               <td>{pallet.stock[1].dry}</td>
+              <td>{pallet.stock[0].green + pallet.stock[1].green}</td>
+              <td>{pallet.stock[0].dry + pallet.stock[1].dry}</td>
+              <td>
+                {pallet.stock[0].dry +
+                  pallet.stock[1].dry +
+                  pallet.stock[0].green +
+                  pallet.stock[1].green}
+              </td>
               <td>
                 <Link to={`stock/update/${pallet._id}?type=pallet`}>
                   <Button className="btn --warning">
