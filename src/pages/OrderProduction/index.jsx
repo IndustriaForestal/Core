@@ -208,39 +208,51 @@ const OrderProduction = props => {
                 <React.Fragment key={order._id}>
                   <Title>{`Pedido #${order.orderNumber}`}</Title>
                   <Table head={tableHeader}>
-                    {order.ordersProduction.map((production, index) => {
-                      if (
-                        production.processId === processId[0]._id &&
-                        production.completed === 0 &&
-                        production.processId !== '5f99cbda74cd296d5bb5b744'
-                      )
-                        return (
-                          <tr key={index}>
-                            <td>
-                              {production.processName
-                                ? production.processName
-                                : production.name}
-                            </td>
-                            <td>
-                              {moment(production.date).format('DD-MM-YYYY')}
-                            </td>
-                            <td>
-                              {moment(production.date).isBefore(moment(), 'day')
-                                ? 'Vencido'
-                                : 'En tiempo'}
-                            </td>
-                            <td>
-                              <Link
-                                to={`orderProduction/${order._id}/${index}`}
-                              >
-                                <Button className="btn --warning">
-                                  <AiOutlineEdit />
-                                </Button>
-                              </Link>
-                            </td>
-                          </tr>
+                    {order.ordersProduction ? (
+                      order.ordersProduction.map((production, index) => {
+                        if (
+                          production.processId === processId[0]._id &&
+                          production.completed === 0 &&
+                          production.processId !== '5f99cbda74cd296d5bb5b744'
                         )
-                    })}
+                          return (
+                            <tr key={index}>
+                              <td>
+                                {production.processName
+                                  ? production.processName
+                                  : production.name}
+                              </td>
+                              <td>
+                                {moment(production.date).format('DD-MM-YYYY')}
+                              </td>
+                              <td>
+                                {moment(production.date).isBefore(
+                                  moment(),
+                                  'day'
+                                )
+                                  ? 'Vencido'
+                                  : 'En tiempo'}
+                              </td>
+                              <td>
+                                <Link
+                                  to={`orderProduction/${order._id}/${index}`}
+                                >
+                                  <Button className="btn --warning">
+                                    <AiOutlineEdit />
+                                  </Button>
+                                </Link>
+                              </td>
+                            </tr>
+                          )
+                      })
+                    ) : (
+                      <tr>
+                        <td>Error </td>
+                        <td>Error </td>
+                        <td>Error </td>
+                        <td>Error </td>
+                      </tr>
+                    )}
                     {order.itemsList && role === 'Aserrio' && counter > 0 ? (
                       <tr>
                         <td>Aserrio</td>
