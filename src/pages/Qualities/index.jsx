@@ -68,6 +68,19 @@ const Qualities = props => {
     })
   }
 
+  function compare(a, b) {
+    const orderA = a.position
+    const orderB = b.position
+
+    let comparison = 0
+    if (orderA > orderB) {
+      comparison = 1
+    } else if (orderA < orderB) {
+      comparison = -1
+    }
+    return comparison
+  }
+
   const tableHeader = [
     '#',
     'Nombre',
@@ -100,7 +113,7 @@ const Qualities = props => {
             >
               {quality.process[0].processName ? (
                 <Table head={tableHeader}>
-                  {quality.process.map((process, index) => {
+                  {quality.process.sort(compare).map((process, index) => {
                     return (
                       <tr key={index}>
                         <td>{process.position}</td>

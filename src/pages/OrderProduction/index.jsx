@@ -195,10 +195,15 @@ const OrderProduction = props => {
               const aserrio = order.ordersProduction.filter(
                 op => op.processId === '5f99cbda74cd296d5bb5b744'
               )
-              const startAserrio = moment(aserrio[0].date).format('DD-MM-YYYY')
-              const endAserrio = moment(
-                aserrio[aserrio.length - 1].date
-              ).format('DD-MM-YYYY')
+              console.log(aserrio)
+              let startAserrio
+              let endAserrio
+              if (aserrio.length > 0) {
+                startAserrio = moment(aserrio[0].date).format('DD-MM-YYYY')
+                endAserrio = moment(aserrio[aserrio.length - 1].date).format(
+                  'DD-MM-YYYY'
+                )
+              }
               const counter = order.ordersProduction.filter(
                 op =>
                   op.processId === '5f99cbda74cd296d5bb5b744' &&
@@ -210,9 +215,10 @@ const OrderProduction = props => {
                   <Table head={tableHeader}>
                     {order.ordersProduction ? (
                       order.ordersProduction.map((production, index) => {
+                        console.log(production)
                         if (
                           production.processId === processId[0]._id &&
-                          production.completed === 0 &&
+                          production.completed !== 1 &&
                           production.processId !== '5f99cbda74cd296d5bb5b744'
                         )
                           return (
