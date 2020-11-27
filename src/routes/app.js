@@ -58,6 +58,7 @@ import CreateUser from '../pages/Users/CreateUser'
 import UpdateUser from '../pages/Users/UpdateUser'
 import OrderProductionList from '../pages/OrderProduction'
 import OrderProductionItem from '../pages/OrderProduction/OrderProductionItem'
+import Calendar from '../pages/Calendar'
 
 const App = ({ loggedIn }) => {
   const role = Cookies.get('role')
@@ -322,6 +323,12 @@ const App = ({ loggedIn }) => {
               path="/users/:id"
               component={role === 'Administrador' ? UpdateUser : Home}
             />
+            <Route
+              exact
+              path="/calendar"
+              component={role === 'Administrador' ? Calendar : Home}
+            />
+            {/* Area Usuario */}
             <Route
               exact
               path="/orderProduction"

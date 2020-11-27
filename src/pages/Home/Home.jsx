@@ -47,6 +47,7 @@ const Home = props => {
           <IconHome icon={<BsCardImage />} url="/qualities" text="Calidades" />
           <IconHome icon={<BsCardImage />} url="/raws" text="Materia Prima" />
           <IconHome icon={<BsCardImage />} url="/users" text="Usuarios" />
+          <IconHome icon={<BsCardImage />} url="/calendar" text="Calendario" />
         </div>
       )
 
