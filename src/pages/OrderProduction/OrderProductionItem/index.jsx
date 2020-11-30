@@ -371,7 +371,7 @@ const OrderProductionItem = props => {
   if (orderDetails && pallet && processes) {
     if (query.get('itemsList')) {
       const aserrio = orderDetails.ordersProduction.filter(
-        op => op.processId === '5f99cbda74cd296d5bb5b744'
+        op => op.processId === '5f99cbda74cd296d5bb5b744' || op.processId === '5f99cbd874cd296d5bb5b743'
       )
       const startAserrio = moment(aserrio[0].date).format('DD-MM-YYYY')
       const endAserrio = moment(aserrio[aserrio.length - 1].date).format(
@@ -381,7 +381,7 @@ const OrderProductionItem = props => {
       if (orderDetails.itemsList) {
         return (
           <>
-            <Card title="Aserrio">
+            <Card title="Aserrio / Pendu">
               <Title className="title --small">{`${startAserrio} - ${endAserrio}`}</Title>
               {orderDetails.itemsList.filter(item => item.completed === 0)
                 .length === 0 ? (

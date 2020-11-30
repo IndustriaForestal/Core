@@ -3,7 +3,7 @@ import { useParams } from 'react-router-dom'
 import { connect } from 'react-redux'
 import DatePicker from 'react-datepicker'
 import Swal from 'sweetalert2'
-import { AiOutlineCheckCircle, AiOutlineClose } from 'react-icons/ai'
+// import { AiOutlineCheckCircle, AiOutlineClose } from 'react-icons/ai'
 import 'react-datepicker/dist/react-datepicker.css'
 import moment from 'moment'
 import { searchCapacities } from '../actions'
@@ -16,7 +16,7 @@ import {
   update,
   updateNotification,
   createNotificationManual,
-  setSocket
+  setSocket,
 } from '../../../actions/app'
 import Table from '../../../components/Table/Table'
 import Button from '../../../components/Button/Button'
@@ -34,19 +34,27 @@ const Order = props => {
     capacities,
     material,
     raws,
-    socket
+    socket,
   } = props
   const [startDate, setStartDate] = useState(new Date())
   const [materialId, setMaterialId] = useState(0)
+  const [pendu, setPendu] = useState(0)
   const { id } = useParams()
 
   const tableHeader = [
     'Proceso',
     'Fecha',
-    'Capacidad Diaria',
-    'Capacidad Disponible',
-    'Estatus',
+    // 'Capacidad Diaria',
+    // 'Capacidad Disponible',
+    // 'Estatus',
   ]
+  // const tableHeader = [
+  //   'Proceso',
+  //   'Fecha',
+  //   'Capacidad Diaria',
+  //   'Capacidad Disponible',
+  //   'Estatus',
+  // ]
 
   useEffect(() => {
     const topbar = {
@@ -119,7 +127,7 @@ const Order = props => {
         })
       })
 
-      itemsVolume = parseInt(itemsVolume * capacityCharge[0].capacity)
+      itemsVolume = parseInt(itemsVolume * parseInt(orderDetails.amount))
 
       searchOrderProduction.map(order => {
         if (order.type === '0') {
@@ -217,7 +225,9 @@ const Order = props => {
       const capacityCharge = pallet[0].capacityCharge.filter(
         charge => orderDetails.platformId === charge._id
       )
-      // eslint-disable-next-line
+
+      console.log(orderDetails.amount)
+
       pallet[0].items.map(item => {
         const pietabla =
           parseInt(item.amount) *
@@ -228,11 +238,11 @@ const Order = props => {
         itemsVolume = itemsVolume + pietabla
         itemsList.push({
           itemName: item.name[0],
-          amount: item.amount,
+          amount: item.amount * parseInt(orderDetails.amount),
           completed: 0,
         })
       })
-      itemsVolume = parseInt(itemsVolume * capacityCharge[0].capacity)
+      itemsVolume = parseInt(itemsVolume * parseInt(orderDetails.amount))
 
       props.update(`orders/itemsList/${id}`, 'DEFAULT', itemsList)
 
@@ -289,6 +299,16 @@ const Order = props => {
         })
       })
 
+      if (pendu === 1) {
+        console.log('Pendu en lugar de aserrio')
+        ordersProduction.map(op => {
+          if (op.processId === '5f99cbda74cd296d5bb5b744') {
+            op.processId = '5f99cbd874cd296d5bb5b743'
+            op.processName = 'Pendu'
+          }
+        })
+      }
+
       Swal.fire({
         title: '¿Estás seguro?',
         text: 'Este proceso no se puede revertir',
@@ -332,7 +352,7 @@ const Order = props => {
           onChange={date => setStartDate(date)}
         />
         <Button onClick={() => handleSearch(startDate)}>Consulta</Button>
-
+        <Button onClick={handleOrderProduction}>Generar</Button>
         {material ? (
           <div className="inputGroup">
             <label htmlFor="materialId">
@@ -354,10 +374,27 @@ const Order = props => {
             </label>
           </div>
         ) : null}
+        {/*   Validacion capacidades disponibles
         {status === 1 && materialId !== 0 ? (
           <Button onClick={handleOrderProduction}>Generar</Button>
-        ) : null}
+        ) : null} */}
+
         <br />
+
+        {materialId === '5fa0721ace9a4996368fb08b' ? (
+          <div className="inputGroup">
+            <label htmlFor="materialId">
+              <span>Inicio:</span>
+              <select
+                name="materialId"
+                onChange={e => setPendu(parseInt(e.target.value))}
+              >
+                <option value="0">Aserrio</option>
+                <option value="1">Pendu</option>
+              </select>
+            </label>
+          </div>
+        ) : null}
 
         <Table head={tableHeader}>
           {capacities
@@ -371,7 +408,7 @@ const Order = props => {
                         : capacity.name}
                     </td>
                     <td>{date}</td>
-                    <td>{capacity.capacity}</td>
+                    {/*  <td>{capacity.capacity}</td>
                     <td>{capacity.capacity - capacity.count}</td>
                     <td>
                       {capacity.capacity - capacity.count - capacity.use >=
@@ -380,7 +417,11 @@ const Order = props => {
                       ) : (
                         <AiOutlineClose className="--danger" />
                       )}
-                    </td>
+                    </td> 
+                    
+                      Mustra información de la capacidad de producción diaria 
+                    
+                    */}
                   </tr>
                 )
               })
@@ -401,7 +442,7 @@ const mapStateToProps = state => {
     capacities: state.capacities,
     material: state.material,
     raws: state.raws,
-    socket: state.socket
+    socket: state.socket,
   }
 }
 

@@ -193,7 +193,9 @@ const OrderProduction = props => {
           {orders.map(order => {
             if (order.orderType === 0) {
               const aserrio = order.ordersProduction.filter(
-                op => op.processId === '5f99cbda74cd296d5bb5b744'
+                op =>
+                  op.processId === '5f99cbda74cd296d5bb5b744' ||
+                  op.processId === '5f99cbd874cd296d5bb5b743'
               )
               console.log(aserrio)
               let startAserrio
@@ -206,7 +208,8 @@ const OrderProduction = props => {
               }
               const counter = order.ordersProduction.filter(
                 op =>
-                  op.processId === '5f99cbda74cd296d5bb5b744' &&
+                  (op.processId === '5f99cbda74cd296d5bb5b744' ||
+                    op.processId === '5f99cbd874cd296d5bb5b743') &&
                   op.completed === 0
               ).length
               return (
@@ -219,7 +222,8 @@ const OrderProduction = props => {
                         if (
                           production.processId === processId[0]._id &&
                           production.completed !== 1 &&
-                          production.processId !== '5f99cbda74cd296d5bb5b744'
+                          production.processId !== '5f99cbda74cd296d5bb5b744' &&
+                          production.processId !== '5f99cbd874cd296d5bb5b743'
                         )
                           return (
                             <tr key={index}>
@@ -262,6 +266,26 @@ const OrderProduction = props => {
                     {order.itemsList && role === 'Aserrio' && counter > 0 ? (
                       <tr>
                         <td>Aserrio</td>
+                        <td>{`${startAserrio} - ${endAserrio}`}</td>
+                        <td>
+                          {moment(aserrio[0].date).isBefore(moment(), 'day')
+                            ? 'Vencido'
+                            : 'En tiempo'}
+                        </td>
+                        <td>
+                          <Link
+                            to={`orderProduction/${order._id}/0?itemsList=true`}
+                          >
+                            <Button className="btn --warning">
+                              <AiOutlineEdit />
+                            </Button>
+                          </Link>
+                        </td>
+                      </tr>
+                    ) : null}
+                    {order.itemsList && role === 'Pendu' && counter > 0 ? (
+                      <tr>
+                        <td>Pendu</td>
                         <td>{`${startAserrio} - ${endAserrio}`}</td>
                         <td>
                           {moment(aserrio[0].date).isBefore(moment(), 'day')

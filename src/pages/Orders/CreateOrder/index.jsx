@@ -115,6 +115,7 @@ const CreateOrder = props => {
               passRef={register({ required: true })}
               placeholder={errors.orderNumber && 'Campo requerido'}
             />
+
             {pallets ? (
               <div className="inputGroup">
                 <label htmlFor="processId">
@@ -136,6 +137,13 @@ const CreateOrder = props => {
                 </label>
               </div>
             ) : null}
+            <Input
+              type="number"
+              name="amount"
+              title="Cantidad"
+              passRef={register({ required: true })}
+              placeholder={errors.orderNumber && 'Campo requerido'}
+            />
             {newPallet && newPallet.length > 0 ? (
               <>
                 <div className="inputGroup">
@@ -160,18 +168,19 @@ const CreateOrder = props => {
                     </select>
                   </label>
                 </div>
-                <Table head={tableHeader}>
-                  {newPallet.map(pallet => (
-                    <tr key={pallet._id}>
-                      <td>{pallet.model}</td>
-                      <td>{pallet.stock[0].green}</td>
-                      <td>{pallet.stock[0].dry}</td>
-                      <td>{pallet.stock[1].green}</td>
-                      <td>{pallet.stock[1].dry}</td>
-                    </tr>
-                  ))}
-                </Table>
+
                 <div className="inputGroup">
+                  <label htmlFor="processId">
+                    <span>Tipo de Pedido:</span>
+                    <select name="typeOrder" ref={typeOrder}>
+                      <option value="0">Producción</option>
+                      <option value="1">Pedido Rapido</option>
+                    </select>
+                  </label>
+                </div>
+                {/*  
+               Cambio de pedido rapido condicionado, a libre
+               <div className="inputGroup">
                   <label htmlFor="processId">
                     <span>Tipo de Pedido:</span>
                     <select name="typeOrder" ref={typeOrder}>
@@ -181,7 +190,7 @@ const CreateOrder = props => {
                       ) : null}
                     </select>
                   </label>
-                </div>
+                </div> */}
               </>
             ) : null}
             <div className="formNail__buttons">
@@ -194,6 +203,19 @@ const CreateOrder = props => {
             </div>
           </form>
         </Card>
+        {newPallet && newPallet.length > 0 ? (
+          <Table head={tableHeader}>
+            {newPallet.map(pallet => (
+              <tr key={pallet._id}>
+                <td>{pallet.model}</td>
+                <td>{pallet.stock[0].green}</td>
+                <td>{pallet.stock[0].dry}</td>
+                <td>{pallet.stock[1].green}</td>
+                <td>{pallet.stock[1].dry}</td>
+              </tr>
+            ))}
+          </Table>
+        ) : null}
       </>
     )
   } else {

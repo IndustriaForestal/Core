@@ -37,6 +37,7 @@ const Orders = props => {
     'Tipo OC',
     'Fecha Entrega',
     'Modelo',
+    'Cantidad',
     'Acciones',
   ]
 
@@ -92,12 +93,17 @@ const Orders = props => {
                     </td>
                     <td>
                       {order.orderType === 1
-                        ? moment(order.orderFast.deliveryDate).format('DD/MM/YY LT')
+                        ? moment(order.orderFast.deliveryDate).format(
+                            'DD/MM/YY LT'
+                          )
                         : order.orderType === 0 && order.ordersProduction
-                        ? moment(order.ordersProduction[0].date).format('DD/MM/YY')
+                        ? moment(order.ordersProduction[0].date).format(
+                            'DD/MM/YY'
+                          )
                         : 'Sin datos disponibles'}
                     </td>
                     <td>{order.pallet[0].model}</td>
+                    <td>{order.amount}</td>
                     <td>
                       {order.ordersProduction &&
                       order.ordersProduction.find(op => op.completed === 0) ===
