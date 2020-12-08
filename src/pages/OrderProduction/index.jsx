@@ -17,6 +17,7 @@ import {
   create,
   update,
 } from '../../actions/app'
+import { completeShipment } from './actions'
 import Table from '../../components/Table/Table'
 import Button from '../../components/Button/Button'
 import Title from '../../components/Title/Title'
@@ -26,9 +27,8 @@ import './styles.scss'
 
 const OrderProduction = props => {
   const role = Cookies.get('role')
-  console.log(role)
   const { orders, setTitle, processes } = props
-
+  console.log(role)
   useEffect(() => {
     const topbar = {
       title: 'Orden de producción',
@@ -43,23 +43,42 @@ const OrderProduction = props => {
   const tableHeader = ['Proceso', 'Fecha', 'Estatus', 'Completado']
   const tableHeaderFast = ['Proceso', 'Dato']
 
+  const handleCompleteShipment = shipmentId => {
+    console.log(shipmentId)
+    props.completeShipment(shipmentId).then(() => {
+      props.getAll(`orders`, 'GET_ORDERS')
+    })
+  }
+
   if (orders && processes) {
+    const newOrders = orders.map(order =>
+      order.shipments.filter(shipment => shipment.completed !== 1)
+    )
+    console.log(newOrders[0])
     if (role === 'Administrador') {
       return (
         <Card title={`Ordenes de producción`}>
-          {orders.map(order => {
-            if (order.orderType === 0) {
-              /*  const aserrio = order.ordersProduction.filter(
-                op => op.processId === '5f99cbda74cd296d5bb5b744'
-              )
-              const startAserrio = moment(aserrio[0].date).format('DD-MM-YYYY')
-              const endAserrio = moment(
-                aserrio[aserrio.length - 1].date
-              ).format('DD-MM-YYYY')
- */
+          {newOrders[0].map(order => {
+            if (order.type === 0) {
+              // const aserrio = order.ordersProduction.filter(
+              //   op => op.processId === '5f99cbda74cd296d5bb5b744'
+              // )
+              // const startAserrio = moment(aserrio[0].date).format(
+              //   'DD-MM-YYYY'
+              // )
+              // const endAserrio = moment(
+              //   aserrio[aserrio.length - 1].date
+              // ).format('DD-MM-YYYY')
+
               return (
                 <React.Fragment key={order._id}>
-                  <Title>{`Pedido #${order.orderNumber}`}</Title>
+                  <Title>{`Estado`}</Title>
+                  {order.ordersProduction.filter(op => op.completed === 0)
+                    .length === 0 ? (
+                    <Button onClick={() => handleCompleteShipment(order._id)}>
+                      Completar
+                    </Button>
+                  ) : null}
                   <Table head={tableHeader}>
                     {order.ordersProduction ? (
                       order.ordersProduction.map((production, index) => {
@@ -187,44 +206,33 @@ const OrderProduction = props => {
         </Card>
       )
     } else {
-      const processId = processes.filter(process => process.name === role)
+      const process = processes.filter(process => process.name === role)
+      const processId = process[0]._id
+      console.log(processId)
+      console.log(newOrders)
       return (
         <Card title={`Ordenes de producción`}>
-          {orders.map(order => {
-            if (order.orderType === 0) {
-              const aserrio = order.ordersProduction.filter(
-                op =>
-                  op.processId === '5f99cbda74cd296d5bb5b744' ||
-                  op.processId === '5f99cbd874cd296d5bb5b743'
-              )
-              console.log(aserrio)
-              let startAserrio
-              let endAserrio
-              if (aserrio.length > 0) {
-                startAserrio = moment(aserrio[0].date).format('DD-MM-YYYY')
-                endAserrio = moment(aserrio[aserrio.length - 1].date).format(
-                  'DD-MM-YYYY'
-                )
-              }
-              const counter = order.ordersProduction.filter(
-                op =>
-                  (op.processId === '5f99cbda74cd296d5bb5b744' ||
-                    op.processId === '5f99cbd874cd296d5bb5b743') &&
-                  op.completed === 0
-              ).length
+          {newOrders[0]
+            .filter(
+              order =>
+                order.completed !== 1 &&
+                order.ordersProduction &&
+                order.ordersProduction.find(
+                  order => order.processId === processId
+                ) !== undefined &&
+                order.ordersProduction.find(
+                  order => order.processId === processId
+                ).completed !== 1
+            )
+            .map(order => {
+              console.log(order, 'Filtrado')
               return (
                 <React.Fragment key={order._id}>
-                  <Title>{`Pedido #${order.orderNumber}`}</Title>
+                  <Title>{`Pendientes`}</Title>
                   <Table head={tableHeader}>
                     {order.ordersProduction ? (
                       order.ordersProduction.map((production, index) => {
-                        console.log(production)
-                        if (
-                          production.processId === processId[0]._id &&
-                          production.completed !== 1 &&
-                          production.processId !== '5f99cbda74cd296d5bb5b744' &&
-                          production.processId !== '5f99cbd874cd296d5bb5b743'
-                        )
+                        if (production.processId === processId) {
                           return (
                             <tr key={index}>
                               <td>
@@ -245,7 +253,7 @@ const OrderProduction = props => {
                               </td>
                               <td>
                                 <Link
-                                  to={`orderProduction/${order._id}/${index}`}
+                                  to={`orderProduction/${order._id}/${index}?processId=${production.processId}`}
                                 >
                                   <Button className="btn --warning">
                                     <AiOutlineEdit />
@@ -254,6 +262,9 @@ const OrderProduction = props => {
                               </td>
                             </tr>
                           )
+                        } else {
+                          return null
+                        }
                       })
                     ) : (
                       <tr>
@@ -263,51 +274,10 @@ const OrderProduction = props => {
                         <td>Error </td>
                       </tr>
                     )}
-                    {order.itemsList && role === 'Aserrio' && counter > 0 ? (
-                      <tr>
-                        <td>Aserrio</td>
-                        <td>{`${startAserrio} - ${endAserrio}`}</td>
-                        <td>
-                          {moment(aserrio[0].date).isBefore(moment(), 'day')
-                            ? 'Vencido'
-                            : 'En tiempo'}
-                        </td>
-                        <td>
-                          <Link
-                            to={`orderProduction/${order._id}/0?itemsList=true`}
-                          >
-                            <Button className="btn --warning">
-                              <AiOutlineEdit />
-                            </Button>
-                          </Link>
-                        </td>
-                      </tr>
-                    ) : null}
-                    {order.itemsList && role === 'Pendu' && counter > 0 ? (
-                      <tr>
-                        <td>Pendu</td>
-                        <td>{`${startAserrio} - ${endAserrio}`}</td>
-                        <td>
-                          {moment(aserrio[0].date).isBefore(moment(), 'day')
-                            ? 'Vencido'
-                            : 'En tiempo'}
-                        </td>
-                        <td>
-                          <Link
-                            to={`orderProduction/${order._id}/0?itemsList=true`}
-                          >
-                            <Button className="btn --warning">
-                              <AiOutlineEdit />
-                            </Button>
-                          </Link>
-                        </td>
-                      </tr>
-                    ) : null}
                   </Table>
                 </React.Fragment>
               )
-            }
-          })}
+            })}
         </Card>
       )
     }
@@ -330,6 +300,7 @@ const mapDispatchToProps = {
   get,
   create,
   update,
+  completeShipment,
 }
 
 export default connect(mapStateToProps, mapDispatchToProps)(OrderProduction)

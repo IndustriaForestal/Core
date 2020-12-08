@@ -12,7 +12,7 @@
   list-style: none;
   transform: translateX(300px);
   box-shadow: var(--boxShadowHover);
-
+  overflow-y: scroll;
   transition-timing-function: ease-in;
   transition: 0.2s;
 
@@ -42,9 +42,9 @@
       }
     }
   }
-  &__date{
+  &__date {
     font-size: 13px;
-    color: var(--gray)
+    color: var(--gray);
   }
   &__toggle {
     cursor: pointer;

@@ -3,7 +3,7 @@ import { useParams } from 'react-router-dom'
 import { connect } from 'react-redux'
 import DatePicker from 'react-datepicker'
 import Swal from 'sweetalert2'
-// import { AiOutlineCheckCircle, AiOutlineClose } from 'react-icons/ai'
+import { AiOutlineCheckCircle, AiOutlineClose } from 'react-icons/ai'
 import 'react-datepicker/dist/react-datepicker.css'
 import moment from 'moment'
 import { searchCapacities } from '../actions'
@@ -31,6 +31,7 @@ const Order = props => {
     setTitle,
     quality,
     pallet,
+    pallets,
     capacities,
     material,
     raws,
@@ -41,20 +42,7 @@ const Order = props => {
   const [pendu, setPendu] = useState(0)
   const { id } = useParams()
 
-  const tableHeader = [
-    'Proceso',
-    'Fecha',
-    // 'Capacidad Diaria',
-    // 'Capacidad Disponible',
-    // 'Estatus',
-  ]
-  // const tableHeader = [
-  //   'Proceso',
-  //   'Fecha',
-  //   'Capacidad Diaria',
-  //   'Capacidad Disponible',
-  //   'Estatus',
-  // ]
+  const tableHeader = ['Proceso', 'Fecha', 'Capacidad', 'Disponible', 'Status']
 
   useEffect(() => {
     const topbar = {
@@ -68,17 +56,23 @@ const Order = props => {
 
   useEffect(() => {
     if (orderDetails !== undefined) {
-      props.get(`qualities/${orderDetails.pallet[0].qualityId}`, 'GET_QUALITY')
-      props.get(`pallets/${orderDetails.palletId}`, 'GET_PALLET')
+      props.get(`qualities/${orderDetails.pallets[0].qualityId}`, 'GET_QUALITY')
+      props.get(`pallets/${orderDetails.pallets[0].palletId}`, 'GET_PALLET')
       props.getAll(`raws`, 'GET_RAWS')
     }
     // eslint-disable-next-line
   }, [orderDetails])
 
-  if (pallet && quality) {
+  if (quality && pallet) {
+    const shipment = orderDetails.shipments.filter(
+      shipment => shipment.procesed === 0
+    )
+
     let finalProcess = []
+
     quality[0].process.sort(compare).map(process => {
       finalProcess.push(process)
+
       // eslint-disable-next-line
       return pallet[0].specialProcess.map(specialProcess => {
         if (process.processId === specialProcess.processId) {
@@ -88,6 +82,18 @@ const Order = props => {
         }
       })
     })
+
+    const humedity = humedity => {
+      if (humedity > 20 && humedity <= 24) {
+        return 1
+      } else if (humedity >= 25 && humedity <= 29) {
+        return 1.5
+      } else if (humedity >= 30 && humedity <= 35) {
+        return 2
+      } else if (humedity >= 36 && humedity <= 43) {
+        return 3
+      }
+    }
 
     function compare(a, b) {
       const orderA = a.position
@@ -109,26 +115,25 @@ const Order = props => {
       let itemsVolume = 0
       let startDate = moment(date)
       let searchOrderProduction = finalProcess
-      const capacityCharge = pallet[0].capacityCharge.filter(
-        charge => orderDetails.platformId === charge._id
-      )
-      pallet[0].items.map(item => {
-        const pietabla =
-          parseInt(item.amount) *
-          ((parseFloat(item.height) *
-            parseFloat(item.length) *
-            parseFloat(item.width)) /
-            144)
-        itemsVolume = itemsVolume + pietabla
-        itemsList.push({
-          itemName: item.name[0],
-          amount: item.amount,
-          completed: 0,
+
+      shipment[0].pallets.map(pallet => {
+        pallet.items.map(item => {
+          const pietabla =
+            parseInt(item.amount) *
+            pallet.amount *
+            ((parseFloat(item.height) *
+              parseFloat(item.length) *
+              parseFloat(item.width)) /
+              61024)
+          itemsVolume = itemsVolume + pietabla
+          itemsList.push({
+            itemName: item.name[0],
+            amount: parseInt(item.amount) * pallet.amount,
+            completed: 0,
+          })
         })
       })
-
-      itemsVolume = parseInt(itemsVolume * parseInt(orderDetails.amount))
-
+      console.log(shipment, 'Shipment')
       searchOrderProduction.map(order => {
         if (order.type === '0') {
           while (itemsVolume > 0) {
@@ -155,7 +160,23 @@ const Order = props => {
             itemsVolume = itemsVolume - order.capacity
           }
         } else {
-          if (order.duration > 1) {
+          if (
+            order.processName === 'Estufado' ||
+            order.processName === 'Pre Secado'
+          ) {
+            const contador = humedity(parseInt(shipment[0].humedity))
+            for (let index = 0; index < contador; index++) {
+              startDate =
+                moment(startDate)
+                  .subtract(1, 'days')
+                  .format('YYYY-MM-DDT06:00:00') + 'Z'
+              ordersProduction.push({
+                date: startDate,
+                use: 1,
+                ...order,
+              })
+            }
+          } else if (order.duration > 1) {
             for (let index = 0; index < order.duration; index++) {
               startDate =
                 moment(startDate)
@@ -181,6 +202,8 @@ const Order = props => {
             return startDate
           }
         }
+
+        return startDate
       })
 
       return ordersProduction
@@ -222,29 +245,35 @@ const Order = props => {
 
     const purchaseOrder = () => {
       let itemsVolume = 0
-      const capacityCharge = pallet[0].capacityCharge.filter(
-        charge => orderDetails.platformId === charge._id
-      )
 
-      console.log(orderDetails.amount)
+      console.log(itemsList)
 
-      pallet[0].items.map(item => {
-        const pietabla =
-          parseInt(item.amount) *
-          ((parseFloat(item.height) *
-            parseFloat(item.length) *
-            parseFloat(item.width)) /
-            144)
-        itemsVolume = itemsVolume + pietabla
-        itemsList.push({
-          itemName: item.name[0],
-          amount: item.amount * parseInt(orderDetails.amount),
-          completed: 0,
+      itemsList = []
+
+      console.log(itemsList)
+
+      shipment[0].pallets.map(pallet => {
+        pallet.items.map(item => {
+          const pietabla =
+            parseInt(item.amount) *
+            pallet.amount *
+            ((parseFloat(item.height) *
+              parseFloat(item.length) *
+              parseFloat(item.width)) /
+              61024)
+          itemsVolume = itemsVolume + pietabla
+          itemsList.push({
+            itemName: item.name[0],
+            amount: parseInt(item.amount) * pallet.amount,
+            completed: 0,
+          })
         })
       })
-      itemsVolume = parseInt(itemsVolume * parseInt(orderDetails.amount))
+      
+      console.log(itemsList)
+     
 
-      props.update(`orders/itemsList/${id}`, 'DEFAULT', itemsList)
+      props.update(`orders/itemsList/${shipment[0]._id}`, 'DEFAULT', itemsList)
 
       // * Crea la orden de compra de ser necesaria
 
@@ -294,7 +323,7 @@ const Order = props => {
           ...order,
           count: order.use,
           completed: 0,
-          orderId: orderDetails._id,
+          orderId: shipment[0]._id,
           materialId,
         })
       })
@@ -322,10 +351,20 @@ const Order = props => {
           purchaseOrder()
           props
             .update(
-              `orders/orderProduction/${orderDetails._id}`,
+              `orders/orderProduction/${shipment[0]._id}`,
               'CREATE_ORDERS_PRODUCTION',
               ordersProduction
             )
+            .then(() => {
+              const order = {
+                materialId,
+              }
+              props.update(
+                `orders/shipmentMaterial/${shipment[0]._id}`,
+                'CREATE_ORDERS_PRODUCTION',
+                order
+              )
+            })
             .then(() => {
               props.createNotificationManual({
                 text: 'Nuevo Pedido Producción',
@@ -352,7 +391,7 @@ const Order = props => {
           onChange={date => setStartDate(date)}
         />
         <Button onClick={() => handleSearch(startDate)}>Consulta</Button>
-        <Button onClick={handleOrderProduction}>Generar</Button>
+        {/* <Button onClick={handleOrderProduction}>Generar</Button> */}
         {material ? (
           <div className="inputGroup">
             <label htmlFor="materialId">
@@ -374,10 +413,10 @@ const Order = props => {
             </label>
           </div>
         ) : null}
-        {/*   Validacion capacidades disponibles
+        {/* Validacion capacidades disponibles */}
         {status === 1 && materialId !== 0 ? (
           <Button onClick={handleOrderProduction}>Generar</Button>
-        ) : null} */}
+        ) : null}
 
         <br />
 
@@ -400,6 +439,7 @@ const Order = props => {
           {capacities
             ? capacities.map((capacity, index) => {
                 const date = moment(capacity.date).format('DD-MM-YYYY')
+                /*  const endDate = moment(capacity.endDate).format('DD-MM-YYYY') */
                 return (
                   <tr key={index}>
                     <td>
@@ -407,8 +447,11 @@ const Order = props => {
                         ? capacity.processName
                         : capacity.name}
                     </td>
-                    <td>{date}</td>
-                    {/*  <td>{capacity.capacity}</td>
+                    <td>
+                      {date} {/* - {endDate} */}
+                    </td>
+
+                    <td>{capacity.capacity}</td>
                     <td>{capacity.capacity - capacity.count}</td>
                     <td>
                       {capacity.capacity - capacity.count - capacity.use >=
@@ -417,11 +460,9 @@ const Order = props => {
                       ) : (
                         <AiOutlineClose className="--danger" />
                       )}
-                    </td> 
-                    
-                      Mustra información de la capacidad de producción diaria 
-                    
-                    */}
+                    </td>
+
+                    {/* Mustra información de la capacidad de producción diaria  */}
                   </tr>
                 )
               })
@@ -439,6 +480,7 @@ const mapStateToProps = state => {
     orderDetails: state.orderDetails,
     quality: state.quality,
     pallet: state.pallet,
+    pallets: state.pallets,
     capacities: state.capacities,
     material: state.material,
     raws: state.raws,

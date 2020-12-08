@@ -1,11 +1,7 @@
 import React, { useEffect } from 'react'
 import { Link } from 'react-router-dom'
 import { connect } from 'react-redux'
-import {
-  AiOutlineFileSearch,
-  AiOutlineDelete,
-  AiOutlineCheck,
-} from 'react-icons/ai'
+import { AiOutlineDelete } from 'react-icons/ai'
 import moment from 'moment'
 import { updatePalletsStock, completeOrder } from './actions'
 import { BsPlus } from 'react-icons/bs'
@@ -34,10 +30,8 @@ const Orders = props => {
   const tableHeader = [
     '#',
     'Cliente',
-    'Tipo OC',
     'Fecha Entrega',
-    'Modelo',
-    'Cantidad',
+    'Modelo - Cantidad',
     'Acciones',
   ]
 
@@ -87,37 +81,23 @@ const Orders = props => {
                 return (
                   <tr key={order._id}>
                     <td>{order.orderNumber}</td>
-                    <td>{order.customer[0].name}</td>
+                    <td>{order.customerId.name}</td>
+                    <td>{moment(order.date).format('DD/MM/YYYY')}</td>
                     <td>
-                      {order.orderType === 1 ? 'Pedido Rapido' : 'Producción'}
+                      <ul>
+                        {order.pallets.map(pallet => {
+                          return (
+                            <li key={pallet.palletId}>
+                              {pallet.model}: {pallet.amount}
+                            </li>
+                          )
+                        })}
+                      </ul>
                     </td>
                     <td>
-                      {order.orderType === 1
-                        ? moment(order.orderFast.deliveryDate).format(
-                            'DD/MM/YY LT'
-                          )
-                        : order.orderType === 0 && order.ordersProduction
-                        ? moment(order.ordersProduction[0].date).format(
-                            'DD/MM/YY'
-                          )
-                        : 'Sin datos disponibles'}
-                    </td>
-                    <td>{order.pallet[0].model}</td>
-                    <td>{order.amount}</td>
-                    <td>
-                      {order.ordersProduction &&
-                      order.ordersProduction.find(op => op.completed === 0) ===
-                        undefined ? (
-                        <Button
-                          className="btn --success"
-                          onClick={() => handleCompleteOrder(order._id)}
-                        >
-                          <AiOutlineCheck />
-                        </Button>
-                      ) : null}
-                      <Link to={`orders/details/${order._id}`}>
-                        <Button className="btn --info">
-                          <AiOutlineFileSearch />
+                      <Link to={`orders/main/${order._id}`}>
+                        <Button className="btn --success">
+                          <BsPlus />
                         </Button>
                       </Link>
                       <Button

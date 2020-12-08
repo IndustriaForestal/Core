@@ -31,12 +31,27 @@ import Card from '../../../components/Card/Card'
 import Loading from '../../../components/Loading/Loading'
 import './styles.scss'
 
+import CompletedTemporal from '../../../components/CompletedTemporal'
+
+import Pendu from '../../../components/Pendu'
+import Recepcion from '../../../components/Recepcion'
+// orderId === shipmentId
 const OrderProductionItem = props => {
   const { orderId, index } = useParams()
   const query = new URLSearchParams(useLocation().search)
-  const { orderDetails, pallet, raws, processes, items, nails } = props
+  const {
+    orderDetails,
+    pallets,
+    raws,
+    processes,
+    items,
+    nails,
+    pallet,
+    material,
+  } = props
   const [saveValue, setSaveValue] = useState(0)
   const [saveObservations, setSaveObservations] = useState()
+  const processId = query.get('processId')
 
   useEffect(() => {
     const topbar = {
@@ -44,17 +59,18 @@ const OrderProductionItem = props => {
       menu: { 'Orden de producción': '/orderProduction' },
     }
     setTitle(topbar)
-    props.get(`orders/${orderId}`, 'GET_ORDER')
+    props.get(`orders/shipments/${orderId}`, 'GET_ORDER')
     props.getAll(`raws`, 'GET_RAWS')
     props.getAll('processes', 'GET_PROCESSES')
     props.getAll('items', 'GET_ITEMS')
     props.getAll('nails', 'GET_NAILS')
+    props.getAll('material', 'GET_MATERIAL')
     // eslint-disable-next-line
   }, [])
 
   useEffect(() => {
     if (orderDetails !== undefined) {
-      props.get(`pallets/${orderDetails.palletId}`, 'GET_PALLET')
+      props.getAll(`pallets`, 'GET_PALLETS')
     }
     // eslint-disable-next-line
   }, [orderDetails])
@@ -368,10 +384,113 @@ const OrderProductionItem = props => {
       })
   }
 
-  if (orderDetails && pallet && processes) {
+  if (orderDetails && pallets && processes) {
+    const orderProduction = orderDetails.shipments.filter(
+      shipment => shipment._id === orderId
+    )[0].ordersProduction[index]
+
+    switch (processId) {
+      case '5f99cbc174cd296d5bb5b73d':
+        return (
+          <CompletedTemporal
+            shipmentId={orderId}
+            index={index}
+            materialId={orderProduction.materialId}
+            raws={raws}
+            orderProduction={orderProduction}
+            material={material}
+          />
+        )
+      case '5f99cbc474cd296d5bb5b73e':
+        return (
+          <CompletedTemporal
+            shipmentId={orderId}
+            index={index}
+            materialId={orderProduction.materialId}
+            raws={raws}
+            orderProduction={orderProduction}
+            material={material}
+          />
+        )
+      case '5f99cbc874cd296d5bb5b73f':
+        return (
+          <CompletedTemporal
+            shipmentId={orderId}
+            index={index}
+            materialId={orderProduction.materialId}
+            raws={raws}
+            orderProduction={orderProduction}
+            material={material}
+          />
+        )
+      case '5f99cbd374cd296d5bb5b741':
+        return (
+          <CompletedTemporal
+            shipmentId={orderId}
+            index={index}
+            materialId={orderProduction.materialId}
+            raws={raws}
+            orderProduction={orderProduction}
+            material={material}
+          />
+        )
+      case '5f99cbd474cd296d5bb5b742':
+        return (
+          <CompletedTemporal
+            shipmentId={orderId}
+            index={index}
+            materialId={orderProduction.materialId}
+            raws={raws}
+            orderProduction={orderProduction}
+            material={material}
+          />
+        )
+      case '5f99cbd874cd296d5bb5b743':
+        return (
+          <Pendu
+            orderId={orderId}
+            index={index}
+            itemsList={orderDetails.itemsList}
+            materialId={orderDetails.materialId}
+            raws={raws}
+            items={items}
+          />
+        )
+      case '5f99cbda74cd296d5bb5b744':
+        return (
+          <CompletedTemporal
+            shipmentId={orderId}
+            index={index}
+            materialId={orderProduction.materialId}
+            raws={raws}
+            orderProduction={orderProduction}
+            material={material}
+          />
+        )
+      case '5f99cbdc74cd296d5bb5b745':
+        return (
+          <Recepcion
+            shipmentId={orderId}
+            index={index}
+            materialId={orderProduction.materialId}
+            raws={raws}
+            orderProduction={orderProduction}
+            material={material}
+          />
+        )
+      default:
+        return <h1>ERROR FATAL!</h1>
+    }
+  } else {
+    return <Loading />
+  }
+
+  /* if (orderDetails && pallet && processes) {
     if (query.get('itemsList')) {
       const aserrio = orderDetails.ordersProduction.filter(
-        op => op.processId === '5f99cbda74cd296d5bb5b744' || op.processId === '5f99cbd874cd296d5bb5b743'
+        op =>
+          op.processId === '5f99cbda74cd296d5bb5b744' ||
+          op.processId === '5f99cbd874cd296d5bb5b743'
       )
       const startAserrio = moment(aserrio[0].date).format('DD-MM-YYYY')
       const endAserrio = moment(aserrio[aserrio.length - 1].date).format(
@@ -407,11 +526,6 @@ const OrderProductionItem = props => {
                       title="Agregar"
                       onChange={e => setSaveValue(parseInt(e.target.value))}
                     />
-                    {/*   <Input
-                      type="text"
-                      title="Observaciones"
-                      onChange={e => setSaveObservations(e.target.value)}
-                    /> */}
 
                     {item.ready && item.amount - item.ready === 0 ? (
                       <Button onClick={() => handleCompleteItem(index)}>
@@ -432,7 +546,6 @@ const OrderProductionItem = props => {
         return <h2>Loading</h2>
       }
     } else {
-      // ! CAMBIAR PROCESOS DE CAPTURA DESDE EL INICIO SE ESTA REDUNDANDO EN PROCESOS
       if (orderDetails.orderType === 0) {
         const capacity = pallet[0].capacityCharge.filter(
           cp => cp._id === orderDetails.platformId
@@ -476,17 +589,11 @@ const OrderProductionItem = props => {
                       orderDetails.ordersProduction[index].ready
                     : capacity[0].capacity}
                 </p>
-                {}
                 <Input
                   type="number"
                   title="Agregar"
                   onChange={e => setSaveValue(parseInt(e.target.value))}
                 />
-                {/*     <Input
-            type="text"
-            title="Observaciones"
-            onChange={e => setSaveObservations(e.target.value)}
-          /> */}
                 <Button onClick={() => handleSave(index)}>Guardar</Button>{' '}
               </>
             )}
@@ -498,17 +605,19 @@ const OrderProductionItem = props => {
     }
   } else {
     return <Loading />
-  }
+  } */
 }
 
 const mapStateToProps = state => {
   return {
     orderDetails: state.orderDetails,
+    pallets: state.pallets,
     pallet: state.pallet,
     raws: state.raws,
     processes: state.processes,
     items: state.items,
     nails: state.nails,
+    material: state.material,
   }
 }
 

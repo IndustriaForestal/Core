@@ -1,7 +1,9 @@
-import React, { useEffect, useState, useRef } from 'react'
+import React, { useEffect, useState } from 'react'
 import { Link } from 'react-router-dom'
 import { connect } from 'react-redux'
-import { useForm } from 'react-hook-form'
+import { AiOutlineDelete } from 'react-icons/ai'
+import DatePicker from 'react-datepicker'
+import moment from 'moment'
 import { setTitle, getAll, deleted, get, create } from '../../../actions/app'
 import Swal from 'sweetalert2'
 import Table from '../../../components/Table/Table'
@@ -12,18 +14,17 @@ import Loading from '../../../components/Loading/Loading'
 import './styles.scss'
 
 const CreateOrder = props => {
-  const { register, handleSubmit, errors } = useForm()
   const [newPallet, setPallet] = useState({})
-  const [fastOrder, setFastOrder] = useState(false)
-  const { setTitle, customers, pallets, order, history } = props
+  const [startDate, setStartDate] = useState(new Date())
+  const [orderNumber, setOrderNumber] = useState()
+  const [customerId, setCostumerId] = useState(0)
+  const [amount, setAmount] = useState(0)
+  const [palletsArray, setPalletArray] = useState([])
+  const { setTitle, customers, pallets } = props
 
-  const typeOrder = useRef(null)
+  const tableHeader = ['Nombre', 'Cantidad', 'Acciones']
 
-  const tableHeader = ['Nombre', '1 Verdes', '1 Secas', '2 Verdes', '2 Secas']
-
-  const onSubmit = data => {
-    data.orderType = typeOrder.current.options.selectedIndex
-
+  const handleSaveOrder = () => {
     Swal.fire({
       title: '¿Estás seguro?',
       text: 'Este proceso no se puede revertir',
@@ -34,7 +35,16 @@ const CreateOrder = props => {
       confirmButtonText: 'Crear',
     }).then(result => {
       if (result.isConfirmed) {
-        props.create('orders', 'CREATE_ORDER', data)
+        const order = {
+          date: moment(startDate).format('YYYY-MM-DDT06:00:00') + 'Z',
+          orderNumber,
+          customerId,
+          pallets: palletsArray,
+        }
+
+        props.create('orders', 'CREATE_ORDER', order).then(() => {
+          props.history.push('/orders')
+        })
       }
     })
   }
@@ -51,170 +61,120 @@ const CreateOrder = props => {
 
   const setPallets = e => {
     props.getAll(`pallets/customer/${e.target.value}`, 'GET_PALLETS')
+    setCostumerId(e.target.value)
   }
 
   const setPalletChange = e => {
     setPallet(pallets.filter(pallet => pallet._id === e.target.value))
   }
 
-  const handlePlatform = (pallet, e) => {
-    if (
-      e.target.options[e.target.selectedIndex].dataset.algo <=
-        pallet[0].stock[0].green ||
-      e.target.options[e.target.selectedIndex].dataset.algo <=
-        pallet[0].stock[1].green ||
-      e.target.options[e.target.selectedIndex].dataset.algo <=
-        pallet[0].stock[0].dry ||
-      e.target.options[e.target.selectedIndex].dataset.algo <=
-        pallet[0].stock[1].dry
-    ) {
-      setFastOrder(true)
-    } else {
-      setFastOrder(false)
-    }
+  const handleAddPallet = () => {
+    const pallet = newPallet[0]
+
+    setPalletArray([
+      ...palletsArray,
+      {
+        palletId: pallet._id,
+        qualityId: pallet.quality._id,
+        model: pallet.model,
+        amount: parseInt(amount),
+      },
+    ])
   }
 
-  useEffect(() => {
-    if (order) {
-      if (typeOrder.current.options.selectedIndex === 0) {
-        history.push(`/orders/create/${order}`)
-      } else {
-        history.push(`/orders/intern/${order}`)
-      }
-    }
-  }, [order, history])
+  const handleRemovePallet = palletId => {
+    const newArray = palletsArray.filter(pallet => pallet.palletId !== palletId)
+    setPalletArray(newArray)
+  }
 
   if (customers) {
     return (
       <>
+        <Card title="Datos Pedido">
+          <DatePicker
+            selected={startDate}
+            name="date"
+            onChange={date => setStartDate(date)}
+            className="datePicker_css"
+          />
+          <Input
+            type="text"
+            name="orderNumber"
+            title="# Pedido"
+            onInput={e => setOrderNumber(e.target.value)}
+          />
+          <div className="inputGroup">
+            <label htmlFor="processId">
+              <span>Cliente:</span>
+              <select name="customerId" onChange={setPallets}>
+                <option value="0">Seleccionar...</option>
+                {customers.map(customer => {
+                  return (
+                    <option key={customer._id} value={customer._id}>
+                      {customer.name}
+                    </option>
+                  )
+                })}
+              </select>
+            </label>
+          </div>
+        </Card>
         <Card title="Crear Pedido">
-          <form
-            id="formNail"
-            className="formNail"
-            onSubmit={handleSubmit(onSubmit)}
-          >
+          {pallets ? (
             <div className="inputGroup">
               <label htmlFor="processId">
-                <span>Cliente:</span>
-                <select name="customerId" onChange={setPallets}>
+                <span>Tarimas:</span>
+                <select name="palletId" onChange={setPalletChange}>
                   <option value="0">Seleccionar...</option>
-                  {customers.map(customer => {
+                  {pallets.map(pallet => {
                     return (
-                      <option key={customer._id} value={customer._id}>
-                        {customer.name}
+                      <option key={pallet._id} value={pallet._id}>
+                        {pallet.model} - {pallet.qualityId[0]}
                       </option>
                     )
                   })}
                 </select>
               </label>
             </div>
-            <Input
-              type="text"
-              name="orderNumber"
-              title="# Pedido"
-              passRef={register({ required: true })}
-              placeholder={errors.orderNumber && 'Campo requerido'}
-            />
-
-            {pallets ? (
-              <div className="inputGroup">
-                <label htmlFor="processId">
-                  <span>Tarimas:</span>
-                  <select
-                    name="palletId"
-                    onChange={setPalletChange}
-                    ref={register({ required: true })}
-                  >
-                    <option value="0">Seleccionar...</option>
-                    {pallets.map(pallet => {
-                      return (
-                        <option key={pallet._id} value={pallet._id}>
-                          {pallet.model} - {pallet.qualityId[0]}
-                        </option>
-                      )
-                    })}
-                  </select>
-                </label>
-              </div>
-            ) : null}
-            <Input
-              type="number"
-              name="amount"
-              title="Cantidad"
-              passRef={register({ required: true })}
-              placeholder={errors.orderNumber && 'Campo requerido'}
-            />
-            {newPallet && newPallet.length > 0 ? (
-              <>
-                <div className="inputGroup">
-                  {console.log(newPallet)}
-                  <label htmlFor="processId">
-                    <span>Plataforma:</span>
-                    <select
-                      name="platformId"
-                      onChange={e => handlePlatform(newPallet, e)}
-                      ref={register({ required: true })}
-                    >
-                      <option value="0">Seleccionar...</option>
-                      {newPallet.map(pallet =>
-                        pallet.capacityCharge.map(capacityCharge => (
-                          <option
-                            key={capacityCharge._id}
-                            value={capacityCharge._id}
-                            data-algo={capacityCharge.capacity}
-                          >{`${capacityCharge.name[0]}: ${capacityCharge.capacity}`}</option>
-                        ))
-                      )}
-                    </select>
-                  </label>
-                </div>
-
-                <div className="inputGroup">
-                  <label htmlFor="processId">
-                    <span>Tipo de Pedido:</span>
-                    <select name="typeOrder" ref={typeOrder}>
-                      <option value="0">Producción</option>
-                      <option value="1">Pedido Rapido</option>
-                    </select>
-                  </label>
-                </div>
-                {/*  
-               Cambio de pedido rapido condicionado, a libre
-               <div className="inputGroup">
-                  <label htmlFor="processId">
-                    <span>Tipo de Pedido:</span>
-                    <select name="typeOrder" ref={typeOrder}>
-                      <option value="0">Producción</option>
-                      {fastOrder ? (
-                        <option value="1">Pedido Rapido</option>
-                      ) : null}
-                    </select>
-                  </label>
-                </div> */}
-              </>
-            ) : null}
-            <div className="formNail__buttons">
-              <Button type="submit" className="btn --success">
-                Crear
-              </Button>
-              <Link to="/nails">
-                <Button className="btn --danger">Cancelar</Button>
-              </Link>
-            </div>
-          </form>
+          ) : null}
+          <Input
+            type="number"
+            name="amount"
+            title="Cantidad"
+            onInput={e => setAmount(e.target.value)}
+          />
+          <div className="formNail__buttons">
+            <Button
+              type="button"
+              className="btn --success"
+              onClick={handleAddPallet}
+            >
+              Agregar
+            </Button>
+            <Link to="/nails">
+              <Button className="btn --danger">Cancelar</Button>
+            </Link>
+          </div>
         </Card>
-        {newPallet && newPallet.length > 0 ? (
-          <Table head={tableHeader}>
-            {newPallet.map(pallet => (
-              <tr key={pallet._id}>
-                <td>{pallet.model}</td>
-                <td>{pallet.stock[0].green}</td>
-                <td>{pallet.stock[0].dry}</td>
-                <td>{pallet.stock[1].green}</td>
-                <td>{pallet.stock[1].dry}</td>
-              </tr>
-            ))}
-          </Table>
+
+        <Table head={tableHeader}>
+          {palletsArray.map(pallet => (
+            <tr key={pallet.palletId}>
+              <td>{pallet.model}</td>
+              <td>{pallet.amount}</td>
+              <td>
+                <Button
+                  className="btn --danger"
+                  onClick={() => handleRemovePallet(pallet.palletId)}
+                >
+                  <AiOutlineDelete />
+                </Button>
+              </td>
+            </tr>
+          ))}
+        </Table>
+        {palletsArray.length > 0 ? (
+          <Button onClick={handleSaveOrder}>Crear</Button>
         ) : null}
       </>
     )

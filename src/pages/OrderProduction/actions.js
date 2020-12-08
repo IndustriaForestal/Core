@@ -202,3 +202,54 @@ export const addReadyToOrderProduction = (
     console.log(error)
   }
 }
+
+// ? Completa una orden de producción con el id del embarque y el index de orderProductions
+
+export const completeOrderProductionSingle = (
+  index,
+  shipmentId
+) => async dispatch => {
+  try {
+    await axios({
+      url: `${process.env.REACT_APP_API}orders/completeOrderProduction/${shipmentId}/${index}`,
+      headers: { Authorization: `Bearer ${Cookies.get('token')}` },
+      method: 'put',
+    })
+    dispatch(
+      createNotification({
+        text: 'Orden de Producción Completada',
+        typeAction: 'UPDATE_ORDER_PRODUCTION',
+        date: moment().format('YYYY-MM-DDThh:mm:ss') + 'Z',
+      })
+    )
+    dispatch({
+      type: 'UPDATE_ORDER_PRODUCTION',
+    })
+  } catch (error) {
+    console.log(error)
+  }
+}
+
+// ? Completa el embarque shipment con su ID
+
+export const completeShipment = shipmentId => async dispatch => {
+  try {
+    await axios({
+      url: `${process.env.REACT_APP_API}orders/completeShipment/${shipmentId}`,
+      headers: { Authorization: `Bearer ${Cookies.get('token')}` },
+      method: 'put',
+    })
+    dispatch(
+      createNotification({
+        text: 'Embarque Completado',
+        typeAction: 'UPDATE_ORDER_PRODUCTION',
+        date: moment().format('YYYY-MM-DDThh:mm:ss') + 'Z',
+      })
+    )
+    dispatch({
+      type: 'UPDATE_ORDER_PRODUCTION',
+    })
+  } catch (error) {
+    console.log(error)
+  }
+}

@@ -304,7 +304,7 @@ const reducer = (state, action) => {
     case 'GET_ORDER':
       return {
         ...state,
-        orderDetails: action.payload[0],
+        orderDetails: action.payload,
         order: null,
       }
     case 'CREATE_ORDER':
@@ -320,6 +320,11 @@ const reducer = (state, action) => {
     case 'CREATE_PURCHASE':
       return {
         ...state,
+      }
+    case 'CREATE_ORDERS_SHIPMENT':
+      return {
+        ...state,
+        order: action.payload
       }
     case 'CREATE_ORDERS_PRODUCTION':
       return {
