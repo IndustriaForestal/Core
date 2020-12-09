@@ -324,7 +324,7 @@ const reducer = (state, action) => {
     case 'CREATE_ORDERS_SHIPMENT':
       return {
         ...state,
-        order: action.payload
+        order: action.payload,
       }
     case 'CREATE_ORDERS_PRODUCTION':
       return {

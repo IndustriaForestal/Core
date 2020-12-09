@@ -179,7 +179,7 @@ const CreateOrder = props => {
           {orderDetails.pallets.map(pallet => (
             <tr key={pallet.palletId}>
               <td>{pallet.model}</td>
-              <td>{pallet.amount}</td>
+              <td>{pallet.ready ? pallet.amount - pallet.ready : pallet.amount}</td>
             </tr>
           ))}
         </Table>

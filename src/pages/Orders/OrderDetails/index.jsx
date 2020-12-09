@@ -32,13 +32,13 @@ const OrderDetails = props => {
       menu: { Pedidos: '/orders' },
     }
     setTitle(topbar)
-    props.get(`orders/${id}`, 'GET_ORDER')
+    props.get(`orders/shipments/${id}`, 'GET_ORDER')
     // eslint-disable-next-line
   }, [])
 
   useEffect(() => {
     if (orderDetails !== undefined) {
-      props.get(`pallets/${orderDetails.palletId}`, 'GET_PALLET')
+      props.get(`pallets/${orderDetails.pallets[0].palletId}`, 'GET_PALLET')
     }
     // eslint-disable-next-line
   }, [orderDetails])
@@ -73,14 +73,16 @@ const OrderDetails = props => {
   }
 
   if (orderDetails && pallet) {
-    if (orderDetails.orderType === 0) {
+    const shipment = orderDetails.shipments.filter(shipment => shipment._id === id)[0]
+    console.log(shipment)
+    if (shipment.type === 0) {
       return (
         <Card title={`Pedido #${orderDetails.orderNumber}`}>
           <Title>{pallet[0].model}</Title>
           <Title className="title --small">{pallet[0].customerId.name}</Title>
           <Table head={tableHeader}>
-            {orderDetails.ordersProduction ? (
-              orderDetails.ordersProduction.map((order, index) => {
+            {shipment.ordersProduction ? (
+              shipment.ordersProduction.map((order, index) => {
                 console.log(order)
                 return (
                   <tr key={index}>
@@ -109,30 +111,30 @@ const OrderDetails = props => {
         </Card>
       )
     } else {
-      if (orderDetails.orderFast) {
+      if (shipment.orderFast) {
         return (
-          <Card title={`Pedido Rapido #${orderDetails.orderNumber}`}>
+          <Card title={`Pedido Rapido #${shipment.orderNumber}`}>
             <Title>{pallet[0].model}</Title>
             <Title className="title --small">{pallet[0].customerId.name}</Title>
             <p>
               Fecha de entrega:
-              {moment(orderDetails.orderFast.deliveryDate).format('L LT')}
+              {moment(shipment.orderFast.deliveryDate).format('L LT')}
             </p>
             <p>
               Inicio viaje:
-              {moment(orderDetails.orderFast.travel).format('L LT')}
+              {moment(shipment.orderFast.travel).format('L LT')}
             </p>
             <p>
               Inicio Limpieza:
-              {moment(orderDetails.orderFast.clean).format('L LT')}
+              {moment(shipment.orderFast.clean).format('L LT')}
             </p>
-            <p>Personal Limpieza: {orderDetails.orderFast.peopleClean}</p>
+            <p>Personal Limpieza: {shipment.orderFast.peopleClean}</p>
             <p>
               Inicio estufado:
-              {moment(orderDetails.orderFast.bake).format('L LT')}
+              {moment(shipment.orderFast.bake).format('L LT')}
             </p>
-            <p>Tiempo estufado: {orderDetails.orderFast.timeBake}</p>
-            <Button onClick={() => handleComplete(orderDetails._id)}>
+            <p>Tiempo estufado: {shipment.orderFast.timeBake}</p>
+            <Button onClick={() => handleComplete(shipment._id)}>
               Completado
             </Button>
           </Card>

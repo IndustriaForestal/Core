@@ -86,11 +86,19 @@ const Orders = props => {
                     <td>
                       <ul>
                         {order.pallets.map(pallet => {
-                          return (
-                            <li key={pallet.palletId}>
-                              {pallet.model}: {pallet.amount}
-                            </li>
-                          )
+                          if (pallet.ready) {
+                            return (
+                              <li key={pallet.palletId}>
+                                {pallet.model}: {pallet.amount - pallet.ready}
+                              </li>
+                            )
+                          } else {
+                            return (
+                              <li key={pallet.palletId}>
+                                {pallet.model}: {pallet.amount}
+                              </li>
+                            )
+                          }
                         })}
                       </ul>
                     </td>

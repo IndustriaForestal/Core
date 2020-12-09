@@ -253,3 +253,29 @@ export const completeShipment = shipmentId => async dispatch => {
     console.log(error)
   }
 }
+
+//? Agrega tarimas listas a pedido
+
+export const addReadyToOrder = (
+  palletId,
+  amount,
+  orderId
+) => async dispatch => {
+  try {
+    await axios({
+      url: `${process.env.REACT_APP_API}orders/addReadyToOrder/${orderId}`,
+      headers: { Authorization: `Bearer ${Cookies.get('token')}` },
+      method: 'put',
+      data: {
+        palletId,
+        amount,
+      },
+    })
+
+    dispatch({
+      type: 'UPDATE_ORDER_PRODUCTION',
+    })
+  } catch (error) {
+    console.log(error)
+  }
+}

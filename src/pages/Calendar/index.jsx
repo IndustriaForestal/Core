@@ -21,7 +21,30 @@ const CalendarOrders = props => {
 
   let eventList = []
 
-  if (orders && orders.filter(order => order.completed !== 1).length > 0) {
+  if (orders) {
+    const shipmentsArray = orders.map(order =>
+      order.shipments.map(shipment => shipment)
+    )
+
+    console.log(shipmentsArray)
+
+    shipmentsArray.map(item =>
+      item.map(shipment => {
+        if (shipment.completed !== 1) {
+          eventList.push({
+            title: 'Prueba',
+            start: moment(shipment.ordersProduction[0].date).toDate(),
+            end: moment(shipment.ordersProduction[0].date).toDate(),
+            orderId: shipment._id,
+          })
+        }
+      })
+    )
+
+    console.log(eventList)
+  }
+
+  /* if (orders && orders.filter(order => order.completed !== 1).length > 0) {
     eventList = orders
       .filter(order => order.completed !== 1)
       .map(order => {
@@ -42,9 +65,9 @@ const CalendarOrders = props => {
           }
         }
       })
-  }
+  } */
 
-  const handleClickEvent = (e) => {
+  const handleClickEvent = e => {
     props.history.push(`/orders/details/${e.orderId}`)
   }
 
