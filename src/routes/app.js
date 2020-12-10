@@ -59,6 +59,7 @@ import CreateUser from '../pages/Users/CreateUser'
 import UpdateUser from '../pages/Users/UpdateUser'
 import OrderProductionList from '../pages/OrderProduction'
 import OrderProductionItem from '../pages/OrderProduction/OrderProductionItem'
+import OrderShipments from '../pages/Orders/OrderShipments'
 import Calendar from '../pages/Calendar'
 
 const App = ({ loggedIn }) => {
@@ -298,6 +299,11 @@ const App = ({ loggedIn }) => {
               exact
               path="/orders/details/:id"
               component={role === 'Administrador' ? OrderDetails : Home}
+            />
+            <Route
+              exact
+              path="/orders/shipments/:id"
+              component={role === 'Administrador' ? OrderShipments : Home}
             />
             <Route
               exact

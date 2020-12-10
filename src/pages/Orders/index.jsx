@@ -2,6 +2,7 @@ import React, { useEffect } from 'react'
 import { Link } from 'react-router-dom'
 import { connect } from 'react-redux'
 import { AiOutlineDelete } from 'react-icons/ai'
+import { BsFileEarmarkPlus } from 'react-icons/bs'
 import moment from 'moment'
 import { updatePalletsStock, completeOrder } from './actions'
 import { BsPlus } from 'react-icons/bs'
@@ -106,6 +107,11 @@ const Orders = props => {
                       <Link to={`orders/main/${order._id}`}>
                         <Button className="btn --success">
                           <BsPlus />
+                        </Button>
+                      </Link>
+                      <Link to={`orders/shipments/${order._id}`}>
+                        <Button className="btn --info">
+                          <BsFileEarmarkPlus />
                         </Button>
                       </Link>
                       <Button
