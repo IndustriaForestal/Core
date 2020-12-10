@@ -247,9 +247,9 @@ const OrderProduction = props => {
                   <React.Fragment key={order._id}>
                     <Title>{`Pendientes`}</Title>
                     <Table head={tableHeader}>
-                      {order.ordersProduction ? (
+                      {order.ordersProduction  ? (
                         order.ordersProduction.map((production, index) => {
-                          if (production.processId === processId) {
+                          if (production.processId === processId && production.completed !== 1) {
                             return (
                               <tr key={index}>
                                 <td>
