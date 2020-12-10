@@ -20,14 +20,7 @@ const CompletedTemp = props => {
   const [saveValue, setSaveValue] = useState(0)
   const [saveObservations, setSaveObservations] = useState()
   const [rawId, setRawId] = useState(0)
-  const {
-    shipmentId,
-    index,
-    materialId,
-    raws,
-    orderProduction,
-    material,
-  } = props
+  const { shipmentId, index, materialId, raws, socket, material } = props
 
   const materialReception = raws.filter(
     raw => raw.name === material.filter(m => m._id === materialId)[0].name
@@ -54,6 +47,9 @@ const CompletedTemp = props => {
         })
       })
       .then(() => {
+        socket.emit('notification')
+      })
+      .then(() => {
         history.push('/orderProduction')
       })
   }
@@ -76,6 +72,7 @@ const mapStateToProps = state => {
     processes: state.processes,
     items: state.items,
     nails: state.nails,
+    socket: state.socket,
   }
 }
 

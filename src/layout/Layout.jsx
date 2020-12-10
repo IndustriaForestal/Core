@@ -1,6 +1,7 @@
 import React, { useEffect } from 'react'
 import { connect } from 'react-redux'
 import io from 'socket.io-client'
+import Swal from 'sweetalert2'
 import './Layout.scss'
 import Aside from '../components/Aside/Aside'
 import Topbar from '../components/Topbar/Topbar'
@@ -17,13 +18,25 @@ const Layout = props => {
     })
     socket.on('notification', () => {
       props.getAll('notifications', 'GET_NOTIFICATIONS')
+
       // console.log('search notifications')
+      const Toast = Swal.mixin({
+        toast: true,
+        position: 'bottom-end',
+        showConfirmButton: false,
+        timer: 3000,
+      })
+
+      Toast.fire({
+        icon: 'info',
+        title: 'Nueva Notificación',
+      })
     })
 
     socket.on('disconnect', () => {
-      socket.disconnect();
-    });
-   
+      socket.disconnect()
+    })
+
     props.setSocket(socket)
     // eslint-disable-next-line
   }, [])

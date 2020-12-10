@@ -26,7 +26,6 @@ const Customers = props => {
   }, [])
 
   const tableHeader = [
-    '#',
     'Nombre',
     'Dirección',
     'Email',
@@ -81,7 +80,7 @@ const Customers = props => {
               <td>{customer.phone}</td>
               <td>{customer.shipment}</td>
               <td>
-                <Link to={`customers/${customer.id}`}>
+                <Link to={`customers/${customer._id}`}>
                   <Button className="btn --warning">
                     <AiOutlineEdit />
                   </Button>

@@ -86,7 +86,7 @@ const OrderProduction = props => {
                 return (
                   <React.Fragment key={order._id}>
                     <Title>{`Estado`}</Title>
-                    {order.ordersProduction.filter(op => op.completed === 0)
+                    {order.ordersProduction && order.ordersProduction.filter(op => op.completed === 0)
                       .length === 0 ? (
                       <Button onClick={() => handleCompleteShipment(order._id)}>
                         Completar
