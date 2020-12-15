@@ -31,6 +31,7 @@ const Orders = props => {
   const tableHeader = [
     '#',
     'Cliente',
+    'Fecha Recepción',
     'Fecha Entrega',
     'Modelo - Cantidad',
     'Acciones',
@@ -83,6 +84,7 @@ const Orders = props => {
                   <tr key={order._id}>
                     <td>{order.orderNumber}</td>
                     <td>{order.customerId.name}</td>
+                    <td>{moment(order.startDate).format('DD/MM/YYYY')}</td>
                     <td>{moment(order.date).format('DD/MM/YYYY')}</td>
                     <td>
                       <ul>
