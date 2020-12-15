@@ -27,7 +27,7 @@ import './styles.scss'
 
 const OrderIntern = props => {
   const { id } = useParams()
-  const { orderDetails, pallet, quality, setTitle, socket } = props
+  const { orderDetails, order, pallet, quality, setTitle, socket } = props
   const [startDate, setStartDate] = useState(new Date())
   const [hoursLeft, setHoursLeft] = useState(12)
   const [checkedClean, setCheckedClean] = useState(false)
@@ -42,6 +42,8 @@ const OrderIntern = props => {
 
   const [hoursTravel, setHoursTravel] = useState(0)
 
+  console.log(id)
+
   useEffect(() => {
     const topbar = {
       title: 'Pedidos',
@@ -54,8 +56,8 @@ const OrderIntern = props => {
 
   useEffect(() => {
     if (orderDetails !== undefined) {
-      props.get(`qualities/${orderDetails.pallet[0].qualityId}`, 'GET_QUALITY')
-      props.get(`pallets/${orderDetails.palletId}`, 'GET_PALLET')
+      props.get(`qualities/${orderDetails.pallets[0].qualityId}`, 'GET_QUALITY')
+      // props.get(`pallets/${orderDetails.palletId}`, 'GET_PALLET')
     }
     // eslint-disable-next-line
   }, [orderDetails])
@@ -141,7 +143,103 @@ const OrderIntern = props => {
     const timeBakeFinal =
       parseInt(hoursTravel) + parseInt(timeClean) + parseInt(timeBake)
 
-    const orderFast = {
+    let ordersProduction = [
+      {
+        date:
+          moment(startDate)
+            .subtract(hoursTravel, 'hours')
+            .format('YYYY-MM-DDTHH:mm:00') + 'Z',
+        use: 1,
+        postion: 1,
+        processId: '5f99cbc174cd296d5bb5b73d',
+        processName: 'Embarque',
+        type: 1,
+        count: 1,
+        completed: 0,
+        orderId: '5f99cbc174cd296d5bb5b73d',
+        specialProcessId: null,
+        materialId: '5fa07756ce9a4996368fb090',
+      },
+    ]
+
+    if (checkedClean) {
+      ordersProduction.push({
+        date:
+          moment(startDate)
+            .subtract(timeCleanFinal, 'hours')
+            .format('YYYY-MM-DDTHH:mm:00') + 'Z',
+        use: 1,
+        postion: 2,
+        processId: '5f99cbc474cd296d5bb5b73e',
+        processName: 'Limpieza',
+        type: 1,
+        count: 1,
+        completed: 0,
+        orderId: '5f99cbc174cd296d5bb5b73d',
+        specialProcessId: null,
+        peopleClean,
+        materialId: '5fa07756ce9a4996368fb090',
+      })
+    }
+
+    if (checkedBake) {
+      ordersProduction.push({
+        date:
+          moment(startDate)
+            .subtract(timeBakeFinal, 'hours')
+            .format('YYYY-MM-DDTHH:mm:00') + 'Z',
+        use: 1,
+        postion: 3,
+        processId: '5f99cbd374cd296d5bb5b741',
+        processName: 'Estufado',
+        type: 1,
+        count: 1,
+        completed: 0,
+        orderId: '5f99cbc174cd296d5bb5b73d',
+        specialProcessId: null,
+        timeBake,
+        materialId: '5fa07756ce9a4996368fb090',
+      })
+    }
+
+    const shipment = orderDetails.shipments.filter(
+      shipment => shipment.type === 1 && shipment.procesed === 0
+    )[0]
+
+    console.log(shipment)
+
+    const order = {
+      materialId: '5f99cbc874cd296d5bb5b73f',
+    }
+
+    props
+      .update(
+        `orders/orderProduction/${shipment._id}`,
+        'CREATE_ORDERS_PRODUCTION',
+        ordersProduction
+      )
+      .then(() => {
+        props.createNotificationManual({
+          text: 'Nuevo Pedido Producción',
+          link: `/orders/details/${orderDetails._id}`,
+          date: moment().format('YYYY-MM-DDThh:mm:ss') + 'Z',
+        })
+      })
+      .then(() => {
+        props.history.push('/')
+      })
+      .then(() => {
+        socket.emit('notification')
+      })
+      .then(() => {
+        props.update(
+          `orders/shipmentMaterial/${shipment._id}`,
+          'CREATE_ORDERS_PRODUCTION',
+          order
+        )
+      })
+
+    /*  const orderFast = {
       palletId: orderDetails.palletId,
       deliveryDate: moment(startDate).format('YYYY-MM-DDT06:00:00') + 'Z',
       travel:
@@ -158,9 +256,11 @@ const OrderIntern = props => {
           .subtract(timeBakeFinal, 'hours')
           .format('YYYY-MM-DDTHH:mm:00') + 'Z',
       timeBake,
-    }
+    } */
 
-    Swal.fire({
+    console.log(ordersProduction)
+
+    /*  Swal.fire({
       title: '¿Estás seguro?',
       text: 'Este proceso no se puede revertir',
       icon: 'warning',
@@ -190,7 +290,7 @@ const OrderIntern = props => {
             props.history.push('/')
           })
       }
-    })
+    }) */
   }
 
   return (
@@ -273,6 +373,7 @@ const OrderIntern = props => {
 const mapStateToProps = state => {
   return {
     orderDetails: state.orderDetails,
+    order: state.order,
     quality: state.quality,
     pallet: state.pallet,
     capacities: state.capacities,

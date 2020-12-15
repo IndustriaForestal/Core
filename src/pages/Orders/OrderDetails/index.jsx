@@ -73,11 +73,17 @@ const OrderDetails = props => {
   }
 
   if (orderDetails && pallet) {
-    const shipment = orderDetails.shipments.filter(shipment => shipment._id === id)[0]
+    const shipment = orderDetails.shipments.filter(
+      shipment => shipment._id === id
+    )[0]
     console.log(shipment)
-    if (shipment.type === 0) {
+    if (shipment.type !== 3) {
       return (
-        <Card title={`Pedido #${orderDetails.orderNumber}`}>
+        <Card
+          title={`Pedido ${shipment.type === 1 ? 'Rapido' : null} #${
+            orderDetails.orderNumber
+          }`}
+        >
           <Title>{pallet[0].model}</Title>
           <Title className="title --small">{pallet[0].customerId.name}</Title>
           <Table head={tableHeader}>

@@ -16,6 +16,7 @@ import './styles.scss'
 const CreateOrder = props => {
   const [newPallet, setPallet] = useState({})
   const [startDate, setStartDate] = useState(new Date())
+  const [startDateOrder, setStartDateOrder] = useState(new Date())
   const [orderNumber, setOrderNumber] = useState()
   const [customerId, setCostumerId] = useState(0)
   const [amount, setAmount] = useState(0)
@@ -37,11 +38,12 @@ const CreateOrder = props => {
       if (result.isConfirmed) {
         const order = {
           date: moment(startDate).format('YYYY-MM-DDT06:00:00') + 'Z',
+          startDate: moment(startDateOrder).format('YYYY-MM-DDT06:00:00') + 'Z',
           orderNumber,
           customerId,
           pallets: palletsArray,
         }
-
+        console.log(order)
         props.create('orders', 'CREATE_ORDER', order).then(() => {
           props.history.push('/orders')
         })
@@ -91,12 +93,25 @@ const CreateOrder = props => {
     return (
       <>
         <Card title="Datos Pedido">
-          <DatePicker
-            selected={startDate}
-            name="date"
-            onChange={date => setStartDate(date)}
-            className="datePicker_css"
-          />
+          <div>
+            <p>Recepción del pedido</p>
+            <DatePicker
+              selected={startDateOrder}
+              name="dateStart"
+              onChange={date => setStartDateOrder(date)}
+              className="datePicker_css"
+            />
+          </div>
+          <div>
+            <p>Entrega del pedido</p>
+            <DatePicker
+              selected={startDate}
+              name="date"
+              onChange={date => setStartDate(date)}
+              className="datePicker_css"
+            />
+          </div>
+
           <Input
             type="text"
             name="orderNumber"
