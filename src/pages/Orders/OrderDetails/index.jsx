@@ -80,7 +80,7 @@ const OrderDetails = props => {
     if (shipment.type !== 3) {
       return (
         <Card
-          title={`Pedido ${shipment.type === 1 ? 'Rapido' : null} #${
+          title={`Pedido ${shipment.type === 1 ? 'Rapido' : ''} #${
             orderDetails.orderNumber
           }`}
         >

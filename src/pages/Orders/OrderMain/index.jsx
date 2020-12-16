@@ -30,7 +30,7 @@ const CreateOrder = props => {
   const typeOrder = useRef(null)
 
   const tableHeader = ['Nombre', '1 Verdes', '1 Secas', '2 Verdes', '2 Secas']
-  const tableHeader2 = ['Nombre', 'Cantidad']
+  const tableHeader2 = ['Nombre', 'OC', 'Cantidad']
   const tableHeader3 = ['Nombre', 'Cantidad', 'Accion']
 
   const onSubmit = data => {
@@ -179,6 +179,7 @@ const CreateOrder = props => {
           {orderDetails.pallets.map(pallet => (
             <tr key={pallet.palletId}>
               <td>{pallet.model}</td>
+              <td>{pallet.orderNumber}</td>
               <td>{pallet.ready ? pallet.amount - pallet.ready : pallet.amount}</td>
             </tr>
           ))}

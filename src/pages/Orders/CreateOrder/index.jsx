@@ -18,12 +18,13 @@ const CreateOrder = props => {
   const [startDate, setStartDate] = useState(new Date())
   const [startDateOrder, setStartDateOrder] = useState(new Date())
   const [orderNumber, setOrderNumber] = useState()
+  const [paperNumber, setPaperNumber] = useState()
   const [customerId, setCostumerId] = useState(0)
   const [amount, setAmount] = useState(0)
   const [palletsArray, setPalletArray] = useState([])
   const { setTitle, customers, pallets } = props
 
-  const tableHeader = ['Nombre', 'Cantidad', 'Acciones']
+  const tableHeader = ['# OC','Nombre', 'Cantidad', 'Acciones']
 
   const handleSaveOrder = () => {
     Swal.fire({
@@ -39,7 +40,7 @@ const CreateOrder = props => {
         const order = {
           date: moment(startDate).format('YYYY-MM-DDT06:00:00') + 'Z',
           startDate: moment(startDateOrder).format('YYYY-MM-DDT06:00:00') + 'Z',
-          orderNumber,
+          paperNumber,
           customerId,
           pallets: palletsArray,
         }
@@ -80,6 +81,7 @@ const CreateOrder = props => {
         qualityId: pallet.quality._id,
         model: pallet.model,
         amount: parseInt(amount),
+        orderNumber,
       },
     ])
   }
@@ -111,12 +113,11 @@ const CreateOrder = props => {
               className="datePicker_css"
             />
           </div>
-
           <Input
             type="text"
-            name="orderNumber"
-            title="# Pedido"
-            onInput={e => setOrderNumber(e.target.value)}
+            name="paperNumber"
+            title="# Papeleta"
+            onInput={e => setPaperNumber(e.target.value)}
           />
           <div className="inputGroup">
             <label htmlFor="processId">
@@ -135,6 +136,12 @@ const CreateOrder = props => {
           </div>
         </Card>
         <Card title="Crear Pedido">
+          <Input
+            type="text"
+            name="orderNumber"
+            title="# Pedido"
+            onInput={e => setOrderNumber(e.target.value)}
+          />
           {pallets ? (
             <div className="inputGroup">
               <label htmlFor="processId">
@@ -152,6 +159,7 @@ const CreateOrder = props => {
               </label>
             </div>
           ) : null}
+
           <Input
             type="number"
             name="amount"
@@ -175,6 +183,7 @@ const CreateOrder = props => {
         <Table head={tableHeader}>
           {palletsArray.map(pallet => (
             <tr key={pallet.palletId}>
+              <td>{pallet.orderNumber}</td>
               <td>{pallet.model}</td>
               <td>{pallet.amount}</td>
               <td>

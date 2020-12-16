@@ -82,7 +82,7 @@ const Orders = props => {
               if (!order.completed) {
                 return (
                   <tr key={order._id}>
-                    <td>{order.orderNumber}</td>
+                    <td>{order.paperNumber}</td>
                     <td>{order.customerId.name}</td>
                     <td>{moment(order.startDate).format('DD/MM/YYYY')}</td>
                     <td>{moment(order.date).format('DD/MM/YYYY')}</td>
@@ -92,13 +92,13 @@ const Orders = props => {
                           if (pallet.ready) {
                             return (
                               <li key={pallet.palletId}>
-                                {pallet.model}: {pallet.amount - pallet.ready}
+                                {pallet.orderNumber} -- {pallet.model}: {pallet.amount - pallet.ready}
                               </li>
                             )
                           } else {
                             return (
                               <li key={pallet.palletId}>
-                                {pallet.model}: {pallet.amount}
+                                {pallet.orderNumber} -- {pallet.model}: {pallet.amount}
                               </li>
                             )
                           }
