@@ -22,7 +22,22 @@ const CalendarOrders = props => {
   let eventList = []
 
   if (orders) {
-    const shipmentsArray = orders.map(order =>
+    orders.map(order => {
+      if(order.shipments){
+        order.shipments.map(shipment => {
+          if (shipment.completed !== 1) {
+            eventList.push({
+              title: order.paperNumber,
+              start: moment(shipment.ordersProduction[0].date).toDate(),
+              end: moment(shipment.ordersProduction[0].date).toDate(),
+              orderId: shipment._id,
+            })
+          }
+        })
+      }
+    })
+
+   /*  const shipmentsArray = orders.map(order =>
       order.shipments.map(shipment => shipment)
     )
 
@@ -39,7 +54,7 @@ const CalendarOrders = props => {
           })
         }
       })
-    )
+    ) */
 
     console.log(eventList)
   }

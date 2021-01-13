@@ -22,6 +22,7 @@ const Nails = props => {
         Complementos: '/stockItems',
         Clavos: '/stockNails',
         'Materia Prima': '/stockMaterial',
+        'Entradas y salidas': '/stockChanges',
       },
     }
     setTitle(topbar)
