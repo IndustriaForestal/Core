@@ -1,8 +1,5 @@
 import React, { useEffect, useState } from 'react'
-import { Link } from 'react-router-dom'
 import { connect } from 'react-redux'
-import { AiOutlineEdit } from 'react-icons/ai'
-import { BsPlus } from 'react-icons/bs'
 import {
   setTitle,
   setWraper,
@@ -24,6 +21,8 @@ const Nails = props => {
   const [idSelected, setIdSelected] = useState(0)
   const [inOut, setInOut] = useState(0)
   const [amount, setAmount] = useState(0)
+  const [sucursal, setSucursal] = useState(null)
+  const [greenDryRepair, setGreenDryRepair] = useState(null)
 
   useEffect(() => {
     const topbar = {
@@ -79,20 +78,46 @@ const Nails = props => {
         label: raw.name,
       }
     })
+
     const handleSaveStock = () => {
       const user = Cookies.get('name')
-      props.update(`stocks/${idSelected}`, 'UPDATE_STOCK', {
-        type,
-        inOut,
-        amount,
-      })
-      props.create('stocks/log', 'LOG_STOCK', {
-        type,
-        inOut,
-        amount,
-        user,
-        stockId: idSelected,
-      })
+      if (type === 1) {
+        console.log(user + ' Usuario')
+        console.log(idSelected + ' Id')
+        console.log(sucursal + ' Sucursal')
+        console.log(amount + ' Cantidad')
+        console.log(greenDryRepair + ' greenDryRepair')
+        console.log(sucursal + ' sucursal')
+        props.update(`stock/${idSelected}`, 'UPDATE_STOCK', {
+          type,
+          amount,
+          inOut,
+          user,
+          greenDryRepair,
+          sucursal
+        })
+      }
+      if (type === 2) {
+        console.log(type)
+      }
+      if (type === 3) {
+        console.log(type)
+      }
+      if (type === 4) {
+        console.log(type)
+      }
+      // props.update(`stocks/${idSelected}`, 'UPDATE_STOCK', {
+      //   type,
+      //   inOut,
+      //   amount,
+      // })
+      // props.create('stocks/log', 'LOG_STOCK', {
+      //   type,
+      //   inOut,
+      //   amount,
+      //   user,
+      //   stockId: idSelected,
+      // })
     }
 
     return (
@@ -129,6 +154,7 @@ const Nails = props => {
                   name="processId"
                   onChange={e => setInOut(parseInt(e.target.value))}
                 >
+                  <option value="">Seleccionar</option>
                   <option value="0">Entrada</option>
                   <option value="1">Salida</option>
                 </select>
@@ -137,7 +163,11 @@ const Nails = props => {
             <div className="inputGroup">
               <label htmlFor="processId">
                 <span>IFISA:</span>
-                <select name="processId">
+                <select
+                  name="processId"
+                  onChange={e => setSucursal(parseInt(e.target.value))}
+                >
+                  <option value="">Seleccionar</option>
                   <option value="0">IFISA 1</option>
                   <option value="1">IFISA 2</option>
                 </select>
@@ -146,9 +176,14 @@ const Nails = props => {
             <div className="inputGroup">
               <label htmlFor="processId">
                 <span>Madera:</span>
-                <select name="processId">
+                <select
+                  name="processId"
+                  onChange={e => setGreenDryRepair(parseInt(e.target.value))}
+                >
+                  <option value="">Seleccionar</option>
                   <option value="0">Secas</option>
                   <option value="1">Verdes</option>
+                  <option value="2">Reaparación</option>
                 </select>
               </label>
             </div>
@@ -156,7 +191,7 @@ const Nails = props => {
               title="Cantidad"
               onChange={e => setAmount(parseInt(e.target.value))}
             />
-            <Button>Guardar</Button>
+            <Button onClick={handleSaveStock}>Guardar</Button>
           </Card>
         ) : null}
         {type === 2 ? (
