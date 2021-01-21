@@ -31,6 +31,7 @@ const StockEdit = props => {
         Clavos: '/stockNails',
         'Materia Prima': '/stockMaterial',
         'Entradas y salidas': '/stockChanges',
+        'Historial': '/stockHistory',
       },
     }
     setTitle(topbar)

@@ -412,6 +412,11 @@ const reducer = (state, action) => {
           notification => notification._id !== action.payload
         ),
       }
+    case 'GET_STOCKLOG':
+      return {
+        ...state,
+        stockLog: action.payload.data,
+      }
     default:
       return state
   }

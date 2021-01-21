@@ -23,6 +23,7 @@ const Nails = props => {
         Clavos: '/stockNails',
         'Materia Prima': '/stockMaterial',
         'Entradas y salidas': '/stockChanges',
+        Historial: '/stockHistory',
       },
     }
     setTitle(topbar)
@@ -34,11 +35,14 @@ const Nails = props => {
   const tableHeader = [
     'Nombre',
     '1 Verdes',
-    '1 Secas',
     '2 Verdes',
-    '2 Secas',
     'Total Verdes',
+    '1 Secas',
+    '2 Secas',
     'Total Secas',
+    '1 Reapracion',
+    '2 Reapracion',
+    'Total Raparacion',
     'Total',
     'Acciones',
   ]
@@ -62,30 +66,53 @@ const Nails = props => {
       <SearchBar onChange={handleSearch} />
       <Table head={tableHeader}>
         {tableData ? (
-          tableData.map(pallet => (
-            <tr key={pallet._id}>
-              <td>{pallet.model}</td>
-              <td>{pallet.stock[0].green}</td>
-              <td>{pallet.stock[0].dry}</td>
-              <td>{pallet.stock[1].green}</td>
-              <td>{pallet.stock[1].dry}</td>
-              <td>{pallet.stock[0].green + pallet.stock[1].green}</td>
-              <td>{pallet.stock[0].dry + pallet.stock[1].dry}</td>
-              <td>
-                {pallet.stock[0].dry +
-                  pallet.stock[1].dry +
-                  pallet.stock[0].green +
-                  pallet.stock[1].green}
-              </td>
-              <td>
-                <Link to={`stock/update/${pallet._id}?type=pallet`}>
-                  <Button className="btn --warning">
-                    <AiOutlineEdit />
-                  </Button>
-                </Link>
-              </td>
-            </tr>
-          ))
+          tableData.map(pallet => {
+            let r1 = 0,
+              r2 = 0
+            if (pallet.stock[0].repair !== undefined) {
+              r1 = pallet.stock[0].repair
+            }
+            if (pallet.stock[1].repair !== undefined) {
+              r2 = pallet.stock[1].repair
+            }
+            return (
+              <tr key={pallet._id}>
+                <td>{pallet.model}</td>
+                <td>{pallet.stock[0].green}</td>
+                <td>{pallet.stock[1].green}</td>
+                <td>{pallet.stock[0].green + pallet.stock[1].green}</td>
+                <td>{pallet.stock[0].dry}</td>
+                <td>{pallet.stock[1].dry}</td>
+                <td>{pallet.stock[0].dry + pallet.stock[1].dry}</td>
+                <td>
+                  {pallet.stock[0].repair !== undefined
+                    ? pallet.stock[0].repair
+                    : 0}
+                </td>
+                <td>
+                  {pallet.stock[1].repair !== undefined
+                    ? pallet.stock[1].repair
+                    : 0}
+                </td>
+                <td>{r1 + r2}</td>
+                <td>
+                  {pallet.stock[0].dry +
+                    pallet.stock[1].dry +
+                    pallet.stock[0].green +
+                    pallet.stock[1].green +
+                    r1 +
+                    r2}
+                </td>
+                <td>
+                  <Link to={`stock/update/${pallet._id}?type=pallet`}>
+                    <Button className="btn --warning">
+                      <AiOutlineEdit />
+                    </Button>
+                  </Link>
+                </td>
+              </tr>
+            )
+          })
         ) : (
           <tr>
             <td colSpan="7">No hay registros</td>

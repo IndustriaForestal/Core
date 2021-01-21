@@ -33,6 +33,7 @@ const Nails = props => {
         Clavos: '/stockNails',
         'Materia Prima': '/stockMaterial',
         'Entradas y salidas': '/stockChanges',
+        'Historial': '/stockHistory',
       },
     }
     setTitle(topbar)
@@ -88,36 +89,31 @@ const Nails = props => {
         console.log(amount + ' Cantidad')
         console.log(greenDryRepair + ' greenDryRepair')
         console.log(sucursal + ' sucursal')
-        props.update(`stock/${idSelected}`, 'UPDATE_STOCK', {
-          type,
-          amount,
-          inOut,
-          user,
-          greenDryRepair,
-          sucursal
-        })
-      }
-      if (type === 2) {
+        props
+          .update(`stock/${idSelected}`, 'UPDATE_STOCK', {
+            type,
+            amount,
+            inOut,
+            user,
+            greenDryRepair,
+            sucursal,
+          })
+          .then(() => {
+            setType(0)
+          })
+      } else {
         console.log(type)
+        props
+          .update(`stock/${idSelected}`, 'UPDATE_STOCK', {
+            type,
+            amount,
+            inOut,
+            user,
+          })
+          .then(() => {
+            setType(0)
+          })
       }
-      if (type === 3) {
-        console.log(type)
-      }
-      if (type === 4) {
-        console.log(type)
-      }
-      // props.update(`stocks/${idSelected}`, 'UPDATE_STOCK', {
-      //   type,
-      //   inOut,
-      //   amount,
-      // })
-      // props.create('stocks/log', 'LOG_STOCK', {
-      //   type,
-      //   inOut,
-      //   amount,
-      //   user,
-      //   stockId: idSelected,
-      // })
     }
 
     return (
