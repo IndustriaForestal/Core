@@ -1,15 +1,16 @@
-import React, { useEffect } from 'react'
+import React, { useEffect, useState } from 'react'
 import { Link } from 'react-router-dom'
 import { connect } from 'react-redux'
 import { BsPlus } from 'react-icons/bs'
-import { AiOutlineEdit } from 'react-icons/ai'
 import { setTitle, getAll, deleted } from '../../../actions/app'
 import Table from '../../../components/Table/Table'
 import AddButton from '../../../components/AddButton/AddButton'
-import Button from '../../../components/Button/Button'
+import Loading from '../../../components/Loading/Loading'
+import SearchBar from '../../../components/SearchBar/SearchBar'
 
 const StockHistory = props => {
-  const { stockLog, setTitle } = props
+  const { stockLog, pallets, raws, nails, items, setTitle } = props
+  const [filter, setFilter] = useState([])
 
   useEffect(() => {
     const topbar = {
@@ -42,52 +43,118 @@ const StockHistory = props => {
     'Tipo Tarima',
   ]
 
-  return (
-    <>
-      <Table head={tableHeader}>
-        {stockLog ? (
-          stockLog.map(item => (
-            <tr key={item._id}>
-              <td>{item.inOut}</td>
-              <td>
-                {item.collection === 'pallets' ? 'Tarima' : null}
-                {item.collection === 'items' ? 'Complementos' : null}
-                {item.collection === 'nails' ? 'Clavos' : null}
-                {item.collection === 'raws' ? 'Materia Prima' : null}
-              </td>
-              <td>{item.amount}</td>
-              <td>{item.user}</td>
-              <td>{new Date(item.date).toLocaleString()}</td>
-              <td>
-                {item.sucursal === 0 ? 'IFISA 1' : null}
-                {item.sucursal === 1 ? 'IFISA 2' : null}
-                {item.sucursal !== 0 && item.sucursal !== 1 ? 'N/A' : null}
-              </td>
-              <td>
-                {item.state === 0 ? 'Verdes' : null}
-                {item.state === 1 ? 'Secas' : null}
-                {item.state === 2 ? 'Reaparación' : null}
-              </td>
+  const handleSearch = e => {
+    const searchWord = e.target.value.toLowerCase()
+    let newTableDate = []
+    pallets.map(pallet => {
+      if (pallet.model.toLowerCase().includes(searchWord)) {
+        newTableDate.push(pallet._id)
+      }
+    })
+    nails.map(nail => {
+      if (nail.name.toLowerCase().includes(searchWord)) {
+        newTableDate.push(nail.name)
+      }
+    })
+    items.map(item => {
+      if (item.name.toLowerCase().includes(searchWord)) {
+        newTableDate.push(item.name)
+      }
+    })
+    raws.map(raw => {
+      if (raw.name.toLowerCase().includes(searchWord)) {
+        newTableDate.push(raw.name)
+      }
+    })
+
+    setFilter(newTableDate)
+  }
+
+  let dataTable = []
+  if (filter.length === 1 || filter.length === 2) {
+    dataTable = stockLog.filter(log => log.productId === filter[0])
+  } else {
+    dataTable = stockLog
+  }
+
+  if (pallets && raws && nails && items) {
+    return (
+      <>
+        <SearchBar onChange={handleSearch} />
+        <Table head={tableHeader} id="tableSearch">
+          {stockLog ? (
+            dataTable.map(item => (
+              <tr key={item._id}>
+                <td>{item.inOut}</td>
+                <td>
+                  {item.collection === 'pallets'
+                    ? `Tarima - ${
+                        pallets.filter(
+                          pallet => pallet._id === item.productId
+                        )[0].model
+                      }`
+                    : null}
+                  {item.collection === 'items'
+                    ? `Complemento - ${
+                        items.filter(itemx => itemx._id === item.productId)[0]
+                          .name
+                      }`
+                    : null}
+                  {item.collection === 'nails'
+                    ? `Clavos - ${
+                        nails.filter(nail => nail._id === item.productId)[0]
+                          .name
+                      }`
+                    : null}
+                  {item.collection === 'raws'
+                    ? `Materia Prima - ${
+                        raws.filter(raw => raw._id === item.productId)[0].name
+                      }`
+                    : null}
+                </td>
+                <td>{item.amount}</td>
+                <td>{item.user}</td>
+                <td>{new Date(item.date).toLocaleString()}</td>
+                <td>
+                  {item.sucursal === 0 ? 'IFISA 1' : null}
+                  {item.sucursal === 1 ? 'IFISA 2' : null}
+                  {item.sucursal !== 0 && item.sucursal !== 1 ? 'N/A' : null}
+                </td>
+                <td>
+                  {item.state === 0 ? 'Verdes' : null}
+                  {item.state === 1 ? 'Secas' : null}
+                  {item.state === 2 ? 'Reaparación' : null}
+                  {item.state !== 0 && item.state !== 1 && item.state !== 2
+                    ? 'N/A'
+                    : null}
+                </td>
+              </tr>
+            ))
+          ) : (
+            <tr>
+              <td colSpan="7">No hay registros</td>
             </tr>
-          ))
-        ) : (
-          <tr>
-            <td colSpan="7">No hay registros</td>
-          </tr>
-        )}
-      </Table>
-      <Link to="/items/create">
-        <AddButton>
-          <BsPlus />
-        </AddButton>
-      </Link>
-    </>
-  )
+          )}
+        </Table>
+        <Link to="/items/create">
+          <AddButton>
+            <BsPlus />
+          </AddButton>
+        </Link>
+      </>
+    )
+  } else {
+    return <Loading />
+  }
 }
 
 const mapStateToProps = state => {
   return {
     stockLog: state.stockLog,
+    pallets: state.pallets,
+    nails: state.nails,
+    items: state.items,
+    raws: state.raws,
   }
 }
 

@@ -1,9 +1,9 @@
 import React from 'react'
 import './Table.scss'
 
-const Table = ({ children, head }) => {
+const Table = ({ children, head, id }) => {
   return (
-    <table className="table">
+    <table className="table" id={id}>
       <thead className="table__head">
         <tr>
           {head.map((item, index) => (
