@@ -11,12 +11,17 @@ import AddButton from '../../components/AddButton/AddButton'
 import './styles.scss'
 
 const Items = props => {
-  const { items, setTitle, setWraper } = props
+  const { items, setTitle, setWraper, role } = props
 
   useEffect(() => {
     const topbar = {
       title: 'Complementos',
-      menu: { Tarimas: '/pallets', Complementos: '/items', Clavos: '/nails', Calidades: '/qualities' },
+      menu: {
+        Tarimas: '/pallets',
+        Complementos: '/items',
+        Clavos: '/nails',
+        Calidades: '/qualities',
+      },
     }
     setTitle(topbar)
     props.getAll('items', 'GET_ITEMS')
@@ -24,15 +29,25 @@ const Items = props => {
     // eslint-disable-next-line
   }, [])
 
-  const tableHeader = [
-    'Nombre',
-    'Descripción',
-    'Largo',
-    'Ancho',
-    'Alto',
-    'Inventario',
-    'Acciones',
-  ]
+  let tableHeader
+  role === 'Administrador'
+    ? (tableHeader = [
+        'Nombre',
+        'Descripción',
+        'Largo',
+        'Ancho',
+        'Alto',
+        'Inventario',
+        'Acciones',
+      ])
+    : (tableHeader = [
+        'Nombre',
+        'Descripción',
+        'Largo',
+        'Ancho',
+        'Alto',
+        'Inventario',
+      ])
 
   const handleDeleteItem = itemId => {
     Swal.fire({
@@ -63,19 +78,21 @@ const Items = props => {
               <td>{item.width}</td>
               <td>{item.height}</td>
               <td>{item.stock}</td>
-              <td>
-                <Link to={`items/${item._id}`}>
-                  <Button className="btn --warning">
-                    <AiOutlineEdit />
+              {role === 'Administrador' ? (
+                <td>
+                  <Link to={`items/${item._id}`}>
+                    <Button className="btn --warning">
+                      <AiOutlineEdit />
+                    </Button>
+                  </Link>
+                  <Button
+                    className="btn --danger"
+                    onClick={() => handleDeleteItem(item._id)}
+                  >
+                    <AiOutlineDelete />
                   </Button>
-                </Link>
-                <Button
-                  className="btn --danger"
-                  onClick={() => handleDeleteItem(item._id)}
-                >
-                  <AiOutlineDelete />
-                </Button>
-              </td>
+                </td>
+              ) : null}
             </tr>
           ))
         ) : (
@@ -96,6 +113,7 @@ const Items = props => {
 const mapStateToProps = state => {
   return {
     items: state.items,
+    role: state.role,
   }
 }
 

@@ -11,7 +11,7 @@ import AddButton from '../../components/AddButton/AddButton'
 import './styles.scss'
 
 const Suppliers = props => {
-  const { suppliers, setTitle } = props
+  const { suppliers, setTitle, role } = props
 
   useEffect(() => {
     const topbar = {
@@ -23,7 +23,13 @@ const Suppliers = props => {
     // eslint-disable-next-line
   }, [])
 
-  const tableHeader = ['Nombre', 'Capacidad', 'Material', 'Acciones']
+  let tableHeader
+
+  if (role === 'Administrador') {
+    tableHeader = ['Nombre', 'Capacidad', 'Material', 'Acciones']
+  } else {
+    tableHeader = ['Nombre', 'Capacidad', 'Material']
+  }
 
   const handleDeleteSupplier = supplierId => {
     Swal.fire({
@@ -51,19 +57,21 @@ const Suppliers = props => {
               <td>{supplier.name}</td>
               <td>{supplier.capacity}</td>
               <td>{supplier.material.map(materialOne => materialOne.name)}</td>
-              <td>
-                <Link to={`suppliers/${supplier._id}`}>
-                  <Button className="btn --warning">
-                    <AiOutlineEdit />
+              {role === 'Administrador' ? (
+                <td>
+                  <Link to={`suppliers/${supplier._id}`}>
+                    <Button className="btn --warning">
+                      <AiOutlineEdit />
+                    </Button>
+                  </Link>
+                  <Button
+                    className="btn --danger"
+                    onClick={() => handleDeleteSupplier(supplier._id)}
+                  >
+                    <AiOutlineDelete />
                   </Button>
-                </Link>
-                <Button
-                  className="btn --danger"
-                  onClick={() => handleDeleteSupplier(supplier._id)}
-                >
-                  <AiOutlineDelete />
-                </Button>
-              </td>
+                </td>
+              ) : null}
             </tr>
           ))
         ) : (
@@ -84,6 +92,7 @@ const Suppliers = props => {
 const mapStateToProps = state => {
   return {
     suppliers: state.suppliers,
+    role: state.role,
   }
 }
 

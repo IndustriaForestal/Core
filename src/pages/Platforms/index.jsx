@@ -11,7 +11,7 @@ import AddButton from '../../components/AddButton/AddButton'
 import './styles.scss'
 
 const Platforms = props => {
-  const { platforms, setTitle } = props
+  const { platforms, setTitle, role } = props
 
   useEffect(() => {
     const topbar = {
@@ -23,7 +23,10 @@ const Platforms = props => {
     // eslint-disable-next-line
   }, [])
 
-  const tableHeader = ['Nombre', 'Acciones']
+  let tableHeader
+  role === 'Administrador'
+    ? (tableHeader = ['Nombre', 'Acciones'])
+    : (tableHeader = ['Nombre'])
 
   const handleDeletePlatform = platformId => {
     Swal.fire({
@@ -34,14 +37,12 @@ const Platforms = props => {
       confirmButtonColor: '#3085d6',
       cancelButtonColor: '#d33',
       confirmButtonText: 'Si, borrar',
+    }).then(result => {
+      if (result.isConfirmed) {
+        props.deleted(`platforms/${platformId}`, 'DELETE_PLATFORM')
+        Swal.fire('Borrado!', 'Borrado con exito.', 'success')
+      }
     })
-      .then(result => {
-        if (result.isConfirmed) {
-          props.deleted(`platforms/${platformId}`, 'DELETE_PLATFORM')
-          Swal.fire('Borrado!', 'Borrado con exito.', 'success')
-        }
-      })
-   
   }
 
   return (
@@ -51,19 +52,21 @@ const Platforms = props => {
           platforms.map(platform => (
             <tr key={platform._id}>
               <td>{platform.name}</td>
-              <td>
-                <Link to={`platforms/${platform._id}`}>
-                  <Button className="btn --warning">
-                    <AiOutlineEdit />
+              {role === 'Administrador' ? (
+                <td>
+                  <Link to={`platforms/${platform._id}`}>
+                    <Button className="btn --warning">
+                      <AiOutlineEdit />
+                    </Button>
+                  </Link>
+                  <Button
+                    className="btn --danger"
+                    onClick={() => handleDeletePlatform(platform._id)}
+                  >
+                    <AiOutlineDelete />
                   </Button>
-                </Link>
-                <Button
-                  className="btn --danger"
-                  onClick={() => handleDeletePlatform(platform._id)}
-                >
-                  <AiOutlineDelete />
-                </Button>
-              </td>
+                </td>
+              ) : null}
             </tr>
           ))
         ) : (
@@ -84,6 +87,7 @@ const Platforms = props => {
 const mapStateToProps = state => {
   return {
     platforms: state.platforms,
+    role: state.role,
   }
 }
 

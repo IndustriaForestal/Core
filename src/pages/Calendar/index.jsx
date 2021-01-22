@@ -23,7 +23,7 @@ const CalendarOrders = props => {
 
   if (orders) {
     orders.map(order => {
-      if(order.shipments){
+      if (order.shipments) {
         order.shipments.map(shipment => {
           if (shipment.completed !== 1) {
             eventList.push({
@@ -37,7 +37,7 @@ const CalendarOrders = props => {
       }
     })
 
-   /*  const shipmentsArray = orders.map(order =>
+    /*  const shipmentsArray = orders.map(order =>
       order.shipments.map(shipment => shipment)
     )
 
@@ -55,8 +55,6 @@ const CalendarOrders = props => {
         }
       })
     ) */
-
-    console.log(eventList)
   }
 
   /* if (orders && orders.filter(order => order.completed !== 1).length > 0) {

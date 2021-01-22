@@ -11,41 +11,69 @@ import SearchBar from '../../components/SearchBar/SearchBar'
 import './styles.scss'
 
 const Nails = props => {
-  const { pallets, setTitle } = props
+  const { pallets, setTitle, role } = props
   const [filter, setFilter] = useState([])
 
   useEffect(() => {
-    const topbar = {
-      title: 'Inventarios',
-      menu: {
-        Tarimas: '/stock',
-        Complementos: '/stockItems',
-        Clavos: '/stockNails',
-        'Materia Prima': '/stockMaterial',
-        'Entradas y salidas': '/stockChanges',
-        Historial: '/stockHistory',
-      },
-    }
+    let topbar
+    role === 'Administrador'
+      ? (topbar = {
+          title: 'Inventarios',
+          menu: {
+            Tarimas: '/stock',
+            Complementos: '/stockItems',
+            Clavos: '/stockNails',
+            'Materia Prima': '/stockMaterial',
+            'Entradas y salidas': '/stockChanges',
+            Historial: '/stockHistory',
+          },
+        })
+      : (topbar = {
+          title: 'Inventarios',
+          menu: {
+            Tarimas: '/stock',
+            Complementos: '/stockItems',
+            Clavos: '/stockNails',
+            'Materia Prima': '/stockMaterial',
+            Historial: '/stockHistory',
+          },
+        })
+
     setTitle(topbar)
     setWraper(true)
     props.getAll('pallets', 'GET_PALLETS')
     // eslint-disable-next-line
   }, [])
+  let tableHeader
+  role === 'Administrador'
+    ? (tableHeader = [
+        'Nombre',
+        '1 Verdes',
+        '2 Verdes',
+        'Total Verdes',
+        '1 Secas',
+        '2 Secas',
+        'Total Secas',
+        '1 Reapracion',
+        '2 Reapracion',
+        'Total Raparacion',
+        'Total',
+        'Acciones',
+      ])
+    : (tableHeader = [
+        'Nombre',
+        '1 Verdes',
+        '2 Verdes',
+        'Total Verdes',
+        '1 Secas',
+        '2 Secas',
+        'Total Secas',
+        '1 Reapracion',
+        '2 Reapracion',
+        'Total Raparacion',
+        'Total',
+      ])
 
-  const tableHeader = [
-    'Nombre',
-    '1 Verdes',
-    '2 Verdes',
-    'Total Verdes',
-    '1 Secas',
-    '2 Secas',
-    'Total Secas',
-    '1 Reapracion',
-    '2 Reapracion',
-    'Total Raparacion',
-    'Total',
-    'Acciones',
-  ]
   const handleSearch = e => {
     const searchWord = e.target.value.toLowerCase()
     const filterPallets = pallets.filter(pallet =>
@@ -103,13 +131,15 @@ const Nails = props => {
                     r1 +
                     r2}
                 </td>
-                <td>
-                  <Link to={`stock/update/${pallet._id}?type=pallet`}>
-                    <Button className="btn --warning">
-                      <AiOutlineEdit />
-                    </Button>
-                  </Link>
-                </td>
+                {role === 'Administrador' ? (
+                  <td>
+                    <Link to={`stock/update/${pallet._id}?type=pallet`}>
+                      <Button className="btn --warning">
+                        <AiOutlineEdit />
+                      </Button>
+                    </Link>
+                  </td>
+                ) : null}
               </tr>
             )
           })
@@ -131,6 +161,7 @@ const Nails = props => {
 const mapStateToProps = state => {
   return {
     pallets: state.pallets,
+    role: state.role,
   }
 }
 

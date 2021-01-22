@@ -10,26 +10,42 @@ import AddButton from '../../../components/AddButton/AddButton'
 import './styles.scss'
 
 const Nails = props => {
-  const { raws, setTitle } = props
+  const { raws, setTitle, role } = props
 
   useEffect(() => {
-    const topbar = {
-      title: 'Inventarios',
-      menu: {
-        Tarimas: '/stock',
-        Complementos: '/stockItems',
-        Clavos: '/stockNails',
-        'Materia Prima': '/stockMaterial',
-        'Entradas y salidas': '/stockChanges',
-        'Historial': '/stockHistory',
-      },
-    }
+    let topbar
+    role === 'Administrador'
+      ? (topbar = {
+          title: 'Inventarios',
+          menu: {
+            Tarimas: '/stock',
+            Complementos: '/stockItems',
+            Clavos: '/stockNails',
+            'Materia Prima': '/stockMaterial',
+            'Entradas y salidas': '/stockChanges',
+            Historial: '/stockHistory',
+          },
+        })
+      : (topbar = {
+          title: 'Inventarios',
+          menu: {
+            Tarimas: '/stock',
+            Complementos: '/stockItems',
+            Clavos: '/stockNails',
+            'Materia Prima': '/stockMaterial',
+            Historial: '/stockHistory',
+          },
+        })
+
     setTitle(topbar)
     props.getAll('raws', 'GET_RAWS')
     // eslint-disable-next-line
   }, [])
 
-  const tableHeader = ['Nombre', 'Stock', 'Acciones']
+  let tableHeader
+  role === 'Administrador'
+    ? (tableHeader = ['Nombre', 'Stock', 'Acciones'])
+    : (tableHeader = ['Nombre', 'Stock'])
 
   return (
     <>
@@ -39,13 +55,15 @@ const Nails = props => {
             <tr key={row._id}>
               <td>{row.name}</td>
               <td>{row.stock}</td>
-              <td>
-                <Link to={`stock/update/${row._id}?type=raw`}>
-                  <Button className="btn --warning">
-                    <AiOutlineEdit />
-                  </Button>
-                </Link>
-              </td>
+              {role === 'Administrador' ? (
+                <td>
+                  <Link to={`stock/update/${row._id}?type=raw`}>
+                    <Button className="btn --warning">
+                      <AiOutlineEdit />
+                    </Button>
+                  </Link>
+                </td>
+              ) : null}
             </tr>
           ))
         ) : (
@@ -66,6 +84,7 @@ const Nails = props => {
 const mapStateToProps = state => {
   return {
     raws: state.raws,
+    role: state.role,
   }
 }
 

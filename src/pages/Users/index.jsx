@@ -11,7 +11,7 @@ import AddButton from '../../components/AddButton/AddButton'
 import './styles.scss'
 
 const Users = props => {
-  const { users, setTitle } = props
+  const { users, setTitle, role } = props
 
   useEffect(() => {
     const topbar = {
@@ -22,8 +22,12 @@ const Users = props => {
     props.getAll('users', 'GET_USERS')
     // eslint-disable-next-line
   }, [])
-
-  const tableHeader = ['Nombre', 'Usuario', 'Roll', 'Acciones']
+  let tableHeader
+  if (role === 'Administrador') {
+    tableHeader = ['Nombre', 'Usuario', 'Roll', 'Acciones']
+  } else {
+    tableHeader = ['Nombre', 'Usuario', 'Roll']
+  }
 
   const handleDeleteUser = userId => {
     Swal.fire({
@@ -51,19 +55,21 @@ const Users = props => {
               <td>{user.name}</td>
               <td>{user.user}</td>
               <td>{user.role}</td>
-              <td>
-                <Link to={`users/${user._id}`}>
-                  <Button className="btn --warning">
-                    <AiOutlineEdit />
+              {role === 'Administrador' ? (
+                <td>
+                  <Link to={`users/${user._id}`}>
+                    <Button className="btn --warning">
+                      <AiOutlineEdit />
+                    </Button>
+                  </Link>
+                  <Button
+                    className="btn --danger"
+                    onClick={() => handleDeleteUser(user._id)}
+                  >
+                    <AiOutlineDelete />
                   </Button>
-                </Link>
-                <Button
-                  className="btn --danger"
-                  onClick={() => handleDeleteUser(user._id)}
-                >
-                  <AiOutlineDelete />
-                </Button>
-              </td>
+                </td>
+              ) : null}
             </tr>
           ))
         ) : (
@@ -84,6 +90,7 @@ const Users = props => {
 const mapStateToProps = state => {
   return {
     users: state.users,
+    role: state.role,
   }
 }
 

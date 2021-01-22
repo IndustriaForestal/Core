@@ -21,7 +21,48 @@ const Home = props => {
       return (
         <div className="Home">
           <IconHome icon={<BsCardImage />} url="/orders" text="Pedidos" />
-          <IconHome icon={<BsCardImage />} url="/orderProduction" text="Ord. Prod" />
+          <IconHome
+            icon={<BsCardImage />}
+            url="/orderProduction"
+            text="Ord. Prod"
+          />
+          <IconHome icon={<BsCardImage />} url="/stock" text="Inventarios" />
+          <IconHome icon={<BsCardImage />} url="/pallets" text="Tarimas" />
+          <IconHome icon={<BsCardImage />} url="/customers" text="Clientes" />
+          <IconHome icon={<BsCardImage />} url="/nails" text="Clavos" />
+          <IconHome icon={<BsCardImage />} url="/material" text="Material" />
+          <IconHome icon={<BsCardImage />} url="/processes" text="Procesos" />
+          <IconHome
+            icon={<BsCardImage />}
+            url="/specialProcesses"
+            text="Procesos Especiales"
+          />
+          <IconHome
+            icon={<BsCardImage />}
+            url="/platforms"
+            text="Plataformas"
+          />
+          <IconHome icon={<BsCardImage />} url="/items" text="Complementos" />
+          <IconHome
+            icon={<BsCardImage />}
+            url="/suppliers"
+            text="Proveedores"
+          />
+          <IconHome icon={<BsCardImage />} url="/qualities" text="Calidades" />
+          <IconHome icon={<BsCardImage />} url="/raws" text="Materia Prima" />
+          <IconHome icon={<BsCardImage />} url="/users" text="Usuarios" />
+          <IconHome icon={<BsCardImage />} url="/calendar" text="Calendario" />
+        </div>
+      )
+    case 'Vista':
+      return (
+        <div className="Home">
+          <IconHome icon={<BsCardImage />} url="/orders" text="Pedidos" />
+          <IconHome
+            icon={<BsCardImage />}
+            url="/orderProduction"
+            text="Ord. Prod"
+          />
           <IconHome icon={<BsCardImage />} url="/stock" text="Inventarios" />
           <IconHome icon={<BsCardImage />} url="/pallets" text="Tarimas" />
           <IconHome icon={<BsCardImage />} url="/customers" text="Clientes" />

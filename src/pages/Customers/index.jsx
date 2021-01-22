@@ -12,7 +12,7 @@ import SearchBar from '../../components/SearchBar/SearchBar'
 import './styles.scss'
 
 const Customers = props => {
-  const { customers, setTitle } = props
+  const { customers, setTitle, role } = props
   const [filter, setFilter] = useState([])
 
   useEffect(() => {
@@ -25,14 +25,23 @@ const Customers = props => {
     // eslint-disable-next-line
   }, [])
 
-  const tableHeader = [
-    'Nombre',
-    'Dirección',
-    'Email',
-    'Teléfono',
-    'Embarques Semana',
-    'Acciones',
-  ]
+  let tableHeader
+  role === 'Administrador'
+    ? (tableHeader = [
+        'Nombre',
+        'Dirección',
+        'Email',
+        'Teléfono',
+        'Embarques Semana',
+        'Acciones',
+      ])
+    : (tableHeader = [
+        'Nombre',
+        'Dirección',
+        'Email',
+        'Teléfono',
+        'Embarques Semana',
+      ])
 
   const handlerDeleteCustomer = customerID => {
     Swal.fire({
@@ -79,19 +88,21 @@ const Customers = props => {
               <td>{customer.email}</td>
               <td>{customer.phone}</td>
               <td>{customer.shipment}</td>
-              <td>
-                <Link to={`customers/${customer._id}`}>
-                  <Button className="btn --warning">
-                    <AiOutlineEdit />
+              {role === 'Administrador' ? (
+                <td>
+                  <Link to={`customers/${customer._id}`}>
+                    <Button className="btn --warning">
+                      <AiOutlineEdit />
+                    </Button>
+                  </Link>
+                  <Button
+                    className="btn --danger"
+                    onClick={() => handlerDeleteCustomer(customer.id)}
+                  >
+                    <AiOutlineDelete />
                   </Button>
-                </Link>
-                <Button
-                  className="btn --danger"
-                  onClick={() => handlerDeleteCustomer(customer.id)}
-                >
-                  <AiOutlineDelete />
-                </Button>
-              </td>
+                </td>
+              ) : null}
             </tr>
           ))
         ) : (
@@ -112,6 +123,7 @@ const Customers = props => {
 const mapStateToProps = state => {
   return {
     customers: state.customers,
+    role: state.role,
   }
 }
 

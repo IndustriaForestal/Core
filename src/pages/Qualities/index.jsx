@@ -18,13 +18,17 @@ import Button from '../../components/Button/Button'
 import './styles.scss'
 
 const Qualities = props => {
-  const { qualities, setTitle } = props
+  const { qualities, setTitle, role } = props
 
   useEffect(() => {
     const topbar = {
       title: 'Calidades',
-      menu: { Tarimas: '/pallets', Complementos: '/items', Clavos: '/nails', Calidades: '/qualities' },
-
+      menu: {
+        Tarimas: '/pallets',
+        Complementos: '/items',
+        Clavos: '/nails',
+        Calidades: '/qualities',
+      },
     }
     setTitle(topbar)
     props.getAll('qualities', 'GET_QUALITIES')
@@ -81,15 +85,25 @@ const Qualities = props => {
     return comparison
   }
 
-  const tableHeader = [
-    '#',
-    'Nombre',
-    'Capacidad',
-    'Duración',
-    'Personal',
-    'Usa',
-    'Acciones',
-  ]
+  let tableHeader
+  role === 'Administrador'
+    ? (tableHeader = [
+        '#',
+        'Nombre',
+        'Capacidad',
+        'Duración',
+        'Personal',
+        'Usa',
+        'Acciones',
+      ])
+    : (tableHeader = [
+        '#',
+        'Nombre',
+        'Capacidad',
+        'Duración',
+        'Personal',
+        'Usa',
+      ])
 
   return (
     <>
@@ -101,13 +115,17 @@ const Qualities = props => {
               title={`Calidad: ${quality.name}`}
               tools={
                 <div>
-                  <Link to={`qualities/add/${quality._id}`}>
-                    <AiOutlineFileAdd className="--success" />
-                  </Link>
-                  <AiOutlineDelete
-                    className="--danger"
-                    onClick={() => handleDeleteQuality(quality._id)}
-                  />
+                  {role === 'Administrador' ? (
+                    <>
+                      <Link to={`qualities/add/${quality._id}`}>
+                        <AiOutlineFileAdd className="--success" />
+                      </Link>
+                      <AiOutlineDelete
+                        className="--danger"
+                        onClick={() => handleDeleteQuality(quality._id)}
+                      />
+                    </>
+                  ) : null}
                 </div>
               }
             >
@@ -122,19 +140,28 @@ const Qualities = props => {
                         <td>{process.duration}</td>
                         <td>{process.people}</td>
                         <td>{process.type === '1' ? 'Tarima' : 'P/T'}</td>
-                        <td>
-                          <Link to={`qualities/edit/${quality._id}/${process.processId}`}>
-                            <Button className="btn --warning">
-                              <AiOutlineEdit />
+                        {role === 'Administrador' ? (
+                          <td>
+                            <Link
+                              to={`qualities/edit/${quality._id}/${process.processId}`}
+                            >
+                              <Button className="btn --warning">
+                                <AiOutlineEdit />
+                              </Button>
+                            </Link>
+                            <Button
+                              className="btn --danger"
+                              onClick={() =>
+                                handleDeleteProcessQuality(
+                                  process.processId,
+                                  quality._id
+                                )
+                              }
+                            >
+                              <AiOutlineDelete />
                             </Button>
-                          </Link>
-                          <Button
-                            className="btn --danger"
-                            onClick={() => handleDeleteProcessQuality(process.processId, quality._id)}
-                          >
-                            <AiOutlineDelete />
-                          </Button>
-                        </td>
+                          </td>
+                        ) : null}
                       </tr>
                     )
                   })}
@@ -160,6 +187,7 @@ const Qualities = props => {
 const mapStateToProps = state => {
   return {
     qualities: state.qualities,
+    role: state.role,
   }
 }
 

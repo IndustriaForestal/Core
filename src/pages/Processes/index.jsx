@@ -11,7 +11,7 @@ import AddButton from '../../components/AddButton/AddButton'
 import './styles.scss'
 
 const Processes = props => {
-  const { processes, setTitle } = props
+  const { processes, setTitle, role } = props
 
   useEffect(() => {
     const topbar = {
@@ -23,7 +23,10 @@ const Processes = props => {
     // eslint-disable-next-line
   }, [])
 
-  const tableHeader = ['Nombre', 'Usa', 'Acciones']
+  let tableHeader
+  role === 'Administrador'
+    ? (tableHeader = ['Nombre', 'Usa', 'Acciones'])
+    : (tableHeader = ['Nombre', 'Usa'])
 
   const handleDeleteProcess = processId => {
     Swal.fire({
@@ -50,19 +53,21 @@ const Processes = props => {
             <tr key={process._id}>
               <td>{process.name}</td>
               <td>{process.type === '1' ? 'Tarima' : 'P/T'}</td>
-              <td>
-                <Link to={`processes/${process._id}`}>
-                  <Button className="btn --warning">
-                    <AiOutlineEdit />
-                  </Button>
-                </Link>
-                {/* <Button
+              {role === 'Administrador' ? (
+                <td>
+                  <Link to={`processes/${process._id}`}>
+                    <Button className="btn --warning">
+                      <AiOutlineEdit />
+                    </Button>
+                  </Link>
+                  {/* <Button
                   className="btn --danger"
                   onClick={() => handleDeleteProcess(process._id)}
                 >
                   <AiOutlineDelete />
                 </Button> */}
-              </td>
+                </td>
+              ) : null}
             </tr>
           ))
         ) : (
@@ -83,6 +88,7 @@ const Processes = props => {
 const mapStateToProps = state => {
   return {
     processes: state.processes,
+    role: state.role,
   }
 }
 

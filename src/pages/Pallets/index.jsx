@@ -15,7 +15,7 @@ import PalletImage from '../../assets/static/pallet.png'
 import './styles.scss'
 
 const Pallets = props => {
-  const { pallets, setTitle } = props
+  const { pallets, setTitle, role } = props
   const [filter, setFilter] = useState([])
 
   useEffect(() => {
@@ -159,27 +159,29 @@ const Pallets = props => {
                     key={pallet._id}
                     title={pallet.customerId.name}
                     tools={
-                      <div>
-                        <Link to={`pallets/add/${pallet._id}`}>
-                          <GiHammerNails className="--success" />
-                        </Link>
-                        <Link to={`pallets/item/${pallet._id}`}>
-                          <GiWoodPile className="--success" />
-                        </Link>
-                        <Link to={`pallets/specialProcess/${pallet._id}`}>
-                          <GiProcessor className="--success" />
-                        </Link>
-                        <Link to={`pallets/platform/${pallet._id}`}>
-                          <GiTruck className="--success" />
-                        </Link>
-                        <Link to={`pallets/${pallet._id}`}>
-                          <AiOutlineEdit className="--warning" />
-                        </Link>
-                        <AiOutlineDelete
-                          className="--danger"
-                          onClick={() => handleDeletePallet(pallet._id)}
-                        />
-                      </div>
+                      role === 'Administrador' ? (
+                        <div>
+                          <Link to={`pallets/add/${pallet._id}`}>
+                            <GiHammerNails className="--success" />
+                          </Link>
+                          <Link to={`pallets/item/${pallet._id}`}>
+                            <GiWoodPile className="--success" />
+                          </Link>
+                          <Link to={`pallets/specialProcess/${pallet._id}`}>
+                            <GiProcessor className="--success" />
+                          </Link>
+                          <Link to={`pallets/platform/${pallet._id}`}>
+                            <GiTruck className="--success" />
+                          </Link>
+                          <Link to={`pallets/${pallet._id}`}>
+                            <AiOutlineEdit className="--warning" />
+                          </Link>
+                          <AiOutlineDelete
+                            className="--danger"
+                            onClick={() => handleDeletePallet(pallet._id)}
+                          />
+                        </div>
+                      ) : null
                     }
                   >
                     <div className="palletCard">
@@ -195,8 +197,8 @@ const Pallets = props => {
                             {pallet.description}
                           </h3>
                           <h4 className="palletCard__subtitle">
-                            {pallet.width} cm - {pallet.height} cm -{' '}
-                            {pallet.length} cm
+                            {pallet.width} in - {pallet.height} in - {''}
+                            {pallet.length} in
                           </h4>
                           <h4 className="palletCard__subtitle">
                             Calidad: {pallet.qualityId[0]}
@@ -210,11 +212,14 @@ const Pallets = props => {
                                     <li
                                       className="palletCard__item"
                                       key={special[0]._id}
-                                      onClick={() =>
-                                        handleDeleteSpecialProcess(
-                                          pallet._id,
-                                          special[0]._id
-                                        )
+                                      onClick={
+                                        role === 'Administrador'
+                                          ? () =>
+                                              handleDeleteSpecialProcess(
+                                                pallet._id,
+                                                special[0]._id
+                                              )
+                                          : null
                                       }
                                     >
                                       {special[0].name}
@@ -240,8 +245,11 @@ const Pallets = props => {
                                 <li
                                   key={item.id}
                                   className="palletCard__item"
-                                  onClick={() =>
-                                    handleDeleteItem(pallet._id, item.id)
+                                  onClick={
+                                    role === 'Administrador'
+                                      ? () =>
+                                          handleDeleteItem(pallet._id, item.id)
+                                      : null
                                   }
                                 >
                                   {item.name}: {item.amount}
@@ -261,8 +269,14 @@ const Pallets = props => {
                                 <li
                                   key={nail.nailId}
                                   className="palletCard__item"
-                                  onClick={() =>
-                                    handleDeleteNail(pallet._id, nail.nailId)
+                                  onClick={
+                                    role === 'Administrador'
+                                      ? () =>
+                                          handleDeleteNail(
+                                            pallet._id,
+                                            nail.nailId
+                                          )
+                                      : null
                                   }
                                 >
                                   {nail.name}: {nail.amount}
@@ -282,11 +296,14 @@ const Pallets = props => {
                                 <li
                                   key={platform._id}
                                   className="palletCard__item"
-                                  onClick={() =>
-                                    handleDeletePlatform(
-                                      pallet._id,
-                                      platform._id
-                                    )
+                                  onClick={
+                                    role === 'Administrador'
+                                      ? () =>
+                                          handleDeletePlatform(
+                                            pallet._id,
+                                            platform._id
+                                          )
+                                      : null
                                   }
                                 >
                                   {platform.name}: {platform.capacity}
@@ -324,6 +341,7 @@ const Pallets = props => {
 const mapStateToProps = state => {
   return {
     pallets: state.pallets,
+    role: state.role,
   }
 }
 

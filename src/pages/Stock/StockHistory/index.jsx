@@ -9,21 +9,33 @@ import Loading from '../../../components/Loading/Loading'
 import SearchBar from '../../../components/SearchBar/SearchBar'
 
 const StockHistory = props => {
-  const { stockLog, pallets, raws, nails, items, setTitle } = props
+  const { stockLog, pallets, raws, nails, items, setTitle, role } = props
   const [filter, setFilter] = useState([])
 
   useEffect(() => {
-    const topbar = {
-      title: 'Inventarios',
-      menu: {
-        Tarimas: '/stock',
-        Complementos: '/stockItems',
-        Clavos: '/stockNails',
-        'Materia Prima': '/stockMaterial',
-        'Entradas y salidas': '/stockChanges',
-        Historial: '/stockHistory',
-      },
-    }
+    let topbar
+    role === 'Administrador'
+      ? (topbar = {
+          title: 'Inventarios',
+          menu: {
+            Tarimas: '/stock',
+            Complementos: '/stockItems',
+            Clavos: '/stockNails',
+            'Materia Prima': '/stockMaterial',
+            'Entradas y salidas': '/stockChanges',
+            Historial: '/stockHistory',
+          },
+        })
+      : (topbar = {
+          title: 'Inventarios',
+          menu: {
+            Tarimas: '/stock',
+            Complementos: '/stockItems',
+            Clavos: '/stockNails',
+            'Materia Prima': '/stockMaterial',
+            Historial: '/stockHistory',
+          },
+        })
     setTitle(topbar)
     props.getAll('stock', 'GET_STOCKLOG')
     props.getAll('pallets', 'GET_PALLETS')
@@ -47,22 +59,22 @@ const StockHistory = props => {
     const searchWord = e.target.value.toLowerCase()
     let newTableDate = []
     pallets.map(pallet => {
-      if (pallet.model.toLowerCase().includes(searchWord)) {
+      if (pallet.model.toLowerCase() === searchWord) {
         newTableDate.push(pallet._id)
       }
     })
     nails.map(nail => {
-      if (nail.name.toLowerCase().includes(searchWord)) {
+      if (nail.name.toLowerCase() === searchWord) {
         newTableDate.push(nail.name)
       }
     })
     items.map(item => {
-      if (item.name.toLowerCase().includes(searchWord)) {
+      if (item.name.toLowerCase() === searchWord) {
         newTableDate.push(item.name)
       }
     })
     raws.map(raw => {
-      if (raw.name.toLowerCase().includes(searchWord)) {
+      if (raw.name.toLowerCase() === searchWord) {
         newTableDate.push(raw.name)
       }
     })
@@ -155,6 +167,7 @@ const mapStateToProps = state => {
     nails: state.nails,
     items: state.items,
     raws: state.raws,
+    role: state.role,
   }
 }
 

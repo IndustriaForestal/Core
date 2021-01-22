@@ -81,6 +81,7 @@ const CreateSupplier = props => {
               <span>Area:</span>
               <select name="role" ref={register}>
                 <option value="Administrador">Administrador</option>
+                <option value="Vista">Vista</option>
                 {processes.map(process => {
                   return (
                     <option key={process._id} value={process.name}>

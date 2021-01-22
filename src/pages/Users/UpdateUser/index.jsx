@@ -82,6 +82,7 @@ const UpdateMaterialOne = props => {
               <select name="role" ref={register}>
                 <option value={user.role}>{user.role}</option>
                 <option value="Administrador">Administrador</option>
+                <option value="Vista">Vista</option>
                 {processes
                   .filter(process => process.name !== user.role)
                   .map(process => {

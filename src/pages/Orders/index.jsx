@@ -15,7 +15,7 @@ import Loading from '../../components/Loading/Loading'
 import './styles.scss'
 
 const Orders = props => {
-  const { orders, setTitle, pallets, socket } = props
+  const { orders, setTitle, pallets, socket, role } = props
 
   useEffect(() => {
     const topbar = {
@@ -92,13 +92,15 @@ const Orders = props => {
                           if (pallet.ready) {
                             return (
                               <li key={pallet.palletId}>
-                                {pallet.orderNumber} -- {pallet.model}: {pallet.amount - pallet.ready}
+                                {pallet.orderNumber} -- {pallet.model}:{' '}
+                                {pallet.amount - pallet.ready}
                               </li>
                             )
                           } else {
                             return (
                               <li key={pallet.palletId}>
-                                {pallet.orderNumber} -- {pallet.model}: {pallet.amount}
+                                {pallet.orderNumber} -- {pallet.model}:{' '}
+                                {pallet.amount}
                               </li>
                             )
                           }
@@ -106,22 +108,26 @@ const Orders = props => {
                       </ul>
                     </td>
                     <td>
-                      <Link to={`orders/main/${order._id}`}>
-                        <Button className="btn --success">
-                          <BsPlus />
-                        </Button>
-                      </Link>
+                      {role === 'Administrador' ? (
+                        <Link to={`orders/main/${order._id}`}>
+                          <Button className="btn --success">
+                            <BsPlus />
+                          </Button>
+                        </Link>
+                      ) : null}
                       <Link to={`orders/shipments/${order._id}`}>
                         <Button className="btn --info">
                           <BsFileEarmarkPlus />
                         </Button>
                       </Link>
-                      <Button
-                        className="btn --danger"
-                        onClick={() => handleDeleteNail(order._id)}
-                      >
-                        <AiOutlineDelete />
-                      </Button>
+                      {role === 'Administrador' ? (
+                        <Button
+                          className="btn --danger"
+                          onClick={() => handleDeleteNail(order._id)}
+                        >
+                          <AiOutlineDelete />
+                        </Button>
+                      ) : null}
                     </td>
                   </tr>
                 )
@@ -150,6 +156,7 @@ const mapStateToProps = state => {
     orders: state.orders,
     pallets: state.pallets,
     socket: state.socket,
+    role: state.role,
   }
 }
 

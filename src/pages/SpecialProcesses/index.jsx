@@ -11,7 +11,7 @@ import AddButton from '../../components/AddButton/AddButton'
 import './styles.scss'
 
 const SpecialProcesses = props => {
-  const { specialProcesses, setTitle } = props
+  const { specialProcesses, setTitle, role } = props
 
   useEffect(() => {
     const topbar = {
@@ -23,7 +23,16 @@ const SpecialProcesses = props => {
     // eslint-disable-next-line
   }, [])
 
-  const tableHeader = ['Nombre', 'Capacidad', 'Personal', 'Duración', 'Acciones']
+  let tableHeader
+  role === 'Administrador'
+    ? (tableHeader = [
+        'Nombre',
+        'Capacidad',
+        'Personal',
+        'Duración',
+        'Acciones',
+      ])
+    : (tableHeader = ['Nombre', 'Capacidad', 'Personal', 'Duración'])
 
   const handleDeleteSpecialProcess = specialProcessId => {
     Swal.fire({
@@ -34,14 +43,15 @@ const SpecialProcesses = props => {
       confirmButtonColor: '#3085d6',
       cancelButtonColor: '#d33',
       confirmButtonText: 'Si, borrar',
+    }).then(result => {
+      if (result.isConfirmed) {
+        props.deleted(
+          `specialProcesses/${specialProcessId}`,
+          'DELETE_SPECIAL_PROCESS'
+        )
+        Swal.fire('Borrado!', 'Borrado con exito.', 'success')
+      }
     })
-      .then(result => {
-        if (result.isConfirmed) {
-          props.deleted(`specialProcesses/${specialProcessId}`, 'DELETE_SPECIAL_PROCESS')
-          Swal.fire('Borrado!', 'Borrado con exito.', 'success')
-        }
-      })
-    
   }
 
   return (
@@ -54,19 +64,23 @@ const SpecialProcesses = props => {
               <td>{specialProcess.capacity}</td>
               <td>{specialProcess.people}</td>
               <td>{specialProcess.duration}</td>
-              <td>
-                <Link to={`specialProcesses/${specialProcess._id}`}>
-                  <Button className="btn --warning">
-                    <AiOutlineEdit />
+              {role === 'Administrador' ? (
+                <td>
+                  <Link to={`specialProcesses/${specialProcess._id}`}>
+                    <Button className="btn --warning">
+                      <AiOutlineEdit />
+                    </Button>
+                  </Link>
+                  <Button
+                    className="btn --danger"
+                    onClick={() =>
+                      handleDeleteSpecialProcess(specialProcess._id)
+                    }
+                  >
+                    <AiOutlineDelete />
                   </Button>
-                </Link>
-                <Button
-                  className="btn --danger"
-                  onClick={() => handleDeleteSpecialProcess(specialProcess._id)}
-                >
-                  <AiOutlineDelete />
-                </Button>
-              </td>
+                </td>
+              ) : null}
             </tr>
           ))
         ) : (
@@ -87,6 +101,7 @@ const SpecialProcesses = props => {
 const mapStateToProps = state => {
   return {
     specialProcesses: state.specialProcesses,
+    role: state.role,
   }
 }
 

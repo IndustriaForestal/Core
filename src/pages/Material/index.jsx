@@ -11,7 +11,7 @@ import AddButton from '../../components/AddButton/AddButton'
 import './styles.scss'
 
 const Nails = props => {
-  const { material, setTitle } = props
+  const { material, setTitle, role } = props
 
   useEffect(() => {
     const topbar = {
@@ -23,7 +23,10 @@ const Nails = props => {
     // eslint-disable-next-line
   }, [])
 
-  const tableHeader = ['Nombre', 'Proceso', 'Acciones']
+  let tableHeader
+  role === 'Administrador'
+    ? (tableHeader = ['Nombre', 'Proceso', 'Acciones'])
+    : (tableHeader = ['Nombre', 'Proceso'])
 
   const handleDeleteMaterial = materialId => {
     Swal.fire({
@@ -42,8 +45,6 @@ const Nails = props => {
     })
   }
 
-  console.log(material)
-
   return (
     <>
       <Table head={tableHeader}>
@@ -52,6 +53,7 @@ const Nails = props => {
             <tr key={materialOne._id}>
               <td>{materialOne.name}</td>
               <td>{materialOne.processes.map(process => process.name)}</td>
+              {role === 'Administrador' ? (
               <td>
                 <Link to={`material/${materialOne._id}`}>
                   <Button className="btn --warning">
@@ -65,6 +67,7 @@ const Nails = props => {
                   <AiOutlineDelete />
                 </Button>
               </td>
+              ) : null}
             </tr>
           ))
         ) : (
@@ -85,6 +88,7 @@ const Nails = props => {
 const mapStateToProps = state => {
   return {
     material: state.material,
+    role: state.role,
   }
 }
 

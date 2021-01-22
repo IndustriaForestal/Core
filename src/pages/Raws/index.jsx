@@ -11,7 +11,7 @@ import AddButton from '../../components/AddButton/AddButton'
 import './styles.scss'
 
 const Raws = props => {
-  const { raws, setTitle } = props
+  const { raws, setTitle, role } = props
 
   useEffect(() => {
     const topbar = {
@@ -23,7 +23,10 @@ const Raws = props => {
     // eslint-disable-next-line
   }, [])
 
-  const tableHeader = ['Nombre', 'Acciones']
+  let tableHeader
+  role === 'Administrador'
+    ? (tableHeader = ['Nombre', 'Acciones'])
+    : (tableHeader = ['Nombre'])
 
   const handleDeleteRaw = rawId => {
     Swal.fire({
@@ -49,19 +52,21 @@ const Raws = props => {
           raws.map(raw => (
             <tr key={raw._id}>
               <td>{raw.name}</td>
-              <td>
-                <Link to={`raws/${raw._id}`}>
-                  <Button className="btn --warning">
-                    <AiOutlineEdit />
+              {role === 'Administrador' ? (
+                <td>
+                  <Link to={`raws/${raw._id}`}>
+                    <Button className="btn --warning">
+                      <AiOutlineEdit />
+                    </Button>
+                  </Link>
+                  <Button
+                    className="btn --danger"
+                    onClick={() => handleDeleteRaw(raw._id)}
+                  >
+                    <AiOutlineDelete />
                   </Button>
-                </Link>
-                <Button
-                  className="btn --danger"
-                  onClick={() => handleDeleteRaw(raw._id)}
-                >
-                  <AiOutlineDelete />
-                </Button>
-              </td>
+                </td>
+              ) : null}
             </tr>
           ))
         ) : (
@@ -82,6 +87,7 @@ const Raws = props => {
 const mapStateToProps = state => {
   return {
     raws: state.raws,
+    role: state.role,
   }
 }
 

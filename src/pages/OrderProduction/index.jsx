@@ -70,7 +70,7 @@ const OrderProduction = props => {
       }
     })
 
-    if (role === 'Administrador') {
+    if (role === 'Administrador' || role === 'Vista') {
       return (
         <Card title={`Ordenes de producción`}>
           {newOrders.length > 0 && newOrders[0]
@@ -94,7 +94,7 @@ const OrderProduction = props => {
                         <Title>{`Estado`}</Title>
                         {order.ordersProduction &&
                         order.ordersProduction.filter(op => op.completed === 0)
-                          .length === 0 ? (
+                          .length === 0 && role === 'Administrador' ? (
                           <Button
                             onClick={() => handleCompleteShipment(order._id)}
                           >

@@ -12,21 +12,28 @@ import SearchBar from '../../components/SearchBar/SearchBar'
 import './styles.scss'
 
 const Nails = props => {
-  const { nails, setTitle } = props
+  const { nails, setTitle, role } = props
   const [filter, setFilter] = useState([])
 
   useEffect(() => {
     const topbar = {
       title: 'Clavos',
-      menu: { Tarimas: '/pallets', Complementos: '/items', Clavos: '/nails', Calidades: '/qualities' },
-
+      menu: {
+        Tarimas: '/pallets',
+        Complementos: '/items',
+        Clavos: '/nails',
+        Calidades: '/qualities',
+      },
     }
     setTitle(topbar)
     props.getAll('nails', 'GET_NAILS')
     // eslint-disable-next-line
   }, [])
 
-  const tableHeader = ['Nombre', 'Stock', 'Acciones']
+  let tableHeader
+  role === 'Administrador'
+    ? (tableHeader = ['Nombre', 'Stock', 'Acciones'])
+    : (tableHeader = ['Nombre', 'Stock'])
 
   const handleDeleteNail = nailId => {
     Swal.fire({
@@ -69,19 +76,21 @@ const Nails = props => {
             <tr key={nail._id}>
               <td>{nail.name}</td>
               <td>{nail.stock}</td>
-              <td>
-                <Link to={`nails/${nail._id}`}>
-                  <Button className="btn --warning">
-                    <AiOutlineEdit />
+              {role === 'Administrador' ? (
+                <td>
+                  <Link to={`nails/${nail._id}`}>
+                    <Button className="btn --warning">
+                      <AiOutlineEdit />
+                    </Button>
+                  </Link>
+                  <Button
+                    className="btn --danger"
+                    onClick={() => handleDeleteNail(nail._id)}
+                  >
+                    <AiOutlineDelete />
                   </Button>
-                </Link>
-                <Button
-                  className="btn --danger"
-                  onClick={() => handleDeleteNail(nail._id)}
-                >
-                  <AiOutlineDelete />
-                </Button>
-              </td>
+                </td>
+              ) : null}
             </tr>
           ))
         ) : (
@@ -102,6 +111,7 @@ const Nails = props => {
 const mapStateToProps = state => {
   return {
     nails: state.nails,
+    role: state.role,
   }
 }
 
