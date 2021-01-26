@@ -4,6 +4,7 @@ import { connect } from 'react-redux'
 import { AiOutlineDelete } from 'react-icons/ai'
 import DatePicker from 'react-datepicker'
 import moment from 'moment'
+import Select from 'react-select'
 import { setTitle, getAll, deleted, get, create } from '../../../actions/app'
 import Swal from 'sweetalert2'
 import Table from '../../../components/Table/Table'
@@ -19,13 +20,13 @@ const CreateOrder = props => {
   const [startDateOrder, setStartDateOrder] = useState(new Date())
   const [orderNumber, setOrderNumber] = useState()
   const [paperNumber, setPaperNumber] = useState()
-  const [orderDateDelivery, setOrderDateDelivery] = useState()
+  const [orderDateDelivery, setOrderDateDelivery] = useState(new Date())
   const [customerId, setCostumerId] = useState(0)
   const [amount, setAmount] = useState(0)
   const [palletsArray, setPalletArray] = useState([])
   const { setTitle, customers, pallets } = props
 
-  const tableHeader = ['# OC', 'Nombre', 'Cantidad', 'Acciones']
+  const tableHeader = ['# OC', 'Nombre', 'Cantidad', 'Entrega', 'Acciones']
 
   const handleSaveOrder = () => {
     Swal.fire({
@@ -59,22 +60,26 @@ const CreateOrder = props => {
       menu: { Pedidos: '/orders' },
     }
     setTitle(topbar)
-    props.getAll('customers', 'GET_CUSTOMERS')
+    props.getAll('customers', 'GET_CUSTOMERS').then(() => {
+      props.getAll('pallets', 'GET_PALLETS')
+    })
     // eslint-disable-next-line
   }, [])
 
   const setPallets = e => {
-    props.getAll(`pallets/customer/${e.target.value}`, 'GET_PALLETS')
+    // props.getAll(`pallets/customer/${e.target.value}`, 'GET_PALLETS')
     setCostumerId(e.target.value)
   }
 
+  console.log(palletsArray)
+
   const setPalletChange = e => {
-    setPallet(pallets.filter(pallet => pallet._id === e.target.value))
+    setPallet(pallets.filter(pallet => pallet._id === e))
   }
 
   const handleAddPallet = () => {
     const pallet = newPallet[0]
-
+    console.log(pallet)
     setPalletArray([
       ...palletsArray,
       {
@@ -93,7 +98,21 @@ const CreateOrder = props => {
     setPalletArray(newArray)
   }
 
-  if (customers) {
+  if (customers && pallets) {
+    const selectCustomers = customers.map(customer => {
+      return {
+        value: customer._id,
+        label: customer.name,
+      }
+    })
+
+    const selectPallets = pallets.map(pallet => {
+      return {
+        value: pallet._id,
+        label: `${pallet.model} - ${pallet.qualityId[0]}`,
+      }
+    })
+
     return (
       <>
         <Card title="Datos Pedido">
@@ -121,7 +140,7 @@ const CreateOrder = props => {
             title="# Papeleta"
             onInput={e => setPaperNumber(e.target.value)}
           />
-          <div className="inputGroup">
+          {/* <div className="inputGroup">
             <label htmlFor="processId">
               <span>Cliente:</span>
               <select name="customerId" onChange={setPallets}>
@@ -135,7 +154,13 @@ const CreateOrder = props => {
                 })}
               </select>
             </label>
-          </div>
+          </div> */}
+          <h5>Cliente</h5>
+          <Select
+            options={selectCustomers}
+            onChange={e => setPaperNumber(e.value)}
+            styles={{ padding: '15px 0' }}
+          />
         </Card>
         <Card title="Crear Pedido">
           <Input
@@ -144,7 +169,7 @@ const CreateOrder = props => {
             title="# Pedido"
             onInput={e => setOrderNumber(e.target.value)}
           />
-          {pallets ? (
+          {/*  {pallets ? (
             <div className="inputGroup">
               <label htmlFor="processId">
                 <span>Tarimas:</span>
@@ -160,7 +185,13 @@ const CreateOrder = props => {
                 </select>
               </label>
             </div>
-          ) : null}
+          ) : null} */}
+          <h5>Tarimas</h5>
+          <Select
+            options={selectPallets}
+            onChange={e => setPalletChange(e.value)}
+            styles={{ padding: '15px 0' }}
+          />
 
           <Input
             type="number"
@@ -171,7 +202,7 @@ const CreateOrder = props => {
           <div>
             <p>Entrega del pedido</p>
             <DatePicker
-              selected={startDate}
+              selected={orderDateDelivery}
               name="date"
               onChange={date => setOrderDateDelivery(date)}
               className="datePicker_css"
@@ -197,6 +228,7 @@ const CreateOrder = props => {
               <td>{pallet.orderNumber}</td>
               <td>{pallet.model}</td>
               <td>{pallet.amount}</td>
+              <td>{moment(pallet.orderDateDelivery).format('YYYY-MM-DD')}</td>
               <td>
                 <Button
                   className="btn --danger"
