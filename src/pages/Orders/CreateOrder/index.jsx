@@ -68,7 +68,7 @@ const CreateOrder = props => {
 
   const setPallets = e => {
     // props.getAll(`pallets/customer/${e.target.value}`, 'GET_PALLETS')
-    setCostumerId(e.target.value)
+    setCostumerId(e)
   }
 
   console.log(palletsArray)
@@ -158,7 +158,7 @@ const CreateOrder = props => {
           <h5>Cliente</h5>
           <Select
             options={selectCustomers}
-            onChange={e => setPaperNumber(e.value)}
+            onChange={e => setPallets(e.value)}
             styles={{ padding: '15px 0' }}
           />
         </Card>
