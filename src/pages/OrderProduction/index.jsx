@@ -64,7 +64,7 @@ const OrderProduction = props => {
   if (orders && processes) {
     const newOrders = orders.map(order => {
       if (order.shipments) {
-        return order.shipments.filter(shipment => shipment.completed !== 1)
+        return order.shipments.filter(shipment => shipment.completed !== 1)[0]
       } else {
         return null
       }
@@ -73,8 +73,8 @@ const OrderProduction = props => {
     if (role === 'Administrador' || role === 'Vista') {
       return (
         <Card title={`Ordenes de producción`}>
-          {newOrders.length > 0 && newOrders[0]
-            ? newOrders[0].map(orderCero => {
+          {newOrders.length > 0 
+            ? newOrders.map(orderCero => {
                 const order = orderCero
                 console.log(newOrders)
                 if (order) {
