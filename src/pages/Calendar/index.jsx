@@ -31,7 +31,7 @@ const CalendarOrders = props => {
               title: `Partida ${order.paperNumber}`,
               start: moment(pallet.orderDateDelivery).toDate(),
               end: moment(pallet.orderDateDelivery).toDate(),
-              orderId: `/orders`,
+              orderId: `/orders/shipments/${order._id}`,
             })
           }
         })
