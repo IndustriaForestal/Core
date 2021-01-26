@@ -2,6 +2,7 @@ import React, { useEffect, useState, useRef } from 'react'
 import { Link, useParams } from 'react-router-dom'
 import { AiOutlineDelete } from 'react-icons/ai'
 import { connect } from 'react-redux'
+import moment from 'moment'
 import {
   setTitle,
   getAll,
@@ -30,7 +31,7 @@ const CreateOrder = props => {
   const typeOrder = useRef(null)
 
   const tableHeader = ['Nombre', '1 Verdes', '1 Secas', '2 Verdes', '2 Secas']
-  const tableHeader2 = ['Nombre', 'OC', 'Cantidad']
+  const tableHeader2 = ['Nombre', 'OC', 'Cantidad', 'Fecha Entrega']
   const tableHeader3 = ['Nombre', 'Cantidad', 'Accion']
 
   const onSubmit = data => {
@@ -101,7 +102,7 @@ const CreateOrder = props => {
     }
   }, [palletsArray])
 
- /*  useEffect(() => {
+  /*  useEffect(() => {
     if (order) {
       if (typeOrder.current.options.selectedIndex === 0) {
         history.push(`/orders/create/${order}`)
@@ -180,7 +181,10 @@ const CreateOrder = props => {
             <tr key={pallet.palletId}>
               <td>{pallet.model}</td>
               <td>{pallet.orderNumber}</td>
-              <td>{pallet.ready ? pallet.amount - pallet.ready : pallet.amount}</td>
+              <td>
+                {pallet.ready ? pallet.amount - pallet.ready : pallet.amount}
+              </td>
+              <td>{moment(pallet.orderDateDelivery).format('DD/MM/YYYY')}</td>
             </tr>
           ))}
         </Table>

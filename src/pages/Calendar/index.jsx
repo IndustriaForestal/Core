@@ -23,15 +23,31 @@ const CalendarOrders = props => {
 
   if (orders) {
     orders.map(order => {
-      if (order.shipments) {
+      if (order.pallets) {
+        order.pallets.map(pallet => {
+          if (pallet.orderDateDelivery) {
+            console.log(pallet)
+            eventList.push({
+              title: `Partida ${order.paperNumber}`,
+              start: moment(pallet.orderDateDelivery).toDate(),
+              end: moment(pallet.orderDateDelivery).toDate(),
+              orderId: `/orders`,
+            })
+          }
+        })
+      }
+      if (order.shipments && order.shipments.length > 0) {
         order.shipments.map(shipment => {
           if (shipment.completed !== 1) {
-            eventList.push({
-              title: order.paperNumber,
-              start: moment(shipment.ordersProduction[0].date).toDate(),
-              end: moment(shipment.ordersProduction[0].date).toDate(),
-              orderId: shipment._id,
-            })
+            if (shipment.ordersProduction) {
+              eventList.push({
+                title: order.paperNumber,
+                start: moment(shipment.ordersProduction[0].date).toDate(),
+                end: moment(shipment.ordersProduction[0].date).toDate(),
+                orderId: `/orders/details/${shipment._id}`,
+                eventColor: '#378006',
+              })
+            }
           }
         })
       }
@@ -81,7 +97,7 @@ const CalendarOrders = props => {
   } */
 
   const handleClickEvent = e => {
-    props.history.push(`/orders/details/${e.orderId}`)
+    props.history.push(`${e.orderId}`)
   }
 
   return (

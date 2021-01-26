@@ -51,6 +51,7 @@ import Orders from '../pages/Orders'
 import MainOrder from '../pages/Orders/OrderMain'
 import OrderProduction from '../pages/Orders/OrderProduction'
 import CreateOrder from '../pages/Orders/CreateOrder'
+import UpdateOrder from '../pages/Orders/UpdateOrder'
 import OrderIntern from '../pages/Orders/OrderIntern'
 import OrderDetails from '../pages/Orders/OrderDetails'
 import Raws from '../pages/Raws'
@@ -296,6 +297,11 @@ const App = ({ loggedIn }) => {
               exact
               path="/orders/create"
               component={role === 'Administrador' || role === 'Vista' ? CreateOrder : Home}
+            />
+            <Route
+              exact
+              path="/orders/update/:id"
+              component={role === 'Administrador' || role === 'Vista' ? UpdateOrder : Home}
             />
             <Route
               exact

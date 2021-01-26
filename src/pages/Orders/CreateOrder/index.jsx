@@ -19,12 +19,13 @@ const CreateOrder = props => {
   const [startDateOrder, setStartDateOrder] = useState(new Date())
   const [orderNumber, setOrderNumber] = useState()
   const [paperNumber, setPaperNumber] = useState()
+  const [orderDateDelivery, setOrderDateDelivery] = useState()
   const [customerId, setCostumerId] = useState(0)
   const [amount, setAmount] = useState(0)
   const [palletsArray, setPalletArray] = useState([])
   const { setTitle, customers, pallets } = props
 
-  const tableHeader = ['# OC','Nombre', 'Cantidad', 'Acciones']
+  const tableHeader = ['# OC', 'Nombre', 'Cantidad', 'Acciones']
 
   const handleSaveOrder = () => {
     Swal.fire({
@@ -81,6 +82,7 @@ const CreateOrder = props => {
         qualityId: pallet.quality._id,
         model: pallet.model,
         amount: parseInt(amount),
+        orderDateDelivery,
         orderNumber,
       },
     ])
@@ -166,6 +168,15 @@ const CreateOrder = props => {
             title="Cantidad"
             onInput={e => setAmount(e.target.value)}
           />
+          <div>
+            <p>Entrega del pedido</p>
+            <DatePicker
+              selected={startDate}
+              name="date"
+              onChange={date => setOrderDateDelivery(date)}
+              className="datePicker_css"
+            />
+          </div>
           <div className="formNail__buttons">
             <Button
               type="button"

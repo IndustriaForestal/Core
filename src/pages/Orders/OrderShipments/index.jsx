@@ -92,7 +92,7 @@ const OrderShipments = props => {
                 {orderDetails.pallets.map(pallet => {
                   return (
                     <li key={pallet.palletId}>
-                       {pallet.orderNumber} -- {pallet.model}: {pallet.amount}
+                      {pallet.orderNumber} -- {pallet.model}: {pallet.amount}
                     </li>
                   )
                 })}
@@ -104,11 +104,16 @@ const OrderShipments = props => {
                   if (pallet.ready) {
                     return (
                       <li key={pallet.palletId}>
-                         {pallet.orderNumber} -- {pallet.model}: {pallet.ready}
+                        {pallet.orderNumber} -- {pallet.model}: {pallet.ready}
                       </li>
                     )
                   } else {
-                    return <li key={pallet.palletId}> {pallet.orderNumber} -- {pallet.model}: 0</li>
+                    return (
+                      <li key={pallet.palletId}>
+                        {' '}
+                        {pallet.orderNumber} -- {pallet.model}: 0
+                      </li>
+                    )
                   }
                 })}
               </ul>
@@ -119,13 +124,16 @@ const OrderShipments = props => {
                   if (pallet.ready) {
                     return (
                       <li key={pallet.palletId}>
-                        {pallet.orderNumber} -- {pallet.model}: {pallet.amount - pallet.ready}
+                        {pallet.orderNumber} -- {pallet.model}:{' '}
+                        {pallet.amount - pallet.ready} --{' '}
+                        {moment(pallet.date).format('DD/MM/YYYY')}
                       </li>
                     )
                   } else {
                     return (
                       <li key={pallet.palletId}>
-                         {pallet.orderNumber} --  {pallet.model}: {pallet.amount}
+                        {pallet.orderNumber} -- {pallet.model}: {pallet.amount}{' '}
+                        -- {moment(pallet.date).format('DD/MM/YYYY')}
                       </li>
                     )
                   }

@@ -1,7 +1,7 @@
 import React from 'react'
 import './Input.scss'
 
-const Input = ({ title, name, type, placeholder, value, onChange, passRef, step, onInput }) => {
+const Input = ({ title, name, type, placeholder, value, onChange, passRef, step, onInput, onKeyPress }) => {
   return (
     <div className="inputGroup">
       <label htmlFor={name}>
@@ -15,6 +15,7 @@ const Input = ({ title, name, type, placeholder, value, onChange, passRef, step,
           defaultValue={value}
           ref={passRef}
           step={step}
+          onKeyPress={onKeyPress}
         />
       </label>
     </div>
