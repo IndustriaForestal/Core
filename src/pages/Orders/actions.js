@@ -20,7 +20,11 @@ export const searchCapacities = data => async dispatch => {
   }
 }
 
-export const updatePalletsStock = (amount, palletId, type) => async dispatch => {
+export const updatePalletsStock = (
+  amount,
+  palletId,
+  type
+) => async dispatch => {
   try {
     await axios({
       url: `${process.env.REACT_APP_API}orders/updatePallet/${palletId}`,
@@ -36,7 +40,7 @@ export const updatePalletsStock = (amount, palletId, type) => async dispatch => 
   }
 }
 
-export const completeOrder = (orderId) => async dispatch => {
+export const completeOrder = orderId => async dispatch => {
   try {
     await axios({
       url: `${process.env.REACT_APP_API}orders/completeOrder/${orderId}`,
@@ -48,9 +52,41 @@ export const completeOrder = (orderId) => async dispatch => {
         text: 'Pedido completado',
         typeAction: 'UPDATE_ORDER_PRODUCTION',
         date: moment().format('YYYY-MM-DDTHH:mm:ss') + 'Z',
-        link: `/history/orders/${orderId}`
+        link: `/history/orders/${orderId}`,
       })
     )
+    dispatch({
+      type: 'COMPLETE_ORDER',
+    })
+  } catch (error) {
+    console.log(error)
+  }
+}
+
+export const updateAmountPalletOrder = (orderId, data) => async dispatch => {
+  try {
+    await axios({
+      url: `${process.env.REACT_APP_API}orders/updatePalletesOrder/${orderId}`,
+      headers: { Authorization: `Bearer ${Cookies.get('token')}` },
+      method: 'put',
+      data
+    })
+    dispatch({
+      type: 'COMPLETE_ORDER',
+    })
+  } catch (error) {
+    console.log(error)
+  }
+}
+
+export const updateDatePalletOrder = (orderId, data) => async dispatch => {
+  try {
+    await axios({
+      url: `${process.env.REACT_APP_API}orders/updatePalletesOrderDate/${orderId}`,
+      headers: { Authorization: `Bearer ${Cookies.get('token')}` },
+      method: 'put',
+      data
+    })
     dispatch({
       type: 'COMPLETE_ORDER',
     })

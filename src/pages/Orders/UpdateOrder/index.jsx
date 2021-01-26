@@ -3,7 +3,12 @@ import { Link, useParams } from 'react-router-dom'
 import { connect } from 'react-redux'
 import moment from 'moment'
 import DatePicker from 'react-datepicker'
-import { updatePalletsStock, completeOrder } from '../actions'
+import {
+  updatePalletsStock,
+  completeOrder,
+  updateAmountPalletOrder,
+  updateDatePalletOrder,
+} from '../actions'
 import { BsPlus } from 'react-icons/bs'
 import { setTitle, getAll, deleted, get } from '../../../actions/app'
 import Input from '../../../components/Input/Input'
@@ -35,11 +40,42 @@ const OrderShipments = props => {
     console.log(e.key)
     if (e.key === 'Enter') {
       console.log(e.target.value, index)
+      const amount = e.target.value
+      props
+        .updateAmountPalletOrder(id, { index, amount })
+        .then(() => props.get(`orders/${id}`, 'GET_ORDER'))
+        .then(() => {
+          const Toast = Swal.mixin({
+            toast: true,
+            position: 'top-end',
+            showConfirmButton: false,
+            timer: 1500,
+          })
+          Toast.fire({
+            icon: 'success',
+            title: 'Se guardo correctamente',
+          })
+        })
     }
   }
 
   const handleSaveDate = (date, index) => {
     console.log(date, index)
+    props
+      .updateDatePalletOrder(id, { index, date })
+      .then(() => props.get(`orders/${id}`, 'GET_ORDER'))
+      .then(() => {
+        const Toast = Swal.mixin({
+          toast: true,
+          position: 'top-end',
+          showConfirmButton: false,
+          timer: 1500,
+        })
+        Toast.fire({
+          icon: 'success',
+          title: 'Se guardo correctamente',
+        })
+      })
   }
 
   if (orderDetails) {
@@ -96,6 +132,8 @@ const mapStateToProps = state => {
 const mapDispatchToProps = {
   setTitle,
   updatePalletsStock,
+  updateAmountPalletOrder,
+  updateDatePalletOrder,
   completeOrder,
   getAll,
   get,

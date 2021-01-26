@@ -72,12 +72,25 @@ const Orders = props => {
       })
   }
 
+  function compare(a, b) {
+    const orderA = a.startDate
+    const orderB = b.startDate
+
+    let comparison = 0
+    if (orderA > orderB) {
+      comparison = -1
+    } else if (orderA < orderB) {
+      comparison = 1
+    }
+    return comparison
+  }
+
   if (orders) {
     return (
       <>
         <Table head={tableHeader}>
           {orders ? (
-            orders.map(order => {
+            orders.sort(compare).map(order => {
               console.log(order)
               if (!order.completed) {
                 return (
