@@ -133,8 +133,8 @@ const StockHistory = props => {
                   {item.sucursal !== 0 && item.sucursal !== 1 ? 'N/A' : null}
                 </td>
                 <td>
-                  {item.state === 0 ? 'Verdes' : null}
-                  {item.state === 1 ? 'Secas' : null}
+                  {item.state === 0 ? 'Secas' : null}
+                  {item.state === 1 ? 'Verdes' : null}
                   {item.state === 2 ? 'Reaparación' : null}
                   {item.state !== 0 && item.state !== 1 && item.state !== 2
                     ? 'N/A'
