@@ -52,6 +52,7 @@ const Home = props => {
           <IconHome icon={<BsCardImage />} url="/raws" text="Materia Prima" />
           <IconHome icon={<BsCardImage />} url="/users" text="Usuarios" />
           <IconHome icon={<BsCardImage />} url="/calendar" text="Calendario" />
+          <IconHome icon={<BsCardImage />} url="/calendar-production" text="Calendario Embarques" />
         </div>
       )
     case 'Vista':
@@ -89,6 +90,7 @@ const Home = props => {
           <IconHome icon={<BsCardImage />} url="/raws" text="Materia Prima" />
           <IconHome icon={<BsCardImage />} url="/users" text="Usuarios" />
           <IconHome icon={<BsCardImage />} url="/calendar" text="Calendario" />
+          <IconHome icon={<BsCardImage />} url="/calendar-production" text="Calendario Embarques" />
         </div>
       )
 

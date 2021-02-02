@@ -83,13 +83,13 @@ const StockHistory = props => {
   }
 
   let dataTable = []
-  if (filter.length === 1 || filter.length === 2) {
+  if (filter.length === 1) {
     dataTable = stockLog.filter(log => log.productId === filter[0])
   } else {
     dataTable = stockLog
   }
 
-  if (pallets && raws && nails && items) {
+  if (pallets && raws && nails && items && stockLog) {
     return (
       <>
         <SearchBar onChange={handleSearch} />
@@ -98,13 +98,18 @@ const StockHistory = props => {
             dataTable.map(item => (
               <tr key={item._id}>
                 <td>{item.inOut}</td>
-                <td>
+                <td>n
                   {item.collection === 'pallets'
-                    ? `Tarima - ${
-                        pallets.filter(
-                          pallet => pallet._id === item.productId
-                        )[0].model
-                      }`
+                    ? 
+                    `Tarima - ${
+                          pallets.filter(
+                            pallet => pallet._id === item.productId
+                          )[0].model
+                        }`
+                     /*  console.log(
+                        pallets.filter(pallet => pallet._id === item.productId),
+                        item._id
+                      ) */
                     : null}
                   {item.collection === 'items'
                     ? `Complemento - ${

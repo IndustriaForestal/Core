@@ -12,6 +12,8 @@ import Table from '../../components/Table/Table'
 import Button from '../../components/Button/Button'
 import AddButton from '../../components/AddButton/AddButton'
 import Loading from '../../components/Loading/Loading'
+import SearchBar from '../../components/SearchBar/SearchBar'
+import MaterialTable from 'material-table'
 import './styles.scss'
 
 const Orders = props => {
@@ -85,13 +87,151 @@ const Orders = props => {
     return comparison
   }
 
+  const setFilter = e => {
+    const filter = orders.map(order => {
+      order.pallets.map(pallet => {
+        // console.log(pallet.orderNumber)
+        if (pallet.orderNumber.toLowerCase().includes(e)) {
+          console.log('Chi')
+          return order
+        }
+      })
+    })
+    console.log(e)
+    console.log(filter)
+  }
+
   if (orders) {
     return (
       <>
-        <Table head={tableHeader}>
+        {/* <SearchBar onChange={e => setFilter(e.target.value)} /> */}
+        <MaterialTable
+          columns={[
+            { title: '#', field: 'paperNumber' },
+            { title: 'Cliente', field: 'customerId.name' },
+            {
+              title: 'Fecha Entrega',
+              field: 'date',
+              render: rowData => moment(rowData.date).format('DD/MM/YYYY'),
+            },
+            {
+              title: 'Acciones',
+              render: rowData => {
+                if (role === 'Administrador') {
+                  return (
+                    <>
+                      <Link to={`orders/update/${rowData._id}`}>
+                        <Button className="btn --warning">
+                          <AiOutlineEdit />
+                        </Button>
+                      </Link>
+                      <Link to={`orders/main/${rowData._id}`}>
+                        <Button className="btn --success">
+                          <BsPlus />
+                        </Button>
+                      </Link>
+                      <Link to={`orders/shipments/${rowData._id}`}>
+                        <Button className="btn --info">
+                          <BsFileEarmarkPlus />
+                        </Button>
+                      </Link>
+                      <Button
+                        className="btn --danger"
+                        onClick={() => handleDeleteNail(rowData._id)}
+                      >
+                        <AiOutlineDelete />
+                      </Button>
+                    </>
+                  )
+                } else {
+                  return (
+                    <>
+                      <Link to={`orders/shipments/${rowData._id}`}>
+                        <Button className="btn --info">
+                          <BsFileEarmarkPlus />
+                        </Button>
+                      </Link>
+                    </>
+                  )
+                }
+              },
+            },
+          ]}
+          detailPanel={rowData => {
+            return (
+              <table
+                style={{
+                  width: '100%',
+                  padding: '15px',
+                  textAlign: 'center',
+                }}
+              >
+                <thead>
+                  <tr>
+                    <th>#Orden</th>
+                    <th>Modelo</th>
+                    <th>Cantidad</th>
+                    <th>Fecha Entrega</th>
+                  </tr>
+                </thead>
+                <tbody>
+                  {rowData.pallets.map((pallet, index) => {
+                    if (pallet.ready) {
+                      return (
+                        <tr key={index}>
+                          <td>{pallet.orderNumber}</td>
+                          <td>{pallet.model}</td>
+                          <td>{pallet.amount - pallet.ready}</td>
+                          <td>
+                            {moment(pallet.orderDateDelivery).format(
+                              'DD/MM/YYYY'
+                            )}
+                          </td>
+                        </tr>
+                      )
+                    } else {
+                      return (
+                        <tr key={index}>
+                          <td>{pallet.orderNumber}</td>
+                          <td>{pallet.model}</td>
+                          <td>{pallet.amount}</td>
+                          <td>
+                            {moment(pallet.orderDateDelivery).format(
+                              'DD/MM/YYYY'
+                            )}
+                          </td>
+                        </tr>
+                      )
+                    }
+                  })}
+                </tbody>
+              </table>
+            )
+          }}
+          localization={{
+            pagination: {
+              labelDisplayedRows: '{from}-{to} de {count}',
+              labelRowsSelect: 'Filas',
+              firstAriaLabel: 'Primera',
+              firstTooltip: 'Primera',
+              previousAriaLabel: 'Anterior',
+              previousTooltip: 'Anterior',
+              nextAriaLabel: 'Siguiente',
+              nextTooltip: 'Siguiente',
+              lastAriaLabel: 'Ultimo',
+              lastTooltip: 'Ultimo',
+            },
+            toolbar: {
+              searchTooltip: 'Buscar',
+              searchPlaceholder: 'Buscar',
+            },
+          }}
+          data={orders}
+          title="Pedidos"
+        />
+        {/* <Table head={tableHeader}>
           {orders ? (
             orders.sort(compare).map(order => {
-              console.log(order)
               if (!order.completed) {
                 return (
                   <tr key={order._id}>
@@ -101,17 +241,17 @@ const Orders = props => {
                     <td>{moment(order.date).format('DD/MM/YYYY')}</td>
                     <td>
                       <ul>
-                        {order.pallets.map(pallet => {
+                        {order.pallets.map((pallet, index) => {
                           if (pallet.ready) {
                             return (
-                              <li key={pallet.palletId}>
+                              <li key={index}>
                                 {pallet.orderNumber} -- {pallet.model}:{' '}
                                 {pallet.amount - pallet.ready}
                               </li>
                             )
                           } else {
                             return (
-                              <li key={pallet.palletId}>
+                              <li key={index}>
                                 {pallet.orderNumber} -- {pallet.model}:{' '}
                                 {pallet.amount} --{' '}
                                 {moment(pallet.orderDateDelivery).format(
@@ -161,7 +301,7 @@ const Orders = props => {
               <td colSpan="7">No hay registros</td>
             </tr>
           )}
-        </Table>
+        </Table> */}
         <Link to="/orders/create">
           <AddButton>
             <BsPlus />

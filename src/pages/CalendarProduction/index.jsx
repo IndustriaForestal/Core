@@ -24,16 +24,18 @@ const CalendarOrders = props => {
 
   if (orders) {
     orders.map(order => {
-      if (order.pallets) {
-        order.pallets.map(pallet => {
-          if (pallet.orderDateDelivery) {
-            console.log(pallet)
-            eventList.push({
-              title: `${pallet.model}: ${pallet.amount}`,
-              start: moment(pallet.orderDateDelivery).toDate(),
-              end: moment(pallet.orderDateDelivery).toDate(),
-              orderId: `/orders/shipments/${order._id}`,
-            })
+      if (order.shipments && order.shipments.length > 0) {
+        order.shipments.map(shipment => {
+          if (shipment.completed !== 1) {
+            if (shipment.ordersProduction) {
+              eventList.push({
+                title: `${shipment.pallets[0].model}: ${shipment.pallets[0].amount}`,
+                start: moment(shipment.ordersProduction[0].date).toDate(),
+                end: moment(shipment.ordersProduction[0].date).toDate(),
+                orderId: `/orders/details/${shipment._id}`,
+                eventColor: '#378006',
+              })
+            }
           }
         })
       }

@@ -64,6 +64,7 @@ import OrderProductionList from '../pages/OrderProduction'
 import OrderProductionItem from '../pages/OrderProduction/OrderProductionItem'
 import OrderShipments from '../pages/Orders/OrderShipments'
 import Calendar from '../pages/Calendar'
+import CalendarProduction from '../pages/CalendarProduction'
 
 const App = ({ loggedIn }) => {
   const role = Cookies.get('role')
@@ -357,6 +358,11 @@ const App = ({ loggedIn }) => {
               exact
               path="/calendar"
               component={role === 'Administrador' || role === 'Vista' ? Calendar : Home}
+            />
+            <Route
+              exact
+              path="/calendar-production"
+              component={role === 'Administrador' || role === 'Vista' ? CalendarProduction : Home}
             />
             {/* Area Usuario */}
             <Route
