@@ -24,6 +24,7 @@ const CreateOrder = props => {
   const [customerId, setCostumerId] = useState(0)
   const [amount, setAmount] = useState(0)
   const [palletsArray, setPalletArray] = useState([])
+  const [sucursal, setSucursal] = useState(0)
   const { setTitle, customers, pallets } = props
 
   const tableHeader = ['# OC', 'Nombre', 'Cantidad', 'Entrega', 'Acciones']
@@ -44,6 +45,7 @@ const CreateOrder = props => {
           startDate: moment(startDateOrder).format('YYYY-MM-DDT06:00:00') + 'Z',
           paperNumber,
           customerId,
+          sucursal,
           pallets: palletsArray,
         }
         console.log(order)
@@ -137,7 +139,7 @@ const CreateOrder = props => {
           <Input
             type="text"
             name="paperNumber"
-            title="# Papeleta"
+            title="Usuario"
             onInput={e => setPaperNumber(e.target.value)}
           />
           {/* <div className="inputGroup">
@@ -161,7 +163,18 @@ const CreateOrder = props => {
             onChange={e => setPallets(e.value)}
             styles={{ padding: '15px 0' }}
           />
+          <div className="inputGroup">
+            <label htmlFor="sucursal">
+              <span>Planta:</span>
+              <select name="sucursal" onChange={e => setSucursal(e.target.value)}>
+                <option value="0">Seleccionar</option>
+                <option value="1">Planta 1</option>
+                <option value="2">Planta 2</option>
+              </select>
+            </label>
+          </div>
         </Card>
+
         <Card title="Crear Pedido">
           <Input
             type="text"

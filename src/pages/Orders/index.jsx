@@ -107,8 +107,10 @@ const Orders = props => {
         {/* <SearchBar onChange={e => setFilter(e.target.value)} /> */}
         <MaterialTable
           columns={[
-            { title: '#', field: 'paperNumber' },
+            { title: 'Planta', field: 'sucursal' },
+            { title: 'Usuario', field: 'paperNumber' },
             { title: 'Cliente', field: 'customerId.name' },
+            { title: '# Pedido', field: 'pallets[0].orderNumber' },
             {
               title: 'Fecha Entrega',
               field: 'date',
