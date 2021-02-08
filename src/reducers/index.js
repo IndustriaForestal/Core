@@ -326,6 +326,17 @@ const reducer = (state, action) => {
         ...state,
         order: action.payload,
       }
+    case 'CREATE_ORDERS_SHIPMENT_NEW':
+      return {
+        ...state,
+        newShipmentId: action.patchPayload.data,
+        orderDetails: undefined,
+      }
+    case 'DELETE_SHIPMENT':
+      return {
+        ...state,
+        orderDetails: null,
+      }
     case 'CREATE_ORDERS_PRODUCTION':
       return {
         ...state,

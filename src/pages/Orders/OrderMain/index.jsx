@@ -1,5 +1,5 @@
 import React, { useEffect, useState, useRef } from 'react'
-import { Link, useParams } from 'react-router-dom'
+import { useParams } from 'react-router-dom'
 import { AiOutlineDelete } from 'react-icons/ai'
 import { connect } from 'react-redux'
 import moment from 'moment'
@@ -26,30 +26,21 @@ const CreateOrder = props => {
   const [amount, setAmount] = useState(0)
   const [capacity, setCapacity] = useState(0)
   const [platformId, setPlatformId] = useState()
-  const { setTitle, pallets, order, history, orderDetails } = props
+  const { setTitle, pallets, history, orderDetails, newShipmentId } = props
   const { id } = useParams()
   const typeOrder = useRef(null)
+  const [typeOrderPatch, setTypeOrderParch] = useState(0)
 
-  const tableHeader = ['Nombre', '1 Verdes', '1 Secas', '2 Verdes', '2 Secas']
+  const tableHeader = [
+    'Nombre',
+    '1 Verdes',
+    '1 Secas',
+    '2 Verdes',
+    '2 Secas',
+    'Stock Seguridad',
+  ]
   const tableHeader2 = ['Nombre', 'OC', 'Cantidad', 'Fecha Entrega']
   const tableHeader3 = ['Nombre', 'Cantidad', 'Accion']
-
-  const onSubmit = data => {
-    data.orderType = typeOrder.current.options.selectedIndex
-
-    Swal.fire({
-      title: '¿Estás seguro?',
-      text: 'Este proceso no se puede revertir',
-      icon: 'warning',
-      showCancelButton: true,
-      confirmButtonColor: '#3085d6',
-      cancelButtonColor: '#d33',
-      confirmButtonText: 'Crear',
-    }).then(result => {
-      if (result.isConfirmed) {
-      }
-    })
-  }
 
   useEffect(() => {
     const topbar = {
@@ -67,20 +58,6 @@ const CreateOrder = props => {
   }
 
   const handlePlatform = (pallet, e) => {
-    /*  if (
-      e.target.options[e.target.selectedIndex].dataset.algo <=
-        pallet[0].stock[0].green ||
-      e.target.options[e.target.selectedIndex].dataset.algo <=
-        pallet[0].stock[1].green ||
-      e.target.options[e.target.selectedIndex].dataset.algo <=
-        pallet[0].stock[0].dry ||
-      e.target.options[e.target.selectedIndex].dataset.algo <=
-        pallet[0].stock[1].dry
-    ) {
-      setFastOrder(true)
-    } else {
-      setFastOrder(false)
-    } */
     setPlatformId(e.target.value)
     setCapacity(parseInt(e.target.options[e.target.selectedIndex].dataset.algo))
   }
@@ -89,10 +66,12 @@ const CreateOrder = props => {
     if (palletsArray && palletsArray.length > 0) {
       palletsArray.map(pallet => {
         if (
-          pallet.amount <= pallet.stock[0].green ||
+          pallet.stock.secutiryStock &&
+          pallet.amount <= pallet.stock.secutiryStock
+          /* pallet.amount <= pallet.stock[0].green ||
           pallet.amount <= pallet.stock[1].green ||
           pallet.amount <= pallet.stock[0].dry ||
-          pallet.amount <= pallet.stock[1].dry
+          pallet.amount <= pallet.stock[1].dry */
         ) {
           return setFastOrder(true)
         } else {
@@ -102,15 +81,15 @@ const CreateOrder = props => {
     }
   }, [palletsArray])
 
-  /*  useEffect(() => {
-    if (order) {
-      if (typeOrder.current.options.selectedIndex === 0) {
-        history.push(`/orders/create/${order}`)
+  useEffect(() => {
+    if (newShipmentId !== undefined) {
+      if (typeOrderPatch === 0) {
+        history.push(`/orders/create/${newShipmentId}`)
       } else {
-        history.push(`/orders/intern/${order}`)
+        history.push(`/orders/intern/${newShipmentId}`)
       }
     }
-  }, [order, history]) */
+  }, [newShipmentId])
 
   const handleAddPalletToArray = () => {
     let finalAmount = 0
@@ -152,19 +131,11 @@ const CreateOrder = props => {
       confirmButtonText: 'Crear',
     }).then(result => {
       if (result.isConfirmed) {
-        props
-          .update(
-            `orders/newShipment/${id}`,
-            'CREATE_ORDERs_SHIPMENT',
-            orderShipment
-          )
-          .then(() => {
-            if (typeOrder.current.options.selectedIndex === 0) {
-              history.push(`/orders/create/${id}`)
-            } else {
-              history.push(`/orders/intern/${id}`)
-            }
-          })
+        props.update(
+          `orders/newShipment/${id}`,
+          'CREATE_ORDERS_SHIPMENT_NEW',
+          orderShipment
+        )
       }
     })
 
@@ -197,18 +168,16 @@ const CreateOrder = props => {
                 <td>{pallet.stock[0].dry}</td>
                 <td>{pallet.stock[1].green}</td>
                 <td>{pallet.stock[1].dry}</td>
+                <td>
+                  {pallet.stock.secutiryStock
+                    ? pallet.stock.secutiryStock
+                    : 'N/A'}
+                </td>
               </tr>
             ))}
           </Table>
         ) : null}
         <Card title="Seleccionar Tarimas">
-          {/*   <DatePicker
-              selected={startDate}
-              name="date"
-              onChange={date => setStartDate(date)}
-              ref={register({ required: true })}
-            /> */}
-
           <div className="inputGroup">
             <label htmlFor="processId">
               <span>Tarimas:</span>
@@ -295,7 +264,11 @@ const CreateOrder = props => {
           <div className="inputGroup">
             <label htmlFor="processId">
               <span>Tipo de Pedido:</span>
-              <select name="typeOrder" ref={typeOrder}>
+              <select
+                name="typeOrder"
+                ref={typeOrder}
+                onChange={e => setTypeOrderParch(e.target.value)}
+              >
                 <option value="0">Producción</option>
                 {fastOrder ? <option value="1">Pedido Rapido</option> : null}
               </select>
@@ -322,6 +295,7 @@ const mapStateToProps = state => {
     pallets: state.pallets,
     order: state.order,
     orderDetails: state.orderDetails,
+    newShipmentId: state.newShipmentId,
   }
 }
 

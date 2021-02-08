@@ -70,13 +70,12 @@ const OrderProduction = props => {
       }
     })
 
-    if (role === 'Administrador' || role === 'Vista') {
+    if (role === 'Administrador' || role === 'Vista') {
       return (
         <Card title={`Ordenes de producción`}>
-          {newOrders.length > 0 
+          {newOrders.length > 0
             ? newOrders.map(orderCero => {
                 const order = orderCero
-                console.log(newOrders)
                 if (order) {
                   if (order.type !== 3) {
                     // const aserrio = order.ordersProduction.filter(
@@ -94,7 +93,8 @@ const OrderProduction = props => {
                         <Title>{`Estado`}</Title>
                         {order.ordersProduction &&
                         order.ordersProduction.filter(op => op.completed === 0)
-                          .length === 0 && role === 'Administrador' ? (
+                          .length === 0 &&
+                        role === 'Administrador' ? (
                           <Button
                             onClick={() => handleCompleteShipment(order._id)}
                           >

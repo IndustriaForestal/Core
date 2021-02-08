@@ -51,6 +51,7 @@ const StockEdit = props => {
           dry: parseInt(data.stock02),
         },
         1: { green: parseInt(data.stock11), dry: parseInt(data.stock12) },
+        secutiryStock: parseInt(data.securityStock)
       }
       props
         .update(`pallets/stock/${id}`, 'UPDATE_PALLET_STOCK', newPallet)
@@ -179,6 +180,13 @@ const StockEdit = props => {
                 title="Stock Secas IFISA2"
                 name="stock12"
                 value={pallet[0].stock[1].dry}
+                passRef={register({ required: true })}
+              />
+              <Input
+                type="number"
+                title="Stock Seguridad"
+                name="securityStock"
+                value={pallet[0].stock.securityStock ? pallet[0].stock.securityStock : 0}
                 passRef={register({ required: true })}
               />
               <label htmlFor="" className="inputGroup">

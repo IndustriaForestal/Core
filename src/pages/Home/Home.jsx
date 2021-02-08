@@ -51,8 +51,17 @@ const Home = props => {
           <IconHome icon={<BsCardImage />} url="/qualities" text="Calidades" />
           <IconHome icon={<BsCardImage />} url="/raws" text="Materia Prima" />
           <IconHome icon={<BsCardImage />} url="/users" text="Usuarios" />
-          <IconHome icon={<BsCardImage />} url="/calendar" text="Calendario" />
-          <IconHome icon={<BsCardImage />} url="/calendar-production" text="Calendario Embarques" />
+          <IconHome icon={<BsCardImage />} url="/calendar" text="Calendario Proyección" />
+          <IconHome
+            icon={<BsCardImage />}
+            url="/calendar-production"
+            text="Calendario Producción"
+          />
+          <IconHome
+            icon={<BsCardImage />}
+            url="/calendar-shipments"
+            text="Calendario Embarques"
+          />
         </div>
       )
     case 'Vista':
@@ -89,8 +98,17 @@ const Home = props => {
           <IconHome icon={<BsCardImage />} url="/qualities" text="Calidades" />
           <IconHome icon={<BsCardImage />} url="/raws" text="Materia Prima" />
           <IconHome icon={<BsCardImage />} url="/users" text="Usuarios" />
-          <IconHome icon={<BsCardImage />} url="/calendar" text="Calendario" />
-          <IconHome icon={<BsCardImage />} url="/calendar-production" text="Calendario Embarques" />
+          <IconHome icon={<BsCardImage />} url="/calendar" text="Calendario Proyección" />
+          <IconHome
+            icon={<BsCardImage />}
+            url="/calendar-production"
+            text="Calendario Producción"
+          />
+          <IconHome
+            icon={<BsCardImage />}
+            url="/calendar-shipments"
+            text="Calendario Embarques"
+          />
         </div>
       )
 

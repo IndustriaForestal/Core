@@ -69,11 +69,8 @@ const CreateOrder = props => {
   }, [])
 
   const setPallets = e => {
-    // props.getAll(`pallets/customer/${e.target.value}`, 'GET_PALLETS')
     setCostumerId(e)
   }
-
-  console.log(palletsArray)
 
   const setPalletChange = e => {
     setPallet(pallets.filter(pallet => pallet._id === e))
@@ -81,7 +78,7 @@ const CreateOrder = props => {
 
   const handleAddPallet = () => {
     const pallet = newPallet[0]
-    console.log(pallet)
+
     setPalletArray([
       ...palletsArray,
       {
@@ -108,12 +105,19 @@ const CreateOrder = props => {
       }
     })
 
-    const selectPallets = pallets.map(pallet => {
-      return {
-        value: pallet._id,
-        label: `${pallet.model} - ${pallet.qualityId[0]}`,
-      }
-    })
+    const selectPallets = pallets
+      .filter(
+        pallet =>
+          pallet.items[0].name.length > 0 &&
+          pallet.nails[0].name.length > 0 &&
+          pallet.capacityCharge[0].name.length > 0
+      )
+      .map(pallet => {
+        return {
+          value: pallet._id,
+          label: `${pallet.model} - ${pallet.qualityId[0]}`,
+        }
+      })
 
     return (
       <>
@@ -142,39 +146,19 @@ const CreateOrder = props => {
             title="Usuario"
             onInput={e => setPaperNumber(e.target.value)}
           />
-          {/* <div className="inputGroup">
-            <label htmlFor="processId">
-              <span>Cliente:</span>
-              <select name="customerId" onChange={setPallets}>
-                <option value="0">Seleccionar...</option>
-                {customers.map(customer => {
-                  return (
-                    <option key={customer._id} value={customer._id}>
-                      {customer.name}
-                    </option>
-                  )
-                })}
-              </select>
-            </label>
-          </div> */}
           <h5>Cliente</h5>
           <Select
             options={selectCustomers}
             onChange={e => setPallets(e.value)}
             styles={{ padding: '15px 0' }}
           />
-          <div className="inputGroup">
-            <label htmlFor="sucursal">
-              <span>Planta:</span>
-              <select name="sucursal" onChange={e => setSucursal(e.target.value)}>
-                <option value="0">Seleccionar</option>
-                <option value="1">Planta 1</option>
-                <option value="2">Planta 2</option>
-              </select>
-            </label>
-          </div>
+          <Input
+            type="text"
+            name="sucursal"
+            title="Planta"
+            onInput={e => setSucursal(e.target.value)}
+          />
         </Card>
-
         <Card title="Crear Pedido">
           <Input
             type="text"
@@ -182,30 +166,12 @@ const CreateOrder = props => {
             title="# Pedido"
             onInput={e => setOrderNumber(e.target.value)}
           />
-          {/*  {pallets ? (
-            <div className="inputGroup">
-              <label htmlFor="processId">
-                <span>Tarimas:</span>
-                <select name="palletId" onChange={setPalletChange}>
-                  <option value="0">Seleccionar...</option>
-                  {pallets.map(pallet => {
-                    return (
-                      <option key={pallet._id} value={pallet._id}>
-                        {pallet.model} - {pallet.qualityId[0]}
-                      </option>
-                    )
-                  })}
-                </select>
-              </label>
-            </div>
-          ) : null} */}
           <h5>Tarimas</h5>
           <Select
             options={selectPallets}
             onChange={e => setPalletChange(e.value)}
             styles={{ padding: '15px 0' }}
           />
-
           <Input
             type="number"
             name="amount"
@@ -234,7 +200,6 @@ const CreateOrder = props => {
             </Link>
           </div>
         </Card>
-
         <Table head={tableHeader}>
           {palletsArray.map(pallet => (
             <tr key={pallet.palletId}>

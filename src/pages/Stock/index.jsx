@@ -58,6 +58,7 @@ const Nails = props => {
         '2 Reapracion',
         'Total Raparacion',
         'Total',
+        'Stock Seguridad',
         'Acciones',
       ])
     : (tableHeader = [
@@ -71,6 +72,7 @@ const Nails = props => {
         '1 Reapracion',
         '2 Reapracion',
         'Total Raparacion',
+        'Stock Seguridad',
         'Total',
       ])
 
@@ -131,6 +133,7 @@ const Nails = props => {
                     r1 +
                     r2}
                 </td>
+                <td>{pallet.stock.secutiryStock ? pallet.stock.secutiryStock : 0 }</td>
                 {role === 'Administrador' ? (
                   <td>
                     <Link to={`stock/update/${pallet._id}?type=pallet`}>

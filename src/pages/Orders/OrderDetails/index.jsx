@@ -37,7 +37,7 @@ const OrderDetails = props => {
   }, [])
 
   useEffect(() => {
-    if (orderDetails !== undefined) {
+    if (orderDetails && orderDetails !== undefined) {
       props.get(`pallets/${orderDetails.pallets[0].palletId}`, 'GET_PALLET')
     }
     // eslint-disable-next-line
@@ -150,7 +150,9 @@ const OrderDetails = props => {
       }
     }
   } else {
-    return <Loading />
+    return (
+      <h1>El pedido no existe</h1>
+    )
   }
 }
 

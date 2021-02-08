@@ -54,6 +54,8 @@ const OrderIntern = props => {
     // eslint-disable-next-line
   }, [])
 
+  // ! Rervisar funcionamiento pedido rapido
+
   useEffect(() => {
     if (orderDetails !== undefined) {
       props.get(`qualities/${orderDetails.pallets[0].qualityId}`, 'GET_QUALITY')

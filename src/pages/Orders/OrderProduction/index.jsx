@@ -50,14 +50,27 @@ const Order = props => {
       menu: { Pedidos: '/orders' },
     }
     setTitle(topbar)
-    props.get(`orders/${id}`, 'GET_ORDER')
+    props.get(`orders/shipments/${id}`, 'GET_ORDER')
     // eslint-disable-next-line
   }, [])
 
   useEffect(() => {
-    if (orderDetails !== undefined) {
-      props.get(`qualities/${orderDetails.pallets[0].qualityId}`, 'GET_QUALITY')
-      props.get(`pallets/${orderDetails.pallets[0].palletId}`, 'GET_PALLET')
+    if (orderDetails && orderDetails !== undefined) {
+      props.get(
+        `qualities/${
+          orderDetails.shipments.filter(shipment => shipment._id === id)[0]
+            .pallets[0].quality[0][0]._id
+        }`,
+        'GET_QUALITY'
+      )
+
+      props.get(
+        `pallets/${
+          orderDetails.shipments.filter(shipment => shipment._id === id)[0]
+            .pallets[0]._id
+        }`,
+        'GET_PALLET'
+      )
       props.getAll(`raws`, 'GET_RAWS')
     }
     // eslint-disable-next-line
@@ -269,9 +282,8 @@ const Order = props => {
           })
         })
       })
-      
+
       console.log(itemsList)
-     
 
       props.update(`orders/itemsList/${shipment[0]._id}`, 'DEFAULT', itemsList)
 

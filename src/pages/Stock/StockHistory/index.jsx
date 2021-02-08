@@ -98,19 +98,18 @@ const StockHistory = props => {
             dataTable.map(item => (
               <tr key={item._id}>
                 <td>{item.inOut}</td>
-                <td>n
+                <td>
                   {item.collection === 'pallets'
-                    ? 
-                    `Tarima - ${
-                          pallets.filter(
-                            pallet => pallet._id === item.productId
-                          )[0].model
-                        }`
-                     /*  console.log(
+                    ? `Tarima - ${
+                        pallets.filter(
+                          pallet => pallet._id === item.productId
+                        )[0].model
+                      }`
+                    : /*  console.log(
                         pallets.filter(pallet => pallet._id === item.productId),
                         item._id
                       ) */
-                    : null}
+                      null}
                   {item.collection === 'items'
                     ? `Complemento - ${
                         items.filter(itemx => itemx._id === item.productId)[0]

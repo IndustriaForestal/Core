@@ -28,17 +28,13 @@ const CalendarOrders = props => {
         order.shipments.map(shipment => {
           if (shipment.completed !== 1) {
             if (shipment.ordersProduction) {
-              shipment.ordersProduction
-                .filter(op => op.completed === 0)
-                .map(op => {
-                  eventList.push({
-                    title: `${op.processName} - ${shipment.pallets[0].model}`,
-                    start: moment(op.date).toDate(),
-                    end: moment(op.date).toDate(),
-                    orderId: `/orders/details/${shipment._id}`,
-                    eventColor: '#378006',
-                  })
-                })
+              eventList.push({
+                title: `${shipment.pallets[0].model}: ${shipment.pallets[0].amount}`,
+                start: moment(shipment.ordersProduction[0].date).toDate(),
+                end: moment(shipment.ordersProduction[0].date).toDate(),
+                orderId: `/orders/details/${shipment._id}`,
+                eventColor: '#378006',
+              })
             }
           }
         })

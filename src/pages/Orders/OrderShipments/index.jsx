@@ -9,11 +9,10 @@ import { setTitle, getAll, deleted, get } from '../../../actions/app'
 import Swal from 'sweetalert2'
 import Table from '../../../components/Table/Table'
 import Button from '../../../components/Button/Button'
-import AddButton from '../../../components/AddButton/AddButton'
 import Loading from '../../../components/Loading/Loading'
 
 const OrderShipments = props => {
-  const { orderDetails, setTitle, pallets, socket } = props
+  const { orderDetails, setTitle } = props
   const { id } = useParams()
 
   useEffect(() => {
@@ -44,7 +43,7 @@ const OrderShipments = props => {
     'Detalles',
   ]
 
-  const handleDeleteNail = orderId => {
+  const handleDeleteShipment = (shipmentiId, orderId) => {
     Swal.fire({
       title: '¿Estás seguro?',
       text: 'Este proceso no se puede revertir',
@@ -55,29 +54,18 @@ const OrderShipments = props => {
       confirmButtonText: 'Si, borrar',
     }).then(result => {
       if (result.isConfirmed) {
-        props.deleted(`orders/${orderId}`, 'DELETE_ORDER')
+        props
+          .deleted(
+            `orders/shipments/${shipmentiId}/${orderId}`,
+            'DELETE_SHIPMENT'
+          )
+          .then(() => {
+            props.get(`orders/${id}`, 'GET_ORDER')
+          })
         Swal.fire('Borrado!', 'Borrado con exito.', 'success')
       }
     })
   }
-
-  // const handleCompleteOrder = orderId => {
-  //   const order = orders.filter(order => orderDetails._id === orderId)
-  //   const pallet = pallets.filter(pallet => order[0].palletId === pallet._id)
-
-  //   const capacity = pallet[0].capacityCharge.filter(
-  //     cp => cp._id === order[0].platformId
-  //   )
-
-  //   props
-  //     .updatePalletsStock(capacity[0].capacity * -1, pallet[0]._id, 'dry')
-  //     .then(() => {
-  //       props.completeOrder(orderId)
-  //     })
-  //     .then(() => {
-  //       socket.emit('notification')
-  //     })
-  // }
 
   if (orderDetails) {
     return (
@@ -89,9 +77,9 @@ const OrderShipments = props => {
             <td>{moment(orderDetails.date).format('DD/MM/YYYY')}</td>
             <td>
               <ul>
-                {orderDetails.pallets.map(pallet => {
+                {orderDetails.pallets.map((pallet, index) => {
                   return (
-                    <li key={pallet.palletId}>
+                    <li key={index}>
                       {pallet.orderNumber} -- {pallet.model}: {pallet.amount}
                     </li>
                   )
@@ -100,16 +88,16 @@ const OrderShipments = props => {
             </td>
             <td>
               <ul>
-                {orderDetails.pallets.map(pallet => {
+                {orderDetails.pallets.map((pallet, index) => {
                   if (pallet.ready) {
                     return (
-                      <li key={pallet.palletId}>
+                      <li key={index}>
                         {pallet.orderNumber} -- {pallet.model}: {pallet.ready}
                       </li>
                     )
                   } else {
                     return (
-                      <li key={pallet.palletId}>
+                      <li key={index}>
                         {' '}
                         {pallet.orderNumber} -- {pallet.model}: 0
                       </li>
@@ -120,10 +108,10 @@ const OrderShipments = props => {
             </td>
             <td>
               <ul>
-                {orderDetails.pallets.map(pallet => {
+                {orderDetails.pallets.map((pallet, index) => {
                   if (pallet.ready) {
                     return (
-                      <li key={pallet.palletId}>
+                      <li key={index}>
                         {pallet.orderNumber} -- {pallet.model}:{' '}
                         {pallet.amount - pallet.ready} --{' '}
                         {moment(pallet.date).format('DD/MM/YYYY')}
@@ -131,7 +119,7 @@ const OrderShipments = props => {
                     )
                   } else {
                     return (
-                      <li key={pallet.palletId}>
+                      <li key={index}>
                         {pallet.orderNumber} -- {pallet.model}: {pallet.amount}{' '}
                         -- {moment(pallet.date).format('DD/MM/YYYY')}
                       </li>
@@ -145,14 +133,15 @@ const OrderShipments = props => {
         <Table head={tableHeader2}>
           {orderDetails.shipments && orderDetails.shipments.length > 0
             ? orderDetails.shipments.map(shipment => {
-                console.log(shipment)
                 return (
                   <tr key={shipment._id}>
                     <td>% {shipment.humedity}</td>
                     <td>
-                      {moment(shipment.ordersProduction[0].date).format(
-                        'DD-MM-YYYY'
-                      )}
+                      {shipment.ordersProduction
+                        ? moment(shipment.ordersProduction[0].date).format(
+                            'DD-MM-YYYY'
+                          )
+                        : 'Error al Crear Orden (BORRAR)'}
                     </td>
                     <td>
                       {shipment.type === 0 ? 'Producción' : 'Pedido Rapido'}
@@ -179,6 +168,12 @@ const OrderShipments = props => {
                           <BsPlus />
                         </Button>
                       </Link>
+                      <Button
+                        className="btn --danger"
+                        onClick={() => handleDeleteShipment(shipment._id, id)}
+                      >
+                        <AiOutlineDelete />
+                      </Button>
                     </td>
                   </tr>
                 )

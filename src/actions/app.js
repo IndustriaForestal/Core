@@ -152,15 +152,17 @@ export const create = (endPoint, typeAction, data) => async dispatch => {
 
 export const update = (endpoint, typeAction, data) => async dispatch => {
   try {
-    await axios({
+    const res = await axios({
       url: `${process.env.REACT_APP_API}${endpoint}`,
       headers: { Authorization: `Bearer ${Cookies.get('token')}` },
       method: 'put',
       data: data,
     })
+    console.log(res)
     dispatch({
       type: typeAction,
       payload: data,
+      patchPayload: res.data,
     })
   } catch (error) {
     console.log(error)
