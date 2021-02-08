@@ -89,7 +89,7 @@ const CalendarOrders = props => {
   }
 
   return (
-    <Card title="Calendario de Ordenes">
+    <Card title="Calendario de Embarques">
       <Calendar
         localizer={localizer}
         events={eventList}

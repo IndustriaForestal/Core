@@ -70,6 +70,15 @@ const OrderProduction = props => {
       }
     })
 
+    console.log(
+      orders.filter(
+        order =>
+          order.shipments &&
+          order.shipments.length > 0 &&
+          order.shipments.completed !== 1
+      ).map(order => order.shipments.map(shipment => shipment))
+    )
+
     if (role === 'Administrador' || role === 'Vista') {
       return (
         <Card title={`Ordenes de producción`}>
@@ -78,16 +87,6 @@ const OrderProduction = props => {
                 const order = orderCero
                 if (order) {
                   if (order.type !== 3) {
-                    // const aserrio = order.ordersProduction.filter(
-                    //   op => op.processId === '5f99cbda74cd296d5bb5b744'
-                    // )
-                    // const startAserrio = moment(aserrio[0].date).format(
-                    //   'DD-MM-YYYY'
-                    // )
-                    // const endAserrio = moment(
-                    //   aserrio[aserrio.length - 1].date
-                    // ).format('DD-MM-YYYY')
-
                     return (
                       <React.Fragment key={order._id}>
                         <Title>{`Estado`}</Title>
@@ -147,31 +146,6 @@ const OrderProduction = props => {
                               <td>Error: La tarima esta incompleta </td>
                             </tr>
                           )}
-                          {/*    {order.itemsList
-                      ? order.itemsList.map((item, index) => {
-                          return (
-                            <tr key={index}>
-                              <td>{item.itemName}</td>
-                              <td>{`${startAserrio} - ${endAserrio}`}</td>
-                              <td>
-                                {moment(aserrio[0].date).isBefore(
-                                  moment(),
-                                  'day'
-                                )
-                                  ? 'Vencido'
-                                  : 'En tiempo'}
-                              </td>
-                              <td>
-                                {item.completed === 1 ? (
-                                  <AiOutlineCheckCircle className="--success" />
-                                ) : (
-                                  <AiOutlineClose className="--danger" />
-                                )}
-                              </td>
-                            </tr>
-                          )
-                        })
-                      : null} */}
                         </Table>
                       </React.Fragment>
                     )
@@ -241,80 +215,68 @@ const OrderProduction = props => {
       return (
         <Card title={`Ordenes de producción`}>
           {newOrders.length > 0 && newOrders[0]
-            ? newOrders[0]
-                /* .filter(
-              order =>
-                order.completed !== 1 &&
-                order.ordersProduction &&
-                order.ordersProduction.find(
-                  order => order.processId === processId
-                ) !== undefined &&
-                order.ordersProduction.find(
-                  order => order.processId === processId
-                ).completed !== 1
-            ) */
-                .map(orderCero => {
-                  const order = orderCero
-                  if (order) {
-                    return (
-                      <React.Fragment key={order._id}>
-                        <Title>{`Pendientes`}</Title>
-                        <Table head={tableHeader}>
-                          {order.ordersProduction ? (
-                            order.ordersProduction.map((production, index) => {
-                              if (
-                                production.processId === processId &&
-                                production.completed !== 1
-                              ) {
-                                return (
-                                  <tr key={index}>
-                                    <td>
-                                      {production.processName
-                                        ? production.processName
-                                        : production.name}
-                                    </td>
-                                    <td>
-                                      {moment(production.date).format(
-                                        'DD-MM-YYYY'
-                                      )}
-                                    </td>
-                                    <td>
-                                      {moment(production.date).isBefore(
-                                        moment(),
-                                        'day'
-                                      )
-                                        ? 'Vencido'
-                                        : 'En tiempo'}
-                                    </td>
-                                    <td>
-                                      <Link
-                                        to={`orderProduction/${order._id}/${index}?processId=${production.processId}`}
-                                      >
-                                        <Button className="btn --warning">
-                                          <AiOutlineEdit />
-                                        </Button>
-                                      </Link>
-                                    </td>
-                                  </tr>
-                                )
-                              } else {
-                                return null
-                              }
-                            })
-                          ) : (
-                            <tr>
-                              <td>Error </td>
-                              <td>Error </td>
-                              <td>Error </td>
-                              <td>Error </td>
-                            </tr>
-                          )}
-                        </Table>
-                      </React.Fragment>
-                    )
-                  }
-                  console.log(order, 'Filtrado')
-                })
+            ? newOrders[0].map(orderCero => {
+                const order = orderCero
+                if (order) {
+                  return (
+                    <React.Fragment key={order._id}>
+                      <Title>{`Pendientes`}</Title>
+                      <Table head={tableHeader}>
+                        {order.ordersProduction ? (
+                          order.ordersProduction.map((production, index) => {
+                            if (
+                              production.processId === processId &&
+                              production.completed !== 1
+                            ) {
+                              return (
+                                <tr key={index}>
+                                  <td>
+                                    {production.processName
+                                      ? production.processName
+                                      : production.name}
+                                  </td>
+                                  <td>
+                                    {moment(production.date).format(
+                                      'DD-MM-YYYY'
+                                    )}
+                                  </td>
+                                  <td>
+                                    {moment(production.date).isBefore(
+                                      moment(),
+                                      'day'
+                                    )
+                                      ? 'Vencido'
+                                      : 'En tiempo'}
+                                  </td>
+                                  <td>
+                                    <Link
+                                      to={`orderProduction/${order._id}/${index}?processId=${production.processId}`}
+                                    >
+                                      <Button className="btn --warning">
+                                        <AiOutlineEdit />
+                                      </Button>
+                                    </Link>
+                                  </td>
+                                </tr>
+                              )
+                            } else {
+                              return null
+                            }
+                          })
+                        ) : (
+                          <tr>
+                            <td>Error </td>
+                            <td>Error </td>
+                            <td>Error </td>
+                            <td>Error </td>
+                          </tr>
+                        )}
+                      </Table>
+                    </React.Fragment>
+                  )
+                }
+                console.log(order, 'Filtrado')
+              })
             : null}
         </Card>
       )
