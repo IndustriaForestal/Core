@@ -71,139 +71,154 @@ const OrderProduction = props => {
     })
 
     console.log(
-      orders.filter(
-        order =>
-          order.shipments &&
-          order.shipments.length > 0 &&
-          order.shipments.completed !== 1
-      ).map(order => order.shipments.map(shipment => shipment))
+      orders
+        .filter(
+          order =>
+            order.shipments &&
+            order.shipments.length > 0 &&
+            order.shipments.completed !== 1
+        )
+        .map(op => op.shipments.map(order => order))
     )
 
     if (role === 'Administrador' || role === 'Vista') {
       return (
         <Card title={`Ordenes de producción`}>
           {newOrders.length > 0
-            ? newOrders.map(orderCero => {
-                const order = orderCero
-                if (order) {
-                  if (order.type !== 3) {
-                    return (
-                      <React.Fragment key={order._id}>
-                        <Title>{`Estado`}</Title>
-                        {order.ordersProduction &&
-                        order.ordersProduction.filter(op => op.completed === 0)
-                          .length === 0 &&
-                        role === 'Administrador' ? (
-                          <Button
-                            onClick={() => handleCompleteShipment(order._id)}
-                          >
-                            Completar
-                          </Button>
-                        ) : null}
-                        <Table head={tableHeader}>
-                          {order.ordersProduction ? (
-                            order.ordersProduction.map((production, index) => {
-                              console.log(production.completed)
-                              if (production.type !== '3') {
-                                return (
-                                  <tr key={index}>
-                                    <td>
-                                      {production.processName
-                                        ? production.processName
-                                        : production.name}
-                                    </td>
-                                    <td>
-                                      {moment(production.date).format(
-                                        'DD-MM-YYYY'
-                                      )}
-                                    </td>
-                                    <td>
-                                      {moment(production.date).isBefore(
-                                        moment(),
-                                        'day'
+            ? orders
+                .filter(
+                  order =>
+                    order.shipments &&
+                    order.shipments.length > 0 &&
+                    order.shipments.completed !== 1
+                )
+                .map(op =>
+                  op.shipments.map(order => {
+                    if (order) {
+                      if (order.type !== 3) {
+                        return (
+                          <React.Fragment key={order._id}>
+                            <Title>{`${op.pallets[0].orderNumber} - ${op.paperNumber}`}</Title>
+                            {order.ordersProduction &&
+                            order.ordersProduction.filter(
+                              op => op.completed === 0
+                            ).length === 0 &&
+                            role === 'Administrador' ? (
+                              <Button
+                                onClick={() =>
+                                  handleCompleteShipment(order._id)
+                                }
+                              >
+                                Completar
+                              </Button>
+                            ) : null}
+                            <Table head={tableHeader}>
+                              {order.ordersProduction ? (
+                                order.ordersProduction.map(
+                                  (production, index) => {
+                                    console.log(production.completed)
+                                    if (production.type !== '3') {
+                                      return (
+                                        <tr key={index}>
+                                          <td>
+                                            {production.processName
+                                              ? production.processName
+                                              : production.name}
+                                          </td>
+                                          <td>
+                                            {moment(production.date).format(
+                                              'DD-MM-YYYY'
+                                            )}
+                                          </td>
+                                          <td>
+                                            {moment(production.date).isBefore(
+                                              moment(),
+                                              'day'
+                                            )
+                                              ? 'Vencido'
+                                              : 'En tiempo'}
+                                          </td>
+                                          <td>
+                                            {production.completed === 1 ? (
+                                              <AiOutlineCheckCircle className="--success" />
+                                            ) : (
+                                              <AiOutlineClose className="--danger" />
+                                            )}
+                                          </td>
+                                        </tr>
                                       )
-                                        ? 'Vencido'
-                                        : 'En tiempo'}
-                                    </td>
-                                    <td>
-                                      {production.completed === 1 ? (
-                                        <AiOutlineCheckCircle className="--success" />
-                                      ) : (
-                                        <AiOutlineClose className="--danger" />
-                                      )}
-                                    </td>
-                                  </tr>
+                                    } else {
+                                      return null
+                                    }
+                                  }
                                 )
-                              } else {
-                                return null
-                              }
-                            })
-                          ) : (
-                            <tr>
-                              <td>Error: La tarima esta incompleta </td>
-                              <td>Error: La tarima esta incompleta </td>
-                              <td>Error: La tarima esta incompleta </td>
-                              <td>Error: La tarima esta incompleta </td>
-                            </tr>
-                          )}
-                        </Table>
-                      </React.Fragment>
-                    )
-                  } else {
-                    if (order.orderFast) {
-                      return (
-                        <React.Fragment key={order._id}>
-                          <Title>{`Pedido #${order.orderNumber}`}</Title>
-                          <Table head={tableHeaderFast}>
-                            <tr>
-                              <td>Fecha de entrega</td>
-                              <td>
-                                {moment(order.orderFast.deliveryDate).format(
-                                  'DD-MM-YYYY LT'
-                                )}
-                              </td>
-                            </tr>
-                            <tr>
-                              <td>Inicio viaje</td>
-                              <td>
-                                {moment(order.orderFast.travel).format(
-                                  'DD-MM-YYYY LT'
-                                )}
-                              </td>
-                            </tr>
-                            <tr>
-                              <td> Inicio Limpieza</td>
-                              <td>
-                                {moment(order.orderFast.clean).format(
-                                  'DD-MM-YYYY LT'
-                                )}
-                              </td>
-                            </tr>
-                            <tr>
-                              <td> Personal Limpieza</td>
-                              <td>{order.orderFast.peopleClean}</td>
-                            </tr>
-                            <tr>
-                              <td> Inicio estufado</td>
-                              <td>
-                                {moment(order.orderFast.bake).format(
-                                  'DD-MM-YYYY LT'
-                                )}
-                              </td>
-                            </tr>
-                            <tr>
-                              <td> Tiempo estufado</td>
-                              <td>{order.orderFast.timeBake}</td>
-                            </tr>
-                          </Table>
-                        </React.Fragment>
-                      )
-                    } else {
-                      return null
+                              ) : (
+                                <tr>
+                                  <td>Error: La tarima esta incompleta </td>
+                                  <td>Error: La tarima esta incompleta </td>
+                                  <td>Error: La tarima esta incompleta </td>
+                                  <td>Error: La tarima esta incompleta </td>
+                                </tr>
+                              )}
+                            </Table>
+                          </React.Fragment>
+                        )
+                      } else {
+                        if (order.orderFast) {
+                          return (
+                            <React.Fragment key={order._id}>
+                              <Title>{`Pedido #${order.orderNumber}`}</Title>
+                              <Table head={tableHeaderFast}>
+                                <tr>
+                                  <td>Fecha de entrega</td>
+                                  <td>
+                                    {moment(
+                                      order.orderFast.deliveryDate
+                                    ).format('DD-MM-YYYY LT')}
+                                  </td>
+                                </tr>
+                                <tr>
+                                  <td>Inicio viaje</td>
+                                  <td>
+                                    {moment(order.orderFast.travel).format(
+                                      'DD-MM-YYYY LT'
+                                    )}
+                                  </td>
+                                </tr>
+                                <tr>
+                                  <td> Inicio Limpieza</td>
+                                  <td>
+                                    {moment(order.orderFast.clean).format(
+                                      'DD-MM-YYYY LT'
+                                    )}
+                                  </td>
+                                </tr>
+                                <tr>
+                                  <td> Personal Limpieza</td>
+                                  <td>{order.orderFast.peopleClean}</td>
+                                </tr>
+                                <tr>
+                                  <td> Inicio estufado</td>
+                                  <td>
+                                    {moment(order.orderFast.bake).format(
+                                      'DD-MM-YYYY LT'
+                                    )}
+                                  </td>
+                                </tr>
+                                <tr>
+                                  <td> Tiempo estufado</td>
+                                  <td>{order.orderFast.timeBake}</td>
+                                </tr>
+                              </Table>
+                            </React.Fragment>
+                          )
+                        } else {
+                          return null
+                        }
+                      }
                     }
-                  }
-                }
-              })
+                  })
+                )
             : null}
         </Card>
       )
