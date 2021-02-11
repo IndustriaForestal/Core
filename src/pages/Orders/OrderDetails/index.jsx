@@ -19,7 +19,6 @@ import Table from '../../../components/Table/Table'
 import Button from '../../../components/Button/Button'
 import Title from '../../../components/Title/Title'
 import Card from '../../../components/Card/Card'
-import Loading from '../../../components/Loading/Loading'
 import './styles.scss'
 
 const OrderDetails = props => {
@@ -81,7 +80,7 @@ const OrderDetails = props => {
       return (
         <Card
           title={`Pedido ${shipment.type === 1 ? 'Rapido' : ''} #${
-            orderDetails.orderNumber
+            orderDetails.pallets[0].orderNumber
           }`}
         >
           <Title>{pallet[0].model}</Title>
@@ -150,9 +149,7 @@ const OrderDetails = props => {
       }
     }
   } else {
-    return (
-      <h1>El pedido no existe</h1>
-    )
+    return <h1>El pedido no existe</h1>
   }
 }
 

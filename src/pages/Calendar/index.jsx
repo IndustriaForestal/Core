@@ -1,23 +1,26 @@
-import React, { useEffect, useState } from 'react'
+import React, { useEffect } from 'react'
 import moment from 'moment'
 import 'moment/locale/es-mx'
-import { Calendar, momentLocalizer } from 'react-big-calendar'
 import { connect } from 'react-redux'
+import './styles.scss'
+import Loading from '../../components/Loading/Loading'
 
-import { getAll } from '../../actions/app'
-
-import Card from '../../components/Card/Card'
-
-import 'react-big-calendar/lib/css/react-big-calendar.css'
+import { getAll, setWraper } from '../../actions/app'
 
 moment.locale('es')
-const localizer = momentLocalizer(moment)
 
 const CalendarOrders = props => {
-  const { orders } = props
+  const { orders, customers } = props
 
   useEffect(() => {
-    props.getAll('orders', 'GET_ORDERS')
+    props
+      .getAll('orders', 'GET_ORDERS')
+      .then(() => {
+        props.getAll('customers', 'GET_CUSTOMERS')
+      })
+      .then(() => {
+        props.setWraper(true)
+      })
   }, [])
 
   let eventList = []
@@ -27,7 +30,6 @@ const CalendarOrders = props => {
       if (order.pallets) {
         order.pallets.map(pallet => {
           if (pallet.orderDateDelivery) {
-            console.log(pallet)
             eventList.push({
               title: `${pallet.model}: ${pallet.amount}`,
               start: moment(pallet.orderDateDelivery).toDate(),
@@ -38,89 +40,112 @@ const CalendarOrders = props => {
         })
       }
     })
-
-    /*  const shipmentsArray = orders.map(order =>
-      order.shipments.map(shipment => shipment)
-    )
-
-    console.log(shipmentsArray)
-
-    shipmentsArray.map(item =>
-      item.map(shipment => {
-        if (shipment.completed !== 1) {
-          eventList.push({
-            title: 'Prueba',
-            start: moment(shipment.ordersProduction[0].date).toDate(),
-            end: moment(shipment.ordersProduction[0].date).toDate(),
-            orderId: shipment._id,
-          })
-        }
-      })
-    ) */
   }
-
-  /* if (orders && orders.filter(order => order.completed !== 1).length > 0) {
-    eventList = orders
-      .filter(order => order.completed !== 1)
-      .map(order => {
-        console.log(order)
-        if (order.orderType === 0) {
-          return {
-            title: order.orderNumber,
-            start: moment(order.ordersProduction[0].date).toDate(),
-            end: moment(order.ordersProduction[0].date).toDate(),
-            orderId: order._id,
-          }
-        } else {
-          return {
-            title: order.orderNumber,
-            start: moment(order.orderFast.deliveryDate).toDate(),
-            end: moment(order.orderFast.deliveryDate).toDate(),
-            orderId: order._id,
-          }
-        }
-      })
-  } */
 
   const handleClickEvent = e => {
-    props.history.push(`${e.orderId}`)
+    props.history.push(`/orders/shipments/${e}`)
   }
 
-  return (
-    <Card title="Calendario Proyección">
-      <Calendar
-        localizer={localizer}
-        events={eventList}
-        startAccessor="start"
-        endAccessor="end"
-        defaultView="month"
-        onDoubleClickEvent={e => handleClickEvent(e)}
-        style={{ height: 500 }}
-        messages={{
-          next: 'sig',
-          previous: 'ant',
-          today: 'Hoy',
-          month: 'Mes',
-          week: 'Semana',
-          day: 'Día',
-          showMore: function (e) {
-            return '+' + e + ' más'
-          },
-        }}
-        culture="es"
-      />
-    </Card>
-  )
+  if (orders && customers) {
+    const newCalendar = customers.map(customer => {
+      let ordersArray = []
+      const ordersCusomter = orders.filter(
+        order => order.customerId._id === customer._id
+      )
+
+      ordersCusomter.map(oc => {
+        oc.pallets.map(pallet => {
+          ordersArray.push({ ...pallet, orderId: oc._id })
+        })
+      })
+      let calendarOrders = []
+
+      for (let i = 0; i < 60; i++) {
+        let calendarDay = []
+        ordersArray.map(order => {
+          if (
+            moment(order.orderDateDelivery).format('YYYY-MM-DD') ===
+            moment().add(i, 'days').format('YYYY-MM-DD')
+          ) {
+            calendarDay.push(order)
+          }
+        })
+        calendarOrders.push(calendarDay)
+      }
+
+      return {
+        _id: customer._id,
+        name: customer.name,
+        orders: calendarOrders,
+      }
+    })
+
+    let days = []
+    for (let i = 0; i < 60; i++) {
+      days.push(moment().add(i, 'days').format('YYYY-MM-DD'))
+    }
+
+    return (
+      <>
+        <div
+          className="calendarPro"
+          style={{
+            gridTemplateColumns: `repeat(${newCalendar.length + 1}, auto)`,
+          }}
+        >
+          <div className="calendarPro__column">
+            <div className="calendarPro__head">Fecha</div>
+
+            {days.map(day => (
+              <div className="calendarPro__day">{day}</div>
+            ))}
+          </div>
+          {newCalendar.map(row => {
+            return (
+              <div className="calendarPro__column">
+                <div className="calendarPro__head">{row.name}</div>
+                {row.orders.map((order, i) => {
+                  if (order.length > 0) {
+                    return (
+                      <div className="calendarPro__day">
+                        <span className="calendarPro__counter">
+                          {order.length}
+                        </span>
+                        {order.map(o => (
+                          <div
+                            className="calendarPro__event"
+                            onClick={() => handleClickEvent(o.orderId)}
+                          >
+                            {o.model} {o.amount} {o.orderNumber}
+                          </div>
+                        ))}
+                      </div>
+                    )
+                  } else {
+                    return <div className="calendarPro__day"></div>
+                  }
+                })}
+              </div>
+            )
+          })}
+        </div>
+      </>
+    )
+  } else {
+    return <Loading />
+  }
 }
 
 const mapStateToProps = state => {
   return {
     orders: state.orders,
+    customers: state.customers,
   }
 }
 
 const mapDispatchToProps = {
   getAll,
+  setWraper,
 }
 
 export default connect(mapStateToProps, mapDispatchToProps)(CalendarOrders)

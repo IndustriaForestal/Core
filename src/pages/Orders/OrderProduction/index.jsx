@@ -97,7 +97,7 @@ const Order = props => {
     })
 
     const humedity = humedity => {
-      if (humedity > 20 && humedity <= 24) {
+      if (humedity <= 24) {
         return 1
       } else if (humedity >= 25 && humedity <= 29) {
         return 1.5
@@ -105,6 +105,8 @@ const Order = props => {
         return 2
       } else if (humedity >= 36 && humedity <= 43) {
         return 3
+      } else if (humedity > 43) {
+        return 4
       }
     }
 

@@ -1,0 +1,47 @@
+.calendarPro {
+  display: grid;
+  &__column{
+    width: 200px;
+  }
+  &__head{
+    height: 100px;
+    text-align: center;
+    display: flex;
+    justify-content: center;
+    align-items: center;
+    border: 1px solid var(--gray-light);
+  }
+  &__day{
+    border: 1px solid var(--gray-light);
+    height: 100px;
+    overflow-y: scroll;
+    display: flex;
+    flex-direction: column;
+    align-items: center;
+    position: relative;
+  }
+  &__event{
+    background-color: var(--primary);
+    color: var(--white);
+    width: 90%;
+    border-radius: 5px;
+    padding: 5px;
+    text-align: center;
+    margin: 5px 0;
+    cursor: pointer;
+  }
+  &__counter{
+    position: absolute;
+    z-index: 2;
+    left: 0;
+    height: 20px;
+    width: 20px;
+    color: var(--white);
+    background-color: var(--success);
+    border-radius: 50%;
+    display: flex;
+    justify-content: center;
+    align-items: center;
+    box-shadow: var(--boxShadow);
+  }
+}
