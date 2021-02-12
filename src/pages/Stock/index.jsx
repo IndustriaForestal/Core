@@ -18,7 +18,7 @@ const Nails = props => {
     let topbar
     role === 'Administrador'
       ? (topbar = {
-          title: 'Inventarios',
+          title: 'Inventarios Generales',
           menu: {
             Tarimas: '/stock',
             Complementos: '/stockItems',
@@ -29,7 +29,7 @@ const Nails = props => {
           },
         })
       : (topbar = {
-          title: 'Inventarios',
+          title: 'Inventarios Generales',
           menu: {
             Tarimas: '/stock',
             Complementos: '/stockItems',

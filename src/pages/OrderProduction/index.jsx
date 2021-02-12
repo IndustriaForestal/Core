@@ -31,8 +31,8 @@ const OrderProduction = props => {
   console.log(role)
   useEffect(() => {
     const topbar = {
-      title: 'Orden de producción',
-      menu: { 'Orden de producción': '/orderProduction' },
+      title: 'Ordenes de producción',
+      menu: { 'Ordenes de producción': '/orderProduction' },
     }
     setTitle(topbar)
     props.getAll(`orders`, 'GET_ORDERS')

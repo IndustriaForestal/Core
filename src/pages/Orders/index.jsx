@@ -21,8 +21,8 @@ const Orders = props => {
 
   useEffect(() => {
     const topbar = {
-      title: 'Pedidos',
-      menu: { Pedidos: '/orders' },
+      title: 'Pedidos de Clientes',
+      menu: { 'Pedidos de Clientes': '/orders' },
     }
     setTitle(topbar)
     props.getAll('orders', 'GET_ORDERS')
