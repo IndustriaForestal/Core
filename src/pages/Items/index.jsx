@@ -1,4 +1,4 @@
-import React, { useEffect } from 'react'
+import React, { useEffect, useState } from 'react'
 import { Link } from 'react-router-dom'
 import { connect } from 'react-redux'
 import { AiOutlineEdit, AiOutlineDelete } from 'react-icons/ai'
@@ -8,10 +8,12 @@ import Swal from 'sweetalert2'
 import Table from '../../components/Table/Table'
 import Button from '../../components/Button/Button'
 import AddButton from '../../components/AddButton/AddButton'
+import SearchBar from '../../components/SearchBar/SearchBar'
 import './styles.scss'
 
 const Items = props => {
   const { items, setTitle, setWraper, role } = props
+  const [filter, setFilter] = useState([])
 
   useEffect(() => {
     const topbar = {
@@ -66,11 +68,27 @@ const Items = props => {
     })
   }
 
+  const handleSearch = e => {
+    const searchWord = e.target.value.toLowerCase()
+    const filterPallets = items.filter(item =>
+      item.name.toLowerCase().includes(searchWord)
+    )
+    setFilter(filterPallets)
+  }
+
+  let tableData
+  if (filter.length > 0) {
+    tableData = filter
+  } else {
+    tableData = items
+  }
+
   return (
     <>
+      <SearchBar onChange={handleSearch} />
       <Table head={tableHeader}>
         {items ? (
-          items.map(item => (
+          tableData.map(item => (
             <tr key={item._id}>
               <td>{item.name}</td>
               <td>{item.description}</td>

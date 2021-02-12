@@ -54,7 +54,9 @@ const Customers = props => {
       confirmButtonText: 'Si, borrar',
     }).then(result => {
       if (result.isConfirmed) {
-        props.deleted(`customers/${customerID}`, 'DELETE_CUSTOMER')
+        props.deleted(`customers/${customerID}`, 'DELETE_CUSTOMER').then(() => {
+          props.getAll('cusomters', 'GET_CUSTOMERS')
+        })
         Swal.fire('Borrado!', 'Borrado con exito.', 'success')
       }
     })
@@ -97,7 +99,7 @@ const Customers = props => {
                   </Link>
                   <Button
                     className="btn --danger"
-                    onClick={() => handlerDeleteCustomer(customer.id)}
+                    onClick={() => handlerDeleteCustomer(customer._id)}
                   >
                     <AiOutlineDelete />
                   </Button>
