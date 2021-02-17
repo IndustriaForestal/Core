@@ -3,6 +3,11 @@ import { BrowserRouter, Route, Switch } from 'react-router-dom'
 import Cookies from 'js-cookie'
 import Layout from '../layout'
 import Home from '../pages/Home'
+import HomeAccounting from '../pages/Home/Accounting'
+import HomeAdministration from '../pages/Home/Administration'
+import HomeManagement from '../pages/Home/Management'
+import HomeProduction from '../pages/Home/Production'
+import HomeQuality from '../pages/Home/Quality'
 import NotFound from '../pages/NotFound'
 import Login from '../pages/Login'
 import Customers from '../pages/Customers'
@@ -78,297 +83,477 @@ const App = ({ loggedIn }) => {
             <Route
               exact
               path="/customers"
-              component={role === 'Administrador' || role === 'Vista' ? Customers : Home}
+              component={
+                role === 'Administrador' || role === 'Vista' ? Customers : Home
+              }
             />
             <Route
               exact
               path="/customers/create"
-              component={role === 'Administrador' || role === 'Vista' ? CreateCustomer : Home}
+              component={
+                role === 'Administrador' || role === 'Vista'
+                  ? CreateCustomer
+                  : Home
+              }
             />
             <Route
               exact
               path="/customers/:id"
-              component={role === 'Administrador' || role === 'Vista' ? EditCustomer : Home}
+              component={
+                role === 'Administrador' || role === 'Vista'
+                  ? EditCustomer
+                  : Home
+              }
             />
             <Route
               exact
               path="/nails"
-              component={role === 'Administrador' || role === 'Vista' ? Nails : Home}
+              component={
+                role === 'Administrador' || role === 'Vista' ? Nails : Home
+              }
             />
             <Route
               exact
               path="/nails/create"
-              component={role === 'Administrador' || role === 'Vista' ? CreateNail : Home}
+              component={
+                role === 'Administrador' || role === 'Vista' ? CreateNail : Home
+              }
             />
             <Route
               exact
               path="/nails/:id"
-              component={role === 'Administrador' || role === 'Vista' ? UpdateNail : Home}
+              component={
+                role === 'Administrador' || role === 'Vista' ? UpdateNail : Home
+              }
             />
             <Route
               exact
               path="/material"
-              component={role === 'Administrador' || role === 'Vista' ? Material : Home}
+              component={
+                role === 'Administrador' || role === 'Vista' ? Material : Home
+              }
             />
             <Route
               exact
               path="/material/create"
-              component={role === 'Administrador' || role === 'Vista' ? CreateMaterial : Home}
+              component={
+                role === 'Administrador' || role === 'Vista'
+                  ? CreateMaterial
+                  : Home
+              }
             />
             <Route
               exact
               path="/material/:id"
-              component={role === 'Administrador' || role === 'Vista' ? UpdateMaterial : Home}
+              component={
+                role === 'Administrador' || role === 'Vista'
+                  ? UpdateMaterial
+                  : Home
+              }
             />
             <Route
               exact
               path="/processes"
-              component={role === 'Administrador' || role === 'Vista' ? Processes : Home}
+              component={
+                role === 'Administrador' || role === 'Vista' ? Processes : Home
+              }
             />
             <Route
               exact
               path="/processes/create"
-              component={role === 'Administrador' || role === 'Vista' ? CreateProcess : Home}
+              component={
+                role === 'Administrador' || role === 'Vista'
+                  ? CreateProcess
+                  : Home
+              }
             />
             <Route
               exact
               path="/processes/:id"
-              component={role === 'Administrador' || role === 'Vista' ? UpdateProcess : Home}
+              component={
+                role === 'Administrador' || role === 'Vista'
+                  ? UpdateProcess
+                  : Home
+              }
             />
             <Route
               exact
               path="/platforms"
-              component={role === 'Administrador' || role === 'Vista' ? Platforms : Home}
+              component={
+                role === 'Administrador' || role === 'Vista' ? Platforms : Home
+              }
             />
             <Route
               exact
               path="/platforms/create"
-              component={role === 'Administrador' || role === 'Vista' ? CreatePlatform : Home}
+              component={
+                role === 'Administrador' || role === 'Vista'
+                  ? CreatePlatform
+                  : Home
+              }
             />
             <Route
               exact
               path="/platforms/:id"
-              component={role === 'Administrador' || role === 'Vista' ? UpdatePlatform : Home}
+              component={
+                role === 'Administrador' || role === 'Vista'
+                  ? UpdatePlatform
+                  : Home
+              }
             />
             <Route
               exact
               path="/items"
-              component={role === 'Administrador' || role === 'Vista' ? Items : Home}
+              component={
+                role === 'Administrador' || role === 'Vista' ? Items : Home
+              }
             />
             <Route
               exact
               path="/items/create"
-              component={role === 'Administrador' || role === 'Vista' ? CreateItem : Home}
+              component={
+                role === 'Administrador' || role === 'Vista' ? CreateItem : Home
+              }
             />
             <Route
               exact
               path="/items/:id"
-              component={role === 'Administrador' || role === 'Vista' ? UpdateItem : Home}
+              component={
+                role === 'Administrador' || role === 'Vista' ? UpdateItem : Home
+              }
             />
             <Route
               exact
               path="/suppliers"
-              component={role === 'Administrador' || role === 'Vista' ? Suppliers : Home}
+              component={
+                role === 'Administrador' || role === 'Vista' ? Suppliers : Home
+              }
             />
             <Route
               exact
               path="/suppliers/create"
-              component={role === 'Administrador' || role === 'Vista' ? CreateSupplier : Home}
+              component={
+                role === 'Administrador' || role === 'Vista'
+                  ? CreateSupplier
+                  : Home
+              }
             />
             <Route
               exact
               path="/suppliers/:id"
-              component={role === 'Administrador' || role === 'Vista' ? UpdateSupplier : Home}
+              component={
+                role === 'Administrador' || role === 'Vista'
+                  ? UpdateSupplier
+                  : Home
+              }
             />
             <Route
               exact
               path="/qualities"
-              component={role === 'Administrador' || role === 'Vista' ? Qualities : Home}
+              component={
+                role === 'Administrador' || role === 'Vista' ? Qualities : Home
+              }
             />
             <Route
               exact
               path="/qualities/create"
-              component={role === 'Administrador' || role === 'Vista' ? CreateQuality : Home}
+              component={
+                role === 'Administrador' || role === 'Vista'
+                  ? CreateQuality
+                  : Home
+              }
             />
             <Route
               exact
               path="/qualities/add/:id"
-              component={role === 'Administrador' || role === 'Vista' ? AddProcess : Home}
+              component={
+                role === 'Administrador' || role === 'Vista' ? AddProcess : Home
+              }
             />
             <Route
               exact
               path="/qualities/edit/:qualityId/:processId"
-              component={role === 'Administrador' || role === 'Vista' ? EditProcess : Home}
+              component={
+                role === 'Administrador' || role === 'Vista'
+                  ? EditProcess
+                  : Home
+              }
             />
             <Route
               exact
               path="/specialProcesses"
-              component={role === 'Administrador' || role === 'Vista' ? SpecialProcesses : Home}
+              component={
+                role === 'Administrador' || role === 'Vista'
+                  ? SpecialProcesses
+                  : Home
+              }
             />
             <Route
               exact
               path="/specialProcesses/create"
-              component={role === 'Administrador' || role === 'Vista' ? CreateSpecialProcess : Home}
+              component={
+                role === 'Administrador' || role === 'Vista'
+                  ? CreateSpecialProcess
+                  : Home
+              }
             />
             <Route
               exact
               path="/specialProcesses/:id"
-              component={role === 'Administrador' || role === 'Vista' ? UpdateSpecialProcess : Home}
+              component={
+                role === 'Administrador' || role === 'Vista'
+                  ? UpdateSpecialProcess
+                  : Home
+              }
             />
             <Route
               exact
               path="/pallets"
-              component={role === 'Administrador' || role === 'Vista' ? Pallets : Home}
+              component={
+                role === 'Administrador' || role === 'Vista' ? Pallets : Home
+              }
             />
             <Route
               exact
               path="/pallets/create"
-              component={role === 'Administrador' || role === 'Vista' ? CreatePallet : Home}
+              component={
+                role === 'Administrador' || role === 'Vista'
+                  ? CreatePallet
+                  : Home
+              }
             />
             <Route
               exact
               path="/pallets/:id"
-              component={role === 'Administrador' || role === 'Vista' ? UpdatePallet : Home}
+              component={
+                role === 'Administrador' || role === 'Vista'
+                  ? UpdatePallet
+                  : Home
+              }
             />
             <Route
               exact
               path="/pallets/add/:id"
-              component={role === 'Administrador' || role === 'Vista' ? AddNail : Home}
+              component={
+                role === 'Administrador' || role === 'Vista' ? AddNail : Home
+              }
             />
             <Route
               exact
               path="/pallets/item/:id"
-              component={role === 'Administrador' || role === 'Vista' ? AddItem : Home}
+              component={
+                role === 'Administrador' || role === 'Vista' ? AddItem : Home
+              }
             />
             <Route
               exact
               path="/pallets/platform/:id"
-              component={role === 'Administrador' || role === 'Vista' ? AddPlatform : Home}
+              component={
+                role === 'Administrador' || role === 'Vista'
+                  ? AddPlatform
+                  : Home
+              }
             />
             <Route
               exact
               path="/pallets/specialProcess/:id"
-              component={role === 'Administrador' || role === 'Vista' ? AddSpecialProcess : Home}
+              component={
+                role === 'Administrador' || role === 'Vista'
+                  ? AddSpecialProcess
+                  : Home
+              }
             />
             <Route
               exact
               path="/stock"
-              component={role === 'Administrador' || role === 'Vista' ? Stock : Home}
+              component={
+                role === 'Administrador' || role === 'Vista' ? Stock : Home
+              }
             />
             <Route
               exact
               path="/stockNails"
-              component={role === 'Administrador' || role === 'Vista' ? StockNails : Home}
+              component={
+                role === 'Administrador' || role === 'Vista' ? StockNails : Home
+              }
             />
             <Route
               exact
               path="/stockItems"
-              component={role === 'Administrador' || role === 'Vista' ? StockItems : Home}
+              component={
+                role === 'Administrador' || role === 'Vista' ? StockItems : Home
+              }
             />
             <Route
               exact
               path="/stockMaterial"
-              component={role === 'Administrador' || role === 'Vista' ? StockMaterial : Home}
+              component={
+                role === 'Administrador' || role === 'Vista'
+                  ? StockMaterial
+                  : Home
+              }
             />
             <Route
               exact
               path="/stock/update/:id"
-              component={role === 'Administrador' || role === 'Vista' ? StockUpdate : Home}
+              component={
+                role === 'Administrador' || role === 'Vista'
+                  ? StockUpdate
+                  : Home
+              }
             />
             <Route
               exact
               path="/stockChanges"
-              component={role === 'Administrador' || role === 'Vista' ? StockChanges : Home}
+              component={
+                role === 'Administrador' || role === 'Vista'
+                  ? StockChanges
+                  : Home
+              }
             />
             <Route
               exact
               path="/stockHistory"
-              component={role === 'Administrador' || role === 'Vista' ? StockHistory : Home}
+              component={
+                role === 'Administrador' || role === 'Vista'
+                  ? StockHistory
+                  : Home
+              }
             />
             <Route
               exact
               path="/orders"
-              component={role === 'Administrador' || role === 'Vista' ? Orders : Home}
+              component={
+                role === 'Administrador' || role === 'Vista' ? Orders : Home
+              }
             />
             <Route
               exact
               path="/orders/main/:id"
-              component={role === 'Administrador' || role === 'Vista' ? MainOrder : Home}
+              component={
+                role === 'Administrador' || role === 'Vista' ? MainOrder : Home
+              }
             />
             <Route
               exact
               path="/orders/create"
-              component={role === 'Administrador' || role === 'Vista' ? CreateOrder : Home}
+              component={
+                role === 'Administrador' || role === 'Vista'
+                  ? CreateOrder
+                  : Home
+              }
             />
             <Route
               exact
               path="/orders/update/:id"
-              component={role === 'Administrador' || role === 'Vista' ? UpdateOrder : Home}
+              component={
+                role === 'Administrador' || role === 'Vista'
+                  ? UpdateOrder
+                  : Home
+              }
             />
             <Route
               exact
               path="/orders/create/:id"
-              component={role === 'Administrador' || role === 'Vista' ? OrderProduction : Home}
+              component={
+                role === 'Administrador' || role === 'Vista'
+                  ? OrderProduction
+                  : Home
+              }
             />
             <Route
               exact
               path="/orders/intern/:id"
-              component={role === 'Administrador' || role === 'Vista' ? OrderIntern : Home}
+              component={
+                role === 'Administrador' || role === 'Vista'
+                  ? OrderIntern
+                  : Home
+              }
             />
             <Route
               exact
               path="/orders/details/:id"
-              component={role === 'Administrador' || role === 'Vista' ? OrderDetails : Home}
+              component={
+                role === 'Administrador' || role === 'Vista'
+                  ? OrderDetails
+                  : Home
+              }
             />
             <Route
               exact
               path="/orders/shipments/:id"
-              component={role === 'Administrador' || role === 'Vista' ? OrderShipments : Home}
+              component={
+                role === 'Administrador' || role === 'Vista'
+                  ? OrderShipments
+                  : Home
+              }
             />
             <Route
               exact
               path="/raws"
-              component={role === 'Administrador' || role === 'Vista' ? Raws : Home}
+              component={
+                role === 'Administrador' || role === 'Vista' ? Raws : Home
+              }
             />
             <Route
               exact
               path="/raws/create"
-              component={role === 'Administrador' || role === 'Vista' ? CreateRaw : Home}
+              component={
+                role === 'Administrador' || role === 'Vista' ? CreateRaw : Home
+              }
             />
             <Route
               exact
               path="/raws/:id"
-              component={role === 'Administrador' || role === 'Vista' ? UpdateRaw : Home}
+              component={
+                role === 'Administrador' || role === 'Vista' ? UpdateRaw : Home
+              }
             />
             <Route
               exact
               path="/users"
-              component={role === 'Administrador' || role === 'Vista' ? Users : Home}
+              component={
+                role === 'Administrador' || role === 'Vista' ? Users : Home
+              }
             />
             <Route
               exact
               path="/users/create"
-              component={role === 'Administrador' || role === 'Vista' ? CreateUser : Home}
+              component={
+                role === 'Administrador' || role === 'Vista' ? CreateUser : Home
+              }
             />
             <Route
               exact
               path="/users/:id"
-              component={role === 'Administrador' || role === 'Vista' ? UpdateUser : Home}
+              component={
+                role === 'Administrador' || role === 'Vista' ? UpdateUser : Home
+              }
             />
             <Route
               exact
               path="/calendar"
-              component={role === 'Administrador' || role === 'Vista' ? Calendar : Home}
+              component={
+                role === 'Administrador' || role === 'Vista' ? Calendar : Home
+              }
             />
             <Route
               exact
               path="/calendar-production"
-              component={role === 'Administrador' || role === 'Vista' ? CalendarProduction : Home}
+              component={
+                role === 'Administrador' || role === 'Vista'
+                  ? CalendarProduction
+                  : Home
+              }
             />
             <Route
               exact
               path="/calendar-shipments"
-              component={role === 'Administrador' || role === 'Vista' ? CalendarShipments : Home}
+              component={
+                role === 'Administrador' || role === 'Vista'
+                  ? CalendarShipments
+                  : Home
+              }
             />
             {/* Area Usuario */}
             <Route
@@ -381,6 +566,15 @@ const App = ({ loggedIn }) => {
               path="/orderProduction/:orderId/:index"
               component={OrderProductionItem}
             />
+            <Route exact path="/home-quality" component={HomeQuality} />
+            <Route exact path="/home-accounting" component={HomeAccounting} />
+            <Route
+              exact
+              path="/home-administration"
+              component={HomeAdministration}
+            />
+            <Route exact path="/home-management" component={HomeManagement} />
+            <Route exact path="/home-production" component={HomeProduction} />
 
             <Route exact path="/login" component={Login} />
             <Route component={NotFound} />

@@ -31,8 +31,11 @@ const CalendarOrders = props => {
               shipment.ordersProduction
                 .filter(op => op.completed === 0)
                 .map(op => {
+                  console.log(op)
                   eventList.push({
-                    title: `${op.processName} - ${shipment.pallets[0].model}`,
+                    title: `${op.processName ? op.processName : op.name} - ${
+                      shipment.pallets[0].model
+                    }`,
                     start: moment(op.date).toDate(),
                     end: moment(op.date).toDate(),
                     orderId: `/orders/details/${shipment._id}`,

@@ -6,7 +6,6 @@ const IconHome = ({ icon, text, url }) => {
   return (
     <div className="iconHome">
       <Link to={url}>
-        <div>{icon}</div>
         <div>{text}</div>
       </Link>
     </div>

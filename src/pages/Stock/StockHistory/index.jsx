@@ -103,7 +103,11 @@ const StockHistory = props => {
                     ? `Tarima - ${
                         pallets.filter(
                           pallet => pallet._id === item.productId
-                        )[0].model
+                        )[0]
+                          ? pallets.filter(
+                              pallet => pallet._id === item.productId
+                            )[0].model
+                          : 'Eliminada'
                       }`
                     : /*  console.log(
                         pallets.filter(pallet => pallet._id === item.productId),
@@ -113,13 +117,18 @@ const StockHistory = props => {
                   {item.collection === 'items'
                     ? `Complemento - ${
                         items.filter(itemx => itemx._id === item.productId)[0]
-                          .name
+                          ? items.filter(
+                              itemx => itemx._id === item.productId
+                            )[0].name
+                          : 'Eliminado'
                       }`
                     : null}
                   {item.collection === 'nails'
                     ? `Clavos - ${
                         nails.filter(nail => nail._id === item.productId)[0]
-                          .name
+                          ? nails.filter(nail => nail._id === item.productId)[0]
+                              .name
+                          : 'Eliminado'
                       }`
                     : null}
                   {item.collection === 'raws'
