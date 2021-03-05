@@ -51,6 +51,17 @@ const Home = props => {
             url="/calendar-shipments"
             text="Calendario Embarques"
           />
+
+          <IconHome
+            icon={<BsCardImage />}
+            url="/shipping-program"
+            text="Programa de Embarques"
+          />
+          <IconHome
+            icon={<BsCardImage />}
+            url="/format"
+            text="Formatos"
+          />
         </div>
       )
     case 'Vista':

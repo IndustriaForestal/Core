@@ -33,10 +33,10 @@ const CreateOrder = props => {
 
   const tableHeader = [
     'Nombre',
-    '1 Verdes',
-    '1 Secas',
-    '2 Verdes',
-    '2 Secas',
+    'IFISA 1 Verdes',
+    'IFISA 1 Secas',
+    'IFISA 2 Verdes',
+    'IFISA 2 Secas',
     'Stock Seguridad',
   ]
   const tableHeader2 = ['Nombre', 'OC', 'Cantidad', 'Fecha Entrega']

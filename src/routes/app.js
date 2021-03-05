@@ -72,6 +72,13 @@ import Calendar from '../pages/Calendar'
 import CalendarProduction from '../pages/CalendarProduction'
 import CalendarShipments from '../pages/CalendarShipments'
 
+//SEGUNDA ETAPA
+
+import ShippingProgram from '../pages/ShippingProgram'
+import ShippingProgramStock from '../pages/ShippingProgram/Stock'
+import Format1 from '../pages/Formats'
+import Format2 from '../pages/Formats/FOR-CAL-FTP022'
+
 const App = ({ loggedIn }) => {
   const role = Cookies.get('role')
   if (loggedIn) {
@@ -575,6 +582,13 @@ const App = ({ loggedIn }) => {
             />
             <Route exact path="/home-management" component={HomeManagement} />
             <Route exact path="/home-production" component={HomeProduction} />
+
+            {/* SEGUNDA ETAPA */}
+
+            <Route exact path="/shipping-program" component={ShippingProgram} />
+            <Route exact path="/shipping-program/stock" component={ShippingProgramStock} />
+            <Route exact path="/format" component={Format1} />
+            <Route exact path="/format/forcalftp022" component={Format2} />
 
             <Route exact path="/login" component={Login} />
             <Route component={NotFound} />

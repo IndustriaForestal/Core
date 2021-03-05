@@ -1,0 +1,61 @@
+.shippingProgram {
+  background-color: var(--white);
+  overflow-x: scroll;
+  position: relative;
+  &__grid {
+    position: relative;
+  }
+  &__row {
+    display: flex;
+  }
+  &__cell {
+    border: 1px solid var(--gray-light);
+    min-width: 120px;
+    max-width: 120px;
+    height: 30px;
+    display: flex;
+    justify-content: center;
+    align-items: center;
+    text-align: center;
+    padding: 0;
+    &.--customer {
+      height: auto;
+    }
+    &.--white {
+      background-color: var(--white);
+    }
+    &.--orange {
+      background-color: orange;
+    }
+    &.--yellow {
+      background-color: var(--warning);
+    }
+    &.--greenYellow {
+      background-color: greenyellow;
+    }
+    &.--green {
+      background-color: green;
+    }
+  }
+}
+
+.excel {
+  background-color: var(--white);
+  border-collapse: collapse;
+  width: 100%;
+  th,
+  td {
+    border: 1px solid var(--gray-light);
+    padding: 0;
+    text-align: center;
+    min-width: 100px;
+    height: 30px;
+  }
+  input {
+    padding: 0;
+    border: 0;
+    text-align: center;
+    min-width: 100px;
+    height: 30px;
+  }
+}

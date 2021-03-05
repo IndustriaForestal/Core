@@ -1,0 +1,25 @@
+.boxFormRadius {
+  .card__body {
+    display: grid;
+    grid-template-columns: repeat(3, 1fr);
+  }
+}
+.--radio {
+  margin: 0 10px;
+}
+.--labelPatch {
+  .card__body {
+    display: flex;
+    flex-direction: column;
+    label {
+      padding-bottom: 10px;
+    }
+  }
+}
+.--twoColumns {
+  .card__body {
+    display: grid;
+    grid-template-columns: 1fr 1fr;
+    gap: 15px;
+  }
+}
