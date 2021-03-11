@@ -11,6 +11,10 @@ const ShippingProgramStock = props => {
       menu: {
         Programa: '/shipping-program',
         Stock: '/shipping-program/stock',
+        'Entrega Prov.': '/shipping-program/supplier-delivery',
+        Aserrio: '/shipping-program/sawn',
+        Armado: '/shipping-program/armed',
+        'Progr. Estufas': '/shipping-program/stoves',
       },
     }
     setTitle(topbar)
@@ -39,8 +43,21 @@ const ShippingProgramStock = props => {
     }
   }
 
+  const compare = (a, b) => {
+    const orderA = a.model
+    const orderB = b.model
+
+    let comparison = 0
+    if (orderA > orderB) {
+      comparison = 1
+    } else if (orderA < orderB) {
+      comparison = -1
+    }
+    return comparison
+  }
+
   if (pallets && shippingProgramStock) {
-    const stock = pallets.map(pallet => {
+    const stock = pallets.sort(compare).map(pallet => {
       const stock = shippingProgramStock.filter(
         stock => stock.palletId === pallet.model
       )

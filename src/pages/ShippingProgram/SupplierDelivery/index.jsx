@@ -3,16 +3,22 @@ import moment from 'moment'
 import Swal from 'sweetalert2'
 import 'moment/locale/es-mx'
 import { connect } from 'react-redux'
-import './styles.scss'
-import Loading from '../../components/Loading/Loading'
-import AddButton from '../../components/AddButton/AddButton'
 
-import { getAll, setWraper, create, setTitle, deleted } from '../../actions/app'
+import Loading from '../../../components/Loading/Loading'
+import AddButton from '../../../components/AddButton/AddButton'
+
+import {
+  getAll,
+  setWraper,
+  create,
+  setTitle,
+  deleted,
+} from '../../../actions/app'
 
 moment.locale('es')
 
 const ShippingProgram = props => {
-  const { shippingProgram, customers } = props
+  const { supplierDelivery, suppliers } = props
 
   useEffect(() => {
     const topbar = {
@@ -23,23 +29,26 @@ const ShippingProgram = props => {
         'Entrega Prov.': '/shipping-program/supplier-delivery',
         Aserrio: '/shipping-program/sawn',
         Armado: '/shipping-program/armed',
-        'Progr. Estufas': '/shipping-program/stoves'
+        'Progr. Estufas': '/shipping-program/stoves',
       },
     }
     props.setTitle(topbar)
     props
-      .getAll('shippingProgram', 'GET_SHIPPING_PROGRAM')
+      .getAll(
+        'shippingProgram/supplier-delivery',
+        'GET_SHIPPING_PROGRAM_SUPPLIER_DELIVERY'
+      )
       .then(() => {
-        props.getAll('customers', 'GET_CUSTOMERS')
+        props.getAll('suppliers', 'GET_SUPPLIERS')
       })
       .then(() => {
         props.setWraper(true)
       })
   }, [])
 
-  const handleSaveShipping = async (date, customer, e) => {
+  const handleSaveShipping = async (date, supplier, e) => {
     if (e.key === 'Enter') {
-      console.log(date, customer, e.target.value)
+      console.log(date, supplier, e.target.value)
       const pallet = e.target.value
       /* inputOptions can be an object or Promise */
       const inputOptions = new Promise(resolve => {
@@ -67,14 +76,21 @@ const ShippingProgram = props => {
 
       if (color) {
         props
-          .create('shippingProgram', 'CREATE_SHIPPING_PROGRAM', {
-            date,
-            customer,
-            color,
-            pallet,
-          })
+          .create(
+            'shippingProgram/supplier-delivery',
+            'CREATE_SHIPPING_PROGRAM',
+            {
+              date,
+              supplier,
+              color,
+              pallet,
+            }
+          )
           .then(() => {
-            props.getAll('shippingProgram', 'GET_SHIPPING_PROGRAM')
+            props.getAll(
+              'shippingProgram/supplier-delivery',
+              'GET_SHIPPING_PROGRAM_SUPPLIER_DELIVERY'
+            )
           })
           .then(() => {
             const Toast = Swal.mixin({
@@ -98,7 +114,7 @@ const ShippingProgram = props => {
     }
   }
 
-  const handleDelete = shippingId => {
+  const handleDelete = deliveryId => {
     Swal.fire({
       title: '¿Estás seguro?',
       text: 'Este proceso no se puede revertir',
@@ -110,9 +126,15 @@ const ShippingProgram = props => {
     }).then(result => {
       if (result.isConfirmed) {
         props
-          .deleted(`shippingProgram/${shippingId}`, 'DELETE_SHIPPING_PROGRAM')
+          .deleted(
+            `shippingProgram/supplier-delivery/${deliveryId}`,
+            'DELETE_SHIPPING_PROGRAM'
+          )
           .then(() => {
-            props.getAll('shippingProgram', 'GET_SHIPPING_PROGRAM')
+            props.getAll(
+              'shippingProgram/supplier-delivery',
+              'GET_SHIPPING_PROGRAM_SUPPLIER_DELIVERY'
+            )
           })
           .then(() => {
             Swal.fire('Borrado!', 'Borrado con exito.', 'success')
@@ -121,7 +143,7 @@ const ShippingProgram = props => {
     })
   }
 
-  if (shippingProgram && customers) {
+  if (supplierDelivery && suppliers) {
     let days = []
     for (let i = 0; i < 90; i++) {
       days.push(moment().add(i, 'days').format('YYYY-MM-DD'))
@@ -134,12 +156,12 @@ const ShippingProgram = props => {
             <div className="shippingProgram__row">
               <div className="shippingProgram__cell --customer"></div>
               <div className="shippingProgram__cell --customer">Fecha</div>
-              {customers.map(customer => (
+              {suppliers.map(supplier => (
                 <div
                   className="shippingProgram__cell --customer"
-                  key={customer._id}
+                  key={supplier._id}
                 >
-                  {customer.name}
+                  {supplier.name}
                 </div>
               ))}
             </div>
@@ -149,26 +171,26 @@ const ShippingProgram = props => {
                   {moment(day).format('dddd')}
                 </div>
                 <div className="shippingProgram__cell --sticky">{day}</div>
-                {customers.map(customer => {
-                  const shippingDay = shippingProgram.filter(
-                    shipping =>
-                      shipping.customer === customer._id &&
-                      moment(shipping.date).format('YYYY-MM-DD') === day
+                {suppliers.map(supplier => {
+                  const deliveryDay = supplierDelivery.filter(
+                    delivery =>
+                      delivery.supplier === supplier._id &&
+                      moment(delivery.date).format('YYYY-MM-DD') === day
                   )
-                  console.log(day, shippingDay)
-                  return shippingDay.length > 0 ? (
+                  console.log(day, deliveryDay)
+                  return deliveryDay.length > 0 ? (
                     <div
-                      key={customer._id}
-                      onClick={() => handleDelete(shippingDay[0].id)}
-                      className={`shippingProgram__cell --${shippingDay[0].color} --delete`}
+                      key={supplier._id}
+                      onClick={() => handleDelete(deliveryDay[0].id)}
+                      className={`shippingProgram__cell --${deliveryDay[0].color} --delete`}
                     >
-                      {shippingDay[0].pallet}
+                      {deliveryDay[0].pallet}
                     </div>
                   ) : (
                     <input
-                      key={customer._id}
+                      key={supplier._id}
                       className="shippingProgram__cell"
-                      onKeyPress={e => handleSaveShipping(day, customer._id, e)}
+                      onKeyPress={e => handleSaveShipping(day, supplier._id, e)}
                     />
                   )
                 })}
@@ -186,8 +208,8 @@ const ShippingProgram = props => {
 
 const mapStateToProps = state => {
   return {
-    shippingProgram: state.shippingProgram,
-    customers: state.customers,
+    supplierDelivery: state.supplierDelivery,
+    suppliers: state.suppliers,
   }
 }
 

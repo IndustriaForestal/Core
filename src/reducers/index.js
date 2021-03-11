@@ -429,7 +429,7 @@ const reducer = (state, action) => {
         stockLog: action.payload.data,
       }
 
-      /* SEgunda Parte */
+    /* SEgunda Parte */
 
     case 'GET_SHIPPING_PROGRAM':
       return {
@@ -444,6 +444,11 @@ const reducer = (state, action) => {
     case 'CREATE_SHIPPING_PROGRAM':
       return {
         ...state,
+      }
+    case 'GET_SHIPPING_PROGRAM_SUPPLIER_DELIVERY':
+      return {
+        ...state,
+        supplierDelivery: action.payload.data,
       }
     default:
       return state

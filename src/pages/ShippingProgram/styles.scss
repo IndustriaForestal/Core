@@ -36,6 +36,9 @@
     &.--green {
       background-color: green;
     }
+    &.--delete {
+      cursor: pointer;
+    }
   }
 }
 
