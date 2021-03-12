@@ -1,4 +1,4 @@
-import React, { useEffect } from 'react'
+import React, { useEffect, useState } from 'react'
 import moment from 'moment'
 import Swal from 'sweetalert2'
 import 'moment/locale/es-mx'
@@ -12,12 +12,15 @@ import {
   create,
   setTitle,
   deleted,
+  update,
 } from '../../../actions/app'
 
 moment.locale('es')
 
 const Sawn = props => {
-  const { supplierDelivery, suppliers } = props
+  const { sawn, suppliers } = props
+  const [volume, setVolume] = useState(0)
+  const [pallet, setPallet] = useState(0)
 
   useEffect(() => {
     const topbar = {
@@ -33,10 +36,7 @@ const Sawn = props => {
     }
     props.setTitle(topbar)
     props
-      .getAll(
-        'shippingProgram/supplier-delivery',
-        'GET_SHIPPING_PROGRAM_SUPPLIER_DELIVERY'
-      )
+      .getAll('shippingProgram/sawn', 'GET_SHIPPING_PROGRAM_SAWN')
       .then(() => {
         props.getAll('suppliers', 'GET_SUPPLIERS')
       })
@@ -45,11 +45,18 @@ const Sawn = props => {
       })
   }, [])
 
-  const handleSaveShipping = async (date, supplier, e) => {
+  const handleReset = () => {
+    Array.from(document.querySelectorAll('input'))
+    this.setState({
+      itemvalues: [{}],
+    })
+  }
+
+  const handleSawn = async (e, date) => {
     if (e.key === 'Enter') {
-      console.log(date, supplier, e.target.value)
-      const pallet = e.target.value
-      /* inputOptions can be an object or Promise */
+      const amount = e.target.value
+      console.log(date, amount)
+
       const inputOptions = new Promise(resolve => {
         setTimeout(() => {
           resolve({
@@ -75,21 +82,15 @@ const Sawn = props => {
 
       if (color) {
         props
-          .create(
-            'shippingProgram/supplier-delivery',
-            'CREATE_SHIPPING_PROGRAM',
-            {
-              date,
-              supplier,
-              color,
-              pallet,
-            }
-          )
+          .create('shippingProgram/sawn', 'CREATE_SHIPPING_PROGRAM', {
+            date,
+            volume,
+            amount,
+            color,
+            pallet,
+          })
           .then(() => {
-            props.getAll(
-              'shippingProgram/supplier-delivery',
-              'GET_SHIPPING_PROGRAM_SUPPLIER_DELIVERY'
-            )
+            props.getAll('shippingProgram/sawn', 'GET_SHIPPING_PROGRAM_SAWN')
           })
           .then(() => {
             const Toast = Swal.mixin({
@@ -113,7 +114,37 @@ const Sawn = props => {
     }
   }
 
-  const handleDelete = deliveryId => {
+  const handleUpdateSawn = (e, id) => {
+    if (e.key === 'Enter') {
+      props
+        .update(`shippingProgram/sawn/${id}`, 'CREATE_SHIPPING_PROMGRAM', {
+          prod: e.target.value,
+        })
+        .then(() => {
+          props.getAll('shippingProgram/sawn', 'GET_SHIPPING_PROGRAM_SAWN')
+        })
+        .then(() => {
+          const Toast = Swal.mixin({
+            toast: true,
+            position: 'top-end',
+            showConfirmButton: false,
+            timer: 3000,
+            timerProgressBar: true,
+            didOpen: toast => {
+              toast.addEventListener('mouseenter', Swal.stopTimer)
+              toast.addEventListener('mouseleave', Swal.resumeTimer)
+            },
+          })
+
+          Toast.fire({
+            icon: 'success',
+            title: 'Signed in successfully',
+          })
+        })
+    }
+  }
+
+  const handleDeleteSawn = id => {
     Swal.fire({
       title: '¿Estás seguro?',
       text: 'Este proceso no se puede revertir',
@@ -125,15 +156,9 @@ const Sawn = props => {
     }).then(result => {
       if (result.isConfirmed) {
         props
-          .deleted(
-            `shippingProgram/supplier-delivery/${deliveryId}`,
-            'DELETE_SHIPPING_PROGRAM'
-          )
+          .deleted(`shippingProgram/sawn/${id}`, 'DELETE_SHIPPING_PROGRAM')
           .then(() => {
-            props.getAll(
-              'shippingProgram/supplier-delivery',
-              'GET_SHIPPING_PROGRAM_SUPPLIER_DELIVERY'
-            )
+            props.getAll('shippingProgram/sawn', 'GET_SHIPPING_PROGRAM_SAWN')
           })
           .then(() => {
             Swal.fire('Borrado!', 'Borrado con exito.', 'success')
@@ -142,12 +167,15 @@ const Sawn = props => {
     })
   }
 
-  if (supplierDelivery && suppliers) {
-    let days = []
-    for (let i = 0; i < 90; i++) {
-      days.push(moment().add(i, 'days').format('YYYY-MM-DD'))
-    }
+  const handleTotalVolume = (sawnF, color) => {
+    let total = 0
+    sawnF
+      .filter(s => s.color === color)
+      .map(s => (total += s.amount * s.volume))
+    return total.toFixed(2)
+  }
 
+  if (sawn && suppliers) {
     return (
       <>
         <div className="shippingProgram">
@@ -202,6 +230,7 @@ const Sawn = props => {
                 SABADO PRODU
               </div>
             </div>
+
             <div className="shippingProgram__row">
               <div className="shippingProgram__cell --customer"></div>
               <div className="shippingProgram__cell --customer">CUB TOTAL</div>
@@ -220,10 +249,219 @@ const Sawn = props => {
               <div className="shippingProgram__cell --customer">PROD. P/T</div>
               <div className="shippingProgram__cell --customer">PROD. P/T</div>
             </div>
-            <div className="shippingProgram__row">
-              <div className="shippingProgram__cell">
-                {moment('2021-03-03').weekday(1).format('YYYY-MM-DD')}
+            {sawn.map((saw, index) => (
+              <div className={`shippingProgram__row`} key={saw.id}>
+                <div
+                  onClick={() => handleDeleteSawn(saw.id)}
+                  className={`shippingProgram__cell --${saw.color}`}
+                >
+                  {console.log(
+                    sawn.filter(sa => sa.color === saw.color).length,
+                    index + 1
+                  )}
+                  {sawn.filter(sa => sa.color === saw.color).length ===
+                  index + 1
+                    ? handleTotalVolume(sawn, saw.color)
+                    : null}
+                </div>
+                <div className={`shippingProgram__cell --${saw.color}`}>
+                  {(saw.volume * saw.amount).toFixed(2)}
+                </div>
+                <div className={`shippingProgram__cell --${saw.color}`}>
+                  {saw.volume}
+                </div>
+                <div className={`shippingProgram__cell --${saw.color}`}>
+                  {saw.pallet}
+                </div>
+
+                {moment().weekday(1).format('YYYY-MM-DD') ===
+                moment(saw.date).format('YYYY-MM-DD') ? (
+                  <>
+                    <div className={`shippingProgram__cell --${saw.color}`}>
+                      {saw.amount}
+                    </div>
+                    <input
+                      className={`shippingProgram__cell --${saw.color}`}
+                      defaultValue={saw.prod}
+                      onKeyPress={e => handleUpdateSawn(e, saw.id)}
+                    />
+                  </>
+                ) : (
+                  <>
+                    <div
+                      className={`shippingProgram__cell --${saw.color}`}
+                    ></div>
+                    <div
+                      className={`shippingProgram__cell --${saw.color}`}
+                    ></div>
+                  </>
+                )}
+                {moment().weekday(2).format('YYYY-MM-DD') ===
+                moment(saw.date).format('YYYY-MM-DD') ? (
+                  <>
+                    <div className={`shippingProgram__cell --${saw.color}`}>
+                      {saw.amount}
+                    </div>
+                    <input
+                      className={`shippingProgram__cell --${saw.color}`}
+                      defaultValue={saw.prod}
+                      onKeyPress={e => handleUpdateSawn(e, saw.id)}
+                    />
+                  </>
+                ) : (
+                  <>
+                    <div
+                      className={`shippingProgram__cell --${saw.color}`}
+                    ></div>
+                    <div
+                      className={`shippingProgram__cell --${saw.color}`}
+                    ></div>
+                  </>
+                )}
+                {moment().weekday(3).format('YYYY-MM-DD') ===
+                moment(saw.date).format('YYYY-MM-DD') ? (
+                  <>
+                    <div className={`shippingProgram__cell --${saw.color}`}>
+                      {saw.amount}
+                    </div>
+                    <input
+                      className={`shippingProgram__cell --${saw.color}`}
+                      defaultValue={saw.prod}
+                      onKeyPress={e => handleUpdateSawn(e, saw.id)}
+                    />
+                  </>
+                ) : (
+                  <>
+                    <div
+                      className={`shippingProgram__cell --${saw.color}`}
+                    ></div>
+                    <div
+                      className={`shippingProgram__cell --${saw.color}`}
+                    ></div>
+                  </>
+                )}
+                {moment().weekday(4).format('YYYY-MM-DD') ===
+                moment(saw.date).format('YYYY-MM-DD') ? (
+                  <>
+                    <div className={`shippingProgram__cell --${saw.color}`}>
+                      {saw.amount}
+                    </div>
+                    <input
+                      className={`shippingProgram__cell --${saw.color}`}
+                      defaultValue={saw.prod}
+                      onKeyPress={e => handleUpdateSawn(e, saw.id)}
+                    />
+                  </>
+                ) : (
+                  <>
+                    <div
+                      className={`shippingProgram__cell --${saw.color}`}
+                    ></div>
+                    <div
+                      className={`shippingProgram__cell --${saw.color}`}
+                    ></div>
+                  </>
+                )}
+                {moment().weekday(5).format('YYYY-MM-DD') ===
+                moment(saw.date).format('YYYY-MM-DD') ? (
+                  <>
+                    <div className={`shippingProgram__cell --${saw.color}`}>
+                      {saw.amount}
+                    </div>
+                    <input
+                      className={`shippingProgram__cell --${saw.color}`}
+                      defaultValue={saw.prod}
+                      onKeyPress={e => handleUpdateSawn(e, saw.id)}
+                    />
+                  </>
+                ) : (
+                  <>
+                    <div
+                      className={`shippingProgram__cell --${saw.color}`}
+                    ></div>
+                    <div
+                      className={`shippingProgram__cell --${saw.color}`}
+                    ></div>
+                  </>
+                )}
+                {moment().weekday(6).format('YYYY-MM-DD') ===
+                moment(saw.date).format('YYYY-MM-DD') ? (
+                  <>
+                    <div className={`shippingProgram__cell --${saw.color}`}>
+                      {saw.amount}
+                    </div>
+                    <input
+                      className={`shippingProgram__cell --${saw.color}`}
+                      defaultValue={saw.prod}
+                      onKeyPress={e => handleUpdateSawn(e, saw.id)}
+                    />
+                  </>
+                ) : (
+                  <>
+                    <div
+                      className={`shippingProgram__cell --${saw.color}`}
+                    ></div>
+                    <div
+                      className={`shippingProgram__cell --${saw.color}`}
+                    ></div>
+                  </>
+                )}
               </div>
+            ))}
+
+            <div className="shippingProgram__row">
+              <div className="shippingProgram__cell"></div>
+              <div className="shippingProgram__cell"></div>
+              <input
+                className="shippingProgram__cell"
+                onChange={e => setVolume(e.target.value)}
+              />
+              <input
+                className="shippingProgram__cell"
+                onChange={e => setPallet(e.target.value)}
+              />
+              <input
+                onKeyPress={e =>
+                  handleSawn(e, moment().weekday(1).format('YYYY-MM-DD'))
+                }
+                className="shippingProgram__cell"
+              />
+              <div className="shippingProgram__cell"></div>
+              <input
+                onKeyPress={e =>
+                  handleSawn(e, moment().weekday(2).format('YYYY-MM-DD'))
+                }
+                className="shippingProgram__cell"
+              />
+              <div className="shippingProgram__cell"></div>
+              <input
+                onKeyPress={e =>
+                  handleSawn(e, moment().weekday(3).format('YYYY-MM-DD'))
+                }
+                className="shippingProgram__cell"
+              />
+              <div className="shippingProgram__cell"></div>
+              <input
+                onKeyPress={e =>
+                  handleSawn(e, moment().weekday(4).format('YYYY-MM-DD'))
+                }
+                className="shippingProgram__cell"
+              />
+              <div className="shippingProgram__cell"></div>
+              <input
+                onKeyPress={e =>
+                  handleSawn(e, moment().weekday(5).format('YYYY-MM-DD'))
+                }
+                className="shippingProgram__cell"
+              />
+              <div className="shippingProgram__cell"></div>
+              <input
+                onKeyPress={e =>
+                  handleSawn(e, moment().weekday(6).format('YYYY-MM-DD'))
+                }
+                className="shippingProgram__cell"
+              />
+              <div className="shippingProgram__cell"></div>
             </div>
           </div>
         </div>
@@ -236,7 +474,7 @@ const Sawn = props => {
 
 const mapStateToProps = state => {
   return {
-    supplierDelivery: state.supplierDelivery,
+    sawn: state.sawn,
     suppliers: state.suppliers,
   }
 }
@@ -247,6 +485,7 @@ const mapDispatchToProps = {
   setTitle,
   create,
   deleted,
+  update,
 }
 
 export default connect(mapStateToProps, mapDispatchToProps)(Sawn)

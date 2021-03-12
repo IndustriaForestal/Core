@@ -450,6 +450,11 @@ const reducer = (state, action) => {
         ...state,
         supplierDelivery: action.payload.data,
       }
+    case 'GET_SHIPPING_PROGRAM_SAWN':
+      return {
+        ...state,
+        sawn: action.payload.data,
+      }
     default:
       return state
   }

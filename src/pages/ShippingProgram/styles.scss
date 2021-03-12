@@ -7,6 +7,39 @@
   }
   &__row {
     display: flex;
+    &.--white {
+      input {
+        background-color: var(--white);
+      }
+      background-color: var(--white);
+    }
+    &.--orange {
+      input {
+        background-color: orange;
+      }
+      background-color: orange;
+    }
+    &.--yellow {
+      input {
+        background-color: var(--warning);
+      }
+      background-color: var(--warning);
+    }
+    &.--greenYellow {
+      input {
+        background-color: greenyellow;
+      }
+      background-color: greenyellow;
+    }
+    &.--green {
+      input {
+        background-color: green;
+      }
+      background-color: green;
+    }
+    &.--delete {
+      cursor: pointer;
+    }
   }
   &__cell {
     border: 1px solid var(--gray-light);
