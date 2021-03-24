@@ -78,6 +78,9 @@ import ShippingProgram from '../pages/ShippingProgram'
 import ShippingProgramStock from '../pages/ShippingProgram/Stock'
 import SupplierDelivery from '../pages/ShippingProgram/SupplierDelivery'
 import Sawn from '../pages/ShippingProgram/Sawn'
+import Assamble from '../pages/ShippingProgram/Assamble'
+import Stoves from '../pages/ShippingProgram/Stoves'
+
 import Format1 from '../pages/Formats'
 import Format2 from '../pages/Formats/FOR-CAL-FTP022'
 
@@ -598,11 +601,9 @@ const App = ({ loggedIn }) => {
               path="/shipping-program/supplier-delivery"
               component={SupplierDelivery}
             />
-            <Route
-              exact
-              path="/shipping-program/sawn"
-              component={Sawn}
-            />
+            <Route exact path="/shipping-program/sawn" component={Sawn} />
+            <Route exact path="/shipping-program/assamble" component={Assamble} />
+            <Route exact path="/shipping-program/stoves" component={Stoves} />
             <Route exact path="/format" component={Format1} />
             <Route exact path="/format/forcalftp022" component={Format2} />
 

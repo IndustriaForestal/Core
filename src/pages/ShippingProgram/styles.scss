@@ -37,6 +37,18 @@
       }
       background-color: green;
     }
+    &.--blue {
+      input {
+        background-color: var(--primary);
+      }
+      background-color: var(--primary);
+    }
+    &.--red {
+      input {
+        background-color: var(--danger);
+      }
+      background-color: var(--danger);
+    }
     &.--delete {
       cursor: pointer;
     }
@@ -68,6 +80,18 @@
     }
     &.--green {
       background-color: green;
+    }
+    &.--blue {
+      input {
+        background-color: var(--primary);
+      }
+      background-color: var(--primary);
+    }
+    &.--red {
+      input {
+        background-color: var(--danger);
+      }
+      background-color: var(--danger);
     }
     &.--delete {
       cursor: pointer;

@@ -13,7 +13,7 @@ const ShippingProgramStock = props => {
         Stock: '/shipping-program/stock',
         'Entrega Prov.': '/shipping-program/supplier-delivery',
         Aserrio: '/shipping-program/sawn',
-        Armado: '/shipping-program/armed',
+        Armado: '/shipping-program/assamble',
         'Progr. Estufas': '/shipping-program/stoves',
       },
     }

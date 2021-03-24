@@ -17,8 +17,8 @@ import {
 
 moment.locale('es')
 
-const ShippingProgram = props => {
-  const { supplierDelivery, suppliers } = props
+const Stoves = props => {
+  const { stolves } = props
 
   useEffect(() => {
     const topbar = {
@@ -34,21 +34,24 @@ const ShippingProgram = props => {
     }
     props.setTitle(topbar)
     props
-      .getAll(
-        'shippingProgram/supplier-delivery',
-        'GET_SHIPPING_PROGRAM_SUPPLIER_DELIVERY'
-      )
-      .then(() => {
-        props.getAll('suppliers', 'GET_SUPPLIERS')
-      })
+      .getAll('shippingProgram/stolves', 'GET_SHIPPING_PROGRAM_STOLVES')
       .then(() => {
         props.setWraper(true)
       })
   }, [])
 
-  const handleSaveShipping = async (date, supplier, e) => {
+  const stolvesToMysql = [
+    { id: 1, name: 'ESTUFA GAS' },
+    { id: 2, name: 'HT' },
+    { id: 3, name: 'ESTUFA 1' },
+    { id: 4, name: 'ESTUFA 2' },
+    { id: 5, name: 'ESTUFA 3' },
+    { id: 6, name: 'ESTUFA 4' },
+  ]
+
+  const handleSaveShipping = async (date, stolve, e) => {
     if (e.key === 'Enter') {
-      console.log(date, supplier, e.target.value)
+      console.log(date, stolve, e.target.value)
       const pallet = e.target.value
       /* inputOptions can be an object or Promise */
       const inputOptions = new Promise(resolve => {
@@ -77,19 +80,19 @@ const ShippingProgram = props => {
       if (color) {
         props
           .create(
-            'shippingProgram/supplier-delivery',
+            'shippingProgram/stolves',
             'CREATE_SHIPPING_PROGRAM',
             {
               date,
-              supplier,
+              stolve,
               color,
               pallet,
             }
           )
           .then(() => {
             props.getAll(
-              'shippingProgram/supplier-delivery',
-              'GET_SHIPPING_PROGRAM_SUPPLIER_DELIVERY'
+              'shippingProgram/stolves',
+              'GET_SHIPPING_PROGRAM_STOLVES'
             )
           })
           .then(() => {
@@ -114,7 +117,7 @@ const ShippingProgram = props => {
     }
   }
 
-  const handleDelete = deliveryId => {
+  const handleDelete = stolveId => {
     Swal.fire({
       title: '¿Estás seguro?',
       text: 'Este proceso no se puede revertir',
@@ -127,13 +130,13 @@ const ShippingProgram = props => {
       if (result.isConfirmed) {
         props
           .deleted(
-            `shippingProgram/supplier-delivery/${deliveryId}`,
+            `shippingProgram/stolves/${stolveId}`,
             'DELETE_SHIPPING_PROGRAM'
           )
           .then(() => {
             props.getAll(
-              'shippingProgram/supplier-delivery',
-              'GET_SHIPPING_PROGRAM_SUPPLIER_DELIVERY'
+              'shippingProgram/stolves',
+              'GET_SHIPPING_PROGRAM_STOLVES'
             )
           })
           .then(() => {
@@ -143,7 +146,7 @@ const ShippingProgram = props => {
     })
   }
 
-  if (supplierDelivery && suppliers) {
+  if (stolves) {
     let days = []
     for (let i = 0; i < 90; i++) {
       days.push(moment().add(i, 'days').format('YYYY-MM-DD'))
@@ -156,12 +159,12 @@ const ShippingProgram = props => {
             <div className="shippingProgram__row">
               <div className="shippingProgram__cell --customer"></div>
               <div className="shippingProgram__cell --customer">Fecha</div>
-              {suppliers.map(supplier => (
+              {stolvesToMysql.map(stolve => (
                 <div
                   className="shippingProgram__cell --customer"
-                  key={supplier._id}
+                  key={stolve.id}
                 >
-                  {supplier.name}
+                  {stolve.name}
                 </div>
               ))}
             </div>
@@ -171,16 +174,16 @@ const ShippingProgram = props => {
                   {moment(day).format('dddd')}
                 </div>
                 <div className="shippingProgram__cell --sticky">{day}</div>
-                {suppliers.map(supplier => {
-                  const deliveryDay = supplierDelivery.filter(
-                    delivery =>
-                      delivery.supplier === supplier._id &&
-                      moment(delivery.date).format('YYYY-MM-DD') === day
+                {stolvesToMysql.map(stolveSQL => {
+                  const deliveryDay = stolves.filter(
+                    stolve =>
+                      parseInt(stolve.stolve) === stolveSQL.id &&
+                      moment(stolve.date).format('YYYY-MM-DD') === day
                   )
                   console.log(day, deliveryDay)
                   return deliveryDay.length > 0 ? (
                     <div
-                      key={supplier._id}
+                      key={stolveSQL.id}
                       onClick={() => handleDelete(deliveryDay[0].id)}
                       className={`shippingProgram__cell --${deliveryDay[0].color} --delete`}
                     >
@@ -188,9 +191,9 @@ const ShippingProgram = props => {
                     </div>
                   ) : (
                     <input
-                      key={supplier._id}
+                      key={stolveSQL.id}
                       className="shippingProgram__cell"
-                      onKeyPress={e => handleSaveShipping(day, supplier._id, e)}
+                      onKeyPress={e => handleSaveShipping(day, stolveSQL.id, e)}
                     />
                   )
                 })}
@@ -198,7 +201,7 @@ const ShippingProgram = props => {
             ))}
           </div>
         </div>
-        <AddButton>+</AddButton>
+
       </>
     )
   } else {
@@ -208,8 +211,7 @@ const ShippingProgram = props => {
 
 const mapStateToProps = state => {
   return {
-    supplierDelivery: state.supplierDelivery,
-    suppliers: state.suppliers,
+    stolves: state.stolves,
   }
 }
 
@@ -221,4 +223,4 @@ const mapDispatchToProps = {
   deleted,
 }
 
-export default connect(mapStateToProps, mapDispatchToProps)(ShippingProgram)
+export default connect(mapStateToProps, mapDispatchToProps)(Stoves)

@@ -17,8 +17,8 @@ import {
 
 moment.locale('es')
 
-const Sawn = props => {
-  const { sawn, suppliers } = props
+const Assamble = props => {
+  const { assamble, suppliers } = props
   const [volume, setVolume] = useState(0)
   const [pallet, setPallet] = useState(0)
 
@@ -36,7 +36,7 @@ const Sawn = props => {
     }
     props.setTitle(topbar)
     props
-      .getAll('shippingProgram/sawn', 'GET_SHIPPING_PROGRAM_SAWN')
+      .getAll('shippingProgram/assamble', 'GET_SHIPPING_PROGRAM_ASSAMBLE')
       .then(() => {
         props.getAll('suppliers', 'GET_SUPPLIERS')
       })
@@ -45,7 +45,7 @@ const Sawn = props => {
       })
   }, [])
 
-  const handleSawn = async (e, date) => {
+  const handleAssamble = async (e, date) => {
     if (e.key === 'Enter') {
       const amount = e.target.value
       console.log(date, amount)
@@ -75,7 +75,7 @@ const Sawn = props => {
 
       if (color) {
         props
-          .create('shippingProgram/sawn', 'CREATE_SHIPPING_PROGRAM', {
+          .create('shippingProgram/assamble', 'CREATE_SHIPPING_PROGRAM', {
             date,
             volume,
             amount,
@@ -83,7 +83,10 @@ const Sawn = props => {
             pallet,
           })
           .then(() => {
-            props.getAll('shippingProgram/sawn', 'GET_SHIPPING_PROGRAM_SAWN')
+            props.getAll(
+              'shippingProgram/assamble',
+              'GET_SHIPPING_PROGRAM_ASSAMBLE'
+            )
           })
           .then(() => {
             const Toast = Swal.mixin({
@@ -107,14 +110,17 @@ const Sawn = props => {
     }
   }
 
-  const handleUpdateSawn = (e, id) => {
+  const handleUpdateAssamble = (e, id) => {
     if (e.key === 'Enter') {
       props
-        .update(`shippingProgram/sawn/${id}`, 'CREATE_SHIPPING_PROMGRAM', {
+        .update(`shippingProgram/assamble/${id}`, 'CREATE_SHIPPING_PROMGRAM', {
           prod: e.target.value,
         })
         .then(() => {
-          props.getAll('shippingProgram/sawn', 'GET_SHIPPING_PROGRAM_SAWN')
+          props.getAll(
+            'shippingProgram/assamble',
+            'GET_SHIPPING_PROGRAM_ASSAMBLE'
+          )
         })
         .then(() => {
           const Toast = Swal.mixin({
@@ -137,7 +143,7 @@ const Sawn = props => {
     }
   }
 
-  const handleDeleteSawn = id => {
+  const handleDeleteAssamble = id => {
     Swal.fire({
       title: '¿Estás seguro?',
       text: 'Este proceso no se puede revertir',
@@ -149,9 +155,12 @@ const Sawn = props => {
     }).then(result => {
       if (result.isConfirmed) {
         props
-          .deleted(`shippingProgram/sawn/${id}`, 'DELETE_SHIPPING_PROGRAM')
+          .deleted(`shippingProgram/assamble/${id}`, 'DELETE_SHIPPING_PROGRAM')
           .then(() => {
-            props.getAll('shippingProgram/sawn', 'GET_SHIPPING_PROGRAM_SAWN')
+            props.getAll(
+              'shippingProgram/assamble',
+              'GET_SHIPPING_PROGRAM_ASSAMBLE'
+            )
           })
           .then(() => {
             Swal.fire('Borrado!', 'Borrado con exito.', 'success')
@@ -160,9 +169,9 @@ const Sawn = props => {
     })
   }
 
-  const handleTotalVolume = (sawnF, color) => {
+  const handleTotalVolume = (assambleF, color) => {
     let total = 0
-    sawnF
+    assambleF
       .filter(s => s.color === color)
       .map(s => (total += s.amount * s.volume))
     return total.toFixed(2)
@@ -177,13 +186,13 @@ const Sawn = props => {
     red: 5,
   }
 
-  const sawnOrdered = sawn => {
-    sawn.sort(function (p1, p2) {
+  const assambleOrdered = assamble => {
+    assamble.sort(function (p1, p2) {
       return sortOrder[p1.color] - sortOrder[p2.color]
     })
   }
 
-  if (sawn && suppliers) {
+  if (assamble && suppliers) {
     let cubTotal = 0
     let totalMonday = 0
     let totalTuesday = 0
@@ -191,7 +200,7 @@ const Sawn = props => {
     let totalThursday = 0
     let totalFriday = 0
     let totalSaturday = 0
-    sawn
+    assamble
       .filter(saw =>
         moment(saw.date).isBetween(moment().weekday(1), moment().weekday(6))
       )
@@ -302,7 +311,7 @@ const Sawn = props => {
               <div className="shippingProgram__cell --customer">PROD. P/T</div>
               <div className="shippingProgram__cell --customer">PROD. P/T</div>
             </div>
-            {sawn
+            {assamble
               .filter(saw =>
                 moment(saw.date).isBetween(
                   moment().weekday(1),
@@ -315,12 +324,12 @@ const Sawn = props => {
               .map((saw, index) => (
                 <div className={`shippingProgram__row`} key={saw.id}>
                   <div
-                    onClick={() => handleDeleteSawn(saw.id)}
+                    onClick={() => handleDeleteAssamble(saw.id)}
                     className={`shippingProgram__cell --${saw.color}`}
                   >
-                    {/*   {sawn.filter(sa => sa.color === saw.color).length ===
+                    {/*   {assamble.filter(sa => sa.color === saw.color).length ===
                     index + 1
-                      ? handleTotalVolume(sawn, saw.color)
+                      ? handleTotalVolume(assamble, saw.color)
                       : null} */}
                   </div>
                   <div className={`shippingProgram__cell --${saw.color}`}>
@@ -331,7 +340,7 @@ const Sawn = props => {
                   </div>
                   <div
                     className={`shippingProgram__cell --${saw.color}`}
-                    onClick={() => handleDeleteSawn(saw.id)}
+                    onClick={() => handleDeleteAssamble(saw.id)}
                   >
                     {saw.pallet}
                   </div>
@@ -345,7 +354,7 @@ const Sawn = props => {
                       <input
                         className={`shippingProgram__cell --${saw.color}`}
                         defaultValue={saw.prod}
-                        onKeyPress={e => handleUpdateSawn(e, saw.id)}
+                        onKeyPress={e => handleUpdateAssamble(e, saw.id)}
                       />
                     </>
                   ) : (
@@ -367,7 +376,7 @@ const Sawn = props => {
                       <input
                         className={`shippingProgram__cell --${saw.color}`}
                         defaultValue={saw.prod}
-                        onKeyPress={e => handleUpdateSawn(e, saw.id)}
+                        onKeyPress={e => handleUpdateAssamble(e, saw.id)}
                       />
                     </>
                   ) : (
@@ -389,7 +398,7 @@ const Sawn = props => {
                       <input
                         className={`shippingProgram__cell --${saw.color}`}
                         defaultValue={saw.prod}
-                        onKeyPress={e => handleUpdateSawn(e, saw.id)}
+                        onKeyPress={e => handleUpdateAssamble(e, saw.id)}
                       />
                     </>
                   ) : (
@@ -411,7 +420,7 @@ const Sawn = props => {
                       <input
                         className={`shippingProgram__cell --${saw.color}`}
                         defaultValue={saw.prod}
-                        onKeyPress={e => handleUpdateSawn(e, saw.id)}
+                        onKeyPress={e => handleUpdateAssamble(e, saw.id)}
                       />
                     </>
                   ) : (
@@ -433,7 +442,7 @@ const Sawn = props => {
                       <input
                         className={`shippingProgram__cell --${saw.color}`}
                         defaultValue={saw.prod}
-                        onKeyPress={e => handleUpdateSawn(e, saw.id)}
+                        onKeyPress={e => handleUpdateAssamble(e, saw.id)}
                       />
                     </>
                   ) : (
@@ -455,7 +464,7 @@ const Sawn = props => {
                       <input
                         className={`shippingProgram__cell --${saw.color}`}
                         defaultValue={saw.prod}
-                        onKeyPress={e => handleUpdateSawn(e, saw.id)}
+                        onKeyPress={e => handleUpdateAssamble(e, saw.id)}
                       />
                     </>
                   ) : (
@@ -501,42 +510,42 @@ const Sawn = props => {
               />
               <input
                 onKeyPress={e =>
-                  handleSawn(e, moment().weekday(1).format('YYYY-MM-DD'))
+                  handleAssamble(e, moment().weekday(1).format('YYYY-MM-DD'))
                 }
                 className="shippingProgram__cell"
               />
               <div className="shippingProgram__cell"></div>
               <input
                 onKeyPress={e =>
-                  handleSawn(e, moment().weekday(2).format('YYYY-MM-DD'))
+                  handleAssamble(e, moment().weekday(2).format('YYYY-MM-DD'))
                 }
                 className="shippingProgram__cell"
               />
               <div className="shippingProgram__cell"></div>
               <input
                 onKeyPress={e =>
-                  handleSawn(e, moment().weekday(3).format('YYYY-MM-DD'))
+                  handleAssamble(e, moment().weekday(3).format('YYYY-MM-DD'))
                 }
                 className="shippingProgram__cell"
               />
               <div className="shippingProgram__cell"></div>
               <input
                 onKeyPress={e =>
-                  handleSawn(e, moment().weekday(4).format('YYYY-MM-DD'))
+                  handleAssamble(e, moment().weekday(4).format('YYYY-MM-DD'))
                 }
                 className="shippingProgram__cell"
               />
               <div className="shippingProgram__cell"></div>
               <input
                 onKeyPress={e =>
-                  handleSawn(e, moment().weekday(5).format('YYYY-MM-DD'))
+                  handleAssamble(e, moment().weekday(5).format('YYYY-MM-DD'))
                 }
                 className="shippingProgram__cell"
               />
               <div className="shippingProgram__cell"></div>
               <input
                 onKeyPress={e =>
-                  handleSawn(e, moment().weekday(6).format('YYYY-MM-DD'))
+                  handleAssamble(e, moment().weekday(6).format('YYYY-MM-DD'))
                 }
                 className="shippingProgram__cell"
               />
@@ -553,7 +562,7 @@ const Sawn = props => {
 
 const mapStateToProps = state => {
   return {
-    sawn: state.sawn,
+    assamble: state.assamble,
     suppliers: state.suppliers,
   }
 }
@@ -567,4 +576,4 @@ const mapDispatchToProps = {
   update,
 }
 
-export default connect(mapStateToProps, mapDispatchToProps)(Sawn)
+export default connect(mapStateToProps, mapDispatchToProps)(Assamble)

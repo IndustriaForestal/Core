@@ -455,6 +455,16 @@ const reducer = (state, action) => {
         ...state,
         sawn: action.payload.data,
       }
+    case 'GET_SHIPPING_PROGRAM_ASSAMBLE':
+      return {
+        ...state,
+        assamble: action.payload.data,
+      }
+    case 'GET_SHIPPING_PROGRAM_STOLVES':
+      return {
+        ...state,
+        stolves: action.payload.data,
+      }
     default:
       return state
   }
