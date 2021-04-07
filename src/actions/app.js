@@ -44,6 +44,21 @@ export const setSocket = payload => ({
   payload,
 })
 
+export const addItemList = payload => ({
+  type: 'CREATE_ITEMS_LIST',
+  payload,
+})
+
+export const deleteItemList = payload => ({
+  type: 'DELETE_ITEMS_LIST',
+  payload,
+})
+
+export const createNewPallet = payload => ({
+  type: 'CREATE_NEW_PALLET',
+  payload,
+})
+
 export const setUser = (payload, redirectionUrl) => async dispatch => {
   const { user, password } = payload
   try {

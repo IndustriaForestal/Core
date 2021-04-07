@@ -1,22 +1,35 @@
 import React from 'react'
 import './Input.scss'
 
-const Input = ({ title, name, type, placeholder, value, onChange, passRef, step, onInput, onKeyPress }) => {
+const Input = ({
+  title,
+  name,
+  type,
+  placeholder,
+  value,
+  onChange,
+  passRef,
+  step,
+  helper,
+  helperClassName,
+  className,
+}) => {
   return (
-    <div className="inputGroup">
+    <div className={`inputGroup ${className}`}>
       <label htmlFor={name}>
-        <span>{title}</span>
+        {/* <span>{title}</span> */}
         <input
           name={name}
           type={type}
           onChange={onChange}
-          onInput={onInput}
-          placeholder={placeholder}
+          placeholder={title}
           defaultValue={value}
           ref={passRef}
           step={step}
-          onKeyPress={onKeyPress}
         />
+        <span className={`inputGroup__helper ${helperClassName}`}>
+          {helper}
+        </span>
       </label>
     </div>
   )

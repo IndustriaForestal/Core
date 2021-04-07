@@ -465,6 +465,38 @@ const reducer = (state, action) => {
         ...state,
         stolves: action.payload.data,
       }
+    case 'GET_WOOD':
+      return {
+        ...state,
+        wood: action.payload.data,
+      }
+    case 'GET_ITEMS_TYPE':
+      return {
+        ...state,
+        itemsType: action.payload.data,
+      }
+    case 'GET_ITEMS_LIST':
+      return {
+        ...state,
+        itemsList: action.payload,
+      }
+    case 'CREATE_ITEMS_LIST':
+      return {
+        ...state,
+        itemsList: [...state.itemsList, action.payload],
+      }
+    case 'DELETE_ITEMS_LIST':
+      return {
+        ...state,
+        itemsList: state.itemsList.filter(
+          (item, index) => index !== action.payload
+        ),
+      }
+    case 'CREATE_NEW_PALLET':
+      return {
+        ...state,
+        newPallet: action.payload,
+      }
     default:
       return state
   }
