@@ -62,7 +62,7 @@ export const functionNewPallet = (data, itemsList) => async dispatch => {
   })
   console.log(formData, itemsList)
   try {
-    await axios({
+    const res = await axios({
       url: `${process.env.REACT_APP_API}pallets/new`,
       headers: {
         Authorization: `Bearer ${Cookies.get('token')}`,
@@ -71,13 +71,14 @@ export const functionNewPallet = (data, itemsList) => async dispatch => {
       method: 'post',
       data: formData,
     })
+    const id = res.data.data
     await axios({
       url: `${process.env.REACT_APP_API}pallets/new/items`,
       headers: {
         Authorization: `Bearer ${Cookies.get('token')}`,
       },
       method: 'post',
-      data: itemsList,
+      data: { itemsList, id },
     })
 
     const Toast = Swal.mixin({

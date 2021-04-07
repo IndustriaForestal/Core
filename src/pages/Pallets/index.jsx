@@ -114,6 +114,7 @@ const Pallets = props => {
           .functionNewPallet(newPallet, itemsList)
           .then(() => props.getAll('pallets', 'GET_PALLETS'))
           .then(() => document.getElementById('formTarima').reset())
+          .then(() => setVisible3(false))
       }
     })
   }
@@ -693,7 +694,7 @@ const Pallets = props => {
                     <label htmlFor="wood_id">
                       <span>Madera:</span>
                       <select name="wood_id" ref={register2}>
-                        <option value="">N/A</option>
+                        <option value="0">N/A</option>
                         {wood.map(w => {
                           return (
                             <option key={w.id} value={w.id}>
@@ -757,7 +758,7 @@ const Pallets = props => {
                               : 'N/A'}
                           </td>
                           <td>
-                            {item.wood_id !== ''
+                            {item.wood_id > 0
                               ? wood.find(w => w.id === parseInt(item.wood_id))
                                   .name
                               : 'N/A'}
@@ -889,7 +890,7 @@ const Pallets = props => {
                               : 'N/A'}
                           </td>
                           <td>
-                            {item.wood_id !== ''
+                            {item.wood_id > 0
                               ? wood.find(w => w.id === parseInt(item.wood_id))
                                   .name
                               : 'N/A'}
