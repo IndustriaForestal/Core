@@ -2,6 +2,7 @@ import React, { useEffect, useState } from 'react'
 import { Link } from 'react-router-dom'
 import { connect } from 'react-redux'
 import { AiOutlineEdit, AiOutlineDelete } from 'react-icons/ai'
+import { HiOutlineArrowRight } from 'react-icons/hi'
 import { GiHammerNails, GiWoodPile, GiProcessor, GiTruck } from 'react-icons/gi'
 import { BsPlus } from 'react-icons/bs'
 import { useForm } from 'react-hook-form'
@@ -37,6 +38,7 @@ const Pallets = props => {
     setTitle,
     customers,
     role,
+    items,
     wood,
     itemsType,
     itemsList,
@@ -51,6 +53,7 @@ const Pallets = props => {
   const [logo, setLogo] = useState(false)
   const [cut, setCut] = useState(false)
   const [unit, setUnits] = useState(false)
+  const [nail, setNail] = useState(0)
   const { register, handleSubmit, errors } = useForm()
   const {
     register: register2,
@@ -69,13 +72,18 @@ const Pallets = props => {
       },
     }
     setTitle(topbar)
-    props.getAll('pallets', 'GET_PALLETS').then(() => {
-      props.getAll('qualities', 'GET_QUALITIES').then(() => {
-        props.getAll('customers', 'GET_CUSTOMERS').then(() => {
-          props.getAll('specialProcesses', 'GET_SPECIAL_PROCESSES')
-        })
+    props
+      .getAll('pallets', 'GET_PALLETS')
+      .then(() => {
+        props.getAll('qualities', 'GET_QUALITIES')
       })
-    })
+      .then(() => {
+        props.getAll('customers', 'GET_CUSTOMERS')
+      })
+      .then(() => {
+        props.getAll('specialProcesses', 'GET_SPECIAL_PROCESSES')
+      })
+      .then(() => props.getAll('items', 'GET_ITEMS'))
     // eslint-disable-next-line
   }, [])
 
@@ -113,6 +121,7 @@ const Pallets = props => {
         props
           .functionNewPallet(newPallet, itemsList)
           .then(() => props.getAll('pallets', 'GET_PALLETS'))
+          .then(() => props.getAll('items', 'GET_ITEMS'))
           .then(() => document.getElementById('formTarima').reset())
           .then(() => setVisible3(false))
       }
@@ -126,7 +135,8 @@ const Pallets = props => {
     itemsType &&
     itemsList &&
     customers &&
-    specialProcesses
+    specialProcesses &&
+    items
   ) {
     const distinctPallets = []
     const map = new Map()
@@ -219,6 +229,16 @@ const Pallets = props => {
                         <h3 className="palletCard__subtitle">
                           {pallet.description}
                         </h3>
+                        <h3 className="palletCard__subtitle">
+                          {pallet.color_comment !== null
+                            ? `Pintura ${pallet.color_comment}`
+                            : null}
+                        </h3>
+                        <h3 className="palletCard__subtitle">
+                          {pallet.logo_comment !== null
+                            ? `Sello ${pallet.logo_comment}`
+                            : null}
+                        </h3>
                         <h4 className="palletCard__subtitle">
                           {unit
                             ? (parseFloat(pallet.width) / 2.54).toFixed(2)
@@ -266,36 +286,79 @@ const Pallets = props => {
                     </div>
                     <div className="palletCard__specs">
                       <ul className="palletCard__list">
-                        {pallets
-                          .filter(p => p.id === pallet.id)
-                          .map((item, index) => {
+                        {items
+                          .filter(item => item.pallet_id === pallet.id)
+                          .map(item => {
                             return (
-                              <li key={index} className="palletCard__item">
+                              <li key={item.id} className="palletCard__item">
                                 {
                                   itemsType.filter(
                                     itemType =>
                                       itemType.id === item.item_type_id
                                   )[0].name
                                 }{' '}
-                                {item.amount}{' '}
-                                {unit
-                                  ? (parseFloat(pallet.i_width) / 2.54).toFixed(
-                                      2
-                                    )
-                                  : pallet.i_width}{' '}
-                                {unit ? 'in' : 'cm'} -{' '}
-                                {unit
-                                  ? (
-                                      parseFloat(pallet.i_height) / 2.54
-                                    ).toFixed(2)
-                                  : pallet.i_height}{' '}
-                                {unit ? 'in' : 'cm'} - {''}
-                                {unit
-                                  ? (
-                                      parseFloat(pallet.i_length) / 2.54
-                                    ).toFixed(2)
-                                  : pallet.length}{' '}
-                                {unit ? 'in' : 'cm'}
+                                {item.item_type_id === 4 ? (
+                                  <span>
+                                    {item.amount} {item.nail}
+                                  </span>
+                                ) : (
+                                  <span>
+                                    {item.amount}{' '}
+                                    {unit
+                                      ? (parseFloat(item.width) / 2.54).toFixed(
+                                          2
+                                        )
+                                      : item.width}{' '}
+                                    {unit ? 'in' : 'cm'} -{' '}
+                                    {unit
+                                      ? (
+                                          parseFloat(item.height) / 2.54
+                                        ).toFixed(2)
+                                      : item.height}{' '}
+                                    {unit ? 'in' : 'cm'} - {''}
+                                    {unit
+                                      ? (
+                                          parseFloat(item.length) / 2.54
+                                        ).toFixed(2)
+                                      : item.length}{' '}
+                                    {unit ? 'in' : 'cm'}
+                                    {item.serve_width !== null ? (
+                                      <span>
+                                        {' '}
+                                        <HiOutlineArrowRight />
+                                        {' Saque '}
+                                        {unit
+                                          ? (
+                                              parseFloat(item.serve_width) /
+                                              2.54
+                                            ).toFixed(2)
+                                          : item.serve_width}
+                                        {unit ? 'in' : 'cm'} - {''}
+                                        {unit
+                                          ? (
+                                              parseFloat(item.serve_height) /
+                                              2.54
+                                            ).toFixed(2)
+                                          : item.serve_height}{' '}
+                                        {unit ? 'in' : 'cm'} - {''}
+                                        {unit
+                                          ? (
+                                              parseFloat(item.serve_length) /
+                                              2.54
+                                            ).toFixed(2)
+                                          : item.serve_length}{' '}
+                                        {unit ? 'in' : 'cm'} - {''}
+                                        {unit
+                                          ? (
+                                              parseFloat(item.serve_start) /
+                                              2.54
+                                            ).toFixed(2)
+                                          : item.serve_start}{' '}
+                                        {unit ? 'in' : 'cm'}
+                                      </span>
+                                    ) : null}
+                                  </span>
+                                )}
                               </li>
                             )
                           })}
@@ -496,7 +559,11 @@ const Pallets = props => {
                 <div className="inputGroup">
                   <label htmlFor="item_type_id">
                     <span>Tipo:</span>
-                    <select name="item_type_id" ref={register2}>
+                    <select
+                      name="item_type_id"
+                      ref={register2}
+                      onChange={e => setNail(parseInt(e.target.value))}
+                    >
                       {itemsType.map(type => {
                         return (
                           <option key={type.id} value={type.id}>
@@ -514,27 +581,39 @@ const Pallets = props => {
                   passRef={register2({ required: true })}
                   className={errors2.amount && '--required'}
                 />
-                <Input
-                  type="text"
-                  name="width"
-                  title={`Ancho ${unit ? 'in' : 'cm'}`}
-                  passRef={register2({ required: true })}
-                  className={errors2.width && '--required'}
-                />
-                <Input
-                  type="text"
-                  name="height"
-                  title={`Alto ${unit ? 'in' : 'cm'}`}
-                  passRef={register2({ required: true })}
-                  className={errors2.height && '--required'}
-                />
-                <Input
-                  type="text"
-                  name="length"
-                  title={`Largo ${unit ? 'in' : 'cm'}`}
-                  passRef={register2({ required: true })}
-                  className={errors2.length && '--required'}
-                />
+                {nail === 4 ? (
+                  <Input
+                    type="text"
+                    name="nail"
+                    title="Clavo"
+                    passRef={register2({ required: true })}
+                    className={errors2.nail && '--required'}
+                  />
+                ) : (
+                  <>
+                    <Input
+                      type="text"
+                      name="width"
+                      title={`Ancho ${unit ? 'in' : 'cm'}`}
+                      passRef={register2({ required: true })}
+                      className={errors2.width && '--required'}
+                    />
+                    <Input
+                      type="text"
+                      name="height"
+                      title={`Alto ${unit ? 'in' : 'cm'}`}
+                      passRef={register2({ required: true })}
+                      className={errors2.height && '--required'}
+                    />
+                    <Input
+                      type="text"
+                      name="length"
+                      title={`Largo ${unit ? 'in' : 'cm'}`}
+                      passRef={register2({ required: true })}
+                      className={errors2.length && '--required'}
+                    />
+                  </>
+                )}
               </div>
               <div>
                 <div className="inputGroup">
@@ -604,9 +683,11 @@ const Pallets = props => {
                     <td>Ancho</td>
                     <td>Alto</td>
                     <td>Largo</td>
+                    <td>Clavo</td>
                     <td>Ancho Saque</td>
                     <td>Alto Saque</td>
                     <td>Largo Saque</td>
+                    <td>Inicio</td>
                     <td>Madera</td>
                     <td>Acciones</td>
                   </tr>
@@ -624,9 +705,10 @@ const Pallets = props => {
                           }
                         </td>
                         <td>{item.amount}</td>
-                        <td>{item.width}</td>
-                        <td>{item.height}</td>
-                        <td>{item.length}</td>
+                        <td>{item.width ? item.width : 'N/A'}</td>
+                        <td>{item.height ? item.height : 'N/A'}</td>
+                        <td>{item.length ? item.length : 'N/A'}</td>
+                        <td>{item.nail ? item.nail : 'N/A'}</td>
                         <td>
                           {item.serve_width !== '' ? item.serve_width : 'N/A'}
                         </td>
@@ -636,6 +718,7 @@ const Pallets = props => {
                         <td>
                           {item.serve_length !== '' ? item.serve_length : 'N/A'}
                         </td>
+                        <td>{item.start !== '' ? item.start : 'N/A'}</td>
                         <td>
                           {item.wood_id > 0
                             ? wood.find(w => w.id === parseInt(item.wood_id))
@@ -730,9 +813,11 @@ const Pallets = props => {
                     <td>Ancho</td>
                     <td>Alto</td>
                     <td>Largo</td>
+                    <td>Clavo</td>
                     <td>Ancho Saque</td>
                     <td>Alto Saque</td>
                     <td>Largo Saque</td>
+                    <td>Inicio</td>
                     <td>Madera</td>
                   </tr>
                 </thead>
@@ -749,9 +834,10 @@ const Pallets = props => {
                           }
                         </td>
                         <td>{item.amount}</td>
-                        <td>{item.width}</td>
-                        <td>{item.height}</td>
-                        <td>{item.length}</td>
+                        <td>{item.width ? item.width : 'N/A'}</td>
+                        <td>{item.height ? item.height : 'N/A'}</td>
+                        <td>{item.length ? item.length : 'N/A'}</td>
+                        <td>{item.nail ? item.nail : 'N/A'}</td>
                         <td>
                           {item.serve_width !== '' ? item.serve_width : 'N/A'}
                         </td>
@@ -761,6 +847,7 @@ const Pallets = props => {
                         <td>
                           {item.serve_length !== '' ? item.serve_length : 'N/A'}
                         </td>
+                        <td>{item.start !== '' ? item.start : 'N/A'}</td>
                         <td>
                           {item.wood_id > 0
                             ? wood.find(w => w.id === parseInt(item.wood_id))
@@ -817,6 +904,7 @@ const mapStateToProps = state => {
     newPallet: state.newPallet,
     customers: state.customers,
     specialProcesses: state.specialProcesses,
+    items: state.items,
   }
 }
 
