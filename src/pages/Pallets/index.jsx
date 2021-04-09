@@ -1,9 +1,7 @@
 import React, { useEffect, useState } from 'react'
-import { Link } from 'react-router-dom'
 import { connect } from 'react-redux'
 import { AiOutlineEdit, AiOutlineDelete } from 'react-icons/ai'
 import { HiOutlineArrowRight } from 'react-icons/hi'
-import { GiHammerNails, GiWoodPile, GiProcessor, GiTruck } from 'react-icons/gi'
 import { BsPlus } from 'react-icons/bs'
 import { useForm } from 'react-hook-form'
 import FormControlLabel from '@material-ui/core/FormControlLabel'
@@ -11,6 +9,7 @@ import Switch from '@material-ui/core/Switch'
 import {
   setTitle,
   getAll,
+  get,
   deleted,
   addItemList,
   deleteItemList,
@@ -34,6 +33,7 @@ import './styles.scss'
 const Pallets = props => {
   const {
     pallets,
+    pallet,
     qualities,
     setTitle,
     customers,
@@ -162,6 +162,29 @@ const Pallets = props => {
       tableData = distinctPallets
     }
 
+    const handleEditPallet = id => {
+      props.get(`pallets/${id}`, 'CREATE_NEW_PALLET')
+    }
+
+    const handleDeletePallet = id => {
+      Swal.fire({
+        title: '¿Estás seguro?',
+        text: 'Este proceso no se puede revertir',
+        icon: 'warning',
+        showCancelButton: true,
+        confirmButtonColor: '#3085d6',
+        cancelButtonColor: '#d33',
+        confirmButtonText: 'Si, borrar',
+      }).then(result => {
+        if (result.isConfirmed) {
+          props
+            .deleted(`pallets/${id}`, 'DELETE_PALLET')
+            .then(() => props.getAll('pallets', 'GET_PALLETS'))
+            .then(() => props.getAll('items', 'GET_ITEMS'))
+        }
+      })
+    }
+
     return (
       <>
         <SearchBar onChange={handleSearch} />
@@ -188,31 +211,20 @@ const Pallets = props => {
                       customer => customer._id === pallet.customer_id
                     )[0].name
                   }
-                  /*  tools={
-                      role === 'Administrador' ? (
-                        <div>
-                          <Link to={`pallets/add/${pallet._id}`}>
-                            <GiHammerNails className="--success" />
-                          </Link>
-                          <Link to={`pallets/item/${pallet._id}`}>
-                            <GiWoodPile className="--success" />
-                          </Link>
-                          <Link to={`pallets/specialProcess/${pallet._id}`}>
-                            <GiProcessor className="--success" />
-                          </Link>
-                          <Link to={`pallets/platform/${pallet._id}`}>
-                            <GiTruck className="--success" />
-                          </Link>
-                          <Link to={`pallets/${pallet._id}`}>
-                            <AiOutlineEdit className="--warning" />
-                          </Link>
-                          <AiOutlineDelete
-                            className="--danger"
-                            onClick={() => handleDeletePallet(pallet._id)}
-                          />
-                        </div>
-                      ) : null
-                    } */
+                  tools={
+                    role === 'Administrador' ? (
+                      <div>
+                        <AiOutlineEdit
+                          className="--warning"
+                          onClick={() => handleEditPallet(pallet.id)}
+                        />
+                        <AiOutlineDelete
+                          className="--danger"
+                          onClick={() => handleDeletePallet(pallet.id)}
+                        />
+                      </div>
+                    ) : null
+                  }
                 >
                   <div className="palletCard">
                     <div className="palletCard__body">
@@ -896,6 +908,7 @@ const Pallets = props => {
 const mapStateToProps = state => {
   return {
     pallets: state.pallets,
+    pallet: state.pallet,
     qualities: state.qualities,
     wood: state.wood,
     itemsType: state.itemsType,
@@ -911,6 +924,7 @@ const mapStateToProps = state => {
 const mapDispatchToProps = {
   setTitle,
   getAll,
+  get,
   deleted,
   deleteObjectPallet,
   addItemList,
