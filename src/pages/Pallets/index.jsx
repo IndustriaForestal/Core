@@ -97,7 +97,7 @@ const Pallets = props => {
   const onSubmit = data => {
     const search = pallets.filter(pallet => pallet.model === data.model)
 
-    if (search.length > 0 && !newPallet) {
+    if (search.length > 0 && !newPallet.id) {
       Swal.fire('Replica!', 'La tarima ya existe.', 'info')
     } else {
       setVisible(false)
@@ -125,14 +125,17 @@ const Pallets = props => {
       confirmButtonText: 'Si, guardar',
     }).then(result => {
       if (result.isConfirmed) {
+        console.log(newPallet.id)
         if (newPallet.id) {
+          console.log('Update')
           props
-            .functionNewPalletUpdate(newPallet, newPallet.id)
-            .then(() => props.getAll('pallets', 'GET_PALLETS'))
-            .then(() => props.getAll('items', 'GET_ITEMS'))
-            .then(() => document.getElementById('formTarima').reset())
-            .then(() => setVisible3(false))
+          .functionNewPalletUpdate(newPallet, newPallet.id)
+          .then(() => props.getAll('pallets', 'GET_PALLETS'))
+          .then(() => props.getAll('items', 'GET_ITEMS'))
+          .then(() => document.getElementById('formTarima').reset())
+          .then(() => setVisible3(false))
         } else {
+          console.log('New')
           props
             .functionNewPallet(newPallet, itemsList)
             .then(() => props.getAll('pallets', 'GET_PALLETS'))
@@ -668,7 +671,7 @@ const Pallets = props => {
               id="formItems"
               className="formTarima modal__grid__3"
               onSubmit={
-                itemsList[0] && itemsList[0].id
+                newPallet && newPallet.id
                   ? handleSubmit2(handleCreateItemListSQL)
                   : handleSubmit2(onSubmitItems)
               }
