@@ -105,10 +105,9 @@ const Pallets = props => {
       props.createNewPallet(data)
     }
   }
-  const onSubmitItems = (data, validation) => {
-    console.log(validation)
-    // props.addItemList(data)
-    // document.getElementById('formItems').reset()
+  const onSubmitItems = (data) => {
+    props.addItemList(data)
+    document.getElementById('formItems').reset()
   }
 
   const handleDeleteItemList = id => {
