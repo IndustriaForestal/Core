@@ -14,8 +14,14 @@ import {
   addItemList,
   deleteItemList,
   createNewPallet,
+  cleanNewPallet,
+  create,
 } from '../../actions/app'
-import { deleteObjectPallet, functionNewPallet } from './actions'
+import {
+  deleteObjectPallet,
+  functionNewPallet,
+  functionNewPalletUpdate,
+} from './actions'
 import Swal from 'sweetalert2'
 import Rodal from 'rodal'
 import Button from '../../components/Button/Button'
@@ -72,6 +78,7 @@ const Pallets = props => {
       },
     }
     setTitle(topbar)
+
     props
       .getAll('pallets', 'GET_PALLETS')
       .then(() => {
@@ -90,7 +97,7 @@ const Pallets = props => {
   const onSubmit = data => {
     const search = pallets.filter(pallet => pallet.model === data.model)
 
-    if (search.length > 0) {
+    if (search.length > 0 && !newPallet) {
       Swal.fire('Replica!', 'La tarima ya existe.', 'info')
     } else {
       setVisible(false)
@@ -98,9 +105,10 @@ const Pallets = props => {
       props.createNewPallet(data)
     }
   }
-  const onSubmitItems = data => {
-    props.addItemList(data)
-    document.getElementById('formItems').reset()
+  const onSubmitItems = (data, validation) => {
+    console.log(validation)
+    // props.addItemList(data)
+    // document.getElementById('formItems').reset()
   }
 
   const handleDeleteItemList = id => {
@@ -118,12 +126,21 @@ const Pallets = props => {
       confirmButtonText: 'Si, guardar',
     }).then(result => {
       if (result.isConfirmed) {
-        props
-          .functionNewPallet(newPallet, itemsList)
-          .then(() => props.getAll('pallets', 'GET_PALLETS'))
-          .then(() => props.getAll('items', 'GET_ITEMS'))
-          .then(() => document.getElementById('formTarima').reset())
-          .then(() => setVisible3(false))
+        if (newPallet.id) {
+          props
+            .functionNewPalletUpdate(newPallet, newPallet.id)
+            .then(() => props.getAll('pallets', 'GET_PALLETS'))
+            .then(() => props.getAll('items', 'GET_ITEMS'))
+            .then(() => document.getElementById('formTarima').reset())
+            .then(() => setVisible3(false))
+        } else {
+          props
+            .functionNewPallet(newPallet, itemsList)
+            .then(() => props.getAll('pallets', 'GET_PALLETS'))
+            .then(() => props.getAll('items', 'GET_ITEMS'))
+            .then(() => document.getElementById('formTarima').reset())
+            .then(() => setVisible3(false))
+        }
       }
     })
   }
@@ -163,7 +180,40 @@ const Pallets = props => {
     }
 
     const handleEditPallet = id => {
-      props.get(`pallets/${id}`, 'CREATE_NEW_PALLET')
+      props
+        .get(`pallets/${id}`, 'UPDATE_NEW_PALLET')
+        .then(() => {
+          props.get(`items/pallets/${id}`, 'UPDATE_NEW_PALLET_ITEMS')
+        })
+        .then(() => {
+          setVisible(true)
+        })
+    }
+
+    const handleCreateItemListSQL = data => {
+      data.pallet_id = newPallet.id
+      console.log('SQL CREATE', data)
+      props
+        .create(`items`, 'UPDATE_ITEMS_ID', data)
+        .then(() =>
+          props.get(`items/pallets/${newPallet.id}`, 'UPDATE_NEW_PALLET_ITEMS')
+        )
+    }
+
+    const handleDeleteItemListSQL = id => {
+      console.log('SQL DELETE')
+      props
+        .deleted(`items/${id}`, 'DELETE_ITEMS_ID')
+        .then(() =>
+          props.get(`items/pallets/${newPallet.id}`, 'UPDATE_NEW_PALLET_ITEMS')
+        )
+    }
+
+    const handleClenaEdit = () => {
+      props.cleanNewPallet()
+      setVisible(false)
+      setVisible2(false)
+      setVisible3(false)
     }
 
     const handleDeletePallet = id => {
@@ -202,7 +252,6 @@ const Pallets = props => {
         <div className="palletsContainer">
           {pallets.length > 0 ? (
             tableData.map(pallet => {
-              console.log(pallet.img)
               return (
                 <Card
                   key={pallet.id}
@@ -218,6 +267,7 @@ const Pallets = props => {
                           className="--warning"
                           onClick={() => handleEditPallet(pallet.id)}
                         />
+
                         <AiOutlineDelete
                           className="--danger"
                           onClick={() => handleDeletePallet(pallet.id)}
@@ -404,7 +454,16 @@ const Pallets = props => {
                     <select name="customer_id" ref={register}>
                       {customers.map(customer => {
                         return (
-                          <option key={customer._id} value={customer._id}>
+                          <option
+                            key={customer._id}
+                            value={customer._id}
+                            selected={
+                              newPallet &&
+                              newPallet.customer_id === customer._id
+                                ? true
+                                : false
+                            }
+                          >
                             {customer.name}
                           </option>
                         )
@@ -416,6 +475,7 @@ const Pallets = props => {
                   type="text"
                   name="model"
                   title="Modelo"
+                  value={newPallet.model ? newPallet.model : null}
                   passRef={register({ required: true })}
                   className={errors.model && '--required'}
                 />
@@ -423,13 +483,15 @@ const Pallets = props => {
                   type="text"
                   name="description"
                   title="Descripción"
+                  value={newPallet.description ? newPallet.description : null}
                   passRef={register({ required: true })}
-                  placeholder={errors.description && 'Campo requerido'}
+                  className={errors.description && '--required'}
                 />
                 <div className="modal__grid__small">
                   <Input
                     type="text"
                     name="width"
+                    value={newPallet.width ? newPallet.width : null}
                     title={`Ancho ${unit ? 'in' : 'cm'}`}
                     passRef={register({ required: true })}
                     className={errors.width && '--required'}
@@ -437,6 +499,7 @@ const Pallets = props => {
                   <Input
                     type="text"
                     name="height"
+                    value={newPallet.height ? newPallet.height : null}
                     title={`Alto ${unit ? 'in' : 'cm'}`}
                     passRef={register({ required: true })}
                     className={errors.height && '--required'}
@@ -444,6 +507,7 @@ const Pallets = props => {
                   <Input
                     type="text"
                     name="length"
+                    value={newPallet.length ? newPallet.length : null}
                     title={`Largo ${unit ? 'in' : 'cm'}`}
                     passRef={register({ required: true })}
                     className={errors.length && '--required'}
@@ -455,7 +519,15 @@ const Pallets = props => {
                     <select name="quality_id" ref={register}>
                       {qualities.map(quality => {
                         return (
-                          <option key={quality._id} value={quality._id}>
+                          <option
+                            key={quality._id}
+                            selected={
+                              newPallet && newPallet.quality_id === quality._id
+                                ? true
+                                : false
+                            }
+                            value={quality._id}
+                          >
                             {quality.name}
                           </option>
                         )
@@ -486,12 +558,18 @@ const Pallets = props => {
                   <Input
                     type="text"
                     name="humedity_min"
+                    value={
+                      newPallet.humedity_min ? newPallet.humedity_min : null
+                    }
                     title="Min Humedad"
                     passRef={register}
                   />
                   <Input
                     type="text"
                     name="humedity_max"
+                    value={
+                      newPallet.humedity_max ? newPallet.humedity_max : null
+                    }
                     title="Max Humedad"
                     passRef={register}
                   />
@@ -511,7 +589,10 @@ const Pallets = props => {
                   type="text"
                   name="color_commnet"
                   title="Cometario"
-                  className={color ? null : 'hidde'}
+                  value={
+                    newPallet.color_comment ? newPallet.color_comment : null
+                  }
+                  className={color || newPallet.color_comment ? null : 'hidde'}
                   passRef={register}
                 />
                 <div className="inputGroup">
@@ -529,16 +610,23 @@ const Pallets = props => {
                   type="text"
                   name="logo_commnet"
                   title="Cometario"
-                  className={logo ? null : 'hidde'}
+                  value={newPallet.logo_comment ? newPallet.logo_comment : null}
+                  className={logo || newPallet.logo_comment ? null : 'hidde'}
                   passRef={register}
                 />
+
                 <Input
                   type="file"
                   name="pdf"
                   title="PDF"
-                  passRef={register({ required: true })}
+                  passRef={
+                    newPallet.pdf === undefined
+                      ? register({ required: true })
+                      : register({ required: false })
+                  }
                   className={errors.pdf && '--required'}
                 />
+
                 <Input
                   type="file"
                   name="image"
@@ -547,6 +635,21 @@ const Pallets = props => {
                 />
               </div>
               <div className="formNail__buttons">
+                <Button
+                  type="button"
+                  className="btn --danger"
+                  onClick={() => handleClenaEdit()}
+                >
+                  Cancelar
+                </Button>
+                {newPallet.id ? (
+                  <input
+                    type="hidden"
+                    defaultValue={newPallet.id}
+                    name="id"
+                    ref={register}
+                  />
+                ) : null}
                 <Button type="submit" className="btn --success">
                   Siguiente
                 </Button>
@@ -565,7 +668,11 @@ const Pallets = props => {
             <form
               id="formItems"
               className="formTarima modal__grid__3"
-              onSubmit={handleSubmit2(onSubmitItems)}
+              onSubmit={
+                itemsList[0] && itemsList[0].id
+                  ? handleSubmit2(handleCreateItemListSQL)
+                  : handleSubmit2(onSubmitItems)
+              }
             >
               <div>
                 <div className="inputGroup">
@@ -740,7 +847,11 @@ const Pallets = props => {
                         <td>
                           <Button
                             className="btn --danger"
-                            onClick={() => handleDeleteItemList(index)}
+                            onClick={
+                              item.id
+                                ? () => handleDeleteItemListSQL(item.id)
+                                : () => handleDeleteItemList(index)
+                            }
                           >
                             <AiOutlineDelete />
                           </Button>
@@ -800,7 +911,6 @@ const Pallets = props => {
               {newPallet.image && newPallet.image.length > 0 ? (
                 <img src={URL.createObjectURL(newPallet.image[0])} alt="img" />
               ) : (
-                // console.log(URL.createObjectURL(newPallet.image[0]))
                 <img src={PalletImage} alt="img" />
               )}
               <h4>
@@ -925,12 +1035,15 @@ const mapDispatchToProps = {
   setTitle,
   getAll,
   get,
+  create,
+  functionNewPalletUpdate,
   deleted,
   deleteObjectPallet,
   addItemList,
   deleteItemList,
   createNewPallet,
   functionNewPallet,
+  cleanNewPallet,
 }
 
 export default connect(mapStateToProps, mapDispatchToProps)(Pallets)

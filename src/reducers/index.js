@@ -497,6 +497,22 @@ const reducer = (state, action) => {
         ...state,
         newPallet: action.payload,
       }
+    case 'CLEAN_NEW_PALLET':
+      return {
+        ...state,
+        newPallet: {},
+        itemsList: [],
+      }
+    case 'UPDATE_NEW_PALLET':
+      return {
+        ...state,
+        newPallet: action.payload[0],
+      }
+    case 'UPDATE_NEW_PALLET_ITEMS':
+      return {
+        ...state,
+        itemsList: action.payload,
+      }
     default:
       return state
   }

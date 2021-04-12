@@ -59,6 +59,11 @@ export const createNewPallet = payload => ({
   payload,
 })
 
+export const cleanNewPallet = payload => ({
+  type: 'CLEAN_NEW_PALLET',
+  payload,
+})
+
 export const setUser = (payload, redirectionUrl) => async dispatch => {
   const { user, password } = payload
   try {
