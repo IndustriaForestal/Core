@@ -1,5 +1,5 @@
-import React, { useEffect, useState } from 'react'
-import { useParams, useLocation, useHistory } from 'react-router-dom'
+import React from 'react'
+import {  useHistory } from 'react-router-dom'
 import { connect } from 'react-redux'
 import Swal from 'sweetalert2'
 
@@ -10,16 +10,11 @@ import {
   completeOrderProductionSingle,
 } from '../../pages/OrderProduction/actions'
 import Card from '../Card/Card'
-import Input from '../Input/Input'
-import Title from '../Title/Title'
 import Button from '../Button/Button'
 import 'react-datepicker/dist/react-datepicker.css'
 
 const CompletedTemp = props => {
   const history = useHistory()
-  const [saveValue, setSaveValue] = useState(0)
-  const [saveObservations, setSaveObservations] = useState()
-  const [rawId, setRawId] = useState(0)
   const { shipmentId, index, materialId, raws, socket, material } = props
 
   const materialReception = raws.filter(

@@ -1,4 +1,4 @@
-import React, { useEffect, useState } from 'react'
+import React, { useEffect } from 'react'
 import moment from 'moment'
 import 'moment/locale/es-mx'
 import { Calendar, momentLocalizer } from 'react-big-calendar'
@@ -18,13 +18,16 @@ const CalendarOrders = props => {
 
   useEffect(() => {
     props.getAll('orders', 'GET_ORDERS')
+        // eslint-disable-next-line
   }, [])
 
   let eventList = []
 
   if (orders) {
+        // eslint-disable-next-line
     orders.map(order => {
       if (order.shipments && order.shipments.length > 0) {
+            // eslint-disable-next-line
         order.shipments.map(shipment => {
           if (shipment.completed !== 1) {
             if (shipment.ordersProduction) {

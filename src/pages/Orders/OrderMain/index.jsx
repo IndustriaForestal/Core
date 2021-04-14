@@ -89,6 +89,7 @@ const CreateOrder = props => {
         history.push(`/orders/intern/${newShipmentId}`)
       }
     }
+    // eslint-disable-next-line
   }, [newShipmentId])
 
   const handleAddPalletToArray = () => {

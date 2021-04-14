@@ -21,13 +21,16 @@ const CalendarOrders = props => {
       .then(() => {
         props.setWraper(true)
       })
+          // eslint-disable-next-line
   }, [])
 
   let eventList = []
 
   if (orders) {
+       // eslint-disable-next-line
     orders.map(order => {
       if (order.pallets) {
+           // eslint-disable-next-line
         order.pallets.map(pallet => {
           if (pallet.orderDateDelivery) {
             eventList.push({
@@ -52,8 +55,9 @@ const CalendarOrders = props => {
       const ordersCusomter = orders.filter(
         order => order.customerId._id === customer._id
       )
-
+   // eslint-disable-next-line
       ordersCusomter.map(oc => {
+           // eslint-disable-next-line
         oc.pallets.map(pallet => {
           ordersArray.push({ ...pallet, orderId: oc._id })
         })
@@ -62,6 +66,7 @@ const CalendarOrders = props => {
 
       for (let i = 0; i < 60; i++) {
         let calendarDay = []
+           // eslint-disable-next-line
         ordersArray.map(order => {
           if (
             moment(order.orderDateDelivery).format('YYYY-MM-DD') ===

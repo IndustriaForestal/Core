@@ -51,6 +51,7 @@ const OrderProduction = props => {
     )[0]
 
     order.shipments.map(shipment =>
+         // eslint-disable-next-line
       shipment.pallets.map(pallet => {
         console.log(pallet.palletId, pallet.amount, order._id)
         props.addReadyToOrder(pallet.palletId, pallet.amount, order._id)
@@ -93,6 +94,7 @@ const OrderProduction = props => {
                     order.shipments.completed !== 1
                 )
                 .map(op =>
+                     // eslint-disable-next-line
                   op.shipments.map(order => {
                     if (order) {
                       if (order.type !== 3) {
@@ -230,6 +232,7 @@ const OrderProduction = props => {
       return (
         <Card title={`Ordenes de producción`}>
           {newOrders.length > 0 && newOrders[0]
+             // eslint-disable-next-line
             ? newOrders[0].map(orderCero => {
                 const order = orderCero
                 if (order) {

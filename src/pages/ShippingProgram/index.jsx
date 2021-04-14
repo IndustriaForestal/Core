@@ -23,7 +23,7 @@ const ShippingProgram = props => {
         'Entrega Prov.': '/shipping-program/supplier-delivery',
         Aserrio: '/shipping-program/sawn',
         Armado: '/shipping-program/assamble',
-        'Progr. Estufas': '/shipping-program/stoves'
+        'Progr. Estufas': '/shipping-program/stoves',
       },
     }
     props.setTitle(topbar)
@@ -35,6 +35,7 @@ const ShippingProgram = props => {
       .then(() => {
         props.setWraper(true)
       })
+    // eslint-disable-next-line
   }, [])
 
   const handleSaveShipping = async (date, customer, e) => {

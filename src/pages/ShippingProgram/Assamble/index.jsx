@@ -43,6 +43,7 @@ const Assamble = props => {
       .then(() => {
         props.setWraper(true)
       })
+    // eslint-disable-next-line
   }, [])
 
   const handleAssamble = async (e, date) => {
@@ -169,14 +170,6 @@ const Assamble = props => {
     })
   }
 
-  const handleTotalVolume = (assambleF, color) => {
-    let total = 0
-    assambleF
-      .filter(s => s.color === color)
-      .map(s => (total += s.amount * s.volume))
-    return total.toFixed(2)
-  }
-
   const sortOrder = {
     yellow: 0,
     green: 1,
@@ -184,12 +177,6 @@ const Assamble = props => {
     blue: 3,
     orange: 4,
     red: 5,
-  }
-
-  const assambleOrdered = assamble => {
-    assamble.sort(function (p1, p2) {
-      return sortOrder[p1.color] - sortOrder[p2.color]
-    })
   }
 
   if (assamble && suppliers) {

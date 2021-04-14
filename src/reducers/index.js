@@ -513,6 +513,11 @@ const reducer = (state, action) => {
         ...state,
         itemsList: action.payload,
       }
+    case 'GET_SPECIAL_PROCESSES_PALLETS':
+      return {
+        ...state,
+        specialProcessesPallets: action.payload.data,
+      }
     default:
       return state
   }

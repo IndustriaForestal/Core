@@ -1,7 +1,7 @@
 import React, { useEffect, useState } from 'react'
-import { Link, useParams } from 'react-router-dom'
+import { useParams } from 'react-router-dom'
 import { connect } from 'react-redux'
-import moment from 'moment'
+
 import DatePicker from 'react-datepicker'
 import {
   updatePalletsStock,
@@ -9,18 +9,17 @@ import {
   updateAmountPalletOrder,
   updateDatePalletOrder,
 } from '../actions'
-import { BsPlus } from 'react-icons/bs'
+
 import { setTitle, getAll, deleted, get } from '../../../actions/app'
 import Input from '../../../components/Input/Input'
 import Swal from 'sweetalert2'
 import Table from '../../../components/Table/Table'
-import Button from '../../../components/Button/Button'
-import AddButton from '../../../components/AddButton/AddButton'
+
 import Loading from '../../../components/Loading/Loading'
 
 const OrderShipments = props => {
-  const { orderDetails, setTitle, pallets, socket } = props
-  const [startDateOrder, setStartDateOrder] = useState(new Date())
+  const { orderDetails, setTitle } = props
+  const [startDateOrder] = useState(new Date())
   console.log(startDateOrder)
   const { id } = useParams()
 

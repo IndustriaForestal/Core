@@ -58,21 +58,25 @@ const StockHistory = props => {
   const handleSearch = e => {
     const searchWord = e.target.value.toLowerCase()
     let newTableDate = []
+       // eslint-disable-next-line
     pallets.map(pallet => {
       if (pallet.model.toLowerCase() === searchWord) {
         newTableDate.push(pallet._id)
       }
     })
+       // eslint-disable-next-line
     nails.map(nail => {
       if (nail.name.toLowerCase() === searchWord) {
         newTableDate.push(nail.name)
       }
     })
+       // eslint-disable-next-line
     items.map(item => {
       if (item.name.toLowerCase() === searchWord) {
         newTableDate.push(item.name)
       }
     })
+       // eslint-disable-next-line
     raws.map(raw => {
       if (raw.name.toLowerCase() === searchWord) {
         newTableDate.push(raw.name)

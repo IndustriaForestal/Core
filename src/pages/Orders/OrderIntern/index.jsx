@@ -2,7 +2,7 @@ import React, { useEffect, useState } from 'react'
 import { useParams } from 'react-router-dom'
 import { connect } from 'react-redux'
 import DatePicker from 'react-datepicker'
-import Swal from 'sweetalert2'
+
 import { AiOutlineCheckCircle, AiOutlineClose } from 'react-icons/ai'
 import 'react-datepicker/dist/react-datepicker.css'
 import moment from 'moment'
@@ -22,12 +22,12 @@ import Button from '../../../components/Button/Button'
 import Title from '../../../components/Title/Title'
 import Input from '../../../components/Input/Input'
 import Card from '../../../components/Card/Card'
-import Loading from '../../../components/Loading/Loading'
+
 import './styles.scss'
 
 const OrderIntern = props => {
   const { id } = useParams()
-  const { orderDetails, order, pallet, quality, setTitle, socket } = props
+  const { orderDetails, pallet, quality, setTitle, socket } = props
   const [startDate, setStartDate] = useState(new Date())
   const [hoursLeft, setHoursLeft] = useState(12)
   const [checkedClean, setCheckedClean] = useState(false)

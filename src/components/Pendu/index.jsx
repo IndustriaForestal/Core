@@ -1,5 +1,5 @@
-import React, { useEffect, useState } from 'react'
-import { useParams, useLocation } from 'react-router-dom'
+import React, {  useState } from 'react'
+
 import { connect } from 'react-redux'
 import Swal from 'sweetalert2'
 
@@ -16,9 +16,9 @@ import 'react-datepicker/dist/react-datepicker.css'
 
 const Pendu = props => {
   const [saveValue, setSaveValue] = useState(0)
-  const [saveObservations, setSaveObservations] = useState()
+
   const [rawId, setRawId] = useState(0)
-  const { orderId, index, itemsList, materialId, raws, items } = props
+  const { orderId, itemsList, materialId, raws, items } = props
 
   console.log(raws)
 

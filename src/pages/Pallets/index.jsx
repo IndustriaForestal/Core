@@ -39,7 +39,6 @@ import './styles.scss'
 const Pallets = props => {
   const {
     pallets,
-    pallet,
     qualities,
     setTitle,
     customers,
@@ -50,6 +49,7 @@ const Pallets = props => {
     itemsList,
     newPallet,
     specialProcesses,
+    specialProcessesPallets,
   } = props
   const [filter, setFilter] = useState([])
   const [visible, setVisible] = useState(false)
@@ -60,6 +60,7 @@ const Pallets = props => {
   const [cut, setCut] = useState(false)
   const [unit, setUnits] = useState(false)
   const [nail, setNail] = useState(0)
+  const [specialProcessList, setSpecialProcessList] = useState([])
   const { register, handleSubmit, errors } = useForm()
   const {
     register: register2,
@@ -90,6 +91,12 @@ const Pallets = props => {
       .then(() => {
         props.getAll('specialProcesses', 'GET_SPECIAL_PROCESSES')
       })
+      .then(() => {
+        props.getAll(
+          'specialProcesses/pallets',
+          'GET_SPECIAL_PROCESSES_PALLETS'
+        )
+      })
       .then(() => props.getAll('items', 'GET_ITEMS'))
     // eslint-disable-next-line
   }, [])
@@ -105,7 +112,7 @@ const Pallets = props => {
       props.createNewPallet(data)
     }
   }
-  const onSubmitItems = (data) => {
+  const onSubmitItems = data => {
     props.addItemList(data)
     document.getElementById('formItems').reset()
   }
@@ -125,19 +132,22 @@ const Pallets = props => {
       confirmButtonText: 'Si, guardar',
     }).then(result => {
       if (result.isConfirmed) {
-        console.log(newPallet.id)
         if (newPallet.id) {
           console.log('Update')
           props
-          .functionNewPalletUpdate(newPallet, newPallet.id)
-          .then(() => props.getAll('pallets', 'GET_PALLETS'))
-          .then(() => props.getAll('items', 'GET_ITEMS'))
-          .then(() => document.getElementById('formTarima').reset())
-          .then(() => setVisible3(false))
+            .functionNewPalletUpdate(
+              newPallet,
+              newPallet.id,
+              specialProcessList
+            )
+            .then(() => props.getAll('pallets', 'GET_PALLETS'))
+            .then(() => props.getAll('items', 'GET_ITEMS'))
+            .then(() => document.getElementById('formTarima').reset())
+            .then(() => setVisible3(false))
         } else {
           console.log('New')
           props
-            .functionNewPallet(newPallet, itemsList)
+            .functionNewPallet(newPallet, itemsList, specialProcessList)
             .then(() => props.getAll('pallets', 'GET_PALLETS'))
             .then(() => props.getAll('items', 'GET_ITEMS'))
             .then(() => document.getElementById('formTarima').reset())
@@ -237,6 +247,48 @@ const Pallets = props => {
       })
     }
 
+    const handleAddSpecialProcess = id => {
+      if (id !== '') {
+        setSpecialProcessList([...specialProcessList, id])
+      }
+    }
+
+    const handleDeleteSpecialProcess = id => {
+      setSpecialProcessList(specialProcessList.filter(sp => sp !== id))
+    }
+
+    const handleAddSpecialProcessSQL = (id, palletId) => {
+      if (id !== '') {
+        // setSpecialProcessList([...specialProcessList, id])
+        props
+          .create(
+            `specialProcesses/${palletId}`,
+            'CREATE_SPECIAL_PROCESS_NEW_PALLET_SQL',
+            { id }
+          )
+          .then(() => {
+            props.getAll(
+              'specialProcesses/pallets',
+              'GET_SPECIAL_PROCESSES_PALLETS'
+            )
+          })
+      }
+    }
+
+    const handleDeleteSpecialProcessSQL = (specialProcessId, palletId) => {
+      props
+        .deleted(
+          `specialProcesses/${palletId}/${specialProcessId}`,
+          'DELETE_SPECIAL_PROCESS_NEW_PALLET_SQL'
+        )
+        .then(() => {
+          props.getAll(
+            'specialProcesses/pallets',
+            'GET_SPECIAL_PROCESSES_PALLETS'
+          )
+        })
+    }
+
     return (
       <>
         <SearchBar onChange={handleSearch} />
@@ -269,7 +321,6 @@ const Pallets = props => {
                           className="--warning"
                           onClick={() => handleEditPallet(pallet.id)}
                         />
-
                         <AiOutlineDelete
                           className="--danger"
                           onClick={() => handleDeletePallet(pallet.id)}
@@ -319,25 +370,28 @@ const Pallets = props => {
                           {/* 2.54 */}
                         </h4>
                         <h4 className="palletCard__subtitle">
-                          Calidad:{' '}
                           {
                             qualities.filter(
                               quality => quality._id === pallet.quality_id
                             )[0].name
                           }
                         </h4>
-                        {pallet.specialProcess &&
-                        pallet.specialProcess !== null ? (
+                        {specialProcessesPallets.filter(
+                          sp => sp.id === pallet.id
+                        ).length > 0 ? (
                           <ul className="palletCard__list">
-                            <li className="palletCard__item">
-                              {
-                                specialProcesses.filter(
-                                  specialProcess =>
-                                    specialProcess._id ===
-                                    pallet.special_process_id
-                                )[0].name
-                              }
-                            </li>
+                            {specialProcessesPallets
+                              .filter(sp => sp.id === pallet.id)
+                              .map(sp => (
+                                <li className="palletCard__item">
+                                  {
+                                    specialProcesses.find(
+                                      special =>
+                                        special._id === sp.special_process_id
+                                    ).name
+                                  }
+                                </li>
+                              ))}
                           </ul>
                         ) : (
                           <ul className="palletCard__list">
@@ -523,12 +577,12 @@ const Pallets = props => {
                         return (
                           <option
                             key={quality._id}
+                            value={quality._id}
                             selected={
                               newPallet && newPallet.quality_id === quality._id
                                 ? true
                                 : false
                             }
-                            value={quality._id}
                           >
                             {quality.name}
                           </option>
@@ -539,7 +593,18 @@ const Pallets = props => {
                 </div>
                 <div className="inputGroup">
                   <label htmlFor="special_process_id">
-                    <select name="special_process_id" ref={register}>
+                    <select
+                      name="special_process_id"
+                      onChange={
+                        newPallet.id
+                          ? e =>
+                              handleAddSpecialProcessSQL(
+                                e.target.value,
+                                newPallet.id
+                              )
+                          : e => handleAddSpecialProcess(e.target.value)
+                      }
+                    >
                       <option value="">Sin Proceso Especial</option>
                       {specialProcesses.map(specialProcess => {
                         return (
@@ -553,6 +618,45 @@ const Pallets = props => {
                       })}
                     </select>
                   </label>
+                </div>
+                <div className="inputGroup specialProcess__container">
+                  {newPallet.id
+                    ? specialProcessesPallets.filter(
+                        sp => sp.id === newPallet.id
+                      ).length > 0
+                      ? specialProcessesPallets
+                          .filter(sp => sp.id === newPallet.id)
+                          .map((sp, index) => (
+                            <div
+                              className="specialProcess__box"
+                              onClick={() =>
+                                handleDeleteSpecialProcessSQL(
+                                  newPallet.id,
+                                  sp.special_process_id
+                                )
+                              }
+                              key={index}
+                            >
+                              {
+                                specialProcesses.find(
+                                  special =>
+                                    special._id === sp.special_process_id
+                                ).name
+                              }
+                            </div>
+                          ))
+                      : null
+                    : specialProcessList.length > 0
+                    ? specialProcessList.map((process, index) => (
+                        <div
+                          className="specialProcess__box"
+                          onClick={() => handleDeleteSpecialProcess(process)}
+                          key={index}
+                        >
+                          {specialProcesses.find(sp => sp._id === process).name}
+                        </div>
+                      ))
+                    : null}
                 </div>
               </div>
               <div>
@@ -586,7 +690,6 @@ const Pallets = props => {
                     />
                   </label>
                 </div>
-
                 <Input
                   type="text"
                   name="color_commnet"
@@ -607,7 +710,6 @@ const Pallets = props => {
                     />
                   </label>
                 </div>
-
                 <Input
                   type="text"
                   name="logo_commnet"
@@ -616,7 +718,6 @@ const Pallets = props => {
                   className={logo || newPallet.logo_comment ? null : 'hidde'}
                   passRef={register}
                 />
-
                 <Input
                   type="file"
                   name="pdf"
@@ -628,33 +729,32 @@ const Pallets = props => {
                   }
                   className={errors.pdf && '--required'}
                 />
-
                 <Input
                   type="file"
                   name="image"
                   title="Imagen"
                   passRef={register}
                 />
-              </div>
-              <div className="formNail__buttons">
-                <Button
-                  type="button"
-                  className="btn --danger"
-                  onClick={() => handleClenaEdit()}
-                >
-                  Cancelar
-                </Button>
-                {newPallet.id ? (
-                  <input
-                    type="hidden"
-                    defaultValue={newPallet.id}
-                    name="id"
-                    ref={register}
-                  />
-                ) : null}
-                <Button type="submit" className="btn --success">
-                  Siguiente
-                </Button>
+                <div className="formNail__buttons">
+                  <Button
+                    type="button"
+                    className="btn --danger"
+                    onClick={() => handleClenaEdit()}
+                  >
+                    Cancelar
+                  </Button>
+                  {newPallet.id ? (
+                    <input
+                      type="hidden"
+                      defaultValue={newPallet.id}
+                      name="id"
+                      ref={register}
+                    />
+                  ) : null}
+                  <Button type="submit" className="btn --success">
+                    Siguiente
+                  </Button>
+                </div>
               </div>
             </form>
           </div>
@@ -1029,6 +1129,7 @@ const mapStateToProps = state => {
     newPallet: state.newPallet,
     customers: state.customers,
     specialProcesses: state.specialProcesses,
+    specialProcessesPallets: state.specialProcessesPallets,
     items: state.items,
   }
 }

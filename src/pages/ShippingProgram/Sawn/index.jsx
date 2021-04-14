@@ -43,6 +43,7 @@ const Sawn = props => {
       .then(() => {
         props.setWraper(true)
       })
+         // eslint-disable-next-line
   }, [])
 
   const handleSawn = async (e, date) => {
@@ -160,13 +161,7 @@ const Sawn = props => {
     })
   }
 
-  const handleTotalVolume = (sawnF, color) => {
-    let total = 0
-    sawnF
-      .filter(s => s.color === color)
-      .map(s => (total += s.amount * s.volume))
-    return total.toFixed(2)
-  }
+
 
   const sortOrder = {
     yellow: 0,
@@ -177,11 +172,7 @@ const Sawn = props => {
     red: 5,
   }
 
-  const sawnOrdered = sawn => {
-    sawn.sort(function (p1, p2) {
-      return sortOrder[p1.color] - sortOrder[p2.color]
-    })
-  }
+ 
 
   if (sawn && suppliers) {
     let cubTotal = 0

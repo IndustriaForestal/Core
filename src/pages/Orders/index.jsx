@@ -8,16 +8,16 @@ import { updatePalletsStock, completeOrder } from './actions'
 import { BsPlus } from 'react-icons/bs'
 import { setTitle, getAll, deleted } from '../../actions/app'
 import Swal from 'sweetalert2'
-import Table from '../../components/Table/Table'
+
 import Button from '../../components/Button/Button'
 import AddButton from '../../components/AddButton/AddButton'
 import Loading from '../../components/Loading/Loading'
-import SearchBar from '../../components/SearchBar/SearchBar'
+
 import MaterialTable from 'material-table'
 import './styles.scss'
 
 const Orders = props => {
-  const { orders, setTitle, pallets, socket, role } = props
+  const { orders, setTitle, role } = props
 
   useEffect(() => {
     const topbar = {
@@ -29,15 +29,6 @@ const Orders = props => {
     props.getAll('pallets', 'GET_PALLETS')
     // eslint-disable-next-line
   }, [])
-
-  const tableHeader = [
-    '#',
-    'Cliente',
-    'Fecha Recepción',
-    'Fecha Entrega',
-    'Modelo - Cantidad',
-    'Acciones',
-  ]
 
   const handleDeleteNail = orderId => {
     Swal.fire({
@@ -54,51 +45,6 @@ const Orders = props => {
         Swal.fire('Borrado!', 'Borrado con exito.', 'success')
       }
     })
-  }
-
-  const handleCompleteOrder = orderId => {
-    const order = orders.filter(order => order._id === orderId)
-    const pallet = pallets.filter(pallet => order[0].palletId === pallet._id)
-
-    const capacity = pallet[0].capacityCharge.filter(
-      cp => cp._id === order[0].platformId
-    )
-
-    props
-      .updatePalletsStock(capacity[0].capacity * -1, pallet[0]._id, 'dry')
-      .then(() => {
-        props.completeOrder(orderId)
-      })
-      .then(() => {
-        socket.emit('notification')
-      })
-  }
-
-  function compare(a, b) {
-    const orderA = a.startDate
-    const orderB = b.startDate
-
-    let comparison = 0
-    if (orderA > orderB) {
-      comparison = -1
-    } else if (orderA < orderB) {
-      comparison = 1
-    }
-    return comparison
-  }
-
-  const setFilter = e => {
-    const filter = orders.map(order => {
-      order.pallets.map(pallet => {
-        // console.log(pallet.orderNumber)
-        if (pallet.orderNumber.toLowerCase().includes(e)) {
-          console.log('Chi')
-          return order
-        }
-      })
-    })
-    console.log(e)
-    console.log(filter)
   }
 
   if (orders) {

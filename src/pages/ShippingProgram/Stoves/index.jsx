@@ -5,7 +5,6 @@ import 'moment/locale/es-mx'
 import { connect } from 'react-redux'
 
 import Loading from '../../../components/Loading/Loading'
-import AddButton from '../../../components/AddButton/AddButton'
 
 import {
   getAll,
@@ -38,6 +37,7 @@ const Stoves = props => {
       .then(() => {
         props.setWraper(true)
       })
+    // eslint-disable-next-line
   }, [])
 
   const stolvesToMysql = [
@@ -79,16 +79,12 @@ const Stoves = props => {
 
       if (color) {
         props
-          .create(
-            'shippingProgram/stolves',
-            'CREATE_SHIPPING_PROGRAM',
-            {
-              date,
-              stolve,
-              color,
-              pallet,
-            }
-          )
+          .create('shippingProgram/stolves', 'CREATE_SHIPPING_PROGRAM', {
+            date,
+            stolve,
+            color,
+            pallet,
+          })
           .then(() => {
             props.getAll(
               'shippingProgram/stolves',
@@ -201,7 +197,6 @@ const Stoves = props => {
             ))}
           </div>
         </div>
-
       </>
     )
   } else {

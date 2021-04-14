@@ -1,22 +1,19 @@
-import React, { useEffect, useState } from 'react'
-import { Link } from 'react-router-dom'
+import React, { useEffect } from 'react'
+
 import { connect } from 'react-redux'
-import { AiOutlineEdit, AiOutlineDelete } from 'react-icons/ai'
-import { BsPlus } from 'react-icons/bs'
+
 import { setTitle, getAll, deleted } from '../../../actions/app'
-import Swal from 'sweetalert2'
-import Table from '../../../components/Table/Table'
+
+
 import Button from '../../../components/Button/Button'
-import AddButton from '../../../components/AddButton/AddButton'
-import SearchBar from '../../../components/SearchBar/SearchBar'
 
 import Input from '../../../components/Input/Input'
 import Card from '../../../components/Card/Card'
 import Loading from '../../../components/Loading/Loading'
 
 const Format1 = props => {
-  const { pallets, setTitle, role } = props
-  const [filter, setFilter] = useState([])
+  const { pallets, setTitle } = props
+
 
   useEffect(() => {
     const topbar = {
@@ -31,27 +28,9 @@ const Format1 = props => {
     // eslint-disable-next-line
   }, [])
 
-  let tableHeader
-  role === 'Administrador'
-    ? (tableHeader = ['Nombre', 'Stock', 'Acciones'])
-    : (tableHeader = ['Nombre', 'Stock'])
+ 
 
-  const handleDeleteNail = nailId => {
-    Swal.fire({
-      title: '¿Estás seguro?',
-      text: 'Este proceso no se puede revertir',
-      icon: 'warning',
-      showCancelButton: true,
-      confirmButtonColor: '#3085d6',
-      cancelButtonColor: '#d33',
-      confirmButtonText: 'Si, borrar',
-    }).then(result => {
-      if (result.isConfirmed) {
-        props.deleted(`nails/${nailId}`, 'DELETE_NAIL')
-        Swal.fire('Borrado!', 'Borrado con exito.', 'success')
-      }
-    })
-  }
+ 
 
   // const handleSearch = e => {
   //   const searchWord = e.target.value.toLowerCase()

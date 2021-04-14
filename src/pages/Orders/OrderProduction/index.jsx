@@ -31,7 +31,6 @@ const Order = props => {
     setTitle,
     quality,
     pallet,
-    pallets,
     capacities,
     material,
     raws,
@@ -131,7 +130,9 @@ const Order = props => {
       let startDate = moment(date)
       let searchOrderProduction = finalProcess
 
+      // eslint-disable-next-line
       shipment[0].pallets.map(pallet => {
+        // eslint-disable-next-line
         pallet.items.map(item => {
           const pietabla =
             parseInt(item.amount) *
@@ -267,7 +268,9 @@ const Order = props => {
 
       console.log(itemsList)
 
+      // eslint-disable-next-line
       shipment[0].pallets.map(pallet => {
+        // eslint-disable-next-line
         pallet.items.map(item => {
           const pietabla =
             parseInt(item.amount) *
@@ -330,7 +333,7 @@ const Order = props => {
     const handleOrderProduction = () => {
       // eslint-disable-next-line
       let ordersProduction = []
-
+      // eslint-disable-next-line
       capacities.map(order => {
         delete order._id
         ordersProduction.push({
@@ -344,6 +347,7 @@ const Order = props => {
 
       if (pendu === 1) {
         console.log('Pendu en lugar de aserrio')
+        // eslint-disable-next-line
         ordersProduction.map(op => {
           if (op.processId === '5f99cbda74cd296d5bb5b744') {
             op.processId = '5f99cbd874cd296d5bb5b743'

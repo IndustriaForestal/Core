@@ -50,7 +50,11 @@ export const deleteObjectPallet = (endpoint, typeAction) => async dispatch => {
   }
 }
 
-export const functionNewPallet = (data, itemsList) => async dispatch => {
+export const functionNewPallet = (
+  data,
+  itemsList,
+  specialProcessList
+) => async dispatch => {
   const formData = new FormData()
   Object.keys(data).map(key => {
     if (key === 'image' || key === 'pdf') {
@@ -60,7 +64,7 @@ export const functionNewPallet = (data, itemsList) => async dispatch => {
       return formData.append(key, data[key])
     }
   })
-  console.log(formData, itemsList)
+
   try {
     const res = await axios({
       url: `${process.env.REACT_APP_API}pallets/new`,
@@ -79,6 +83,15 @@ export const functionNewPallet = (data, itemsList) => async dispatch => {
       },
       method: 'post',
       data: { itemsList, id },
+    })
+    console.log(specialProcessList)
+    await axios({
+      url: `${process.env.REACT_APP_API}pallets/new/special`,
+      headers: {
+        Authorization: `Bearer ${Cookies.get('token')}`,
+      },
+      method: 'post',
+      data: { specialProcessList, id },
     })
 
     const Toast = Swal.mixin({
@@ -124,7 +137,7 @@ export const functionNewPalletUpdate = data => async dispatch => {
       method: 'put',
       data: formData,
     })
-
+    console.log(res)
     const Toast = Swal.mixin({
       toast: true,
       position: 'top-end',

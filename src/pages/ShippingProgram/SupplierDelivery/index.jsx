@@ -44,6 +44,7 @@ const ShippingProgram = props => {
       .then(() => {
         props.setWraper(true)
       })
+    // eslint-disable-next-line
   }, [])
 
   const handleSaveShipping = async (date, supplier, e) => {
