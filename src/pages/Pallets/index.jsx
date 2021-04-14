@@ -92,6 +92,12 @@ const Pallets = props => {
         props.getAll('specialProcesses', 'GET_SPECIAL_PROCESSES')
       })
       .then(() => {
+        props.getAll('wood', 'GET_WOOD')
+      })
+      .then(() => {
+        props.getAll('items/type', 'GET_ITEMS_TYPE')
+      })
+      .then(() => {
         props.getAll(
           'specialProcesses/pallets',
           'GET_SPECIAL_PROCESSES_PALLETS'
@@ -382,8 +388,8 @@ const Pallets = props => {
                           <ul className="palletCard__list">
                             {specialProcessesPallets
                               .filter(sp => sp.id === pallet.id)
-                              .map(sp => (
-                                <li className="palletCard__item">
+                              .map((sp, index) => (
+                                <li key={index} className="palletCard__item">
                                   {
                                     specialProcesses.find(
                                       special =>
