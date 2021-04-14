@@ -20,6 +20,7 @@ const Management = props => {
         Gestión: '/home-management',
         Contabilidad: '/home-accounting',
         Administración: '/home-administration',
+        Configuración: '/home-settings',
       },
     }
     props.setTitle(topbar)

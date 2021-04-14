@@ -84,6 +84,12 @@ import Stoves from '../pages/ShippingProgram/Stoves'
 import Format1 from '../pages/Formats'
 import Format2 from '../pages/Formats/FOR-CAL-FTP022'
 
+//Renovando Sistema
+
+import SettingsHome from '../pages/Home/Settings'
+import TypeMaterial from '../pages/Settings/TypeMaterial'
+import TypeWood from '../pages/Settings/TypeWood'
+
 const App = ({ loggedIn }) => {
   const role = Cookies.get('role')
   if (loggedIn) {
@@ -588,6 +594,7 @@ const App = ({ loggedIn }) => {
             <Route exact path="/home-management" component={HomeManagement} />
             <Route exact path="/home-production" component={HomeProduction} />
 
+            <Route exact path="/home-settings" component={SettingsHome} />
             {/* SEGUNDA ETAPA */}
 
             <Route exact path="/shipping-program" component={ShippingProgram} />
@@ -602,10 +609,19 @@ const App = ({ loggedIn }) => {
               component={SupplierDelivery}
             />
             <Route exact path="/shipping-program/sawn" component={Sawn} />
-            <Route exact path="/shipping-program/assamble" component={Assamble} />
+            <Route
+              exact
+              path="/shipping-program/assamble"
+              component={Assamble}
+            />
             <Route exact path="/shipping-program/stoves" component={Stoves} />
             <Route exact path="/format" component={Format1} />
             <Route exact path="/format/forcalftp022" component={Format2} />
+
+
+            <Route exact path="/settings/type-material" component={TypeMaterial} />
+            <Route exact path="/settings/type-wood" component={TypeWood} />
+
 
             <Route exact path="/login" component={Login} />
             <Route component={NotFound} />

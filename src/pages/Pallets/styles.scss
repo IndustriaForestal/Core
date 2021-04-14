@@ -14,7 +14,7 @@
   &__img {
     height: 300px;
     width: 50%;
-    object-fit: contain;
+    object-fit: cover;
     box-shadow: var(--neumorphism);
     margin-bottom: 15px;
     border-radius: 50px;

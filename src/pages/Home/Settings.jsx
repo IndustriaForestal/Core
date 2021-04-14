@@ -6,7 +6,7 @@ import { setTitle } from '../../actions/app'
 import IconHome from './IconHome/IconHome'
 import './Home.scss'
 
-const Quality = props => {
+const Settings = props => {
   const role = Cookies.get('role')
 
   useEffect(() => {
@@ -30,40 +30,13 @@ const Quality = props => {
         <div className="Home">
           <IconHome
             icon={<BsCardImage />}
-            url="/pallets"
-            text="Fichas tecnicas de Tarimas"
-          />
-
-          <IconHome
-            icon={<BsCardImage />}
-            url="/suppliers"
-            text="Proveedores"
+            url="/settings/type-material"
+            text="Tipo de material"
           />
           <IconHome
             icon={<BsCardImage />}
-            url="/qualities"
-            text="Capacidad de Producción por Calidades"
-          />
-        </div>
-      )
-    case 'Vista':
-      return (
-        <div className="Home">
-          <IconHome
-            icon={<BsCardImage />}
-            url="/pallets"
-            text="Fichas tecnicas de Tarimas"
-          />
-
-          <IconHome
-            icon={<BsCardImage />}
-            url="/suppliers"
-            text="Proveedores"
-          />
-          <IconHome
-            icon={<BsCardImage />}
-            url="/qualities"
-            text="Capacidad de Producción por Calidades"
+            url="/settings/type-wood"
+            text="Tipo de madera"
           />
         </div>
       )
@@ -85,4 +58,4 @@ const mapDispatchToProps = {
   setTitle,
 }
 
-export default connect(null, mapDispatchToProps)(Quality)
+export default connect(null, mapDispatchToProps)(Settings)

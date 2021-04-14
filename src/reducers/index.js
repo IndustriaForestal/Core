@@ -518,6 +518,7 @@ const reducer = (state, action) => {
         ...state,
         specialProcessesPallets: action.payload.data,
       }
+
     default:
       return state
   }
