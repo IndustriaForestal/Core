@@ -63,6 +63,7 @@ const Home = props => {
             url="/format"
             text="Formatos"
           />
+       
         </div>
       )
     case 'Vista':

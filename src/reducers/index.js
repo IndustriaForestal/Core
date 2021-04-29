@@ -519,6 +519,28 @@ const reducer = (state, action) => {
         specialProcessesPallets: action.payload.data,
       }
 
+    case 'GET_STOCK':
+      return {
+        ...state,
+        stock: action.payload.data,
+      }
+
+    case 'GET_PLANTS':
+      return {
+        ...state,
+        plants: action.payload.data,
+      }
+    case 'GET_ZONES':
+      return {
+        ...state,
+        zones: action.payload.data,
+      }
+    case 'GET_SUBZONES':
+      return {
+        ...state,
+        subzones: action.payload.data,
+      }
+
     default:
       return state
   }

@@ -1,16 +1,12 @@
 import React, { useEffect } from 'react'
-import { Link } from 'react-router-dom'
+
 import { connect } from 'react-redux'
-import { BsPlus } from 'react-icons/bs'
-import { AiOutlineEdit } from 'react-icons/ai'
 import { setTitle, getAll, deleted } from '../../../actions/app'
-import Table from '../../../components/Table/Table'
-import Button from '../../../components/Button/Button'
-import AddButton from '../../../components/AddButton/AddButton'
 import './styles.scss'
+import MaterialTable from 'material-table'
 
 const Nails = props => {
-  const { nails, setTitle, role } = props
+  const { stock, setTitle, role } = props
 
   useEffect(() => {
     let topbar
@@ -38,53 +34,55 @@ const Nails = props => {
         })
 
     setTitle(topbar)
-    props.getAll('nails', 'GET_NAILS')
+    props.getAll('stock/items', 'GET_STOCK')
     // eslint-disable-next-line
   }, [])
 
-  let tableHeader
-
-  role === 'Administrador'
-    ? (tableHeader = ['Nombre', 'Stock', 'Acciones'])
-    : (tableHeader = ['Nombre', 'Stock'])
-
-  return (
-    <>
-      <Table head={tableHeader}>
-        {nails ? (
-          nails.map(nail => (
-            <tr key={nail._id}>
-              <td>{nail.name}</td>
-              <td>{nail.stock}</td>
-              {role === 'Administrador' ? (
-                <td>
-                  <Link to={`stock/update/${nail._id}?type=nail`}>
-                    <Button className="btn --warning">
-                      <AiOutlineEdit />
-                    </Button>
-                  </Link>
-                </td>
-              ) : null}
-            </tr>
-          ))
-        ) : (
-          <tr>
-            <td colSpan="7">No hay registros</td>
-          </tr>
-        )}
-      </Table>
-      <Link to="/nails/create">
-        <AddButton>
-          <BsPlus />
-        </AddButton>
-      </Link>
-    </>
-  )
+  if (stock) {
+    const stockItems = stock.filter(item => item.item_type_id === 4)
+    return (
+      <>
+        <MaterialTable
+          columns={[
+            { title: 'id', field: 'id' },
+            { title: 'Nombre', field: 'nail' },
+            {
+              title: 'Total',
+              field: 'total',
+              render: rowData => rowData.dry + rowData.damp + rowData.repair,
+            },
+          ]}
+          localization={{
+            pagination: {
+              labelDisplayedRows: '{from}-{to} de {count}',
+              labelRowsSelect: 'Filas',
+              firstAriaLabel: 'Primera',
+              firstTooltip: 'Primera',
+              previousAriaLabel: 'Anterior',
+              previousTooltip: 'Anterior',
+              nextAriaLabel: 'Siguiente',
+              nextTooltip: 'Siguiente',
+              lastAriaLabel: 'Ultimo',
+              lastTooltip: 'Ultimo',
+            },
+            toolbar: {
+              searchTooltip: 'Buscar',
+              searchPlaceholder: 'Buscar',
+            },
+          }}
+          data={stockItems}
+          title="Inventario Clavos"
+        />
+      </>
+    )
+  } else {
+    return <h1>Cargando</h1>
+  }
 }
 
 const mapStateToProps = state => {
   return {
-    nails: state.nails,
+    stock: state.stock,
     role: state.role,
   }
 }

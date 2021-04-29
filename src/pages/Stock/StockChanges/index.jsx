@@ -16,13 +16,14 @@ import Loading from '../../../components/Loading/Loading'
 import Select from 'react-select'
 
 const Nails = props => {
-  const { pallets, items, nails, raws, setTitle } = props
+  const { pallets, items, zones, wood, setTitle } = props
   const [type, setType] = useState(0)
   const [idSelected, setIdSelected] = useState(0)
   const [inOut, setInOut] = useState(0)
   const [amount, setAmount] = useState(0)
   const [sucursal, setSucursal] = useState(null)
   const [greenDryRepair, setGreenDryRepair] = useState(null)
+  const [woodSelected, setWood] = useState()
 
   useEffect(() => {
     const topbar = {
@@ -33,15 +34,15 @@ const Nails = props => {
         Clavos: '/stockNails',
         'Materia Prima': '/stockMaterial',
         'Entradas y salidas': '/stockChanges',
-        'Historial': '/stockHistory',
+        Historial: '/stockHistory',
       },
     }
     setTitle(topbar)
     setWraper(true)
     props.getAll('pallets', 'GET_PALLETS')
-    props.getAll('raws', 'GET_RAWS')
-    props.getAll('nails', 'GET_NAILS')
     props.getAll('items', 'GET_ITEMS')
+    props.getAll('zones/zones', 'GET_ZONES')
+    props.getAll('wood', 'GET_WOOD')
     // eslint-disable-next-line
   }, [])
 
@@ -50,53 +51,58 @@ const Nails = props => {
     setIdSelected(0)
   }
 
-  if (pallets && items && nails && raws) {
+  if (pallets && items && zones && wood) {
     console.log(idSelected, type, inOut)
     const palletsOptions = pallets.map(pallet => {
       return {
-        value: pallet._id,
+        value: pallet.id,
         label: pallet.model,
       }
     })
 
-    const itemsOptions = items.map(item => {
-      return {
-        value: item._id,
-        label: item.name,
+    const itemsOptions = items.filter(item => {
+      if (item.item_type_id !== 4) {
+        return {
+          value: item.id,
+          label: item.heigth,
+        }
+      } else {
+        return null
       }
     })
 
-    const nailsOptions = nails.map(nail => {
-      return {
-        value: nail._id,
-        label: nail.name,
-      }
-    })
-
-    const rawsOptions = raws.map(raw => {
-      return {
-        value: raw._id,
-        label: raw.name,
+    const nailsOptions = items.filter(item => {
+      if (item.item_type_id === 4) {
+        return {
+          value: item.id,
+          label: item.name,
+        }
+      } else {
+        return null
       }
     })
 
     const handleSaveStock = () => {
       const user = Cookies.get('name')
+      console.log(
+        type,
+        amount,
+        inOut,
+        user,
+        greenDryRepair,
+        sucursal,
+        woodSelected
+      )
       if (type === 1) {
-        console.log(user + ' Usuario')
-        console.log(idSelected + ' Id')
-        console.log(sucursal + ' Sucursal')
-        console.log(amount + ' Cantidad')
-        console.log(greenDryRepair + ' greenDryRepair')
-        console.log(sucursal + ' sucursal')
         props
-          .update(`stock/${idSelected}`, 'UPDATE_STOCK', {
+          .update(`stock/pallets/${idSelected}`, 'PALLET_HISTORY', {
             type,
             amount,
             inOut,
-            user,
-            greenDryRepair,
-            sucursal,
+            user_id: user,
+            state: greenDryRepair,
+            zone_id: sucursal,
+            wood_id: woodSelected,
           })
           .then(() => {
             setType(0)
@@ -104,11 +110,14 @@ const Nails = props => {
       } else {
         console.log(type)
         props
-          .update(`stock/${idSelected}`, 'UPDATE_STOCK', {
+          .update(`stock/items/${idSelected}`, 'PALLET_HISTORY', {
             type,
             amount,
             inOut,
-            user,
+            user_id: user,
+            state: greenDryRepair,
+            zone_id: sucursal,
+            wood_id: woodSelected,
           })
           .then(() => {
             setType(0)
@@ -127,7 +136,7 @@ const Nails = props => {
                 <option value="1">Tarima</option>
                 <option value="2">Complemento</option>
                 <option value="3">Clavos</option>
-                <option value="4">Materia Prima</option>
+                {/* <option value="4">Materia Prima</option> */}
               </select>
             </label>
           </div>
@@ -152,20 +161,41 @@ const Nails = props => {
                 >
                   <option value="">Seleccionar</option>
                   <option value="0">Entrada</option>
-                  <option value="1">Salida</option>
+                  {/* <option value="1">Salida</option> */}
                 </select>
               </label>
             </div>
             <div className="inputGroup">
               <label htmlFor="processId">
-                <span>IFISA:</span>
+                <span>Zona:</span>
                 <select
                   name="processId"
                   onChange={e => setSucursal(parseInt(e.target.value))}
                 >
                   <option value="">Seleccionar</option>
-                  <option value="0">IFISA 1</option>
-                  <option value="1">IFISA 2</option>
+                  {zones.map(z => (
+                    <>
+                      <option value={z.id}>
+                        {z.id} {z.plant} {z.zone} {z.subzone}
+                      </option>
+                    </>
+                  ))}
+                </select>
+              </label>
+            </div>
+            <div className="inputGroup">
+              <label htmlFor="processId">
+                <span>Especie Madera:</span>
+                <select
+                  name="processId"
+                  onChange={e => setWood(parseInt(e.target.value))}
+                >
+                  <option value="">Seleccionar</option>
+                  {wood.map(w => (
+                    <>
+                      <option value={w.id}>{w.name}</option>
+                    </>
+                  ))}
                 </select>
               </label>
             </div>
@@ -174,12 +204,12 @@ const Nails = props => {
                 <span>Madera:</span>
                 <select
                   name="processId"
-                  onChange={e => setGreenDryRepair(parseInt(e.target.value))}
+                  onChange={e => setGreenDryRepair(e.target.value)}
                 >
                   <option value="">Seleccionar</option>
-                  <option value="0">Secas</option>
-                  <option value="1">Verdes</option>
-                  <option value="2">Reaparación</option>
+                  <option value="dry">Secas</option>
+                  <option value="damp">Verdes</option>
+                  <option value="repair">Reaparación</option>
                 </select>
               </label>
             </div>
@@ -208,8 +238,57 @@ const Nails = props => {
                   name="processId"
                   onChange={e => setInOut(parseInt(e.target.value))}
                 >
+                  <option value="">Seleccionar</option>
                   <option value="0">Entrada</option>
-                  <option value="1">Salida</option>
+                  {/* <option value="1">Salida</option> */}
+                </select>
+              </label>
+            </div>
+            <div className="inputGroup">
+              <label htmlFor="processId">
+                <span>Zona:</span>
+                <select
+                  name="processId"
+                  onChange={e => setSucursal(parseInt(e.target.value))}
+                >
+                  <option value="">Seleccionar</option>
+                  {zones.map(z => (
+                    <>
+                      <option value={z.id}>
+                        {z.id} {z.plant} {z.zone} {z.subzone}
+                      </option>
+                    </>
+                  ))}
+                </select>
+              </label>
+            </div>
+            <div className="inputGroup">
+              <label htmlFor="processId">
+                <span>Especie Madera:</span>
+                <select
+                  name="processId"
+                  onChange={e => setWood(parseInt(e.target.value))}
+                >
+                  <option value="">Seleccionar</option>
+                  {wood.map(w => (
+                    <>
+                      <option value={w.id}>{w.name}</option>
+                    </>
+                  ))}
+                </select>
+              </label>
+            </div>
+            <div className="inputGroup">
+              <label htmlFor="processId">
+                <span>Madera:</span>
+                <select
+                  name="processId"
+                  onChange={e => setGreenDryRepair(e.target.value)}
+                >
+                  <option value="">Seleccionar</option>
+                  <option value="dry">Secas</option>
+                  <option value="damp">Verdes</option>
+                  <option value="repair">Reaparación</option>
                 </select>
               </label>
             </div>
@@ -238,8 +317,57 @@ const Nails = props => {
                   name="processId"
                   onChange={e => setInOut(parseInt(e.target.value))}
                 >
+                  <option value="">Seleccionar</option>
                   <option value="0">Entrada</option>
-                  <option value="1">Salida</option>
+                  {/* <option value="1">Salida</option> */}
+                </select>
+              </label>
+            </div>
+            <div className="inputGroup">
+              <label htmlFor="processId">
+                <span>Zona:</span>
+                <select
+                  name="processId"
+                  onChange={e => setSucursal(parseInt(e.target.value))}
+                >
+                  <option value="">Seleccionar</option>
+                  {zones.map(z => (
+                    <>
+                      <option value={z.id}>
+                        {z.id} {z.plant} {z.zone} {z.subzone}
+                      </option>
+                    </>
+                  ))}
+                </select>
+              </label>
+            </div>
+            <div className="inputGroup">
+              <label htmlFor="processId">
+                <span>Especie Madera:</span>
+                <select
+                  name="processId"
+                  onChange={e => setWood(parseInt(e.target.value))}
+                >
+                  <option value="">Seleccionar</option>
+                  {wood.map(w => (
+                    <>
+                      <option value={w.id}>{w.name}</option>
+                    </>
+                  ))}
+                </select>
+              </label>
+            </div>
+            <div className="inputGroup">
+              <label htmlFor="processId">
+                <span>Madera:</span>
+                <select
+                  name="processId"
+                  onChange={e => setGreenDryRepair(e.target.value)}
+                >
+                  <option value="">Seleccionar</option>
+                  <option value="dry">Secas</option>
+                  <option value="damp">Verdes</option>
+                  <option value="repair">Reaparación</option>
                 </select>
               </label>
             </div>
@@ -250,7 +378,7 @@ const Nails = props => {
             <Button onClick={handleSaveStock}>Guardar</Button>
           </Card>
         ) : null}
-        {type === 4 ? (
+        {/* {type === 4 ? (
           <Card title="Clavos">
             <div className="inputGroup">
               <label htmlFor="processId">
@@ -279,7 +407,7 @@ const Nails = props => {
             />
             <Button onClick={handleSaveStock}>Guardar</Button>
           </Card>
-        ) : null}
+        ) : null} */}
       </>
     )
   } else {
@@ -291,8 +419,8 @@ const mapStateToProps = state => {
   return {
     pallets: state.pallets,
     items: state.items,
-    nails: state.nails,
-    raws: state.raws,
+    zones: state.zones,
+    wood: state.wood,
   }
 }
 

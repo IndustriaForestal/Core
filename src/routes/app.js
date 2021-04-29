@@ -89,6 +89,10 @@ import Format2 from '../pages/Formats/FOR-CAL-FTP022'
 import SettingsHome from '../pages/Home/Settings'
 import TypeMaterial from '../pages/Settings/TypeMaterial'
 import TypeWood from '../pages/Settings/TypeWood'
+import Zones from '../pages/Zones'
+import CreatePlant from '../pages/Zones/CreatePlant'
+import CreateSubzone from '../pages/Zones/CreateSubzone'
+import CreateZone from '../pages/Zones/CreateZone'
 
 const App = ({ loggedIn }) => {
   const role = Cookies.get('role')
@@ -618,10 +622,16 @@ const App = ({ loggedIn }) => {
             <Route exact path="/format" component={Format1} />
             <Route exact path="/format/forcalftp022" component={Format2} />
 
-
-            <Route exact path="/settings/type-material" component={TypeMaterial} />
+            <Route
+              exact
+              path="/settings/type-material"
+              component={TypeMaterial}
+            />
             <Route exact path="/settings/type-wood" component={TypeWood} />
-
+            <Route exact path="/zones" component={Zones} />
+            <Route exact path="/zones/createzone" component={CreateZone} />
+            <Route exact path="/zones/createsubzone" component={CreateSubzone} />
+            <Route exact path="/zones/createplant" component={CreatePlant} />
 
             <Route exact path="/login" component={Login} />
             <Route component={NotFound} />

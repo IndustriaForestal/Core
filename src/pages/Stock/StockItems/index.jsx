@@ -1,16 +1,12 @@
 import React, { useEffect } from 'react'
-import { Link } from 'react-router-dom'
+
 import { connect } from 'react-redux'
-import { BsPlus } from 'react-icons/bs'
-import { AiOutlineEdit } from 'react-icons/ai'
 import { setTitle, getAll, deleted } from '../../../actions/app'
-import Table from '../../../components/Table/Table'
-import AddButton from '../../../components/AddButton/AddButton'
-import Button from '../../../components/Button/Button'
 import './styles.scss'
+import MaterialTable from 'material-table'
 
 const Nails = props => {
-  const { items, setTitle, role } = props
+  const { stock, setTitle, role } = props
 
   useEffect(() => {
     let topbar
@@ -38,52 +34,61 @@ const Nails = props => {
         })
 
     setTitle(topbar)
-    props.getAll('items', 'GET_ITEMS')
+    props.getAll('stock/items', 'GET_STOCK')
     // eslint-disable-next-line
   }, [])
 
-  let tableHeader
-  role === 'Administrador'
-    ? (tableHeader = ['Nombre', 'Stock', 'Acciones'])
-    : (tableHeader = ['Nombre', 'Stock'])
+  if (stock) {
+    const stockItems = stock.filter(item => item.item_type_id !== 4)
+    return (
+      <>
+        <MaterialTable
+          columns={[
+            { title: 'id', field: 'id' },
+            { title: 'Especie', field: 'name' },
+            { title: 'Alto', field: 'height' },
+            { title: 'Largo', field: 'length' },
+            { title: 'Ancho', field: 'width' },
+            { title: 'Seco', field: 'dry' },
+            { title: 'Humeda', field: 'damp' },
 
-  return (
-    <>
-      <Table head={tableHeader}>
-        {items ? (
-          items.map(item => (
-            <tr key={item._id}>
-              <td>{item.name}</td>
-              <td>{item.stock}</td>
-              {role === 'Administrador' ? (
-                <td>
-                  <Link to={`stock/update/${item._id}?type=item`}>
-                    <Button className="btn --warning">
-                      <AiOutlineEdit />
-                    </Button>
-                  </Link>
-                </td>
-              ) : null}
-            </tr>
-          ))
-        ) : (
-          <tr>
-            <td colSpan="7">No hay registros</td>
-          </tr>
-        )}
-      </Table>
-      <Link to="/items/create">
-        <AddButton>
-          <BsPlus />
-        </AddButton>
-      </Link>
-    </>
-  )
+            {
+              title: 'Total',
+              field: 'total',
+              render: rowData => rowData.dry + rowData.damp + rowData.repair,
+            },
+          ]}
+          localization={{
+            pagination: {
+              labelDisplayedRows: '{from}-{to} de {count}',
+              labelRowsSelect: 'Filas',
+              firstAriaLabel: 'Primera',
+              firstTooltip: 'Primera',
+              previousAriaLabel: 'Anterior',
+              previousTooltip: 'Anterior',
+              nextAriaLabel: 'Siguiente',
+              nextTooltip: 'Siguiente',
+              lastAriaLabel: 'Ultimo',
+              lastTooltip: 'Ultimo',
+            },
+            toolbar: {
+              searchTooltip: 'Buscar',
+              searchPlaceholder: 'Buscar',
+            },
+          }}
+          data={stockItems}
+          title="Inventario Complementos"
+        />
+      </>
+    )
+  } else {
+    return <h1>Cargando</h1>
+  }
 }
 
 const mapStateToProps = state => {
   return {
-    items: state.items,
+    stock: state.stock,
     role: state.role,
   }
 }

@@ -38,6 +38,7 @@ const Settings = props => {
             url="/settings/type-wood"
             text="Tipo de madera"
           />
+          <IconHome icon={<BsCardImage />} url="/zones" text="Zonas" />
         </div>
       )
 
