@@ -52,6 +52,7 @@ import StockNails from '../pages/Stock/StockNails'
 import StockUpdate from '../pages/Stock/StockUpdate'
 import StockChanges from '../pages/Stock/StockChanges'
 import StockHistory from '../pages/Stock/StockHistory'
+import StockSawn from '../pages/Stock/StockSawn'
 import Orders from '../pages/Orders'
 import MainOrder from '../pages/Orders/OrderMain'
 import OrderProduction from '../pages/Orders/OrderProduction'
@@ -412,6 +413,15 @@ const App = ({ loggedIn }) => {
               component={
                 role === 'Administrador' || role === 'Vista'
                   ? StockMaterial
+                  : Home
+              }
+            />
+            <Route
+              exact
+              path="/stockSawn"
+              component={
+                role === 'Administrador' || role === 'Vista'
+                  ? StockSawn
                   : Home
               }
             />

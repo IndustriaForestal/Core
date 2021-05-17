@@ -1,7 +1,7 @@
 import React, { useEffect } from 'react'
 import { connect } from 'react-redux'
 import { Link } from 'react-router-dom'
-import { getAll, create } from '../../../actions/app'
+import { getAll, create, update } from '../../../actions/app'
 import { useForm } from 'react-hook-form'
 import Card from '../../../components/Card/Card'
 import Input from '../../../components/Input/Input'
@@ -27,7 +27,11 @@ const CreateCustomer = props => {
     if (data.zone_id === '') {
       console.log(data)
     } else {
-      props.create(`zones/subzones/${data.zone_id}`, 'GET_SUBZONES', data)
+      props
+        .create(`zones/subzones/${data.zone_id}`, 'GET_SUBZONES', data)
+        .then(() => {
+          props.getAll('zones/subzones', 'GET_SUBZONES')
+        })
       document.getElementById('formCustomer').reset()
     }
   }
@@ -126,6 +130,22 @@ const CreateCustomer = props => {
           }}
           data={subzones}
           title="Sub-Zonas"
+          cellEditable={{
+            onCellEditApproved: (newValue, oldValue, rowData, columnDef) => {
+              return new Promise((resolve, reject) => {
+                props
+                  .update(`zones/subzones/${rowData.id}`, 'UPDATE_PLANT', {
+                    ...rowData,
+                    [columnDef.field]: newValue,
+                    user_id: Cookies.get('id'),
+                  })
+                  .then(() => {
+                    props.getAll('zones/subzones', 'GET_SUBZONES')
+                  })
+                setTimeout(resolve, 1000)
+              })
+            },
+          }}
         />
       </>
     )
@@ -137,6 +157,7 @@ const CreateCustomer = props => {
 const mapDispatchToProps = {
   create,
   getAll,
+  update
 }
 
 const mapStateToProps = state => {

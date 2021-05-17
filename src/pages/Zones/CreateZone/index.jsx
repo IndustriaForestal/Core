@@ -1,7 +1,7 @@
 import React, { useEffect } from 'react'
 import { connect } from 'react-redux'
 import { Link } from 'react-router-dom'
-import { create, getAll } from '../../../actions/app'
+import { create, getAll, update } from '../../../actions/app'
 import { useForm } from 'react-hook-form'
 import Card from '../../../components/Card/Card'
 import Input from '../../../components/Input/Input'
@@ -13,20 +13,20 @@ import MaterialTable from 'material-table'
 const CreateCustomer = props => {
   const { register, handleSubmit, errors } = useForm()
   const { plants, zones } = props
-  const endPoint = 'zones/plants'
   const typeAction = 'CREATE_CUSTOMER'
 
   useEffect(() => {
     props.getAll('zones/plants', 'GET_PLANTS').then(() => {
       props.getAll('zones/zones', 'GET_ZONES')
     })
-
     // eslint-disable-next-line
   }, [])
 
   const onSubmit = data => {
     data.user_id = Cookies.get('id')
-    props.create(`zones/zones/${data.plant_id}`, typeAction, data)
+    props.create(`zones/zones/${data.plant_id}`, typeAction, data).then(() => {
+      props.getAll('zones/zones', 'GET_ZONES')
+    })
     document.getElementById('formCustomer').reset()
   }
 
@@ -74,7 +74,7 @@ const CreateCustomer = props => {
         </Card>
         <MaterialTable
           columns={[
-            { title: 'ID', field: 'id' },
+            { title: 'ID', field: 'id', editable: 'never' },
             { title: 'Zona', field: 'name' },
           ]}
           localization={{
@@ -97,6 +97,22 @@ const CreateCustomer = props => {
           }}
           data={zones}
           title="Zonas"
+          cellEditable={{
+            onCellEditApproved: (newValue, oldValue, rowData, columnDef) => {
+              return new Promise((resolve, reject) => {
+                props
+                  .update(`zones/zones/${rowData.id}`, 'UPDATE_PLANT', {
+                    ...rowData,
+                    [columnDef.field]: newValue,
+                    user_id: Cookies.get('id'),
+                  })
+                  .then(() => {
+                    props.getAll('zones/zones', 'GET_ZONES')
+                  })
+                setTimeout(resolve, 1000)
+              })
+            },
+          }}
         />
       </>
     )
@@ -108,6 +124,7 @@ const CreateCustomer = props => {
 const mapDispatchToProps = {
   create,
   getAll,
+  update,
 }
 
 const mapStateToProps = state => {

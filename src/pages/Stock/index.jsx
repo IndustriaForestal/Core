@@ -10,29 +10,18 @@ const Nails = props => {
   const { stock, setTitle, role } = props
 
   useEffect(() => {
-    let topbar
-    role === 'Administrador'
-      ? (topbar = {
-          title: 'Inventarios Generales',
-          menu: {
-            Tarimas: '/stock',
-            Complementos: '/stockItems',
-            Clavos: '/stockNails',
-            'Materia Prima': '/stockMaterial',
-            'Entradas y salidas': '/stockChanges',
-            Historial: '/stockHistory',
-          },
-        })
-      : (topbar = {
-          title: 'Inventarios Generales',
-          menu: {
-            Tarimas: '/stock',
-            Complementos: '/stockItems',
-            Clavos: '/stockNails',
-            'Materia Prima': '/stockMaterial',
-            Historial: '/stockHistory',
-          },
-        })
+    const topbar = {
+      title: 'Inventarios Generales',
+      menu: {
+        Tarimas: '/stock',
+        Complementos: '/stockNails',
+        'Madera Habilitada': '/stockItems',
+        'Madera Aserrada': '/stockSawn',
+        'Materia Prima': '/stockMaterial',
+        'Entradas y salidas': '/stockChanges',
+        Historial: '/stockHistory',
+      },
+    }
 
     setTitle(topbar)
     setWraper(true)

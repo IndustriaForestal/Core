@@ -1,5 +1,6 @@
 import React, { useEffect, useState } from 'react'
 import { connect } from 'react-redux'
+import moment from 'moment'
 import {
   setTitle,
   setWraper,
@@ -14,24 +15,46 @@ import Input from '../../../components/Input/Input'
 import Button from '../../../components/Button/Button'
 import Loading from '../../../components/Loading/Loading'
 import Select from 'react-select'
+import MaterialTable from 'material-table'
 
 const Nails = props => {
-  const { pallets, items, zones, wood, setTitle } = props
+  const {
+    pallets,
+    items,
+    plants,
+    zones,
+    subzones,
+    wood,
+    setTitle,
+    sawn,
+    stockZoneSawn,
+    stockZoneItems,
+    stockZone,
+    stockZoneRaws,
+  } = props
   const [type, setType] = useState(0)
   const [idSelected, setIdSelected] = useState(0)
-  const [inOut, setInOut] = useState(0)
+  const [inOut, setInOut] = useState(null)
   const [amount, setAmount] = useState(0)
   const [sucursal, setSucursal] = useState(null)
   const [greenDryRepair, setGreenDryRepair] = useState(null)
   const [woodSelected, setWood] = useState()
+  const [plantSelected, setPlant] = useState(null)
+  const [zoneSelected, setZone] = useState(null)
+  const [subzoneSelected, setSubzone] = useState(null)
+  const [height, setHeight] = useState(0)
+  const [length, setLength] = useState(0)
+  const [width, setWidth] = useState(0)
+  const [m3, setM3] = useState(0)
 
   useEffect(() => {
     const topbar = {
-      title: 'Inventarios',
+      title: 'Inventarios Generales',
       menu: {
         Tarimas: '/stock',
-        Complementos: '/stockItems',
-        Clavos: '/stockNails',
+        Complementos: '/stockNails',
+        'Madera Habilitada': '/stockItems',
+        'Madera Aserrada': '/stockSawn',
         'Materia Prima': '/stockMaterial',
         'Entradas y salidas': '/stockChanges',
         Historial: '/stockHistory',
@@ -39,19 +62,80 @@ const Nails = props => {
     }
     setTitle(topbar)
     setWraper(true)
-    props.getAll('pallets', 'GET_PALLETS')
-    props.getAll('items', 'GET_ITEMS')
-    props.getAll('zones/zones', 'GET_ZONES')
-    props.getAll('wood', 'GET_WOOD')
+    props
+      .getAll('pallets', 'GET_PALLETS')
+      .then(() => {
+        props.getAll('items', 'GET_ITEMS')
+      })
+      .then(() => {
+        props.getAll('zones/plants', 'GET_PLANTS')
+      })
+      .then(() => {
+        props.getAll('zones/zones', 'GET_ZONES')
+      })
+      .then(() => {
+        props.getAll('zones/subzones', 'GET_SUBZONES')
+      })
+      .then(() => {
+        props.getAll('wood', 'GET_WOOD')
+      })
+      .then(() => {
+        props.getAll('stock/sawn', 'GET_STOCK')
+      })
+      .then(() => {
+        props.getAll('stock/stock_zones', 'GET_SZ')
+      })
+      .then(() => {
+        props.getAll('stock/stock_zones/items', 'GET_SZ_ITEMS')
+      })
+      .then(() => {
+        props.getAll('stock/stock_zones/sawn', 'GET_SZ_SAWN')
+      })
+      .then(() => {
+        props.getAll('stock/stock_zones/raws', 'GET_SZ_RAWS')
+      })
     // eslint-disable-next-line
   }, [])
+
+  console.log(plantSelected, zoneSelected, subzoneSelected)
+
+  const localization = {
+    pagination: {
+      labelDisplayedRows: '{from}-{to} de {count}',
+      labelRowsSelect: 'Filas',
+      firstAriaLabel: 'Primera',
+      firstTooltip: 'Primera',
+      previousAriaLabel: 'Anterior',
+      previousTooltip: 'Anterior',
+      nextAriaLabel: 'Siguiente',
+      nextTooltip: 'Siguiente',
+      lastAriaLabel: 'Ultimo',
+      lastTooltip: 'Ultimo',
+    },
+    toolbar: {
+      searchTooltip: 'Buscar',
+      searchPlaceholder: 'Buscar',
+    },
+  }
 
   const handleChangeStock = e => {
     setType(parseInt(e.target.value))
     setIdSelected(0)
   }
 
-  if (pallets && items && zones && wood) {
+  if (
+    pallets &&
+    items &&
+    zones &&
+    wood &&
+    plants &&
+    subzones &&
+    sawn &&
+    stockZoneSawn &&
+    stockZoneItems &&
+    stockZone &&
+    stockZoneRaws
+  ) {
     console.log(idSelected, type, inOut)
     const palletsOptions = pallets.map(pallet => {
       return {
@@ -60,29 +144,27 @@ const Nails = props => {
       }
     })
 
-    const itemsOptions = items.filter(item => {
-      if (item.item_type_id !== 4) {
+    const itemsOptions = items
+      .filter(item => item.item_type_id !== 4)
+      .map(item => {
         return {
           value: item.id,
-          label: item.heigth,
+          label: `${item.height} x ${item.width} x ${item.length} - ${
+            item.name !== null ? item.name : 'N/A'
+          }  `,
         }
-      } else {
-        return null
-      }
-    })
+      })
 
-    const nailsOptions = items.filter(item => {
-      if (item.item_type_id === 4) {
+    const nailsOptions = items
+      .filter(item => item.item_type_id === 4)
+      .map(item => {
         return {
           value: item.id,
-          label: item.name,
+          label: item.nail,
         }
-      } else {
-        return null
-      }
-    })
+      })
 
-    const handleSaveStock = () => {
+    const handleSaveStockPallet = () => {
       const user = Cookies.get('name')
       console.log(
         type,
@@ -93,321 +175,676 @@ const Nails = props => {
         sucursal,
         woodSelected
       )
-      if (type === 1) {
-        props
-          .update(`stock/pallets/${idSelected}`, 'PALLET_HISTORY', {
-            type,
-            amount,
-            inOut,
-            user_id: user,
-            state: greenDryRepair,
-            zone_id: sucursal,
-            wood_id: woodSelected,
-          })
-          .then(() => {
-            setType(0)
-          })
+      props
+        .create(`stock/pallets/${idSelected}`, 'PALLET_HISTORY', {
+          type,
+          amount,
+          inOut,
+          user_id: user,
+          state: greenDryRepair,
+          zone_id: subzoneSelected,
+          wood_id: woodSelected,
+          date: moment().format('YYYY-MM-DD'),
+        })
+        .then(() => {
+          setType(0)
+        })
+    }
+
+    const handleSaveStockItem = () => {
+      const user = Cookies.get('name')
+      props
+        .create(`stock/items/${idSelected}`, 'PALLET_HISTORY', {
+          amount,
+          user_id: user,
+          state: greenDryRepair,
+          zone_id: subzoneSelected,
+          date: moment().format('YYYY-MM-DD'),
+        })
+        .then(() => {
+          setType(0)
+        })
+    }
+
+    const handleSaveStockNail = () => {
+      const user = Cookies.get('name')
+      props
+        .create(`stock/nails/${idSelected}`, 'PALLET_HISTORY', {
+          amount,
+          user_id: user,
+          state: '',
+          date: moment().format('YYYY-MM-DD'),
+        })
+        .then(() => {
+          setType(0)
+        })
+    }
+
+    const handleSaveStockSawn = () => {
+      const user = Cookies.get('name')
+      const verification = sawn.find(
+        s =>
+          parseFloat(s.height) === parseFloat(height) &&
+          parseFloat(s.length) === parseFloat(length) &&
+          parseFloat(s.width) === parseFloat(width) &&
+          parseInt(s.wood_id) === parseInt(woodSelected) &&
+          s.state === greenDryRepair
+      )
+      props
+        .create(`stock/sawn/1`, 'PALLET_HISTORY', {
+          height,
+          length,
+          width,
+          amount,
+          wood_id: woodSelected,
+          user_id: user,
+          state: greenDryRepair,
+          zone_id: subzoneSelected,
+          date: moment().format('YYYY-MM-DD'),
+        })
+        .then(() => {
+          setType(0)
+        })
+      if (verification !== undefined) {
+        console.log(verification.id)
       } else {
-        console.log(type)
-        props
-          .update(`stock/items/${idSelected}`, 'PALLET_HISTORY', {
-            type,
-            amount,
-            inOut,
-            user_id: user,
-            state: greenDryRepair,
-            zone_id: sucursal,
-            wood_id: woodSelected,
-          })
-          .then(() => {
-            setType(0)
-          })
+        console.log(verification)
       }
     }
 
+    const handleSaveStockRaw = () => {
+      const user = Cookies.get('name')
+
+      props
+        .create(`stock/raws`, 'PALLET_HISTORY', {
+          m3,
+          amount,
+          wood_id: woodSelected,
+          user_id: user,
+          state: greenDryRepair,
+          zone_id: subzoneSelected,
+          date: moment().format('YYYY-MM-DD'),
+        })
+        .then(() => {
+          props.getAll('stock/stock_zones/items', 'GET_SZ_ITEMS')
+        })
+        .then(() => {
+          props.getAll('stock/stock_zones/sawn', 'GET_SZ_SAWN')
+        })
+        .then(() => {
+          props.getAll('stock/stock_zones/raws', 'GET_SZ_RAWS')
+        })
+    }
+
+    const handleDeleteStockZone = (id, table) => {
+      props.deleted(`stock/delete/${table}/${id}`).then(() => {
+        setType(0)
+      })
+    }
+
+    const stockZoneNailsFiltered = stockZoneItems.filter(
+      nail => nail.item_type_id === 4
+    )
+
+    const stockZoneItemsFiltered = stockZoneItems.filter(
+      item => item.item_type_id !== 4
+    )
+
     return (
       <>
-        <Card title="Cambio">
+        <Card title="Entradas y Salidas">
+          <div className="inputGroup">
+            <label htmlFor="processId">
+              <span>Tipo:</span>
+              <select
+                name="processId"
+                onChange={e => setInOut(parseInt(e.target.value))}
+              >
+                <option value="">Seleccionar</option>
+                <option value="0">Entrada</option>
+                <option value="1">Salida</option>
+              </select>
+            </label>
+          </div>
           <div className="inputGroup">
             <label htmlFor="processId">
               <span>Inventario:</span>
               <select onChange={e => handleChangeStock(e)} name="processId">
                 <option value="0">Seleccionar</option>
                 <option value="1">Tarima</option>
-                <option value="2">Complemento</option>
-                <option value="3">Clavos</option>
-                {/* <option value="4">Materia Prima</option> */}
+                <option value="2">Complementos</option>
+                <option value="3">Madera Habilitada</option>
+                <option value="4">Madera Aserrada</option>
+                <option value="5">Madera Trozo</option>
               </select>
             </label>
           </div>
         </Card>
         {type === 1 ? (
-          <Card title="Tarima">
-            <div className="inputGroup">
-              <label htmlFor="processId">
-                <span>Inventario:</span>
-                <Select
-                  onChange={e => setIdSelected(e.value)}
-                  options={palletsOptions}
-                />
-              </label>
-            </div>
-            <div className="inputGroup">
-              <label htmlFor="processId">
-                <span>Tipo:</span>
-                <select
-                  name="processId"
-                  onChange={e => setInOut(parseInt(e.target.value))}
-                >
-                  <option value="">Seleccionar</option>
-                  <option value="0">Entrada</option>
-                  {/* <option value="1">Salida</option> */}
-                </select>
-              </label>
-            </div>
-            <div className="inputGroup">
-              <label htmlFor="processId">
-                <span>Zona:</span>
-                <select
-                  name="processId"
-                  onChange={e => setSucursal(parseInt(e.target.value))}
-                >
-                  <option value="">Seleccionar</option>
-                  {zones.map(z => (
-                    <>
-                      <option value={z.id}>
-                        {z.id} {z.plant} {z.zone} {z.subzone}
+          inOut === 0 ? (
+            <Card title="Tarima">
+              <div className="inputGroup">
+                <label htmlFor="processId">
+                  <span>Inventario:</span>
+                  <Select
+                    onChange={e => setIdSelected(e.value)}
+                    options={palletsOptions}
+                  />
+                </label>
+              </div>
+
+              <div className="inputGroup">
+                <label htmlFor="processId">
+                  <span>Planta:</span>
+                  <select
+                    name="processId"
+                    onChange={e => setPlant(e.target.value)}
+                  >
+                    <option value="">Seleccionar</option>
+                    {plants.map(plant => (
+                      <option key={plant.id} value={plant.id}>
+                        {plant.name}
                       </option>
-                    </>
-                  ))}
-                </select>
-              </label>
-            </div>
-            <div className="inputGroup">
-              <label htmlFor="processId">
-                <span>Especie Madera:</span>
-                <select
-                  name="processId"
-                  onChange={e => setWood(parseInt(e.target.value))}
-                >
-                  <option value="">Seleccionar</option>
-                  {wood.map(w => (
-                    <>
-                      <option value={w.id}>{w.name}</option>
-                    </>
-                  ))}
-                </select>
-              </label>
-            </div>
-            <div className="inputGroup">
-              <label htmlFor="processId">
-                <span>Madera:</span>
-                <select
-                  name="processId"
-                  onChange={e => setGreenDryRepair(e.target.value)}
-                >
-                  <option value="">Seleccionar</option>
-                  <option value="dry">Secas</option>
-                  <option value="damp">Verdes</option>
-                  <option value="repair">Reaparación</option>
-                </select>
-              </label>
-            </div>
-            <Input
-              title="Cantidad"
-              onChange={e => setAmount(parseInt(e.target.value))}
+                    ))}
+                  </select>
+                </label>
+              </div>
+              {plantSelected !== null ? (
+                <div className="inputGroup">
+                  <label htmlFor="processId">
+                    <span>Zona:</span>
+                    <select
+                      name="processId"
+                      onChange={e => setZone(e.target.value)}
+                    >
+                      <option value="">Seleccionar</option>
+                      {zones
+                        .filter(zone => zone.plant_id === plantSelected)
+                        .map(zone => (
+                          <option key={zone.id} value={zone.id}>
+                            {zone.name}
+                          </option>
+                        ))}
+                    </select>
+                  </label>
+                </div>
+              ) : null}
+
+              {zoneSelected !== null ? (
+                <div className="inputGroup">
+                  <label htmlFor="processId">
+                    <span>SubZona:</span>
+                    <select
+                      name="processId"
+                      onChange={e => setSubzone(e.target.value)}
+                    >
+                      <option value="">Seleccionar</option>
+                      {subzones
+                        .filter(
+                          subzone =>
+                            parseInt(subzone.zone_id) === parseInt(zoneSelected)
+                        )
+                        .map(subzone => (
+                          <option key={subzone.id} value={subzone.id}>
+                            {subzone.id}
+                          </option>
+                        ))}
+                    </select>
+                  </label>
+                </div>
+              ) : null}
+
+              <div className="inputGroup">
+                <label htmlFor="processId">
+                  <span>Especie Madera:</span>
+                  <select
+                    name="processId"
+                    onChange={e => setWood(parseInt(e.target.value))}
+                  >
+                    <option value="">Seleccionar</option>
+                    {wood.map(w => (
+                      <>
+                        <option value={w.id}>{w.name}</option>
+                      </>
+                    ))}
+                  </select>
+                </label>
+              </div>
+              <div className="inputGroup">
+                <label htmlFor="processId">
+                  <span>Estado de la madera:</span>
+                  <select
+                    name="processId"
+                    onChange={e => setGreenDryRepair(e.target.value)}
+                  >
+                    <option value="">Seleccionar</option>
+                    <option value="dry">Secas</option>
+                    <option value="damp">Verdes</option>
+                    <option value="repair">Reaparación</option>
+                  </select>
+                </label>
+              </div>
+              <Input
+                title="Cantidad"
+                onChange={e => setAmount(parseInt(e.target.value))}
+              />
+              <Button onClick={handleSaveStockPallet}>Guardar</Button>
+            </Card>
+          ) : inOut === 1 ? (
+            <MaterialTable
+              localization={localization}
+              data={stockZone}
+              title="Disponible"
+              columns={[
+                { title: 'Subzona', field: 'zone_id' },
+                { title: 'Modelo', field: 'model' },
+                { title: 'Disponible', field: 'amount' },
+              ]}
             />
-            <Button onClick={handleSaveStock}>Guardar</Button>
-          </Card>
+          ) : null
         ) : null}
         {type === 2 ? (
-          <Card title="Complementos">
-            <div className="inputGroup">
-              <label htmlFor="processId">
-                <span>Inventario:</span>
-                <Select
-                  onChange={e => setIdSelected(e.value)}
-                  options={itemsOptions}
-                />
-              </label>
-            </div>
-            <div className="inputGroup">
-              <label htmlFor="processId">
-                <span>Tipo:</span>
-                <select
-                  name="processId"
-                  onChange={e => setInOut(parseInt(e.target.value))}
-                >
-                  <option value="">Seleccionar</option>
-                  <option value="0">Entrada</option>
-                  {/* <option value="1">Salida</option> */}
-                </select>
-              </label>
-            </div>
-            <div className="inputGroup">
-              <label htmlFor="processId">
-                <span>Zona:</span>
-                <select
-                  name="processId"
-                  onChange={e => setSucursal(parseInt(e.target.value))}
-                >
-                  <option value="">Seleccionar</option>
-                  {zones.map(z => (
-                    <>
-                      <option value={z.id}>
-                        {z.id} {z.plant} {z.zone} {z.subzone}
-                      </option>
-                    </>
-                  ))}
-                </select>
-              </label>
-            </div>
-            <div className="inputGroup">
-              <label htmlFor="processId">
-                <span>Especie Madera:</span>
-                <select
-                  name="processId"
-                  onChange={e => setWood(parseInt(e.target.value))}
-                >
-                  <option value="">Seleccionar</option>
-                  {wood.map(w => (
-                    <>
-                      <option value={w.id}>{w.name}</option>
-                    </>
-                  ))}
-                </select>
-              </label>
-            </div>
-            <div className="inputGroup">
-              <label htmlFor="processId">
-                <span>Madera:</span>
-                <select
-                  name="processId"
-                  onChange={e => setGreenDryRepair(e.target.value)}
-                >
-                  <option value="">Seleccionar</option>
-                  <option value="dry">Secas</option>
-                  <option value="damp">Verdes</option>
-                  <option value="repair">Reaparación</option>
-                </select>
-              </label>
-            </div>
-            <Input
-              title="Cantidad"
-              onChange={e => setAmount(parseInt(e.target.value))}
+          inOut === 0 ? (
+            <Card title="Complementos">
+              <div className="inputGroup">
+                <label htmlFor="processId">
+                  <span>Inventario:</span>
+                  <Select
+                    onChange={e => setIdSelected(e.value)}
+                    options={nailsOptions}
+                  />
+                </label>
+              </div>
+
+              <Input
+                title="Cantidad"
+                onChange={e => setAmount(parseInt(e.target.value))}
+              />
+              <Button onClick={handleSaveStockNail}>Guardar</Button>
+            </Card>
+          ) : inOut === 1 ? (
+            <MaterialTable
+              localization={localization}
+              data={stockZoneNailsFiltered}
+              title="Disponible"
+              columns={[
+                { title: 'Clavo', field: 'nail' },
+                { title: 'Disponible', field: 'amount' },
+              ]}
             />
-            <Button onClick={handleSaveStock}>Guardar</Button>
-          </Card>
+          ) : null
         ) : null}
         {type === 3 ? (
-          <Card title="Clavos">
-            <div className="inputGroup">
-              <label htmlFor="processId">
-                <span>Inventario:</span>
-                <Select
-                  onChange={e => setIdSelected(e.value)}
-                  options={nailsOptions}
-                />
-              </label>
-            </div>
-            <div className="inputGroup">
-              <label htmlFor="processId">
-                <span>Tipo:</span>
-                <select
-                  name="processId"
-                  onChange={e => setInOut(parseInt(e.target.value))}
-                >
-                  <option value="">Seleccionar</option>
-                  <option value="0">Entrada</option>
-                  {/* <option value="1">Salida</option> */}
-                </select>
-              </label>
-            </div>
-            <div className="inputGroup">
-              <label htmlFor="processId">
-                <span>Zona:</span>
-                <select
-                  name="processId"
-                  onChange={e => setSucursal(parseInt(e.target.value))}
-                >
-                  <option value="">Seleccionar</option>
-                  {zones.map(z => (
-                    <>
-                      <option value={z.id}>
-                        {z.id} {z.plant} {z.zone} {z.subzone}
+          inOut === 0 ? (
+            <Card title="Madera Habilitada">
+              <div className="inputGroup">
+                <label htmlFor="processId">
+                  <span>Inventario:</span>
+                  <Select
+                    onChange={e => setIdSelected(e.value)}
+                    options={itemsOptions}
+                  />
+                </label>
+              </div>
+
+              <div className="inputGroup">
+                <label htmlFor="processId">
+                  <span>Planta:</span>
+                  <select
+                    name="processId"
+                    onChange={e => setPlant(e.target.value)}
+                  >
+                    <option value="">Seleccionar</option>
+                    {plants.map(plant => (
+                      <option key={plant.id} value={plant.id}>
+                        {plant.name}
                       </option>
-                    </>
-                  ))}
-                </select>
-              </label>
-            </div>
-            <div className="inputGroup">
-              <label htmlFor="processId">
-                <span>Especie Madera:</span>
-                <select
-                  name="processId"
-                  onChange={e => setWood(parseInt(e.target.value))}
-                >
-                  <option value="">Seleccionar</option>
-                  {wood.map(w => (
-                    <>
-                      <option value={w.id}>{w.name}</option>
-                    </>
-                  ))}
-                </select>
-              </label>
-            </div>
-            <div className="inputGroup">
-              <label htmlFor="processId">
-                <span>Madera:</span>
-                <select
-                  name="processId"
-                  onChange={e => setGreenDryRepair(e.target.value)}
-                >
-                  <option value="">Seleccionar</option>
-                  <option value="dry">Secas</option>
-                  <option value="damp">Verdes</option>
-                  <option value="repair">Reaparación</option>
-                </select>
-              </label>
-            </div>
-            <Input
-              title="Cantidad"
-              onChange={e => setAmount(parseInt(e.target.value))}
+                    ))}
+                  </select>
+                </label>
+              </div>
+              {plantSelected !== null ? (
+                <div className="inputGroup">
+                  <label htmlFor="processId">
+                    <span>Zona:</span>
+                    <select
+                      name="processId"
+                      onChange={e => setZone(e.target.value)}
+                    >
+                      <option value="">Seleccionar</option>
+                      {zones
+                        .filter(zone => zone.plant_id === plantSelected)
+                        .map(zone => (
+                          <option key={zone.id} value={zone.id}>
+                            {zone.name}
+                          </option>
+                        ))}
+                    </select>
+                  </label>
+                </div>
+              ) : null}
+
+              {zoneSelected !== null ? (
+                <div className="inputGroup">
+                  <label htmlFor="processId">
+                    <span>SubZona:</span>
+                    <select
+                      name="processId"
+                      onChange={e => setSubzone(e.target.value)}
+                    >
+                      <option value="">Seleccionar</option>
+                      {subzones
+                        .filter(
+                          subzone =>
+                            parseInt(subzone.zone_id) === parseInt(zoneSelected)
+                        )
+                        .map(subzone => (
+                          <option key={subzone.id} value={subzone.id}>
+                            {subzone.id}
+                          </option>
+                        ))}
+                    </select>
+                  </label>
+                </div>
+              ) : null}
+
+              <div className="inputGroup">
+                <label htmlFor="processId">
+                  <span>Estado de la madera:</span>
+                  <select
+                    name="processId"
+                    onChange={e => setGreenDryRepair(e.target.value)}
+                  >
+                    <option value="">Seleccionar</option>
+                    <option value="dry">Secas</option>
+                    <option value="damp">Verdes</option>
+                    <option value="repair">Reaparación</option>
+                  </select>
+                </label>
+              </div>
+              <Input
+                title="Cantidad"
+                onChange={e => setAmount(parseInt(e.target.value))}
+              />
+              <Button onClick={handleSaveStockItem}>Guardar</Button>
+            </Card>
+          ) : inOut === 1 ? (
+            <MaterialTable
+              localization={localization}
+              data={stockZoneItemsFiltered}
+              title="Disponible"
+              columns={[
+                { title: 'SubZona', field: 'zone_id' },
+                {
+                  title: 'Subzona',
+                  field: 'height',
+                  render: rowData =>
+                    `${rowData.height} x ${rowData.width} x ${rowData.length} - ${rowData.name}`,
+                },
+                { title: 'Disponible', field: 'amount' },
+              ]}
             />
-            <Button onClick={handleSaveStock}>Guardar</Button>
-          </Card>
+          ) : null
         ) : null}
-        {/* {type === 4 ? (
-          <Card title="Clavos">
-            <div className="inputGroup">
-              <label htmlFor="processId">
-                <span>Inventario:</span>
-                <Select
-                  onChange={e => setIdSelected(e.value)}
-                  options={rawsOptions}
-                />
-              </label>
-            </div>
-            <div className="inputGroup">
-              <label htmlFor="processId">
-                <span>Tipo:</span>
-                <select
-                  name="processId"
-                  onChange={e => setInOut(parseInt(e.target.value))}
-                >
-                  <option value="0">Entrada</option>
-                  <option value="1">Salida</option>
-                </select>
-              </label>
-            </div>
-            <Input
-              title="Cantidad"
-              onChange={e => setAmount(parseInt(e.target.value))}
+        {type === 4 ? (
+          inOut === 0 ? (
+            <Card title="Madera Aserrada">
+              <Input
+                onChange={e => setLength(e.target.value)}
+                type="number"
+                name="length"
+                step="any"
+                title="Largo"
+              />
+              <Input
+                onChange={e => setWidth(e.target.value)}
+                type="number"
+                name="width"
+                step="any"
+                title="Ancho"
+              />
+              <Input
+                onChange={e => setHeight(e.target.value)}
+                type="number"
+                name="height"
+                step="any"
+                title="Alto"
+              />
+              <div className="inputGroup">
+                <label htmlFor="processId">
+                  <span>Planta:</span>
+                  <select
+                    name="processId"
+                    onChange={e => setPlant(e.target.value)}
+                  >
+                    <option value="">Seleccionar</option>
+                    {plants.map(plant => (
+                      <option key={plant.id} value={plant.id}>
+                        {plant.name}
+                      </option>
+                    ))}
+                  </select>
+                </label>
+              </div>
+              {plantSelected !== null ? (
+                <div className="inputGroup">
+                  <label htmlFor="processId">
+                    <span>Zona:</span>
+                    <select
+                      name="processId"
+                      onChange={e => setZone(e.target.value)}
+                    >
+                      <option value="">Seleccionar</option>
+                      {zones
+                        .filter(zone => zone.plant_id === plantSelected)
+                        .map(zone => (
+                          <option key={zone.id} value={zone.id}>
+                            {zone.name}
+                          </option>
+                        ))}
+                    </select>
+                  </label>
+                </div>
+              ) : null}
+
+              {zoneSelected !== null ? (
+                <div className="inputGroup">
+                  <label htmlFor="processId">
+                    <span>SubZona:</span>
+                    <select
+                      name="processId"
+                      onChange={e => setSubzone(e.target.value)}
+                    >
+                      <option value="">Seleccionar</option>
+                      {subzones
+                        .filter(
+                          subzone =>
+                            parseInt(subzone.zone_id) === parseInt(zoneSelected)
+                        )
+                        .map(subzone => (
+                          <option key={subzone.id} value={subzone.id}>
+                            {subzone.id}
+                          </option>
+                        ))}
+                    </select>
+                  </label>
+                </div>
+              ) : null}
+
+              <div className="inputGroup">
+                <label htmlFor="processId">
+                  <span>Especie Madera:</span>
+                  <select
+                    name="processId"
+                    onChange={e => setWood(parseInt(e.target.value))}
+                  >
+                    <option value="">Seleccionar</option>
+                    {wood.map(w => (
+                      <>
+                        <option value={w.id}>{w.name}</option>
+                      </>
+                    ))}
+                  </select>
+                </label>
+              </div>
+              <div className="inputGroup">
+                <label htmlFor="processId">
+                  <span>Estado de la madera:</span>
+                  <select
+                    name="processId"
+                    onChange={e => setGreenDryRepair(e.target.value)}
+                  >
+                    <option value="">Seleccionar</option>
+                    <option value="dry">Secas</option>
+                    <option value="damp">Verdes</option>
+                    <option value="repair">Reaparación</option>
+                  </select>
+                </label>
+              </div>
+              <Input
+                title="Cantidad"
+                onChange={e => setAmount(parseInt(e.target.value))}
+              />
+              <Button onClick={handleSaveStockSawn}>Guardar</Button>
+            </Card>
+          ) : inOut === 1 ? (
+            <MaterialTable
+              localization={localization}
+              data={stockZoneSawn.filter(i => i.item_type_id !== 4)}
+              title="Disponible"
+              columns={[
+                { title: 'SubZona', field: 'zone_id' },
+                {
+                  title: 'Subzona',
+                  field: 'height',
+                  render: rowData =>
+                    `${rowData.height} x ${rowData.width} x ${rowData.length} - ${rowData.name}`,
+                },
+                { title: 'Disponible', field: 'amount' },
+              ]}
             />
-            <Button onClick={handleSaveStock}>Guardar</Button>
-          </Card>
-        ) : null} */}
+          ) : null
+        ) : null}
+        {type === 5 ? (
+          inOut === 0 ? (
+            <Card title="Madera Trozo">
+              <Input
+                onChange={e => setM3(e.target.value)}
+                type="number"
+                name="m3"
+                step="any"
+                title="Volumen"
+              />
+
+              <div className="inputGroup">
+                <label htmlFor="processId">
+                  <span>Planta:</span>
+                  <select
+                    name="processId"
+                    onChange={e => setPlant(e.target.value)}
+                  >
+                    <option value="">Seleccionar</option>
+                    {plants.map(plant => (
+                      <option key={plant.id} value={plant.id}>
+                        {plant.name}
+                      </option>
+                    ))}
+                  </select>
+                </label>
+              </div>
+              {plantSelected !== null ? (
+                <div className="inputGroup">
+                  <label htmlFor="processId">
+                    <span>Zona:</span>
+                    <select
+                      name="processId"
+                      onChange={e => setZone(e.target.value)}
+                    >
+                      <option value="">Seleccionar</option>
+                      {zones
+                        .filter(zone => zone.plant_id === plantSelected)
+                        .map(zone => (
+                          <option key={zone.id} value={zone.id}>
+                            {zone.name}
+                          </option>
+                        ))}
+                    </select>
+                  </label>
+                </div>
+              ) : null}
+
+              {zoneSelected !== null ? (
+                <div className="inputGroup">
+                  <label htmlFor="processId">
+                    <span>SubZona:</span>
+                    <select
+                      name="processId"
+                      onChange={e => setSubzone(e.target.value)}
+                    >
+                      <option value="">Seleccionar</option>
+                      {subzones
+                        .filter(
+                          subzone =>
+                            parseInt(subzone.zone_id) === parseInt(zoneSelected)
+                        )
+                        .map(subzone => (
+                          <option key={subzone.id} value={subzone.id}>
+                            {subzone.id}
+                          </option>
+                        ))}
+                    </select>
+                  </label>
+                </div>
+              ) : null}
+
+              <div className="inputGroup">
+                <label htmlFor="processId">
+                  <span>Especie Madera:</span>
+                  <select
+                    name="processId"
+                    onChange={e => setWood(parseInt(e.target.value))}
+                  >
+                    <option value="">Seleccionar</option>
+                    {wood.map(w => (
+                      <>
+                        <option value={w.id}>{w.name}</option>
+                      </>
+                    ))}
+                  </select>
+                </label>
+              </div>
+              <div className="inputGroup">
+                <label htmlFor="processId">
+                  <span>Estado de la madera:</span>
+                  <select
+                    name="processId"
+                    onChange={e => setGreenDryRepair(e.target.value)}
+                  >
+                    <option value="">Seleccionar</option>
+                    <option value="dry">Secas</option>
+                    <option value="damp">Verdes</option>
+                    <option value="repair">Reaparación</option>
+                  </select>
+                </label>
+              </div>
+              <Button onClick={handleSaveStockRaw}>Guardar</Button>
+            </Card>
+          ) : inOut === 1 ? (
+            <MaterialTable
+              localization={localization}
+              data={stockZoneRaws.filter(i => i.item_type_id !== 4)}
+              title="Disponible"
+              columns={[
+                { title: 'SubZona', field: 'zone_id' },
+                {
+                  title: 'Subzona',
+                  field: 'm3',
+                  render: rowData => `${rowData.m3} - ${rowData.name}`,
+                },
+              ]}
+            />
+          ) : null
+        ) : null}
       </>
     )
   } else {
@@ -419,8 +856,15 @@ const mapStateToProps = state => {
   return {
     pallets: state.pallets,
     items: state.items,
+    sawn: state.stock,
+    plants: state.plants,
     zones: state.zones,
+    subzones: state.subzones,
     wood: state.wood,
+    stockZone: state.stockZone,
+    stockZoneItems: state.stockZoneItems,
+    stockZoneSawn: state.stockZoneSawn,
+    stockZoneRaws: state.stockZoneRaws,
   }
 }
 

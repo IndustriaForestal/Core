@@ -24,14 +24,15 @@ const StockEdit = props => {
 
   useEffect(() => {
     const topbar = {
-      title: 'Inventarios',
+      title: 'Inventarios Generales',
       menu: {
         Tarimas: '/stock',
-        Complementos: '/stockItems',
-        Clavos: '/stockNails',
+        Complementos: '/stockNails',
+        'Madera Habilitada': '/stockItems',
+        'Madera Aserrada': '/stockSawn',
         'Materia Prima': '/stockMaterial',
         'Entradas y salidas': '/stockChanges',
-        'Historial': '/stockHistory',
+        Historial: '/stockHistory',
       },
     }
     setTitle(topbar)

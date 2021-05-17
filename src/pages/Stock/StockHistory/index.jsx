@@ -13,29 +13,18 @@ const StockHistory = props => {
   const [filter, setFilter] = useState([])
 
   useEffect(() => {
-    let topbar
-    role === 'Administrador'
-      ? (topbar = {
-          title: 'Inventarios',
-          menu: {
-            Tarimas: '/stock',
-            Complementos: '/stockItems',
-            Clavos: '/stockNails',
-            'Materia Prima': '/stockMaterial',
-            'Entradas y salidas': '/stockChanges',
-            Historial: '/stockHistory',
-          },
-        })
-      : (topbar = {
-          title: 'Inventarios',
-          menu: {
-            Tarimas: '/stock',
-            Complementos: '/stockItems',
-            Clavos: '/stockNails',
-            'Materia Prima': '/stockMaterial',
-            Historial: '/stockHistory',
-          },
-        })
+    const topbar = {
+      title: 'Inventarios Generales',
+      menu: {
+        Tarimas: '/stock',
+        Complementos: '/stockNails',
+        'Madera Habilitada': '/stockItems',
+        'Madera Aserrada': '/stockSawn',
+        'Materia Prima': '/stockMaterial',
+        'Entradas y salidas': '/stockChanges',
+        Historial: '/stockHistory',
+      },
+    }
     setTitle(topbar)
     props.getAll('stock', 'GET_STOCKLOG')
     props.getAll('pallets', 'GET_PALLETS')

@@ -1,7 +1,7 @@
 import React, { useEffect } from 'react'
 import { connect } from 'react-redux'
 import { Link } from 'react-router-dom'
-import { create, getAll } from '../../../actions/app'
+import { create, getAll, update } from '../../../actions/app'
 import { useForm } from 'react-hook-form'
 import Card from '../../../components/Card/Card'
 import Input from '../../../components/Input/Input'
@@ -23,7 +23,9 @@ const CreateCustomer = props => {
 
   const onSubmit = data => {
     data.user_id = Cookies.get('id')
-    props.create(endPoint, typeAction, data)
+    props.create(endPoint, typeAction, data).then(() => {
+      props.getAll('zones/plants', 'GET_PLANTS')
+    })
     document.getElementById('formCustomer').reset()
   }
 
@@ -56,7 +58,7 @@ const CreateCustomer = props => {
         </Card>
         <MaterialTable
           columns={[
-            { title: 'ID', field: 'id' },
+            { title: 'ID', field: 'id', editable: 'never' },
             { title: 'Planta', field: 'name' },
           ]}
           localization={{
@@ -79,6 +81,22 @@ const CreateCustomer = props => {
           }}
           data={plants}
           title="Plantas"
+          cellEditable={{
+            onCellEditApproved: (newValue, oldValue, rowData, columnDef) => {
+              return new Promise((resolve, reject) => {
+                props
+                  .update(`zones/plants/${rowData.id}`, 'UPDATE_PLANT', {
+                    ...rowData,
+                    [columnDef.field]: newValue,
+                    user_id: Cookies.get('id'),
+                  })
+                  .then(() => {
+                    props.getAll('zones/plants', 'GET_PLANTS')
+                  })
+                setTimeout(resolve, 1000)
+              })
+            },
+          }}
         />
       </>
     )
@@ -90,6 +108,7 @@ const CreateCustomer = props => {
 const mapDispatchToProps = {
   create,
   getAll,
+  update,
 }
 
 const mapStateToProps = state => {

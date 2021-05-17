@@ -9,29 +9,18 @@ const Nails = props => {
   const { stock, setTitle, role } = props
 
   useEffect(() => {
-    let topbar
-    role === 'Administrador'
-      ? (topbar = {
-          title: 'Inventarios',
-          menu: {
-            Tarimas: '/stock',
-            Complementos: '/stockItems',
-            Clavos: '/stockNails',
-            'Materia Prima': '/stockMaterial',
-            'Entradas y salidas': '/stockChanges',
-            Historial: '/stockHistory',
-          },
-        })
-      : (topbar = {
-          title: 'Inventarios',
-          menu: {
-            Tarimas: '/stock',
-            Complementos: '/stockItems',
-            Clavos: '/stockNails',
-            'Materia Prima': '/stockMaterial',
-            Historial: '/stockHistory',
-          },
-        })
+    const topbar = {
+      title: 'Inventarios Generales',
+      menu: {
+        Tarimas: '/stock',
+        Complementos: '/stockNails',
+        'Madera Habilitada': '/stockItems',
+        'Madera Aserrada': '/stockSawn',
+        'Materia Prima': '/stockMaterial',
+        'Entradas y salidas': '/stockChanges',
+        Historial: '/stockHistory',
+      },
+    }
 
     setTitle(topbar)
     props.getAll('stock/items', 'GET_STOCK')
@@ -45,7 +34,8 @@ const Nails = props => {
         <MaterialTable
           columns={[
             { title: 'id', field: 'id' },
-            { title: 'Especie', field: 'name' },
+            { title: 'Tipo', field: 'item_type_name' },
+            { title: 'Especie', field: 'wood_name' },
             { title: 'Alto', field: 'height' },
             { title: 'Largo', field: 'length' },
             { title: 'Ancho', field: 'width' },
@@ -77,7 +67,7 @@ const Nails = props => {
             },
           }}
           data={stockItems}
-          title="Inventario Complementos"
+          title="Madera Habilitada"
         />
       </>
     )

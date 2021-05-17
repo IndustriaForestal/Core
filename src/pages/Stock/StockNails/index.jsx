@@ -9,29 +9,18 @@ const Nails = props => {
   const { stock, setTitle, role } = props
 
   useEffect(() => {
-    let topbar
-    role === 'Administrador'
-      ? (topbar = {
-          title: 'Inventarios',
-          menu: {
-            Tarimas: '/stock',
-            Complementos: '/stockItems',
-            Clavos: '/stockNails',
-            'Materia Prima': '/stockMaterial',
-            'Entradas y salidas': '/stockChanges',
-            Historial: '/stockHistory',
-          },
-        })
-      : (topbar = {
-          title: 'Inventarios',
-          menu: {
-            Tarimas: '/stock',
-            Complementos: '/stockItems',
-            Clavos: '/stockNails',
-            'Materia Prima': '/stockMaterial',
-            Historial: '/stockHistory',
-          },
-        })
+    const topbar = {
+      title: 'Inventarios Generales',
+      menu: {
+        Tarimas: '/stock',
+        Complementos: '/stockNails',
+        'Madera Habilitada': '/stockItems',
+        'Madera Aserrada': '/stockSawn',
+        'Materia Prima': '/stockMaterial',
+        'Entradas y salidas': '/stockChanges',
+        Historial: '/stockHistory',
+      },
+    }
 
     setTitle(topbar)
     props.getAll('stock/items', 'GET_STOCK')
@@ -49,7 +38,7 @@ const Nails = props => {
             {
               title: 'Total',
               field: 'total',
-              render: rowData => rowData.dry + rowData.damp + rowData.repair,
+              render: rowData => rowData.stock,
             },
           ]}
           localization={{

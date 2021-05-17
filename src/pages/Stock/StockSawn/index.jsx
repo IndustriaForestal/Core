@@ -22,7 +22,7 @@ const StockSwan = props => {
     }
 
     setTitle(topbar)
-    props.getAll('stock/raws', 'GET_STOCK')
+    props.getAll('stock/sawn', 'GET_STOCK')
     // eslint-disable-next-line
   }, [])
 
@@ -33,9 +33,19 @@ const StockSwan = props => {
         <MaterialTable
           columns={[
             { title: 'id', field: 'id' },
-            { title: 'Volumen', field: 'm3' },
-            { title: 'Especie', field: 'name' },
-            { title: 'Estado', field: 'state' },
+            { title: 'Tipo', field: 'item_type_name' },
+            { title: 'Especie', field: 'wood_name' },
+            { title: 'Alto', field: 'height' },
+            { title: 'Largo', field: 'length' },
+            { title: 'Ancho', field: 'width' },
+            { title: 'Seco', field: 'dry' },
+            { title: 'Humeda', field: 'damp' },
+
+            {
+              title: 'Total',
+              field: 'total',
+              render: rowData => rowData.dry + rowData.damp + rowData.repair,
+            },
           ]}
           localization={{
             pagination: {
@@ -55,8 +65,8 @@ const StockSwan = props => {
               searchPlaceholder: 'Buscar',
             },
           }}
-          data={stock}
-          title="Materia Prima"
+          data={stockItems}
+          title="Madera Habilitada"
         />
       </>
     )
