@@ -1,21 +1,16 @@
-import React, { useEffect, useState } from 'react'
+import React, { useEffect } from 'react'
 import { Link } from 'react-router-dom'
 import { connect } from 'react-redux'
-import { AiOutlineEdit, AiOutlineDelete } from 'react-icons/ai'
 import { BsPlus } from 'react-icons/bs'
 import { setTitle, getAll, deleted } from '../../actions/app'
 import Swal from 'sweetalert2'
-import Table from '../../components/Table/Table'
-import Button from '../../components/Button/Button'
 import AddButton from '../../components/AddButton/AddButton'
-import SearchBar from '../../components/SearchBar/SearchBar'
 import './styles.scss'
 
 import MaterialTable from 'material-table'
 
 const Customers = props => {
-  const { customers, setTitle, role, zones, subzones, plants } = props
-  const [filter, setFilter] = useState([])
+  const { setTitle, role, zones, subzones, plants } = props
 
   useEffect(() => {
     const topbar = {
@@ -59,25 +54,6 @@ const Customers = props => {
         'Teléfono',
         'Embarques Semana',
       ])
-
-  const handlerDeleteCustomer = customerID => {
-    Swal.fire({
-      title: '¿Estás seguro?',
-      text: 'Este proceso no se puede revertir',
-      icon: 'warning',
-      showCancelButton: true,
-      confirmButtonColor: '#3085d6',
-      cancelButtonColor: '#d33',
-      confirmButtonText: 'Si, borrar',
-    }).then(result => {
-      if (result.isConfirmed) {
-        props.deleted(`customers/${customerID}`, 'DELETE_CUSTOMER').then(() => {
-          props.getAll('cusomters', 'GET_CUSTOMERS')
-        })
-        Swal.fire('Borrado!', 'Borrado con exito.', 'success')
-      }
-    })
-  }
 
   if (zones && subzones && plants) {
     const zonesCompleted = subzones.map(sz => {

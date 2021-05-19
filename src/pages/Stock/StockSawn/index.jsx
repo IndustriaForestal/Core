@@ -33,19 +33,12 @@ const StockSwan = props => {
         <MaterialTable
           columns={[
             { title: 'id', field: 'id' },
-            { title: 'Tipo', field: 'item_type_name' },
-            { title: 'Especie', field: 'wood_name' },
+            { title: 'Especie', field: 'name' },
             { title: 'Alto', field: 'height' },
             { title: 'Largo', field: 'length' },
             { title: 'Ancho', field: 'width' },
-            { title: 'Seco', field: 'dry' },
-            { title: 'Humeda', field: 'damp' },
-
-            {
-              title: 'Total',
-              field: 'total',
-              render: rowData => rowData.dry + rowData.damp + rowData.repair,
-            },
+            { title: 'Estado', field: 'state' },
+            { title: 'Cantidad', field: 'stock' },
           ]}
           localization={{
             pagination: {

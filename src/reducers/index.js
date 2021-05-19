@@ -560,6 +560,26 @@ const reducer = (state, action) => {
         ...state,
         stockZoneRaws: action.payload.data,
       }
+    case 'GET_SH':
+      return {
+        ...state,
+        stockHistory: action.payload.data,
+      }
+    case 'GET_SH_ITEMS':
+      return {
+        ...state,
+        stockHistoryItems: action.payload.data,
+      }
+    case 'GET_SH_SAWN':
+      return {
+        ...state,
+        stockHistorySawn: action.payload.data,
+      }
+    case 'GET_SH_RAWS':
+      return {
+        ...state,
+        stockHistoryRaws: action.payload.data,
+      }
 
     default:
       return state

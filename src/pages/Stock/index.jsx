@@ -38,10 +38,12 @@ const Nails = props => {
           { title: 'Seco', field: 'dry' },
           { title: 'Humeda', field: 'damp' },
           { title: 'Reaparación', field: 'repair' },
+          { title: 'Stock de Seguridad', field: 'stock' },
           {
             title: 'Total',
             field: 'total',
-            render: rowData => rowData.dry + rowData.damp + rowData.repair,
+            render: rowData =>
+              rowData.dry + rowData.damp + rowData.repair + rowData.stock,
           },
         ]}
         localization={{
