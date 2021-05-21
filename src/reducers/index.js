@@ -570,6 +570,11 @@ const reducer = (state, action) => {
         ...state,
         stockHistoryItems: action.payload.data,
       }
+    case 'GET_SH_NAILS':
+      return {
+        ...state,
+        stockHistoryNails: action.payload.data,
+      }
     case 'GET_SH_SAWN':
       return {
         ...state,

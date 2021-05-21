@@ -4,10 +4,17 @@ import { connect } from 'react-redux'
 import { BsPlus } from 'react-icons/bs'
 import { setTitle, getAll, deleted } from '../../../actions/app'
 import Loading from '../../../components/Loading/Loading'
+import moment from 'moment'
 import MaterialTable from 'material-table'
 
 const StockHistory = props => {
-  const { stockHistory, stockHistoryItems } = props
+  const {
+    stockHistory,
+    stockHistoryItems,
+    stockHistoryNails,
+    stockHistorySawn,
+    stockHistoryRaws,
+  } = props
 
   useEffect(() => {
     const topbar = {
@@ -23,36 +30,153 @@ const StockHistory = props => {
       },
     }
     setTitle(topbar)
-    props.getAll('stock/stock_history/pallets', 'GET_SH').then(() => {
-      props.getAll('stock/stock_history/items', 'GET_SH_ITEMS')
-    })
+    props
+      .getAll('stock/stock_history/pallets', 'GET_SH')
+      .then(() => {
+        props.getAll('stock/stock_history/items', 'GET_SH_ITEMS')
+      })
+      .then(() => {
+        props.getAll('stock/stock_history/nails', 'GET_SH_NAILS')
+      })
+      .then(() => {
+        props.getAll('stock/stock_history/sawn', 'GET_SH_SAWN')
+      })
+      .then(() => {
+        props.getAll('stock/stock_history/raws', 'GET_SH_RAWS')
+      })
     // eslint-disable-next-line
   }, [])
 
-  if (stockHistory && stockHistoryItems) {
+  function compare(a, b) {
+    const orderA = a.date
+    const orderB = b.date
 
-    console.table(stockHistory)
-    console.table(stockHistoryItems)
+    let comparison = 0
+    if (orderA < orderB) {
+      comparison = 1
+    } else if (orderA > orderB) {
+      comparison = -1
+    }
+    return comparison
+  }
+
+  if (
+    stockHistory &&
+    stockHistoryItems &&
+    stockHistorySawn &&
+    stockHistoryRaws &&
+    stockHistoryNails
+  ) {
+    console.table(stockHistoryNails)
+
+    let stockHistoryTotal = []
+
+    stockHistory.map(sh => {
+      stockHistoryTotal.push({
+        id: sh.id,
+        zone: 'Tarima',
+        name: sh.model,
+        amount: sh.amount,
+        zone_id: sh.zone_id,
+        status:
+          sh.order_id !== null
+            ? sh.order.paper_number
+            : sh.process_id !== null
+            ? sh.process_name
+            : sh.supplier_id !== null
+            ? sh.supplier_name
+            : 'Ingresado Manual',
+        date: moment(sh.date).format('YYYY-MM-DD HH:mm:ss'),
+      })
+    })
+
+    stockHistoryItems.map(sh => {
+      stockHistoryTotal.push({
+        id: sh.id,
+        zone: 'Madera Habilitada',
+        name: `${sh.height} x ${sh.width} x ${sh.length} - ${sh.wood_name}`,
+        amount: sh.amount,
+        zone_id: sh.zone_id,
+        status:
+          sh.order_id !== null
+            ? sh.order.paper_number
+            : sh.process_id !== null
+            ? sh.process_name
+            : sh.supplier_id !== null
+            ? sh.supplier_name
+            : 'Ingresado Manual',
+        date: moment(sh.date).format('YYYY-MM-DD HH:mm:ss'),
+      })
+    })
+
+    stockHistoryNails.map(sh => {
+      stockHistoryTotal.push({
+        id: sh.id,
+        zone: 'Complementos',
+        name: sh.nail,
+        amount: sh.amount,
+        zone_id: 'Almacen de Clavos',
+        status:
+          sh.order_id !== null
+            ? sh.order.paper_number
+            : sh.process_id !== null
+            ? sh.process_name
+            : sh.supplier_id !== null
+            ? sh.supplier_name
+            : 'Ingresado Manual',
+        date: moment(sh.date).format('YYYY-MM-DD HH:mm:ss'),
+      })
+    })
+
+    stockHistorySawn.map(sh => {
+      stockHistoryTotal.push({
+        id: sh.id,
+        zone: 'Materia Aserrada',
+        name: `${sh.height} x ${sh.width} x ${sh.length} - ${sh.wood_name}`,
+        amount: sh.amount,
+        zone_id: sh.zone_id,
+        status:
+          sh.order_id !== null
+            ? sh.order.paper_number
+            : sh.process_id !== null
+            ? sh.process_name
+            : sh.supplier_id !== null
+            ? sh.supplier_name
+            : 'Ingresado Manual',
+        date: moment(sh.date).format('YYYY-MM-DD HH:mm:ss'),
+      })
+    })
+
+    stockHistoryRaws.map(sh => {
+      stockHistoryTotal.push({
+        id: sh.id,
+        zone: 'Materia Prima',
+        name: sh.id,
+        amount: sh.amount,
+        zone_id: sh.zone_id,
+        status:
+          sh.order_id !== null
+            ? sh.order.paper_number
+            : sh.process_id !== null
+            ? sh.process_name
+            : sh.supplier_id !== null
+            ? sh.supplier_name
+            : 'Ingresado Manual',
+        date: moment(sh.date).format('YYYY-MM-DD HH:mm:ss'),
+      })
+    })
 
     return (
       <>
         <MaterialTable
           columns={[
-            { title: 'id', field: 'id' },
-            { title: 'Modelo', field: 'model' },
+            { title: 'Tipo', field: 'zone' },
+            { title: 'Modelo / Nombre', field: 'name' },
             { title: 'Cantidad', field: 'amount' },
-            { title: 'Sub Zona', field: 'subzone_id' },
+            { title: 'Sub Zona', field: 'zone_id' },
             {
               title: 'Estatus',
-              field: 'subzone_id',
-              render: rowData =>
-                rowData.order_id !== null
-                  ? rowData.order.paper_number
-                  : rowData.process_id !== null
-                  ? rowData.process_name
-                  : rowData.supplier_id !== null
-                  ? rowData.supplier_name
-                  : 'Ingresado Manual',
+              field: 'status',
             },
             { title: 'Fecha', field: 'date' },
           ]}
@@ -74,7 +198,7 @@ const StockHistory = props => {
               searchPlaceholder: 'Buscar',
             },
           }}
-          data={stockHistory}
+          data={stockHistoryTotal.sort(compare)}
           title="Madera Habilitada"
         />
       </>
@@ -88,6 +212,9 @@ const mapStateToProps = state => {
   return {
     stockHistory: state.stockHistory,
     stockHistoryItems: state.stockHistoryItems,
+    stockHistorySawn: state.stockHistorySawn,
+    stockHistoryRaws: state.stockHistoryRaws,
+    stockHistoryNails: state.stockHistoryNails,
   }
 }
 

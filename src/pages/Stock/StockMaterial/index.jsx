@@ -55,7 +55,7 @@ const StockSwan = props => {
               searchPlaceholder: 'Buscar',
             },
           }}
-          data={stock}
+          data={stock.filter(s => s.m3 > 0)}
           title="Materia Prima"
         />
       </>
