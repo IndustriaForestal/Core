@@ -34,7 +34,7 @@ const Nails = props => {
     stockZoneRaws,
     units,
   } = props
-  const [type, setType] = useState(5)
+  const [type, setType] = useState(0)
   const [idSelected, setIdSelected] = useState(0)
   const [inOut, setInOut] = useState(0)
   const [amount, setAmount] = useState(0)
@@ -775,7 +775,7 @@ const Nails = props => {
               columns={[
                 { title: 'SubZona', field: 'zone_id' },
                 {
-                  title: 'Subzona',
+                  title: 'Pieza',
                   field: 'height',
                   render: rowData =>
                     `${rowData.height} x ${rowData.width} x ${rowData.length} - ${rowData.name}`,
@@ -931,7 +931,7 @@ const Nails = props => {
               columns={[
                 { title: 'SubZona', field: 'zone_id' },
                 {
-                  title: 'Subzona',
+                  title: 'Pieza',
                   field: 'height',
                   render: rowData =>
                     `${rowData.height} x ${rowData.width} x ${rowData.length} - ${rowData.name}`,
@@ -1091,7 +1091,7 @@ const Nails = props => {
               columns={[
                 { title: 'SubZona', field: 'zone_id' },
                 {
-                  title: 'Subzona',
+                  title: 'Pieza',
                   field: 'm3',
                   render: rowData => `${rowData.m3} - ${rowData.name}`,
                 },
