@@ -4,8 +4,6 @@ import { AiOutlineEdit, AiOutlineDelete } from 'react-icons/ai'
 import { HiOutlineArrowRight } from 'react-icons/hi'
 import { BsPlus } from 'react-icons/bs'
 import { useForm } from 'react-hook-form'
-import FormControlLabel from '@material-ui/core/FormControlLabel'
-import Switch from '@material-ui/core/Switch'
 import {
   setTitle,
   getAll,
@@ -50,6 +48,7 @@ const Pallets = props => {
     newPallet,
     specialProcesses,
     specialProcessesPallets,
+    units
   } = props
   const [filter, setFilter] = useState([])
   const [visible, setVisible] = useState(false)
@@ -58,7 +57,6 @@ const Pallets = props => {
   const [color, setColor] = useState(false)
   const [logo, setLogo] = useState(false)
   const [cut, setCut] = useState(false)
-  const [unit, setUnits] = useState(false)
   const [nail, setNail] = useState(0)
   const [specialProcessList, setSpecialProcessList] = useState([])
   const { register, handleSubmit, errors } = useForm()
@@ -298,17 +296,6 @@ const Pallets = props => {
     return (
       <>
         <SearchBar onChange={handleSearch} />
-        <FormControlLabel
-          control={
-            <Switch
-              value="checkedA"
-              inputProps={{ 'aria-label': 'cm / in' }}
-              color="primary"
-              onChange={() => setUnits(!unit)}
-            />
-          }
-          label="cm / in"
-        />
         <div className="palletsContainer">
           {pallets.length > 0 ? (
             tableData.map(pallet => {
@@ -361,18 +348,18 @@ const Pallets = props => {
                             : null}
                         </h3>
                         <h4 className="palletCard__subtitle">
-                          {unit
+                          {units
                             ? (parseFloat(pallet.width) / 2.54).toFixed(2)
                             : pallet.width}{' '}
-                          {unit ? 'in' : 'cm'} -{' '}
-                          {unit
+                          {units ? 'in' : 'cm'} -{' '}
+                          {units
                             ? (parseFloat(pallet.height) / 2.54).toFixed(2)
                             : pallet.height}{' '}
-                          {unit ? 'in' : 'cm'} - {''}
-                          {unit
+                          {units ? 'in' : 'cm'} - {''}
+                          {units
                             ? (parseFloat(pallet.length) / 2.54).toFixed(2)
                             : pallet.length}{' '}
-                          {unit ? 'in' : 'cm'}
+                          {units ? 'in' : 'cm'}
                           {/* 2.54 */}
                         </h4>
                         <h4 className="palletCard__subtitle">
@@ -428,57 +415,57 @@ const Pallets = props => {
                                 ) : (
                                   <span>
                                     {item.amount}{' '}
-                                    {unit
+                                    {units
                                       ? (parseFloat(item.width) / 2.54).toFixed(
                                           2
                                         )
                                       : item.width}{' '}
-                                    {unit ? 'in' : 'cm'} -{' '}
-                                    {unit
+                                    {units ? 'in' : 'cm'} -{' '}
+                                    {units
                                       ? (
                                           parseFloat(item.height) / 2.54
                                         ).toFixed(2)
                                       : item.height}{' '}
-                                    {unit ? 'in' : 'cm'} - {''}
-                                    {unit
+                                    {units ? 'in' : 'cm'} - {''}
+                                    {units
                                       ? (
                                           parseFloat(item.length) / 2.54
                                         ).toFixed(2)
                                       : item.length}{' '}
-                                    {unit ? 'in' : 'cm'}
+                                    {units ? 'in' : 'cm'}
                                     {item.serve_width !== null ? (
                                       <span>
                                         {' '}
                                         <HiOutlineArrowRight />
                                         {' Saque '}
-                                        {unit
+                                        {units
                                           ? (
                                               parseFloat(item.serve_width) /
                                               2.54
                                             ).toFixed(2)
                                           : item.serve_width}
-                                        {unit ? 'in' : 'cm'} - {''}
-                                        {unit
+                                        {units ? 'in' : 'cm'} - {''}
+                                        {units
                                           ? (
                                               parseFloat(item.serve_height) /
                                               2.54
                                             ).toFixed(2)
                                           : item.serve_height}{' '}
-                                        {unit ? 'in' : 'cm'} - {''}
-                                        {unit
+                                        {units ? 'in' : 'cm'} - {''}
+                                        {units
                                           ? (
                                               parseFloat(item.serve_length) /
                                               2.54
                                             ).toFixed(2)
                                           : item.serve_length}{' '}
-                                        {unit ? 'in' : 'cm'} - {''}
-                                        {unit
+                                        {units ? 'in' : 'cm'} - {''}
+                                        {units
                                           ? (
                                               parseFloat(item.serve_start) /
                                               2.54
                                             ).toFixed(2)
                                           : item.serve_start}{' '}
-                                        {unit ? 'in' : 'cm'}
+                                        {units ? 'in' : 'cm'}
                                       </span>
                                     ) : null}
                                   </span>
@@ -554,7 +541,7 @@ const Pallets = props => {
                     type="text"
                     name="width"
                     value={newPallet.width ? newPallet.width : null}
-                    title={`Ancho ${unit ? 'in' : 'cm'}`}
+                    title={`Ancho ${units ? 'in' : 'cm'}`}
                     passRef={register({ required: true })}
                     className={errors.width && '--required'}
                   />
@@ -562,7 +549,7 @@ const Pallets = props => {
                     type="text"
                     name="height"
                     value={newPallet.height ? newPallet.height : null}
-                    title={`Alto ${unit ? 'in' : 'cm'}`}
+                    title={`Alto ${units ? 'in' : 'cm'}`}
                     passRef={register({ required: true })}
                     className={errors.height && '--required'}
                   />
@@ -570,7 +557,7 @@ const Pallets = props => {
                     type="text"
                     name="length"
                     value={newPallet.length ? newPallet.length : null}
-                    title={`Largo ${unit ? 'in' : 'cm'}`}
+                    title={`Largo ${units ? 'in' : 'cm'}`}
                     passRef={register({ required: true })}
                     className={errors.length && '--required'}
                   />
@@ -821,21 +808,21 @@ const Pallets = props => {
                     <Input
                       type="text"
                       name="width"
-                      title={`Ancho ${unit ? 'in' : 'cm'}`}
+                      title={`Ancho ${units ? 'in' : 'cm'}`}
                       passRef={register2({ required: true })}
                       className={errors2.width && '--required'}
                     />
                     <Input
                       type="text"
                       name="height"
-                      title={`Alto ${unit ? 'in' : 'cm'}`}
+                      title={`Alto ${units ? 'in' : 'cm'}`}
                       passRef={register2({ required: true })}
                       className={errors2.height && '--required'}
                     />
                     <Input
                       type="text"
                       name="length"
-                      title={`Largo ${unit ? 'in' : 'cm'}`}
+                      title={`Largo ${units ? 'in' : 'cm'}`}
                       passRef={register2({ required: true })}
                       className={errors2.length && '--required'}
                     />
@@ -857,19 +844,19 @@ const Pallets = props => {
                   <Input
                     type="text"
                     name="serve_width"
-                    title={`Ancho ${unit ? 'in' : 'cm'}`}
+                    title={`Ancho ${units ? 'in' : 'cm'}`}
                     passRef={register2}
                   />
                   <Input
                     type="text"
                     name="serve_height"
-                    title={`Alto ${unit ? 'in' : 'cm'}`}
+                    title={`Alto ${units ? 'in' : 'cm'}`}
                     passRef={register2}
                   />
                   <Input
                     type="text"
                     name="serve_length"
-                    title={`Largo ${unit ? 'in' : 'cm'}`}
+                    title={`Largo ${units ? 'in' : 'cm'}`}
                     passRef={register2}
                   />
                   <Input
@@ -1137,6 +1124,7 @@ const mapStateToProps = state => {
     specialProcesses: state.specialProcesses,
     specialProcessesPallets: state.specialProcessesPallets,
     items: state.items,
+    units: state.units
   }
 }
 

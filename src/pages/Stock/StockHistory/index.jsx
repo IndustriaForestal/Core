@@ -86,7 +86,7 @@ const StockHistory = props => {
             : sh.supplier_id !== null
             ? sh.supplier_name
             : 'Ingresado Manual',
-        date: moment(sh.date).format('YYYY-MM-DD HH:mm:ss'),
+        date: moment(sh.date).format('DD-MM-YYYY HH:mm:ss'),
       })
     })
 
@@ -105,7 +105,7 @@ const StockHistory = props => {
             : sh.supplier_id !== null
             ? sh.supplier_name
             : 'Ingresado Manual',
-        date: moment(sh.date).format('YYYY-MM-DD HH:mm:ss'),
+        date: moment(sh.date).format('DD-MM-YYYY HH:mm:ss'),
       })
     })
 
@@ -124,7 +124,7 @@ const StockHistory = props => {
             : sh.supplier_id !== null
             ? sh.supplier_name
             : 'Ingresado Manual',
-        date: moment(sh.date).format('YYYY-MM-DD HH:mm:ss'),
+        date: moment(sh.date).format('DD-MM-YYYY HH:mm:ss'),
       })
     })
 
@@ -143,7 +143,7 @@ const StockHistory = props => {
             : sh.supplier_id !== null
             ? sh.supplier_name
             : 'Ingresado Manual',
-        date: moment(sh.date).format('YYYY-MM-DD HH:mm:ss'),
+        date: moment(sh.date).format('DD-MM-YYYY HH:mm:ss'),
       })
     })
 
@@ -162,7 +162,7 @@ const StockHistory = props => {
             : sh.supplier_id !== null
             ? sh.supplier_name
             : 'Ingresado Manual',
-        date: moment(sh.date).format('YYYY-MM-DD HH:mm:ss'),
+        date: moment(sh.date).format('DD-MM-YYYY HH:mm:ss'),
       })
     })
 

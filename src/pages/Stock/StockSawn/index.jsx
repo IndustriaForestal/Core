@@ -3,9 +3,10 @@ import React, { useEffect } from 'react'
 import { connect } from 'react-redux'
 import { setTitle, getAll, deleted } from '../../../actions/app'
 import MaterialTable from 'material-table'
+import { cmToIn } from '../../../utils'
 
 const StockSwan = props => {
-  const { stock, setTitle, role } = props
+  const { stock, setTitle, role, units } = props
 
   useEffect(() => {
     const topbar = {
@@ -27,7 +28,25 @@ const StockSwan = props => {
   }, [])
 
   if (stock) {
-    const stockItems = stock.filter(item => item.item_type_id !== 4)
+    const stockItems = stock
+      .filter(item => item.item_type_id !== 4)
+      .map(item => {
+        if (units) {
+          return {
+            ...item,
+            length: `${cmToIn(item.length).toFixed(3)} in`,
+            height: `${cmToIn(item.height).toFixed(3)} in`,
+            width: `${cmToIn(item.width).toFixed(3)} in`,
+          }
+        } else {
+          return {
+            ...item,
+            length: `${item.length.toFixed(3)} cm`,
+            height: `${item.height.toFixed(3)} cm`,
+            width: `${item.width.toFixed(3)} cm`,
+          }
+        }
+      })
     return (
       <>
         <MaterialTable
@@ -72,6 +91,7 @@ const mapStateToProps = state => {
   return {
     stock: state.stock,
     role: state.role,
+    units: state.units,
   }
 }
 

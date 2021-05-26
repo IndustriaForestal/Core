@@ -7,6 +7,7 @@ const initialState = {
   loggedIn: false,
   wraper: false,
   role: Cookies.get('role'),
+  units: false,
   wood: [
     {
       id: 1,

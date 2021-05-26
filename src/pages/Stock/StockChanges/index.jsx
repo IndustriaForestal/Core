@@ -9,6 +9,7 @@ import {
   update,
   create,
 } from '../../../actions/app'
+import { inToCm } from '../../../utils'
 import Cookies from 'js-cookie'
 import Card from '../../../components/Card/Card'
 import Input from '../../../components/Input/Input'
@@ -31,8 +32,9 @@ const Nails = props => {
     stockZoneItems,
     stockZone,
     stockZoneRaws,
+    units,
   } = props
-  const [type, setType] = useState(0)
+  const [type, setType] = useState(5)
   const [idSelected, setIdSelected] = useState(0)
   const [inOut, setInOut] = useState(0)
   const [amount, setAmount] = useState(0)
@@ -46,6 +48,9 @@ const Nails = props => {
   const [width, setWidth] = useState(0)
   const [m3, setM3] = useState(0)
   const [inputOut, setAmountInputOut] = useState(0)
+  const [amountRaw, setAmountRaw] = useState(0)
+  const [d1, setD1] = useState(0)
+  const [d2, setD2] = useState(0)
 
   useEffect(() => {
     const topbar = {
@@ -171,7 +176,7 @@ const Nails = props => {
           user_id: user,
           state: greenDryRepair,
           zone_id: subzoneSelected,
-          date: moment().format('YYYY-MM-DD'),
+          date: moment().format('YYYY-MM-DD HH:mm:ss'),
         })
         .then(() => {
           setType(0)
@@ -189,7 +194,7 @@ const Nails = props => {
           user_id: user,
           state: greenDryRepair,
           zone_id: subzoneSelected,
-          date: moment().format('YYYY-MM-DD'),
+          date: moment().format('YYYY-MM-DD HH:mm:ss'),
         })
         .then(() => {
           setType(0)
@@ -206,7 +211,7 @@ const Nails = props => {
           amount,
           user_id: user,
           state: '',
-          date: moment().format('YYYY-MM-DD'),
+          date: moment().format('YYYY-MM-DD HH:mm:ss'),
         })
         .then(() => {
           setType(0)
@@ -218,16 +223,33 @@ const Nails = props => {
 
     const handleSaveStockSawn = () => {
       const user = Cookies.get('id')
+
+      let heighConverted
+      let lengthConverted
+      let widthConverted
+
+      if (units === true) {
+        console.log('Conversor')
+        heighConverted = inToCm(parseFloat(height)).toFixed(3)
+        lengthConverted = inToCm(parseFloat(length)).toFixed(3)
+        widthConverted = inToCm(parseFloat(width)).toFixed(3)
+      } else {
+        heighConverted = height
+        lengthConverted = length
+        widthConverted = width
+      }
       const verification = sawn.find(
         s =>
-          parseFloat(s.height) === parseFloat(height) &&
-          parseFloat(s.length) === parseFloat(length) &&
-          parseFloat(s.width) === parseFloat(width) &&
+          parseFloat(s.height) === parseFloat(heighConverted) &&
+          parseFloat(s.length) === parseFloat(lengthConverted) &&
+          parseFloat(s.width) === parseFloat(widthConverted) &&
           parseInt(s.wood_id) === parseInt(woodSelected) &&
           s.state === greenDryRepair
       )
 
       const id = verification !== undefined ? verification.id : 0
+
+      console.log(id, heighConverted, lengthConverted, widthConverted)
 
       props
         .create(`stock/sawn/${id}`, 'PALLET_HISTORY', {
@@ -239,7 +261,7 @@ const Nails = props => {
           user_id: user,
           state: greenDryRepair,
           zone_id: subzoneSelected,
-          date: moment().format('YYYY-MM-DD'),
+          date: moment().format('YYYY-MM-DD HH:mm:ss'),
         })
         .then(() => {
           setType(0)
@@ -252,15 +274,19 @@ const Nails = props => {
     const handleSaveStockRaw = () => {
       const user = Cookies.get('name')
 
+      let volumen1 = length * d1 * amountRaw * 0.07854
+      let volumen2 = length * d2 * amountRaw * 0.07854
+      let volumen = (volumen1 + volumen2) / 2
+
       props
         .create(`stock/raws`, 'PALLET_HISTORY', {
-          m3,
+          m3: volumen,
           amount,
           wood_id: woodSelected,
           user_id: user,
           state: greenDryRepair,
           zone_id: subzoneSelected,
-          date: moment().format('YYYY-MM-DD'),
+          date: moment().format('YYYY-MM-DD HH:mm:ss'),
         })
         .then(() => {
           props.getAll('stock/stock_zones/items', 'GET_SZ_ITEMS')
@@ -287,7 +313,7 @@ const Nails = props => {
               zone_id: stock.zone_id,
               sz: stock.id,
               delete: true,
-              date: moment().format('YYYY-MM-DD'),
+              date: moment().format('YYYY-MM-DD HH:mm:ss'),
             })
             .then(() => {
               props.getAll('stock/stock_zones', 'GET_SZ')
@@ -300,7 +326,7 @@ const Nails = props => {
               zone_id: stock.zone_id,
               sz: stock.id,
               delete: false,
-              date: moment().format('YYYY-MM-DD'),
+              date: moment().format('YYYY-MM-DD HH:mm:ss'),
             })
             .then(() => {
               props.getAll('stock/stock_zones', 'GET_SZ')
@@ -321,7 +347,7 @@ const Nails = props => {
               zone_id: stock.zone_id,
               sz: stock.id,
               delete: true,
-              date: moment().format('YYYY-MM-DD'),
+              date: moment().format('YYYY-MM-DD HH:mm:ss'),
             })
             .then(() => {
               props.getAll('stock/stock_zones/items', 'GET_SZ_ITEMS')
@@ -334,7 +360,7 @@ const Nails = props => {
               zone_id: stock.zone_id,
               sz: stock.id,
               delete: false,
-              date: moment().format('YYYY-MM-DD'),
+              date: moment().format('YYYY-MM-DD HH:mm:ss'),
             })
             .then(() => {
               props.getAll('stock/stock_zones/items', 'GET_SZ_ITEMS')
@@ -355,7 +381,7 @@ const Nails = props => {
               zone_id: stock.zone_id,
               sz: stock.id,
               delete: true,
-              date: moment().format('YYYY-MM-DD'),
+              date: moment().format('YYYY-MM-DD HH:mm:ss'),
             })
             .then(() => {
               props.getAll('stock/stock_zones/items', 'GET_SZ_ITEMS')
@@ -368,7 +394,7 @@ const Nails = props => {
               zone_id: stock.zone_id,
               sz: stock.id,
               delete: false,
-              date: moment().format('YYYY-MM-DD'),
+              date: moment().format('YYYY-MM-DD HH:mm:ss'),
             })
             .then(() => {
               props.getAll('stock/stock_zones/items', 'GET_SZ_ITEMS')
@@ -388,7 +414,7 @@ const Nails = props => {
               zone_id: stock.zone_id,
               sz: stock.id,
               delete: true,
-              date: moment().format('YYYY-MM-DD'),
+              date: moment().format('YYYY-MM-DD HH:mm:ss'),
             })
             .then(() => {
               props.getAll('stock/stock_zones/sawn', 'GET_SZ_SAWN')
@@ -400,7 +426,7 @@ const Nails = props => {
               zone_id: stock.zone_id,
               sz: stock.id,
               delete: false,
-              date: moment().format('YYYY-MM-DD'),
+              date: moment().format('YYYY-MM-DD HH:mm:ss'),
             })
             .then(() => {
               props.getAll('stock/stock_zones/sawn', 'GET_SZ_SAWN')
@@ -420,7 +446,7 @@ const Nails = props => {
               zone_id: stock.zone_id,
               sz: stock.id,
               delete: true,
-              date: moment().format('YYYY-MM-DD'),
+              date: moment().format('YYYY-MM-DD HH:mm:ss'),
             })
             .then(() => {
               props.getAll('stock/stock_zones/raws', 'GET_SZ_RAWS')
@@ -432,7 +458,7 @@ const Nails = props => {
               zone_id: stock.zone_id,
               sz: stock.id,
               delete: false,
-              date: moment().format('YYYY-MM-DD'),
+              date: moment().format('YYYY-MM-DD HH:mm:ss'),
             })
             .then(() => {
               props.getAll('stock/stock_zones/raws', 'GET_SZ_RAWS')
@@ -784,21 +810,21 @@ const Nails = props => {
                 type="number"
                 name="length"
                 step="any"
-                title="Largo"
+                title={`Largo ${units === false ? 'cm' : 'in'}`}
               />
               <Input
                 onChange={e => setWidth(e.target.value)}
                 type="number"
                 name="width"
                 step="any"
-                title="Ancho"
+                title={`Ancho ${units === false ? 'cm' : 'in'}`}
               />
               <Input
                 onChange={e => setHeight(e.target.value)}
                 type="number"
                 name="height"
                 step="any"
-                title="Alto"
+                title={`Alto ${units === false ? 'cm' : 'in'}`}
               />
               <div className="inputGroup">
                 <label htmlFor="processId">
@@ -936,11 +962,32 @@ const Nails = props => {
           inOut === 0 ? (
             <Card title="Madera Trozo">
               <Input
-                onChange={e => setM3(e.target.value)}
+                onChange={e => setD1(e.target.value)}
                 type="number"
-                name="m3"
+                name="d1"
                 step="any"
-                title="Volumen"
+                title="Diametro 1 cm"
+              />
+              <Input
+                onChange={e => setD2(e.target.value)}
+                type="number"
+                name="d2"
+                step="any"
+                title="Diametro 2 cm"
+              />
+              <Input
+                onChange={e => setLength(e.target.value)}
+                type="number"
+                name="length"
+                step="any"
+                title="Largo cm"
+              />
+              <Input
+                onChange={e => setAmountRaw(e.target.value)}
+                type="number"
+                name="amount"
+                step="any"
+                title="Cantidad"
               />
 
               <div className="inputGroup">
@@ -1089,6 +1136,7 @@ const mapStateToProps = state => {
     stockZoneItems: state.stockZoneItems,
     stockZoneSawn: state.stockZoneSawn,
     stockZoneRaws: state.stockZoneRaws,
+    units: state.units,
   }
 }
 

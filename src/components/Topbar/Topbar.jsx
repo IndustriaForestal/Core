@@ -5,13 +5,15 @@ import { AiOutlineMail } from 'react-icons/ai'
 import { FiLogOut } from 'react-icons/fi'
 import { BiLogInCircle } from 'react-icons/bi'
 import Cookies from 'js-cookie'
-import { logOut } from '../../actions/app'
+import FormControlLabel from '@material-ui/core/FormControlLabel'
+import Switch from '@material-ui/core/Switch'
+import { logOut, setUnits } from '../../actions/app'
 import Title from '../Title/Title'
 import Notifications from '../Notifications'
 import './Topbar.scss'
 
 const Topbar = props => {
-  const { topbar } = props
+  const { topbar, setUnits, units } = props
   const location = useLocation()
   const handleLogOut = () => {
     document.cookie = `user=`
@@ -29,6 +31,17 @@ const Topbar = props => {
             <Title>{topbar.title}</Title>
           </div>
           <div className="topbar__right">
+            <FormControlLabel
+              control={
+                <Switch
+                  value="checkedA"
+                  inputProps={{ 'aria-label': 'cm / in' }}
+                  color="primary"
+                  onChange={() => setUnits(!units)}
+                />
+              }
+              label="cm / in"
+            />
             <AiOutlineMail />
             <Notifications />
             <FiLogOut onClick={handleLogOut} />
@@ -68,11 +81,13 @@ const Topbar = props => {
 const mapStateToProps = state => {
   return {
     topbar: state.topbar,
+    units: state.units
   }
 }
 
 const mapDispatchToProps = {
   logOut,
+  setUnits
 }
 
 export default connect(mapStateToProps, mapDispatchToProps)(Topbar)

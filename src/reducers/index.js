@@ -15,6 +15,11 @@ const reducer = (state, action) => {
         ...state,
         socket: action.payload,
       }
+    case 'SET_UNITS':
+      return {
+        ...state,
+        units: action.payload,
+      }
     case 'LOGIN_REQUEST':
       return {
         ...state,
@@ -523,6 +528,11 @@ const reducer = (state, action) => {
       return {
         ...state,
         stock: action.payload.data,
+      }
+    case 'CLEAN_STOCK':
+      return {
+        ...state,
+        stock: [],
       }
 
     case 'GET_PLANTS':
