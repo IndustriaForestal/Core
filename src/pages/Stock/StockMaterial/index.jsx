@@ -1,7 +1,7 @@
 import React, { useEffect } from 'react'
 
 import { connect } from 'react-redux'
-import { setTitle, getAll, deleted } from '../../../actions/app'
+import { setTitle, getAll, deleted, cleanStock } from '../../../actions/app'
 import MaterialTable from 'material-table'
 
 const StockSwan = props => {
@@ -76,6 +76,7 @@ const mapDispatchToProps = {
   setTitle,
   getAll,
   deleted,
+  cleanStock
 }
 
 export default connect(mapStateToProps, mapDispatchToProps)(StockSwan)

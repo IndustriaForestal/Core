@@ -23,13 +23,12 @@ const Nails = props => {
     }
 
     setTitle(topbar)
-    props.cleanStock()
     props.getAll('stock/items', 'GET_STOCK')
 
     // eslint-disable-next-line
   }, [])
 
-  if (stock) {
+  if (stock && stock[0].length) {
     const stockItems = stock
       .filter(item => item.item_type_id !== 4)
       .map(item => {

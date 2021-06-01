@@ -1,7 +1,7 @@
 import React, { useEffect } from 'react'
 
 import { connect } from 'react-redux'
-import { setTitle, getAll, deleted } from '../../../actions/app'
+import { setTitle, getAll, deleted, cleanStock } from '../../../actions/app'
 import MaterialTable from 'material-table'
 import { cmToIn } from '../../../utils'
 
@@ -27,7 +27,7 @@ const StockSwan = props => {
     // eslint-disable-next-line
   }, [])
 
-  if (stock) {
+  if (stock && stock[0].length) {
     const stockItems = stock
       .filter(item => item.item_type_id !== 4)
       .map(item => {
@@ -99,6 +99,7 @@ const mapDispatchToProps = {
   setTitle,
   getAll,
   deleted,
+  cleanStock,
 }
 
 export default connect(mapStateToProps, mapDispatchToProps)(StockSwan)

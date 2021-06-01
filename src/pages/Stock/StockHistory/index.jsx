@@ -199,7 +199,7 @@ const StockHistory = props => {
             },
           }}
           data={stockHistoryTotal.sort(compare)}
-          title="Madera Habilitada"
+          title="Historial Inventario"
         />
       </>
     )

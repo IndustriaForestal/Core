@@ -269,6 +269,41 @@ const Nails = props => {
         .then(() => {
           props.getAll('stock/sawn', 'GET_STOCK')
         })
+        .then(() => {
+          props.getAll('stock/stock_zones/sawn', 'GET_SZ_SAWN')
+        })
+    }
+
+    const hanldeUpdateStockZoneSawn = stock => {
+      const user = Cookies.get('id')
+      const negativeInput = parseInt(inputOut) * -1
+      inputOut > stock.amount
+        ? console.log('Mayor')
+        : parseInt(stock.amount) - inputOut === 0
+        ? props
+            .create(`stock/sawn/${stock.sawn_id}`, 'PALLET_HISTORY', {
+              amount: negativeInput,
+              user_id: user,
+              zone_id: stock.zone_id,
+              sz: stock.id,
+              delete: true,
+              date: moment().format('YYYY-MM-DD HH:mm:ss'),
+            })
+            .then(() => {
+              props.getAll('stock/stock_zones/sawn', 'GET_SZ_SAWN')
+            })
+        : props
+            .create(`stock/sawn/${stock.sawn_id}`, 'PALLET_HISTORY', {
+              amount: negativeInput,
+              user_id: user,
+              zone_id: stock.zone_id,
+              sz: stock.id,
+              delete: false,
+              date: moment().format('YYYY-MM-DD HH:mm:ss'),
+            })
+            .then(() => {
+              props.getAll('stock/stock_zones/sawn', 'GET_SZ_SAWN')
+            })
     }
 
     const handleSaveStockRaw = () => {
@@ -398,38 +433,6 @@ const Nails = props => {
             })
             .then(() => {
               props.getAll('stock/stock_zones/items', 'GET_SZ_ITEMS')
-            })
-    }
-
-    const hanldeUpdateStockZoneSawn = stock => {
-      const user = Cookies.get('id')
-      const negativeInput = parseInt(inputOut) * -1
-      inputOut > stock.amount
-        ? console.log('Mayor')
-        : parseInt(stock.amount) - inputOut === 0
-        ? props
-            .create(`stock/sawn/${stock.sawn_id}`, 'PALLET_HISTORY', {
-              amount: negativeInput,
-              user_id: user,
-              zone_id: stock.zone_id,
-              sz: stock.id,
-              delete: true,
-              date: moment().format('YYYY-MM-DD HH:mm:ss'),
-            })
-            .then(() => {
-              props.getAll('stock/stock_zones/sawn', 'GET_SZ_SAWN')
-            })
-        : props
-            .create(`stock/sawn/${stock.sawn_id}`, 'PALLET_HISTORY', {
-              amount: negativeInput,
-              user_id: user,
-              zone_id: stock.zone_id,
-              sz: stock.id,
-              delete: false,
-              date: moment().format('YYYY-MM-DD HH:mm:ss'),
-            })
-            .then(() => {
-              props.getAll('stock/stock_zones/sawn', 'GET_SZ_SAWN')
             })
     }
 
