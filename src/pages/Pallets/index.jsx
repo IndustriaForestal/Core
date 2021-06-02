@@ -437,11 +437,11 @@ const Pallets = props => {
                                 }{' '}
                                 {item.item_type_id === 4 ? (
                                   <span>
-                                    {item.amount} {item.nail}
+                                    {item.amount_new} {item.nail}
                                   </span>
                                 ) : (
                                   <span>
-                                    {item.amount}{' '}
+                                    {item.amount_new}{' '}
                                     {units
                                       ? (parseFloat(item.width) / 2.54).toFixed(
                                           2
@@ -945,7 +945,7 @@ const Pallets = props => {
                             ).name
                           }
                         </td>
-                        <td>{item.amount}</td>
+                        <td>{item.amount_new}</td>
                         <td>{item.width ? item.width : 'N/A'}</td>
                         <td>{item.height ? item.height : 'N/A'}</td>
                         <td>{item.length ? item.length : 'N/A'}</td>
@@ -1077,7 +1077,7 @@ const Pallets = props => {
                             ).name
                           }
                         </td>
-                        <td>{item.amount}</td>
+                        <td>{item.amount_new}</td>
                         <td>{item.width ? item.width : 'N/A'}</td>
                         <td>{item.height ? item.height : 'N/A'}</td>
                         <td>{item.length ? item.length : 'N/A'}</td>
