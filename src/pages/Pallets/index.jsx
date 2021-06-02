@@ -71,9 +71,9 @@ const Pallets = props => {
       title: 'Tarimas',
       menu: {
         Tarimas: '/pallets',
-        Complementos: '/items',
+       /*  Complementos: '/items',
         Clavos: '/nails',
-        Calidades: '/qualities',
+        Calidades: '/qualities', */
       },
     }
     setTitle(topbar)

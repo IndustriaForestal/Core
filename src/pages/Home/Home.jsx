@@ -1,6 +1,7 @@
 import React, { useEffect } from 'react'
 import { connect } from 'react-redux'
 import { BsCardImage } from 'react-icons/bs'
+import { FaPallet } from 'react-icons/fa'
 import Cookies from 'js-cookie'
 import { setTitle } from '../../actions/app'
 import IconHome from './IconHome/IconHome'
@@ -13,13 +14,13 @@ const Home = props => {
     const topbar = {
       title: 'Home',
       menu: {
-        Ventas: '/',
-        Producción: '/home-production',
+        Home: '/',
+       /*  Producción: '/home-production',
         Calidad: '/home-quality',
         Gestión: '/home-management',
         Contabilidad: '/home-accounting',
         Administración: '/home-administration',
-        Configuración: '/home-settings',
+        Configuración: '/home-settings', */
       },
     }
     props.setTitle(topbar)
@@ -30,12 +31,14 @@ const Home = props => {
         <div className="Home">
           <IconHome
             icon={<BsCardImage />}
-            url="/orders"
-            text="Pedidos de Clientes"
+            url="/stock"
+            text="Inventarios"
           />
 
-          <IconHome icon={<BsCardImage />} url="/customers" text="Clientes" />
-          <IconHome
+          <IconHome icon={<FaPallet />} url="/pallets" text="Tarimas" />
+          <IconHome icon={<FaPallet />} url="/zones" text="Zonas" />
+          <IconHome icon={<FaPallet />} url="/users" text="Usuarios" />
+        {/*   <IconHome
             icon={<BsCardImage />}
             url="/platforms"
             text="Plataformas jaulas y tractos"
@@ -62,14 +65,14 @@ const Home = props => {
             icon={<BsCardImage />}
             url="/format"
             text="Formatos"
-          />
+          /> */}
        
         </div>
       )
     case 'Vista':
       return (
         <div className="Home">
-          <IconHome
+       {/*    <IconHome
             icon={<BsCardImage />}
             url="/orders"
             text="Pedidos de Clientes"
@@ -92,7 +95,7 @@ const Home = props => {
             icon={<BsCardImage />}
             url="/calendar-shipments"
             text="Calendario Embarques"
-          />
+          /> */}
           {/* <IconHome
             icon={<BsCardImage />}
             url="/orders"
@@ -186,11 +189,11 @@ const Home = props => {
     default:
       return (
         <div className="Home">
-          <IconHome
+         {/*  <IconHome
             icon={<BsCardImage />}
             url="/orderProduction"
             text="Ordenes de Producción"
-          />
+          /> */}
         </div>
       )
   }
