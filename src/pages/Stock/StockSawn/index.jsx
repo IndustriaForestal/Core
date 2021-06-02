@@ -27,7 +27,7 @@ const StockSwan = props => {
     // eslint-disable-next-line
   }, [])
 
-  if (stock && stock[0].length) {
+  if (stock) {
     const stockItems = stock
       .filter(item => item.item_type_id !== 4)
       .map(item => {

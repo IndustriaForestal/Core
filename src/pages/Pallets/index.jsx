@@ -48,7 +48,7 @@ const Pallets = props => {
     newPallet,
     specialProcesses,
     specialProcessesPallets,
-    units
+    units,
   } = props
   const [filter, setFilter] = useState([])
   const [visible, setVisible] = useState(false)
@@ -117,6 +117,19 @@ const Pallets = props => {
     }
   }
   const onSubmitItems = data => {
+    const verification = items.find(
+      item =>
+        item.height === parseFloat(data.height) &&
+        item.length === parseFloat(data.length) &&
+        item.width === parseFloat(data.width) &&
+        parseInt(data.wood_id) === item.wood_id &&
+        parseInt(data.item_type_id) === item.item_type_id
+    )
+
+    const id = verification !== undefined ? verification.id : 0
+    data.id = id
+    console.log(verification)
+
     props.addItemList(data)
     document.getElementById('formItems').reset()
   }
@@ -137,8 +150,8 @@ const Pallets = props => {
     }).then(result => {
       if (result.isConfirmed) {
         if (newPallet.id) {
-          console.log('Update')
-          props
+          console.log('Update', newPallet, newPallet.id, specialProcessList)
+           props
             .functionNewPalletUpdate(
               newPallet,
               newPallet.id,
@@ -149,7 +162,7 @@ const Pallets = props => {
             .then(() => document.getElementById('formTarima').reset())
             .then(() => setVisible3(false))
         } else {
-          console.log('New')
+          console.log('New', newPallet, itemsList, specialProcessList)
           props
             .functionNewPallet(newPallet, itemsList, specialProcessList)
             .then(() => props.getAll('pallets', 'GET_PALLETS'))
@@ -208,7 +221,21 @@ const Pallets = props => {
 
     const handleCreateItemListSQL = data => {
       data.pallet_id = newPallet.id
+
+      const verification = items.find(
+        item =>
+          item.height === parseFloat(data.height) &&
+          item.length === parseFloat(data.length) &&
+          item.width === parseFloat(data.width) &&
+          parseInt(data.wood_id) === item.wood_id &&
+          parseInt(data.item_type_id) === item.item_type_id
+      )
+
+      const id = verification !== undefined ? verification.id : 0
+      data.id = id
+      console.log(verification)
       console.log('SQL CREATE', data)
+
       props
         .create(`items`, 'UPDATE_ITEMS_ID', data)
         .then(() =>
@@ -219,7 +246,7 @@ const Pallets = props => {
     const handleDeleteItemListSQL = id => {
       console.log('SQL DELETE')
       props
-        .deleted(`items/${id}`, 'DELETE_ITEMS_ID')
+        .deleted(`items/${id}/${newPallet.id}`, 'DELETE_ITEMS_ID')
         .then(() =>
           props.get(`items/pallets/${newPallet.id}`, 'UPDATE_NEW_PALLET_ITEMS')
         )
@@ -364,9 +391,9 @@ const Pallets = props => {
                         </h4>
                         <h4 className="palletCard__subtitle">
                           {
-                            qualities.filter(
+                            qualities.find(
                               quality => quality._id === pallet.quality_id
-                            )[0].name
+                            ).name
                           }
                         </h4>
                         {specialProcessesPallets.filter(
@@ -398,7 +425,7 @@ const Pallets = props => {
                     <div className="palletCard__specs">
                       <ul className="palletCard__list">
                         {items
-                          .filter(item => item.pallet_id === pallet.id)
+                          .filter(item => item.id_pallet === pallet.id)
                           .map(item => {
                             return (
                               <li key={item.id} className="palletCard__item">
@@ -1124,7 +1151,7 @@ const mapStateToProps = state => {
     specialProcesses: state.specialProcesses,
     specialProcessesPallets: state.specialProcessesPallets,
     items: state.items,
-    units: state.units
+    units: state.units,
   }
 }
 
