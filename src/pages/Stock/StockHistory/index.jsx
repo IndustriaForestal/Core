@@ -7,6 +7,8 @@ import Loading from '../../../components/Loading/Loading'
 import moment from 'moment'
 import MaterialTable from 'material-table'
 
+moment.locale('mx')
+
 const StockHistory = props => {
   const {
     stockHistory,
@@ -200,6 +202,9 @@ const StockHistory = props => {
           }}
           data={stockHistoryTotal.sort(compare)}
           title="Historial Inventario"
+          options={{
+            exportButton: true,
+          }}
         />
       </>
     )

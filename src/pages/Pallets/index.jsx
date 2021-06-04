@@ -71,7 +71,7 @@ const Pallets = props => {
       title: 'Tarimas',
       menu: {
         Tarimas: '/pallets',
-       /*  Complementos: '/items',
+        /*  Complementos: '/items',
         Clavos: '/nails',
         Calidades: '/qualities', */
       },
@@ -151,7 +151,7 @@ const Pallets = props => {
       if (result.isConfirmed) {
         if (newPallet.id) {
           console.log('Update', newPallet, newPallet.id, specialProcessList)
-           props
+          props
             .functionNewPalletUpdate(
               newPallet,
               newPallet.id,
@@ -945,7 +945,11 @@ const Pallets = props => {
                             ).name
                           }
                         </td>
-                        <td>{item.amount_new}</td>
+                        <td>
+                          {newPallet && newPallet.id
+                            ? item.amount_new
+                            : item.amount}
+                        </td>
                         <td>{item.width ? item.width : 'N/A'}</td>
                         <td>{item.height ? item.height : 'N/A'}</td>
                         <td>{item.length ? item.length : 'N/A'}</td>
@@ -1077,7 +1081,11 @@ const Pallets = props => {
                             ).name
                           }
                         </td>
-                        <td>{item.amount_new}</td>
+                        <td>
+                          {newPallet && newPallet.id
+                            ? item.amount_new
+                            : item.amount}
+                        </td>
                         <td>{item.width ? item.width : 'N/A'}</td>
                         <td>{item.height ? item.height : 'N/A'}</td>
                         <td>{item.length ? item.length : 'N/A'}</td>

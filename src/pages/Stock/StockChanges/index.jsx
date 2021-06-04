@@ -309,9 +309,9 @@ const Nails = props => {
     const handleSaveStockRaw = () => {
       const user = Cookies.get('name')
 
-      let volumen1 = length * d1 * amountRaw * 0.07854
-      let volumen2 = length * d2 * amountRaw * 0.07854
-      let volumen = (volumen1 + volumen2) / 2
+      /* let volumen1 = length * d1 * amountRaw * 0.07854
+      let volumen2 = length * d2 * amountRaw * 0.07854 */
+      const volumen = length * d1 * d2 * amountRaw * 0.7854
 
       props
         .create(`stock/raws`, 'PALLET_HISTORY', {
