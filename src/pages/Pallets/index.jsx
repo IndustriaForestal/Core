@@ -49,6 +49,8 @@ const Pallets = props => {
     specialProcesses,
     specialProcessesPallets,
     units,
+    stock,
+    stock2,
   } = props
   const [filter, setFilter] = useState([])
   const [visible, setVisible] = useState(false)
@@ -102,6 +104,8 @@ const Pallets = props => {
         )
       })
       .then(() => props.getAll('items', 'GET_ITEMS'))
+      .then(() => props.getAll('stock', 'GET_STOCK'))
+      .then(() => props.getAll('stock/items', 'GET_STOCK_2'))
     // eslint-disable-next-line
   }, [])
 
@@ -260,22 +264,81 @@ const Pallets = props => {
     }
 
     const handleDeletePallet = id => {
-      Swal.fire({
-        title: '¿Estás seguro?',
-        text: 'Este proceso no se puede revertir',
-        icon: 'warning',
-        showCancelButton: true,
-        confirmButtonColor: '#3085d6',
-        cancelButtonColor: '#d33',
-        confirmButtonText: 'Si, borrar',
-      }).then(result => {
-        if (result.isConfirmed) {
-          props
-            .deleted(`pallets/${id}`, 'DELETE_PALLET')
-            .then(() => props.getAll('pallets', 'GET_PALLETS'))
-            .then(() => props.getAll('items', 'GET_ITEMS'))
+      const searchPallet = stock.find(pallet => id === pallet.id)
+
+      const totalStock =
+        searchPallet.damp +
+        searchPallet.dry +
+        searchPallet.repair +
+        searchPallet.stock
+
+      let totalStockItems = 0
+
+      const itemsPallet = items
+        .filter(item => item.id_pallet === id)
+        .map(item => {
+          const itemStock = stock2.find(s => s.id === item.id)
+          totalStockItems +=
+            itemStock.dry + itemStock.damp + itemStock.repair + itemStock.stock
+          return itemStock
+        })
+
+      // const itemRepeat = []
+
+      /*  function count() {
+        const array_elements = items
+          .filter(item => item.id_pallet === id)
+          .map(item =>
+            items
+              .filter(i => i.id === item.id)
+              .map(i => {
+                itemRepeat.push(i.id)
+                return i
+              })
+          )
+        console.log(array_elements, itemRepeat)
+
+        itemRepeat.sort()
+
+        var current = null
+        var cnt = 0
+        for (var i = 0; i < itemRepeat.length; i++) {
+          if (itemRepeat[i] != current) {
+            if (cnt > 0) {
+              console.log(current + ' comes --> ' + cnt + ' times<br>')
+            }
+            current = itemRepeat[i]
+            cnt = 1
+          } else {
+            cnt++
+          }
         }
-      })
+        if (cnt > 0) {
+          console.log(current + ' comes --> ' + cnt + ' times')
+        }
+      }
+
+      count() */
+      if (totalStock > 0 && totalStockItems > 0) {
+        Swal.fire('La tarima tiene existencias!', 'No se puede borrar.', 'info')
+      } else {
+        Swal.fire({
+          title: '¿Estás seguro?',
+          text: 'Este proceso no se puede revertir',
+          icon: 'warning',
+          showCancelButton: true,
+          confirmButtonColor: '#3085d6',
+          cancelButtonColor: '#d33',
+          confirmButtonText: 'Si, borrar',
+        }).then(result => {
+          if (result.isConfirmed) {
+            props
+              .deleted(`pallets/${id}`, 'DELETE_PALLET')
+              .then(() => props.getAll('pallets', 'GET_PALLETS'))
+              .then(() => props.getAll('items', 'GET_ITEMS'))
+          }
+        })
+      }
     }
 
     const handleAddSpecialProcess = id => {
@@ -404,12 +467,15 @@ const Pallets = props => {
                               .filter(sp => sp.id === pallet.id)
                               .map((sp, index) => (
                                 <li key={index} className="palletCard__item">
-                                  {
-                                    specialProcesses.find(
-                                      special =>
-                                        special._id === sp.special_process_id
-                                    ).name
-                                  }
+                                  {specialProcesses.find(
+                                    special =>
+                                      special.id === sp.special_process_id
+                                  )
+                                    ? specialProcesses.find(
+                                        special =>
+                                          special.id === sp.special_process_id
+                                      ).name
+                                    : null}
                                 </li>
                               ))}
                           </ul>
@@ -625,12 +691,12 @@ const Pallets = props => {
                           : e => handleAddSpecialProcess(e.target.value)
                       }
                     >
-                      <option value="">Sin Proceso Especial</option>
+                      <option value="">Sin requerimiento de calidad</option>
                       {specialProcesses.map(specialProcess => {
                         return (
                           <option
-                            key={specialProcess._id}
-                            value={specialProcess._id}
+                            key={specialProcess.id}
+                            value={specialProcess.id}
                           >
                             {specialProcess.name}
                           </option>
@@ -660,7 +726,7 @@ const Pallets = props => {
                               {
                                 specialProcesses.find(
                                   special =>
-                                    special._id === sp.special_process_id
+                                    special.id === sp.special_process_id
                                 ).name
                               }
                             </div>
@@ -673,7 +739,7 @@ const Pallets = props => {
                           onClick={() => handleDeleteSpecialProcess(process)}
                           key={index}
                         >
-                          {specialProcesses.find(sp => sp._id === process).name}
+                          {specialProcesses.find(sp => sp.id === process).name}
                         </div>
                       ))
                     : null}
@@ -1160,6 +1226,8 @@ const mapStateToProps = state => {
     specialProcessesPallets: state.specialProcessesPallets,
     items: state.items,
     units: state.units,
+    stock: state.stock,
+    stock2: state.stock2,
   }
 }
 

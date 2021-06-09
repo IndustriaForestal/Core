@@ -15,12 +15,12 @@ const Home = props => {
       title: 'Home',
       menu: {
         Home: '/',
-       /*  Producción: '/home-production',
+        /*  Producción: '/home-production',
         Calidad: '/home-quality',
         Gestión: '/home-management',
         Contabilidad: '/home-accounting',
-        Administración: '/home-administration',
-        Configuración: '/home-settings', */
+        Administración: '/home-administration', */
+        Configuración: '/home-settings',
       },
     }
     props.setTitle(topbar)
@@ -29,16 +29,12 @@ const Home = props => {
     case 'Administrador':
       return (
         <div className="Home">
-          <IconHome
-            icon={<BsCardImage />}
-            url="/stock"
-            text="Inventarios"
-          />
+          <IconHome icon={<BsCardImage />} url="/stock" text="Inventarios" />
 
           <IconHome icon={<FaPallet />} url="/pallets" text="Tarimas" />
-          <IconHome icon={<FaPallet />} url="/zones" text="Zonas" />
-          <IconHome icon={<FaPallet />} url="/users" text="Usuarios" />
-        {/*   <IconHome
+          {/* <IconHome icon={<FaPallet />} url="/zones" text="Zonas" /> */}
+          {/* <IconHome icon={<FaPallet />} url="/users" text="Usuarios" /> */}
+          {/*   <IconHome
             icon={<BsCardImage />}
             url="/platforms"
             text="Plataformas jaulas y tractos"
@@ -66,13 +62,12 @@ const Home = props => {
             url="/format"
             text="Formatos"
           /> */}
-       
         </div>
       )
     case 'Vista':
       return (
         <div className="Home">
-       {/*    <IconHome
+          {/*    <IconHome
             icon={<BsCardImage />}
             url="/orders"
             text="Pedidos de Clientes"
@@ -189,7 +184,7 @@ const Home = props => {
     default:
       return (
         <div className="Home">
-         {/*  <IconHome
+          {/*  <IconHome
             icon={<BsCardImage />}
             url="/orderProduction"
             text="Ordenes de Producción"

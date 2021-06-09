@@ -1,107 +1,129 @@
 import React, { useEffect } from 'react'
-import { Link } from 'react-router-dom'
 import { connect } from 'react-redux'
-import { AiOutlineEdit, AiOutlineDelete } from 'react-icons/ai'
-import { BsPlus } from 'react-icons/bs'
-import { setTitle, getAll, deleted } from '../../actions/app'
-import Swal from 'sweetalert2'
-import Table from '../../components/Table/Table'
-import Button from '../../components/Button/Button'
-import AddButton from '../../components/AddButton/AddButton'
+import { setTitle, getAll, deleted, create, update } from '../../actions/app'
+import Loading from '../../components/Loading/Loading'
+import moment from 'moment'
+import MaterialTable from 'material-table'
 import './styles.scss'
+import Cookies from 'js-cookie'
 
 const SpecialProcesses = props => {
-  const { specialProcesses, setTitle, role } = props
+  const { specialProcesses, setTitle } = props
+
+  const role = Cookies.get('name')
 
   useEffect(() => {
     const topbar = {
-      title: 'Procesos Especiales',
-      menu: { 'Procesos Especiales': '/specialProcesses' },
+      title: 'Requerimientos de calidad',
+      menu: { 'Requerimientos de calidad': '/specialProcesses' },
     }
     setTitle(topbar)
     props.getAll('specialProcesses', 'GET_SPECIAL_PROCESSES')
     // eslint-disable-next-line
   }, [])
-
-  let tableHeader
-  role === 'Administrador'
-    ? (tableHeader = [
-        'Nombre',
-        'Capacidad',
-        'Personal',
-        'Duración',
-        'Acciones',
-      ])
-    : (tableHeader = ['Nombre', 'Capacidad', 'Personal', 'Duración'])
-
-  const handleDeleteSpecialProcess = specialProcessId => {
-    Swal.fire({
-      title: '¿Estás seguro?',
-      text: 'Este proceso no se puede revertir',
-      icon: 'warning',
-      showCancelButton: true,
-      confirmButtonColor: '#3085d6',
-      cancelButtonColor: '#d33',
-      confirmButtonText: 'Si, borrar',
-    }).then(result => {
-      if (result.isConfirmed) {
-        props.deleted(
-          `specialProcesses/${specialProcessId}`,
-          'DELETE_SPECIAL_PROCESS'
-        )
-        Swal.fire('Borrado!', 'Borrado con exito.', 'success')
+  if (specialProcesses) {
+    const specialProcessesMaped = specialProcesses.map(specialProcess => {
+      return {
+        ...specialProcess,
+        created: moment(specialProcess.created).format('YYYY-MM-DD HH:mm:ss'),
       }
     })
-  }
 
-  return (
-    <>
-      <Table head={tableHeader}>
-        {specialProcesses ? (
-          specialProcesses.map(specialProcess => (
-            <tr key={specialProcess._id}>
-              <td>{specialProcess.name}</td>
-              <td>{specialProcess.capacity}</td>
-              <td>{specialProcess.people}</td>
-              <td>{specialProcess.duration}</td>
-              {role === 'Administrador' ? (
-                <td>
-                  <Link to={`specialProcesses/${specialProcess._id}`}>
-                    <Button className="btn --warning">
-                      <AiOutlineEdit />
-                    </Button>
-                  </Link>
-                  <Button
-                    className="btn --danger"
-                    onClick={() =>
-                      handleDeleteSpecialProcess(specialProcess._id)
-                    }
-                  >
-                    <AiOutlineDelete />
-                  </Button>
-                </td>
-              ) : null}
-            </tr>
-          ))
-        ) : (
-          <tr>
-            <td colSpan="7">No hay registros</td>
-          </tr>
-        )}
-      </Table>
-      <Link to="/specialProcesses/create">
-        <AddButton>
-          <BsPlus />
-        </AddButton>
-      </Link>
-    </>
-  )
+    return (
+      <MaterialTable
+        title="Requerimientos Calidad"
+        columns={[
+          { title: 'Nombre', field: 'name' },
+          { title: 'Severidad', field: 'severity' },
+        ]}
+        localization={{
+          pagination: {
+            labelDisplayedRows: '{from}-{to} de {count}',
+            labelRowsSelect: 'Filas',
+            firstAriaLabel: 'Primera',
+            firstTooltip: 'Primera',
+            previousAriaLabel: 'Anterior',
+            previousTooltip: 'Anterior',
+            nextAriaLabel: 'Siguiente',
+            nextTooltip: 'Siguiente',
+            lastAriaLabel: 'Ultimo',
+            lastTooltip: 'Ultimo',
+          },
+          toolbar: {
+            searchTooltip: 'Buscar',
+            searchPlaceholder: 'Buscar',
+          },
+          header: {
+            actions: 'Acciones',
+          },
+          body: {
+            editRow: {
+              deleteText: '¿Eliminar?',
+              saveTooltip: 'Ok',
+              cancelTooltip: 'Cancelar',
+            },
+            editTooltip: 'Editar',
+            deleteTooltip: 'Eliminar',
+            addTooltip: 'Agregar',
+          },
+        }}
+        data={specialProcessesMaped}
+        editable={{
+          onRowAdd: newData =>
+            new Promise((resolve, reject) => {
+              setTimeout(() => {
+                newData.user_id = 1
+                props
+                  .create('specialProcesses', 'CREATE_SPECIAL_PROCESS', newData)
+                  .then(() =>
+                    props.getAll('specialProcesses', 'GET_SPECIAL_PROCESSES')
+                  )
+                  .then(() => resolve())
+              }, 1000)
+            }),
+          onRowUpdate: (newData, oldData) =>
+            new Promise((resolve, reject) => {
+              setTimeout(() => {
+                console.log(oldData, newData)
+                delete newData.id
+                newData.user_id = 1
+                props
+                  .update(
+                    `specialProcesses/${oldData.id}`,
+                    'UPDATE_SPECIAL_PROCESS',
+                    newData
+                  )
+                  .then(() =>
+                    props.getAll('specialProcesses', 'GET_SPECIAL_PROCESSES')
+                  )
+                  .then(() => resolve())
+              }, 1000)
+            }),
+          onRowDelete: oldData =>
+            new Promise((resolve, reject) => {
+              setTimeout(() => {
+                props
+                  .deleted(
+                    `specialProcesses/${oldData.id}`,
+                    'DELETE_SPECIAL_PROCESS'
+                  )
+                  .then(() =>
+                    props.getAll('specialProcesses', 'GET_SPECIAL_PROCESSES')
+                  )
+                  .then(() => resolve())
+              }, 1000)
+            }),
+        }}
+      />
+    )
+  } else {
+    return <Loading />
+  }
 }
 
 const mapStateToProps = state => {
   return {
     specialProcesses: state.specialProcesses,
-    role: state.role,
   }
 }
 
@@ -109,6 +131,8 @@ const mapDispatchToProps = {
   setTitle,
   getAll,
   deleted,
+  create,
+  update,
 }
 
 export default connect(mapStateToProps, mapDispatchToProps)(SpecialProcesses)

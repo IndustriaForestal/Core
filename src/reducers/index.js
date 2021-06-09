@@ -535,6 +535,12 @@ const reducer = (state, action) => {
         stock: [],
       }
 
+    case 'GET_STOCK_2':
+      return {
+        ...state,
+        stock2: action.payload.data,
+      }
+
     case 'GET_PLANTS':
       return {
         ...state,

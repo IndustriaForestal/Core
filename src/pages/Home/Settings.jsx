@@ -1,6 +1,7 @@
 import React, { useEffect } from 'react'
 import { connect } from 'react-redux'
 import { BsCardImage } from 'react-icons/bs'
+import { FaPallet } from 'react-icons/fa'
 import Cookies from 'js-cookie'
 import { setTitle } from '../../actions/app'
 import IconHome from './IconHome/IconHome'
@@ -13,12 +14,12 @@ const Settings = props => {
     const topbar = {
       title: 'Home',
       menu: {
-        Ventas: '/',
-        Producción: '/home-production',
+        Home: '/',
+        /* Producción: '/home-production',
         Calidad: '/home-quality',
         Gestión: '/home-management',
         Contabilidad: '/home-accounting',
-        Administración: '/home-administration',
+        Administración: '/home-administration', */
         Configuración: '/home-settings',
       },
     }
@@ -38,7 +39,11 @@ const Settings = props => {
             url="/settings/type-wood"
             text="Tipo de madera"
           />
+          <IconHome icon={<BsCardImage />} url="/qualities" text="Calidades" />
+          <IconHome icon={<BsCardImage />} url="/specialProcesses" text="Requerimientos Calidad" />
           <IconHome icon={<BsCardImage />} url="/zones" text="Zonas" />
+
+          <IconHome icon={<FaPallet />} url="/users" text="Usuarios" />
         </div>
       )
 
