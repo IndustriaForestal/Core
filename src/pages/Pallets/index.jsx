@@ -40,7 +40,6 @@ const Pallets = props => {
     qualities,
     setTitle,
     customers,
-    role,
     items,
     wood,
     itemsType,
@@ -51,6 +50,7 @@ const Pallets = props => {
     units,
     stock,
     stock2,
+    user,
   } = props
   const [filter, setFilter] = useState([])
   const [visible, setVisible] = useState(false)
@@ -67,6 +67,8 @@ const Pallets = props => {
     handleSubmit: handleSubmit2,
     errors: errors2,
   } = useForm()
+
+  const role = user.role
 
   useEffect(() => {
     const topbar = {
@@ -134,7 +136,21 @@ const Pallets = props => {
     data.id = id
     console.log(verification)
 
-    props.addItemList(data)
+    const verificationRedux = itemsList.find(
+      item =>
+        item.height === data.height &&
+        item.length === data.length &&
+        item.width === data.width &&
+        data.wood_id === item.wood_id &&
+        data.item_type_id === item.item_type_id
+    )
+
+    verificationRedux !== undefined
+      ? Swal.fire('La pieza ya existe!', 'No se puede repetir.', 'info')
+      : props.addItemList(data)
+
+    console.log(verificationRedux)
+
     document.getElementById('formItems').reset()
   }
 
@@ -154,7 +170,6 @@ const Pallets = props => {
     }).then(result => {
       if (result.isConfirmed) {
         if (newPallet.id) {
-          console.log('Update', newPallet, newPallet.id, specialProcessList)
           props
             .functionNewPalletUpdate(
               newPallet,
@@ -166,7 +181,6 @@ const Pallets = props => {
             .then(() => document.getElementById('formTarima').reset())
             .then(() => setVisible3(false))
         } else {
-          console.log('New', newPallet, itemsList, specialProcessList)
           props
             .functionNewPallet(newPallet, itemsList, specialProcessList)
             .then(() => props.getAll('pallets', 'GET_PALLETS'))
@@ -469,11 +483,13 @@ const Pallets = props => {
                                 <li key={index} className="palletCard__item">
                                   {specialProcesses.find(
                                     special =>
-                                      special.id === sp.special_process_id
+                                      special.id ===
+                                      parseInt(sp.special_process_id)
                                   )
                                     ? specialProcesses.find(
                                         special =>
-                                          special.id === sp.special_process_id
+                                          special.id ===
+                                          parseInt(sp.special_process_id)
                                       ).name
                                     : null}
                                 </li>
@@ -723,12 +739,16 @@ const Pallets = props => {
                               }
                               key={index}
                             >
-                              {
-                                specialProcesses.find(
-                                  special =>
-                                    special.id === sp.special_process_id
-                                ).name
-                              }
+                              {specialProcesses.find(
+                                special =>
+                                  special.id === parseInt(sp.special_process_id)
+                              )
+                                ? specialProcesses.find(
+                                    special =>
+                                      special.id ===
+                                      parseInt(sp.special_process_id)
+                                  ).name
+                                : null}
                             </div>
                           ))
                       : null
@@ -1213,21 +1233,22 @@ const Pallets = props => {
 
 const mapStateToProps = state => {
   return {
-    pallets: state.pallets,
-    pallet: state.pallet,
-    qualities: state.qualities,
-    wood: state.wood,
-    itemsType: state.itemsType,
-    itemsList: state.itemsList,
-    role: state.role,
-    newPallet: state.newPallet,
-    customers: state.customers,
-    specialProcesses: state.specialProcesses,
-    specialProcessesPallets: state.specialProcessesPallets,
-    items: state.items,
-    units: state.units,
-    stock: state.stock,
-    stock2: state.stock2,
+    pallets: state.reducerPallets.pallets,
+    pallet: state.reducerPallets.pallet,
+    qualities: state.reducerQualities.qualities,
+    wood: state.reducerWood.wood,
+    itemsType: state.reducerItems.itemsType,
+    itemsList: state.reducerItems.itemsList,
+    user: state.reducerApp.user,
+    newPallet: state.reducerPallets.newPallet,
+    customers: state.reducerCustomers.customers,
+    specialProcesses: state.reducerSpecialProcesses.specialProcesses,
+    specialProcessesPallets:
+      state.reducerSpecialProcesses.specialProcessesPallets,
+    items: state.reducerItems.items,
+    units: state.reducerApp.units,
+    stock: state.reducerStock.stock,
+    stock2: state.reducerStock.stock2,
   }
 }
 

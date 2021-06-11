@@ -1128,18 +1128,18 @@ const Nails = props => {
 
 const mapStateToProps = state => {
   return {
-    pallets: state.pallets,
-    items: state.items,
-    sawn: state.stock,
-    plants: state.plants,
-    zones: state.zones,
-    subzones: state.subzones,
-    wood: state.wood,
-    stockZone: state.stockZone,
-    stockZoneItems: state.stockZoneItems,
-    stockZoneSawn: state.stockZoneSawn,
-    stockZoneRaws: state.stockZoneRaws,
-    units: state.units,
+    pallets: state.reducerPallets.pallets,
+    items: state.reducerItems.items,
+    sawn: state.reducerStock.stock,
+    plants: state.reducerZones.plants,
+    zones: state.reducerZones.zones,
+    subzones: state.reducerZones.subzones,
+    wood: state.reducerWood.wood,
+    stockZone: state.reducerStock.stockZone,
+    stockZoneItems: state.reducerStock.stockZoneItems,
+    stockZoneSawn: state.reducerStock.stockZoneSawn,
+    stockZoneRaws: state.reducerStock.stockZoneRaws,
+    units: state.reducerApp.units,
   }
 }
 

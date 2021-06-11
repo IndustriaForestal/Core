@@ -113,7 +113,7 @@ const mapDispatchToProps = {
 
 const mapStateToProps = state => {
   return {
-    plants: state.plants,
+    plants: state.reducerZones.plants,
   }
 }
 

@@ -215,11 +215,11 @@ const StockHistory = props => {
 
 const mapStateToProps = state => {
   return {
-    stockHistory: state.stockHistory,
-    stockHistoryItems: state.stockHistoryItems,
-    stockHistorySawn: state.stockHistorySawn,
-    stockHistoryRaws: state.stockHistoryRaws,
-    stockHistoryNails: state.stockHistoryNails,
+    stockHistory: state.reducerStock.stockHistory,
+    stockHistoryItems: state.reducerStock.stockHistoryItems,
+    stockHistorySawn: state.reducerStock.stockHistorySawn,
+    stockHistoryRaws: state.reducerStock.stockHistoryRaws,
+    stockHistoryNails: state.reducerStock.stockHistoryNails,
   }
 }
 

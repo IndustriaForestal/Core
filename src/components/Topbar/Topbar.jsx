@@ -16,10 +16,7 @@ const Topbar = props => {
   const { topbar, setUnits, units } = props
   const location = useLocation()
   const handleLogOut = () => {
-    document.cookie = `user=`
-    document.cookie = `name=`
-    document.cookie = `id=`
-    document.cookie = `token=`
+    sessionStorage.clear()
     props.logOut({})
     window.location.href = '/login'
   }
@@ -80,14 +77,14 @@ const Topbar = props => {
 
 const mapStateToProps = state => {
   return {
-    topbar: state.topbar,
-    units: state.units
+    topbar: state.reducerApp.topbar,
+    units: state.reducerApp.units,
   }
 }
 
 const mapDispatchToProps = {
   logOut,
-  setUnits
+  setUnits,
 }
 
 export default connect(mapStateToProps, mapDispatchToProps)(Topbar)

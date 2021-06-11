@@ -1,22 +1,22 @@
 import React, { useEffect } from 'react'
 import { connect } from 'react-redux'
-import { setTitle, getAll, deleted, create } from '../../actions/app'
+import { setTitle, getAll, deleted, create } from '../../../actions/app'
 import { useForm } from 'react-hook-form'
-import Card from '../../components/Card/Card'
-import Input from '../../components/Input/Input'
+import Card from '../../../components/Card/Card'
+import Input from '../../../components/Input/Input'
 
-import Button from '../../components/Button/Button'
+import Button from '../../../components/Button/Button'
 
 import MaterialTable from 'material-table'
 
-const TypeMaterial = props => {
+const ItemType = props => {
   const { itemsType, setTitle } = props
   const { register, handleSubmit, errors } = useForm()
 
   useEffect(() => {
     const topbar = {
       title: 'Tipo de Complemento',
-      menu: { 'Tipo de Complemento': '/settings/type-material' },
+      menu: { 'Tipo de Complemento': '/items/type' },
     }
     setTitle(topbar)
     props.getAll('items/type', 'GET_ITEMS_TYPE')
@@ -84,7 +84,7 @@ const TypeMaterial = props => {
 
 const mapStateToProps = state => {
   return {
-    itemsType: state.reducerMaterial.itemsType,
+    itemsType: state.reducerItems.itemsType,
   }
 }
 
@@ -95,4 +95,4 @@ const mapDispatchToProps = {
   create,
 }
 
-export default connect(mapStateToProps, mapDispatchToProps)(TypeMaterial)
+export default connect(mapStateToProps, mapDispatchToProps)(ItemType)

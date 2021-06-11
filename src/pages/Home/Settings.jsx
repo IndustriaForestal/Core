@@ -31,16 +31,21 @@ const Settings = props => {
         <div className="Home">
           <IconHome
             icon={<BsCardImage />}
-            url="/settings/type-material"
+            url="/items/type"
             text="Tipo de material"
           />
           <IconHome
             icon={<BsCardImage />}
-            url="/settings/type-wood"
+            url="/wood"
             text="Tipo de madera"
           />
           <IconHome icon={<BsCardImage />} url="/qualities" text="Calidades" />
-          <IconHome icon={<BsCardImage />} url="/specialProcesses" text="Requerimientos Calidad" />
+          <IconHome
+            icon={<BsCardImage />}
+            url="/specialProcesses"
+            text="Requerimientos Calidad"
+          />
+          <IconHome icon={<BsCardImage />} url="/processes" text="Procesos" />
           <IconHome icon={<BsCardImage />} url="/zones" text="Zonas" />
 
           <IconHome icon={<FaPallet />} url="/users" text="Usuarios" />

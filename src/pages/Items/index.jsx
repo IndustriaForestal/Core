@@ -9,7 +9,6 @@ import Table from '../../components/Table/Table'
 import Button from '../../components/Button/Button'
 import AddButton from '../../components/AddButton/AddButton'
 import SearchBar from '../../components/SearchBar/SearchBar'
-import './styles.scss'
 
 const Items = props => {
   const { items, setTitle, setWraper, role } = props
@@ -130,8 +129,8 @@ const Items = props => {
 
 const mapStateToProps = state => {
   return {
-    items: state.items,
-    role: state.role,
+    items: state.reducerItems.items,
+    role: state.reducerApp.role,
   }
 }
 

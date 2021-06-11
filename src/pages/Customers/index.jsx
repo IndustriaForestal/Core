@@ -124,8 +124,8 @@ const Customers = props => {
 
 const mapStateToProps = state => {
   return {
-    customers: state.customers,
-    role: state.role,
+    customers: state.reducerCustomers.customers,
+    role: state.reducerApp.role,
   }
 }
 

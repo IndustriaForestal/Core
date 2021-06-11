@@ -1,40 +1,63 @@
 import React, { useEffect } from 'react'
 import { connect } from 'react-redux'
-import { setTitle, getAll, deleted, create, update } from '../../actions/app'
-import Loading from '../../components/Loading/Loading'
-import moment from 'moment'
+import { setTitle, getAll, deleted, create, update } from '../../../actions/app'
+import Loading from '../../../components/Loading/Loading'
 import MaterialTable from 'material-table'
-import './styles.scss'
-import Cookies from 'js-cookie'
 
-const SpecialProcesses = props => {
-  const { specialProcesses, setTitle } = props
-
-  const role = Cookies.get('name')
+const Processes = props => {
+  const { processes, setTitle, processesItems, items } = props
 
   useEffect(() => {
     const topbar = {
-      title: 'Requerimientos de calidad',
-      menu: { 'Requerimientos de calidad': '/specialProcesses' },
+      title: 'Procesos',
+      menu: {
+        Procesos: '/processes',
+        'Procesos por Tarima': '/processes/pallets',
+        'Procesos por Madera Habilitada': '/processes/items',
+      },
     }
     setTitle(topbar)
-    props.getAll('specialProcesses', 'GET_SPECIAL_PROCESSES')
+    props
+      .getAll('processes', 'GET_PROCESSES')
+      .then(() => {
+        props.getAll('processes/items', 'GET_PROCESSES_ITEMS')
+      })
+      .then(() => {
+        props.getAll('items', 'GET_ITEMS')
+      })
     // eslint-disable-next-line
   }, [])
-  if (specialProcesses) {
-    const specialProcessesMaped = specialProcesses.map(specialProcess => {
-      return {
-        ...specialProcess,
-        created: moment(specialProcess.created).format('YYYY-MM-DD HH:mm:ss'),
-      }
-    })
+
+  if (processes && processesItems && items) {
+    const lookup = {}
+    const lookupPallets = {}
+
+    processes.map(process => (lookup[process.id] = process.name))
+
+    items.map(
+      item =>
+        (lookupPallets[
+          item.id
+        ] = `${item.length} x ${item.width} x ${item.height}`)
+    )
 
     return (
       <MaterialTable
-        title="Requerimientos Calidad"
+        title="Procesos por madera habilitada"
         columns={[
-          { title: 'Nombre', field: 'name' },
-          { title: 'Severidad', field: 'severity' },
+          {
+            title: 'Proceso',
+            field: 'process_id',
+            lookup: lookup,
+          },
+          {
+            title: 'Madera Habilitada',
+            field: 'item_id',
+            lookup: lookupPallets,
+          },
+          { title: 'Orden', field: 'orden' },
+          { title: 'Estimado Horas', field: 'estimated' },
+          { title: 'Holgura Horas', field: 'clearance' },
         ]}
         localization={{
           pagination: {
@@ -67,16 +90,16 @@ const SpecialProcesses = props => {
             addTooltip: 'Agregar',
           },
         }}
-        data={specialProcessesMaped}
+        data={processesItems}
         editable={{
           onRowAdd: newData =>
             new Promise((resolve, reject) => {
               setTimeout(() => {
                 newData.user_id = 1
                 props
-                  .create('specialProcesses', 'CREATE_SPECIAL_PROCESS', newData)
+                  .create('processes/items', 'CREATE_PROCESS_PALLETS', newData)
                   .then(() =>
-                    props.getAll('specialProcesses', 'GET_SPECIAL_PROCESSES')
+                    props.getAll('processes/items', 'GET_PROCESSES_ITEMS')
                   )
                   .then(() => resolve())
               }, 1000)
@@ -89,14 +112,18 @@ const SpecialProcesses = props => {
                 newData.user_id = 1
                 props
                   .update(
-                    `specialProcesses/${oldData.id}`,
-                    'UPDATE_SPECIAL_PROCESS',
+                    `processes/items/${oldData.id}`,
+                    'UPDATE_PROCESS_PALLETS',
                     newData
                   )
                   .then(() =>
-                    props.getAll('specialProcesses', 'GET_SPECIAL_PROCESSES')
+                    props.getAll('processes/items', 'GET_PROCESSES_ITEMS')
                   )
                   .then(() => resolve())
+                  .catch(e => {
+                    console.log(e)
+                    reject()
+                  })
               }, 1000)
             }),
           onRowDelete: oldData =>
@@ -104,11 +131,11 @@ const SpecialProcesses = props => {
               setTimeout(() => {
                 props
                   .deleted(
-                    `specialProcesses/${oldData.id}`,
-                    'DELETE_SPECIAL_PROCESS'
+                    `processes/items/${oldData.id}`,
+                    'DELETE_PROCESS_PALLETS'
                   )
                   .then(() =>
-                    props.getAll('specialProcesses', 'GET_SPECIAL_PROCESSES')
+                    props.getAll('processes/items', 'GET_PROCESSES_ITEMS')
                   )
                   .then(() => resolve())
               }, 1000)
@@ -123,7 +150,10 @@ const SpecialProcesses = props => {
 
 const mapStateToProps = state => {
   return {
-    specialProcesses: state.reducerSpecialProcesses.specialProcesses,
+    processes: state.reducerProcesses.processes,
+    processesItems: state.reducerProcesses.processesItems,
+    items: state.reducerItems.items,
+    user: state.reducerApp.user,
   }
 }
 
@@ -135,4 +165,4 @@ const mapDispatchToProps = {
   update,
 }
 
-export default connect(mapStateToProps, mapDispatchToProps)(SpecialProcesses)
+export default connect(mapStateToProps, mapDispatchToProps)(Processes)

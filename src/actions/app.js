@@ -20,6 +20,7 @@ axios.interceptors.response.use(
       }).then(result => {
         if (result.isConfirmed) {
           logOut()
+          sessionStorage.clear()
           window.location.href = '/login'
         }
       })
@@ -89,11 +90,12 @@ export const setUser = (payload, redirectionUrl) => async dispatch => {
       },
     })
 
-    document.cookie = `user=${res.data.user.user}`
-    document.cookie = `name=${res.data.user.name}`
-    document.cookie = `id=${res.data.user.id}`
-    document.cookie = `token=${res.data.token}`
-    document.cookie = `role=${res.data.user.role}`
+    sessionStorage.setItem('token', res.data.token)
+    sessionStorage.setItem('user', res.data.user.user)
+    sessionStorage.setItem('name', res.data.user.name)
+    sessionStorage.setItem('id', res.data.user.id)
+    sessionStorage.setItem('role', res.data.user.role)
+
     window.location.href = redirectionUrl
 
     dispatch({
@@ -115,10 +117,11 @@ export const logOut = () => ({
 //CRUD
 
 export const getAll = (endPoint, typeAction) => async dispatch => {
+  const storedJwt = sessionStorage.getItem('token')
   try {
     const res = await axios({
       url: `${process.env.REACT_APP_API}${endPoint}`,
-      headers: { Authorization: `Bearer ${Cookies.get('token')}` },
+      headers: { Authorization: `Bearer ${storedJwt}` },
       method: 'get',
     })
     dispatch({
@@ -131,10 +134,11 @@ export const getAll = (endPoint, typeAction) => async dispatch => {
 }
 
 export const get = (endPoint, typeAction) => async dispatch => {
+  const storedJwt = sessionStorage.getItem('token')
   try {
     const res = await axios({
       url: `${process.env.REACT_APP_API}${endPoint}`,
-      headers: { Authorization: `Bearer ${Cookies.get('token')}` },
+      headers: { Authorization: `Bearer ${storedJwt}` },
       method: 'get',
     })
     dispatch({
@@ -147,10 +151,12 @@ export const get = (endPoint, typeAction) => async dispatch => {
 }
 
 export const create = (endPoint, typeAction, data) => async dispatch => {
+  const storedJwt = sessionStorage.getItem('token')
+
   try {
     const res = await axios({
       url: `${process.env.REACT_APP_API}${endPoint}`,
-      headers: { Authorization: `Bearer ${Cookies.get('token')}` },
+      headers: { Authorization: `Bearer ${storedJwt}` },
       method: 'post',
       data: data,
     })
@@ -181,10 +187,12 @@ export const create = (endPoint, typeAction, data) => async dispatch => {
 }
 
 export const update = (endpoint, typeAction, data) => async dispatch => {
+  const storedJwt = sessionStorage.getItem('token')
+
   try {
     const res = await axios({
       url: `${process.env.REACT_APP_API}${endpoint}`,
-      headers: { Authorization: `Bearer ${Cookies.get('token')}` },
+      headers: { Authorization: `Bearer ${storedJwt}` },
       method: 'put',
       data: data,
     })
@@ -200,10 +208,12 @@ export const update = (endpoint, typeAction, data) => async dispatch => {
 }
 
 export const deleted = (endpoint, typeAction) => async dispatch => {
+  const storedJwt = sessionStorage.getItem('token')
+
   try {
     const res = await axios({
       url: `${process.env.REACT_APP_API}${endpoint}`,
-      headers: { Authorization: `Bearer ${Cookies.get('token')}` },
+      headers: { Authorization: `Bearer ${storedJwt}` },
       method: 'delete',
     })
     dispatch({
@@ -218,10 +228,12 @@ export const deleted = (endpoint, typeAction) => async dispatch => {
 //Notifications
 
 export const createNotification = data => async dispatch => {
+  const storedJwt = sessionStorage.getItem('token')
+
   try {
     await axios({
       url: `${process.env.REACT_APP_API}notifications`,
-      headers: { Authorization: `Bearer ${Cookies.get('token')}` },
+      headers: { Authorization: `Bearer ${storedJwt}` },
       method: 'post',
       data: {
         userId: Cookies.get('id'),
@@ -240,10 +252,12 @@ export const createNotification = data => async dispatch => {
 }
 
 export const updateNotification = (data, notificationId) => async dispatch => {
+  const storedJwt = sessionStorage.getItem('token')
+
   try {
     const res = await axios({
       url: `${process.env.REACT_APP_API}notification/${notificationId}`,
-      headers: { Authorization: `Bearer ${Cookies.get('token')}` },
+      headers: { Authorization: `Bearer ${storedJwt}` },
       method: 'put',
       data: {
         userId: Cookies.get('id'),
@@ -260,10 +274,12 @@ export const updateNotification = (data, notificationId) => async dispatch => {
 }
 
 export const createNotificationManual = data => async dispatch => {
+  const storedJwt = sessionStorage.getItem('token')
+
   try {
     await axios({
       url: `${process.env.REACT_APP_API}notifications`,
-      headers: { Authorization: `Bearer ${Cookies.get('token')}` },
+      headers: { Authorization: `Bearer ${storedJwt}` },
       method: 'post',
       data: {
         userId: Cookies.get('id'),

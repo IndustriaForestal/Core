@@ -73,8 +73,8 @@ const Nails = props => {
 
 const mapStateToProps = state => {
   return {
-    stock: state.stock,
-    role: state.role,
+    stock: state.reducerStock.stock,
+    role: state.reducerStock.role,
   }
 }
 

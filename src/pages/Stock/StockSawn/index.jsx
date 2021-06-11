@@ -89,9 +89,9 @@ const StockSwan = props => {
 
 const mapStateToProps = state => {
   return {
-    stock: state.stock,
-    role: state.role,
-    units: state.units,
+    stock: state.reducerStock.stock,
+    role: state.reducerApp.role,
+    units: state.reducerApp.units,
   }
 }
 

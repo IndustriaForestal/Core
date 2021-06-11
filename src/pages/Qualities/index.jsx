@@ -186,8 +186,8 @@ const Qualities = props => {
 
 const mapStateToProps = state => {
   return {
-    qualities: state.qualities,
-    role: state.role,
+    qualities: state.reducerQualities.qualities,
+    role: state.reducerApp.role,
   }
 }
 

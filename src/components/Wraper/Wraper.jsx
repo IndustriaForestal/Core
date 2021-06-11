@@ -12,7 +12,7 @@ const Wraper = ({ children, wraper }) => {
 
 const mapStateToProps = state => {
   return {
-    wraper: state.wraper,
+    wraper: state.reducerApp.wraper,
   }
 }
 

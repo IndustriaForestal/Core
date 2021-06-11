@@ -11,13 +11,12 @@ import Loading from '../../../components/Loading/Loading'
 const UpdateMaterialOne = props => {
   const { register, handleSubmit } = useForm()
   const { id } = useParams()
-  const { user, processes } = props
+  const { user } = props
   const [passwordVerify, setPasswordVerify] = useState(true)
   const [password, setPassword] = useState(true)
 
   useEffect(() => {
-    props.get(`users/one/${id}`, 'GET_USER')
-    props.getAll(`processes`, 'GET_PROCESSES')
+    props.get(`users/${id}`, 'GET_USER')
     // eslint-disable-next-line
   }, [])
 
@@ -34,7 +33,7 @@ const UpdateMaterialOne = props => {
     }
   }
 
-  if (user && processes) {
+  if (user) {
     return (
       <Card title="Editar Usuario" className="card -warning">
         <form
@@ -71,9 +70,7 @@ const UpdateMaterialOne = props => {
             title="Confirmar Contraseña"
             onChange={handlePasswordVerify}
           />
-          {passwordVerify ? (
-            <span className="--success">Password Correcto</span>
-          ) : (
+          {passwordVerify ? null : (
             <span className="--danger">Los password deben ser iguales</span>
           )}
           <div className="inputGroup">
@@ -82,16 +79,6 @@ const UpdateMaterialOne = props => {
               <select name="role" ref={register}>
                 <option value={user.role}>{user.role}</option>
                 <option value="Administrador">Administrador</option>
-                <option value="Vista">Vista</option>
-                {processes
-                  .filter(process => process.name !== user.role)
-                  .map(process => {
-                    return (
-                      <option key={process._id} value={process.name}>
-                        {process.name}
-                      </option>
-                    )
-                  })}
               </select>
             </label>
           </div>
@@ -113,8 +100,7 @@ const UpdateMaterialOne = props => {
 
 const mapStateToProps = state => {
   return {
-    processes: state.processes,
-    user: state.user,
+    user: state.reducerUsers.user,
   }
 }
 

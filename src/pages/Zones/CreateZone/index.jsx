@@ -129,8 +129,8 @@ const mapDispatchToProps = {
 
 const mapStateToProps = state => {
   return {
-    plants: state.plants,
-    zones: state.zones,
+    plants: state.reducerZones.plants,
+    zones: state.reducerZones.zones,
   }
 }
 

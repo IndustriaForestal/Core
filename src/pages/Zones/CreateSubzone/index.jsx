@@ -162,8 +162,8 @@ const mapDispatchToProps = {
 
 const mapStateToProps = state => {
   return {
-    zones: state.zones,
-    subzones: state.subzones,
+    zones: state.reducerZones.zones,
+    subzones: state.reducerZones.subzones,
   }
 }
 

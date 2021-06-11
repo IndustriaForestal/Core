@@ -1,79 +1,154 @@
 import React, { useEffect } from 'react'
-import { Link } from 'react-router-dom'
 import { connect } from 'react-redux'
-import { AiOutlineEdit } from 'react-icons/ai'
-import { BsPlus } from 'react-icons/bs'
-import { setTitle, getAll, deleted } from '../../actions/app'
-
-import Table from '../../components/Table/Table'
-import Button from '../../components/Button/Button'
-import AddButton from '../../components/AddButton/AddButton'
+import { setTitle, getAll, deleted, create, update } from '../../actions/app'
+import Loading from '../../components/Loading/Loading'
 import './styles.scss'
+import MaterialTable from 'material-table'
 
 const Processes = props => {
-  const { processes, setTitle, role } = props
-
+  const { processes, setTitle, user, material, processesReject } = props
+  const userId = user.id
   useEffect(() => {
     const topbar = {
       title: 'Procesos',
-      menu: { Procesos: '/processes' },
+      menu: {
+        Procesos: '/processes',
+        'Procesos por Tarima': '/processes/pallets',
+        'Procesos por Madera Habilitada': '/processes/items',
+      },
     }
     setTitle(topbar)
-    props.getAll('processes', 'GET_PROCESSES')
+    props
+      .getAll('processes', 'GET_PROCESSES')
+      .then(() => {
+        props.getAll('material', 'GET_MATERIAL')
+      })
+      .then(() => {
+        props.getAll('processes/reject', 'GET_PROCESSES_REJECT')
+      })
     // eslint-disable-next-line
   }, [])
 
-  let tableHeader
-  role === 'Administrador'
-    ? (tableHeader = ['Nombre', 'Usa', 'Acciones'])
-    : (tableHeader = ['Nombre', 'Usa'])
+  if (processes && material && processesReject) {
+    const lookupMaterial = {}
 
+    material.map(m => (lookupMaterial[m.id] = m.name))
 
+    const lookupProcessReject = {}
 
-  return (
-    <>
-      <Table head={tableHeader}>
-        {processes ? (
-          processes.map(process => (
-            <tr key={process._id}>
-              <td>{process.name}</td>
-              <td>{process.type === '1' ? 'Tarima' : 'P/T'}</td>
-              {role === 'Administrador' ? (
-                <td>
-                  <Link to={`processes/${process._id}`}>
-                    <Button className="btn --warning">
-                      <AiOutlineEdit />
-                    </Button>
-                  </Link>
-                  {/* <Button
-                  className="btn --danger"
-                  onClick={() => handleDeleteProcess(process._id)}
-                >
-                  <AiOutlineDelete />
-                </Button> */}
-                </td>
-              ) : null}
-            </tr>
-          ))
-        ) : (
-          <tr>
-            <td colSpan="7">No hay registros</td>
-          </tr>
-        )}
-      </Table>
-      <Link to="/processes/create">
-        <AddButton>
-          <BsPlus />
-        </AddButton>
-      </Link>
-    </>
-  )
+    processesReject.map(m => (lookupProcessReject[m.id] = m.name))
+
+    const editable = {
+      onRowAdd: newData =>
+        new Promise((resolve, reject) => {
+          setTimeout(() => {
+            newData.user_id = userId
+            props
+              .create('processes', 'CREATE_PROCESS', newData)
+              .then(() => props.getAll('processes', 'GET_PROCESSES'))
+              .then(() => resolve())
+          }, 1000)
+        }),
+      onRowUpdate: (newData, oldData) =>
+        new Promise((resolve, reject) => {
+          setTimeout(() => {
+            console.log(oldData, newData)
+            delete newData.id
+            newData.user_id = userId
+            props
+              .update(`processes/${oldData.id}`, 'UPDATE_PROCESS', newData)
+              .then(() => props.getAll('processes', 'GET_PROCESSES'))
+              .then(() => resolve())
+          }, 1000)
+        }),
+      onRowDelete: oldData =>
+        new Promise((resolve, reject) => {
+          setTimeout(() => {
+            props
+              .deleted(`processes/${oldData.id}`, 'DELETE_PROCESS')
+              .then(() => props.getAll('processes', 'GET_PROCESSES'))
+              .then(() => resolve())
+          }, 1000)
+        }),
+    }
+
+    return (
+      <MaterialTable
+        title="Procesos"
+        columns={[
+          { title: 'Nombre', field: 'name' },
+          {
+            title: 'Material de entrada',
+            field: 'material_in',
+            lookup: lookupMaterial,
+          },
+          {
+            title: 'Material de salida',
+            field: 'material_out',
+            lookup: lookupMaterial,
+          },
+          {
+            title: 'Rechazo 1',
+            field: 'reject_1',
+            lookup: lookupProcessReject,
+          },
+          {
+            title: 'Rechazo 2',
+            field: 'reject_2',
+            lookup: lookupProcessReject,
+          },
+          {
+            title: 'Rechazo 3',
+            field: 'reject_3',
+            lookup: lookupProcessReject,
+          },
+        ]}
+        localization={{
+          pagination: {
+            labelDisplayedRows: '{from}-{to} de {count}',
+            labelRowsSelect: 'Filas',
+            firstAriaLabel: 'Primera',
+            firstTooltip: 'Primera',
+            previousAriaLabel: 'Anterior',
+            previousTooltip: 'Anterior',
+            nextAriaLabel: 'Siguiente',
+            nextTooltip: 'Siguiente',
+            lastAriaLabel: 'Ultimo',
+            lastTooltip: 'Ultimo',
+          },
+          toolbar: {
+            searchTooltip: 'Buscar',
+            searchPlaceholder: 'Buscar',
+          },
+          header: {
+            actions: 'Acciones',
+          },
+          body: {
+            editRow: {
+              deleteText: '¿Eliminar?',
+              saveTooltip: 'Ok',
+              cancelTooltip: 'Cancelar',
+            },
+            editTooltip: 'Editar',
+            deleteTooltip: 'Eliminar',
+            addTooltip: 'Agregar',
+          },
+        }}
+        data={processes}
+        editable={editable}
+      />
+    )
+  } else {
+    return <Loading />
+  }
 }
 
 const mapStateToProps = state => {
   return {
-    processes: state.processes,
-    role: state.role,
+    processes: state.reducerProcesses.processes,
+    processesReject: state.reducerProcesses.processesReject,
+    material: state.reducerMaterial.material,
+    user: state.reducerApp.user,
   }
 }
 
@@ -81,6 +156,8 @@ const mapDispatchToProps = {
   setTitle,
   getAll,
   deleted,
+  create,
+  update,
 }
 
 export default connect(mapStateToProps, mapDispatchToProps)(Processes)
