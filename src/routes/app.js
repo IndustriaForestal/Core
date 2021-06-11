@@ -13,11 +13,7 @@ import Customers from '../pages/Customers'
 import CreateCustomer from '../pages/Customers/CreateCustomer'
 import EditCustomer from '../pages/Customers/EditCustomer'
 import Nails from '../pages/Nails'
-import CreateNail from '../pages/Nails/CreateNail'
-import UpdateNail from '../pages/Nails/UpdateNail'
 import Material from '../pages/Material'
-import CreateMaterial from '../pages/Material/CreateMaterial'
-import UpdateMaterial from '../pages/Material/UpdateMaterial'
 import Processes from '../pages/Processes'
 import ProcessesPallets from '../pages/Processes/ProcessesPallets'
 import ProcessesItems from '../pages/Processes/ProcessesItems'
@@ -72,12 +68,8 @@ const App = ({ loggedIn }) => {
             <Route exact path="/customers/:id" component={EditCustomer} />
 
             <Route exact path="/nails" component={Nails} />
-            <Route exact path="/nails/create" component={CreateNail} />
-            <Route exact path="/nails/:id" component={UpdateNail} />
 
             <Route exact path="/material" component={Material} />
-            <Route exact path="/material/create" component={CreateMaterial} />
-            <Route exact path="/material/:id" component={UpdateMaterial} />
 
             <Route exact path="/processes" component={Processes} />
             <Route
