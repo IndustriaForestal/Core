@@ -2,13 +2,13 @@ import React, { useEffect } from 'react'
 import { connect } from 'react-redux'
 import { BsCardImage } from 'react-icons/bs'
 import { FaPallet } from 'react-icons/fa'
-import Cookies from 'js-cookie'
 import { setTitle } from '../../actions/app'
 import IconHome from './IconHome/IconHome'
 import './Home.scss'
 
 const Home = props => {
-  const role = Cookies.get('role')
+  const { user } = props
+  const role = user.role
 
   useEffect(() => {
     const topbar = {
@@ -32,36 +32,6 @@ const Home = props => {
           <IconHome icon={<BsCardImage />} url="/stock" text="Inventarios" />
 
           <IconHome icon={<FaPallet />} url="/pallets" text="Tarimas" />
-          {/* <IconHome icon={<FaPallet />} url="/zones" text="Zonas" /> */}
-          {/* <IconHome icon={<FaPallet />} url="/users" text="Usuarios" /> */}
-          {/*   <IconHome
-            icon={<BsCardImage />}
-            url="/platforms"
-            text="Plataformas jaulas y tractos"
-          />
-          <IconHome icon={<BsCardImage />} url="/users" text="Usuarios" />
-          <IconHome
-            icon={<BsCardImage />}
-            url="/calendar"
-            text="Calendario de Proyección de embarques"
-          />
-
-          <IconHome
-            icon={<BsCardImage />}
-            url="/calendar-shipments"
-            text="Calendario Embarques"
-          />
-
-          <IconHome
-            icon={<BsCardImage />}
-            url="/shipping-program"
-            text="Programa de Embarques"
-          />
-          <IconHome
-            icon={<BsCardImage />}
-            url="/format"
-            text="Formatos"
-          /> */}
         </div>
       )
     case 'Vista':
@@ -198,4 +168,10 @@ const mapDispatchToProps = {
   setTitle,
 }
 
-export default connect(null, mapDispatchToProps)(Home)
+const mapStateToProps = state => {
+  return {
+    user: state.reducerApp.user,
+  }
+}
+
+export default connect(mapStateToProps, mapDispatchToProps)(Home)

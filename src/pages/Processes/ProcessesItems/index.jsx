@@ -5,7 +5,7 @@ import Loading from '../../../components/Loading/Loading'
 import MaterialTable from 'material-table'
 
 const Processes = props => {
-  const { processes, setTitle, processesItems, items } = props
+  const { processes, setTitle, processesItems, items, user } = props
 
   useEffect(() => {
     const topbar = {
@@ -95,7 +95,7 @@ const Processes = props => {
           onRowAdd: newData =>
             new Promise((resolve, reject) => {
               setTimeout(() => {
-                newData.user_id = 1
+                newData.user_id = user.id
                 props
                   .create('processes/items', 'CREATE_PROCESS_PALLETS', newData)
                   .then(() =>
@@ -109,7 +109,7 @@ const Processes = props => {
               setTimeout(() => {
                 console.log(oldData, newData)
                 delete newData.id
-                newData.user_id = 1
+                newData.user_id = user.id
                 props
                   .update(
                     `processes/items/${oldData.id}`,
