@@ -8,7 +8,8 @@ import IconHome from './IconHome/IconHome'
 import './Home.scss'
 
 const Settings = props => {
-  const role = Cookies.get('role')
+  const { user } = props
+  const role = user.role
 
   useEffect(() => {
     const topbar = {
@@ -34,11 +35,7 @@ const Settings = props => {
             url="/items/type"
             text="Tipo de material"
           />
-          <IconHome
-            icon={<BsCardImage />}
-            url="/wood"
-            text="Tipo de madera"
-          />
+          <IconHome icon={<BsCardImage />} url="/wood" text="Tipo de madera" />
           <IconHome icon={<BsCardImage />} url="/qualities" text="Calidades" />
           <IconHome
             icon={<BsCardImage />}
@@ -69,4 +66,10 @@ const mapDispatchToProps = {
   setTitle,
 }
 
-export default connect(null, mapDispatchToProps)(Settings)
+const mapStateToProps = state => {
+  return {
+    user: state.reducerApp.user,
+  }
+}
+
+export default connect(mapStateToProps, mapDispatchToProps)(Settings)
