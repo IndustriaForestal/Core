@@ -10,7 +10,6 @@ import {
   create,
 } from '../../../actions/app'
 import { inToCm } from '../../../utils'
-import Cookies from 'js-cookie'
 import Card from '../../../components/Card/Card'
 import Input from '../../../components/Input/Input'
 import Button from '../../../components/Button/Button'
@@ -32,6 +31,8 @@ const Nails = props => {
     stockZoneItems,
     stockZone,
     stockZoneRaws,
+    stockZoneComplements,
+    complements,
     units,
   } = props
   const [type, setType] = useState(0)
@@ -46,7 +47,6 @@ const Nails = props => {
   const [height, setHeight] = useState(0)
   const [length, setLength] = useState(0)
   const [width, setWidth] = useState(0)
-  const [m3, setM3] = useState(0)
   const [inputOut, setAmountInputOut] = useState(0)
   const [amountRaw, setAmountRaw] = useState(0)
   const [d1, setD1] = useState(0)
@@ -73,6 +73,9 @@ const Nails = props => {
         props.getAll('items', 'GET_ITEMS')
       })
       .then(() => {
+        props.getAll('complements', 'GET_COMPLEMENTS')
+      })
+      .then(() => {
         props.getAll('zones/plants', 'GET_PLANTS')
       })
       .then(() => {
@@ -92,6 +95,9 @@ const Nails = props => {
       })
       .then(() => {
         props.getAll('stock/stock_zones/items', 'GET_SZ_ITEMS')
+      })
+      .then(() => {
+        props.getAll('stock/stock_zones/complements', 'GET_SZ_COMPLEMENTS')
       })
       .then(() => {
         props.getAll('stock/stock_zones/sawn', 'GET_SZ_SAWN')
@@ -137,7 +143,9 @@ const Nails = props => {
     stockZoneSawn &&
     stockZoneItems &&
     stockZone &&
-    stockZoneRaws
+    stockZoneRaws &&
+    stockZoneComplements &&
+    complements
   ) {
     const palletsOptions = pallets.map(pallet => {
       return {
@@ -157,17 +165,15 @@ const Nails = props => {
         }
       })
 
-    const nailsOptions = items
-      .filter(item => item.item_type_id === 4)
-      .map(item => {
-        return {
-          value: item.id,
-          label: item.nail,
-        }
-      })
+    const nailsOptions = complements.map(complement => {
+      return {
+        value: complement.id,
+        label: complement.name,
+      }
+    })
 
     const handleSaveStockPallet = () => {
-      const user = Cookies.get('name')
+      const user = sessionStorage.getItem('name')
       props
         .create(`stock/pallets/${idSelected}`, 'PALLET_HISTORY', {
           type,
@@ -187,7 +193,7 @@ const Nails = props => {
     }
 
     const handleSaveStockItem = () => {
-      const user = Cookies.get('name')
+      const user = sessionStorage.getItem('name')
       props
         .create(`stock/items/${idSelected}`, 'PALLET_HISTORY', {
           amount,
@@ -205,24 +211,25 @@ const Nails = props => {
     }
 
     const handleSaveStockNail = () => {
-      const user = Cookies.get('name')
+      const user = sessionStorage.getItem('name')
       props
         .create(`stock/nails/${idSelected}`, 'PALLET_HISTORY', {
           amount,
           user_id: user,
-          state: '',
+          state: 'stock',
+          zone_id: 1,
           date: moment().format('YYYY-MM-DD HH:mm:ss'),
         })
         .then(() => {
           setType(0)
         })
         .then(() => {
-          props.getAll('stock/stock_zones/items', 'GET_SZ_ITEMS')
+          props.getAll('stock/stock_zones/complements', 'GET_SZ_COMPLEMENTS')
         })
     }
 
     const handleSaveStockSawn = () => {
-      const user = Cookies.get('id')
+      const user = sessionStorage.getItem('id')
 
       let heighConverted
       let lengthConverted
@@ -275,7 +282,7 @@ const Nails = props => {
     }
 
     const hanldeUpdateStockZoneSawn = stock => {
-      const user = Cookies.get('id')
+      const user = sessionStorage.getItem('id')
       const negativeInput = parseInt(inputOut) * -1
       inputOut > stock.amount
         ? console.log('Mayor')
@@ -307,7 +314,7 @@ const Nails = props => {
     }
 
     const handleSaveStockRaw = () => {
-      const user = Cookies.get('name')
+      const user = sessionStorage.getItem('name')
 
       /* let volumen1 = length * d1 * amountRaw * 0.07854
       let volumen2 = length * d2 * amountRaw * 0.07854 */
@@ -335,7 +342,7 @@ const Nails = props => {
     }
 
     const hanldeUpdateStockZone = stock => {
-      const user = Cookies.get('id')
+      const user = sessionStorage.getItem('id')
       const negativeInput = parseInt(inputOut) * -1
       inputOut > stock.amount
         ? console.log('Mayor')
@@ -369,41 +376,47 @@ const Nails = props => {
     }
 
     const hanldeUpdateStockZoneNails = stock => {
-      const user = Cookies.get('id')
+      const user = sessionStorage.getItem('id')
       const negativeInput = parseInt(inputOut) * -1
       inputOut > stock.amount
         ? console.log('Mayor')
         : parseInt(stock.amount) - inputOut === 0
         ? props
-            .create(`stock/nails/${stock.item_id}`, 'PALLET_HISTORY', {
+            .create(`stock/nails/${stock.complement_id}`, 'PALLET_HISTORY', {
               amount: negativeInput,
               user_id: user,
-              state: stock.state,
-              zone_id: stock.zone_id,
-              sz: stock.id,
-              delete: true,
-              date: moment().format('YYYY-MM-DD HH:mm:ss'),
-            })
-            .then(() => {
-              props.getAll('stock/stock_zones/items', 'GET_SZ_ITEMS')
-            })
-        : props
-            .create(`stock/nails/${stock.item_id}`, 'PALLET_HISTORY', {
-              amount: negativeInput,
-              user_id: user,
-              state: stock.state,
-              zone_id: stock.zone_id,
+              state: 'stock',
+              zone_id: 1,
               sz: stock.id,
               delete: false,
               date: moment().format('YYYY-MM-DD HH:mm:ss'),
             })
             .then(() => {
-              props.getAll('stock/stock_zones/items', 'GET_SZ_ITEMS')
+              props.getAll(
+                'stock/stock_zones/complements',
+                'GET_SZ_COMPLEMENTS'
+              )
+            })
+        : props
+            .create(`stock/nails/${stock.complement_id}`, 'PALLET_HISTORY', {
+              amount: negativeInput,
+              user_id: user,
+              state: 'stock',
+              zone_id: 1,
+              sz: stock.id,
+              delete: false,
+              date: moment().format('YYYY-MM-DD HH:mm:ss'),
+            })
+            .then(() => {
+              props.getAll(
+                'stock/stock_zones/complements',
+                'GET_SZ_COMPLEMENTS'
+              )
             })
     }
 
     const hanldeUpdateStockZoneItems = stock => {
-      const user = Cookies.get('id')
+      const user = sessionStorage.getItem('id')
       const negativeInput = parseInt(inputOut) * -1
       inputOut > stock.amount
         ? console.log('Mayor')
@@ -437,7 +450,7 @@ const Nails = props => {
     }
 
     const hanldeUpdateStockZoneRaws = stock => {
-      const user = Cookies.get('id')
+      const user = sessionStorage.getItem('id')
       const negativeInput = parseInt(inputOut) * -1
       inputOut > stock.m3
         ? console.log('Mayor')
@@ -468,9 +481,7 @@ const Nails = props => {
             })
     }
 
-    const stockZoneNailsFiltered = stockZoneItems.filter(
-      nail => nail.item_type_id === 4
-    )
+    const stockZoneNailsFiltered = stockZoneComplements
 
     const stockZoneItemsFiltered = stockZoneItems.filter(
       item => item.item_type_id !== 4
@@ -653,7 +664,7 @@ const Nails = props => {
               data={stockZoneNailsFiltered}
               title="Disponible"
               columns={[
-                { title: 'Clavo', field: 'nail' },
+                { title: 'Clavo', field: 'name' },
                 { title: 'Disponible', field: 'amount' },
                 {
                   title: 'Cantidad a retirar',
@@ -1130,6 +1141,7 @@ const mapStateToProps = state => {
   return {
     pallets: state.reducerPallets.pallets,
     items: state.reducerItems.items,
+    complements: state.reducerComplements.complements,
     sawn: state.reducerStock.stock,
     plants: state.reducerZones.plants,
     zones: state.reducerZones.zones,
@@ -1139,6 +1151,7 @@ const mapStateToProps = state => {
     stockZoneItems: state.reducerStock.stockZoneItems,
     stockZoneSawn: state.reducerStock.stockZoneSawn,
     stockZoneRaws: state.reducerStock.stockZoneRaws,
+    stockZoneComplements: state.reducerStock.stockZoneComplements,
     units: state.reducerApp.units,
   }
 }

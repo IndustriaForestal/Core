@@ -26,7 +26,7 @@ import Loading from '../../components/Loading/Loading'
 import './styles.scss'
 
 const OrderProduction = props => {
-  const role = Cookies.get('role')
+  const role = sessionStorage.getItem('role')
   const { orders, setTitle, processes } = props
   console.log(role)
   useEffect(() => {

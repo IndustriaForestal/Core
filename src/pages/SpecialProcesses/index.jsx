@@ -5,12 +5,10 @@ import Loading from '../../components/Loading/Loading'
 import moment from 'moment'
 import MaterialTable from 'material-table'
 import './styles.scss'
-import Cookies from 'js-cookie'
 
 const SpecialProcesses = props => {
   const { specialProcesses, setTitle } = props
 
-  const role = Cookies.get('name')
 
   useEffect(() => {
     const topbar = {

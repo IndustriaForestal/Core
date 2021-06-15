@@ -1,5 +1,4 @@
 import axios from 'axios'
-import Cookies from 'js-cookie'
 import moment from 'moment'
 import { createNotification } from '../../actions/app'
 

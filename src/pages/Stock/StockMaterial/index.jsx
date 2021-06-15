@@ -5,7 +5,7 @@ import { setTitle, getAll, deleted, cleanStock } from '../../../actions/app'
 import MaterialTable from 'material-table'
 
 const StockSwan = props => {
-  const { stock, setTitle, role } = props
+  const { stock, setTitle } = props
 
   useEffect(() => {
     const topbar = {
@@ -27,7 +27,7 @@ const StockSwan = props => {
   }, [])
 
   if (stock) {
-    const stockItems = stock.filter(item => item.item_type_id !== 4)
+
     return (
       <>
         <MaterialTable

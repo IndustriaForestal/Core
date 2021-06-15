@@ -7,7 +7,7 @@ import './styles.scss'
 import MaterialTable from 'material-table'
 
 const Nails = props => {
-  const { stock, setTitle, role } = props
+  const { stock, setTitle } = props
 
   useEffect(() => {
     const topbar = {

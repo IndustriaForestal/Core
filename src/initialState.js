@@ -6,7 +6,6 @@ const initialState = {
   topbar: { title: 'Demo', menu: { Menu1: '/' } },
   loggedIn: false,
   wraper: false,
-  role: Cookies.get('role'),
   units: false,
   wood: [
     {

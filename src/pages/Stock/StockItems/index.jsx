@@ -6,7 +6,7 @@ import MaterialTable from 'material-table'
 import { cmToIn } from '../../../utils'
 
 const Nails = props => {
-  const { stock, setTitle, role, units } = props
+  const { stock, setTitle, units } = props
 
   useEffect(() => {
     const topbar = {

@@ -12,7 +12,6 @@ import Login from '../pages/Login'
 import Customers from '../pages/Customers'
 import CreateCustomer from '../pages/Customers/CreateCustomer'
 import EditCustomer from '../pages/Customers/EditCustomer'
-import Nails from '../pages/Nails'
 import Material from '../pages/Material'
 import Processes from '../pages/Processes'
 import ProcessesPallets from '../pages/Processes/ProcessesPallets'
@@ -46,7 +45,6 @@ import Users from '../pages/Users'
 import CreateUser from '../pages/Users/CreateUser'
 import UpdateUser from '../pages/Users/UpdateUser'
 import OrderShipments from '../pages/Orders/OrderShipments'
-
 import SettingsHome from '../pages/Home/Settings'
 import ItemType from '../pages/Items/ItemType'
 import Wood from '../pages/Wood'
@@ -55,6 +53,7 @@ import CreatePlant from '../pages/Zones/CreatePlant'
 import CreateSubzone from '../pages/Zones/CreateSubzone'
 import CreateZone from '../pages/Zones/CreateZone'
 import CreateWorkStation from '../pages/Zones/CreateWorkStation'
+import Complements from '../pages/Complements'
 
 const App = ({ loggedIn }) => {
   if (loggedIn) {
@@ -67,7 +66,7 @@ const App = ({ loggedIn }) => {
             <Route exact path="/customers/create" component={CreateCustomer} />
             <Route exact path="/customers/:id" component={EditCustomer} />
 
-            <Route exact path="/nails" component={Nails} />
+            <Route exact path="/complements" component={Complements} />
 
             <Route exact path="/material" component={Material} />
 

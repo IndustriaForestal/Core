@@ -6,7 +6,7 @@ import './styles.scss'
 import MaterialTable from 'material-table'
 
 const Nails = props => {
-  const { stock, setTitle, role } = props
+  const { stock, setTitle } = props
 
   useEffect(() => {
     const topbar = {
@@ -23,18 +23,18 @@ const Nails = props => {
     }
 
     setTitle(topbar)
-    props.getAll('stock/items', 'GET_STOCK')
+    props.getAll('stock/complements', 'GET_STOCK')
     // eslint-disable-next-line
   }, [])
 
   if (stock) {
-    const stockItems = stock.filter(item => item.item_type_id === 4)
+
     return (
       <>
         <MaterialTable
           columns={[
             { title: 'id', field: 'id' },
-            { title: 'Nombre', field: 'nail' },
+            { title: 'Nombre', field: 'name' },
             {
               title: 'Total',
               field: 'total',
@@ -59,7 +59,7 @@ const Nails = props => {
               searchPlaceholder: 'Buscar',
             },
           }}
-          data={stockItems}
+          data={stock}
           title="Inventario Clavos"
         />
       </>

@@ -11,6 +11,7 @@ import reducerZones from '../pages/Zones/reducer'
 import reducerQualities from '../pages/Qualities/reducer'
 import reducerSpecialProcesses from '../pages/SpecialProcesses/reducer'
 import reducerMaterial from '../pages/Material/reducer'
+import reducerComplements from '../pages/Complements/reducer'
 
 const reducer = combineReducers({
   reducerApp,
@@ -25,6 +26,7 @@ const reducer = combineReducers({
   reducerSpecialProcesses,
   reducerUsers,
   reducerMaterial,
+  reducerComplements,
 })
 
 export default reducer

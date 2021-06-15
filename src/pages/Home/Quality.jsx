@@ -1,13 +1,12 @@
 import React, { useEffect } from 'react'
 import { connect } from 'react-redux'
 import { BsCardImage } from 'react-icons/bs'
-import Cookies from 'js-cookie'
 import { setTitle } from '../../actions/app'
 import IconHome from './IconHome/IconHome'
 import './Home.scss'
 
 const Quality = props => {
-  const role = Cookies.get('role')
+  const role = sessionStorage.getItem('role')
 
   useEffect(() => {
     const topbar = {

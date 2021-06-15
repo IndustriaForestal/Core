@@ -1,15 +1,15 @@
 import React from 'react'
 import { Link, useLocation } from 'react-router-dom'
 import { connect } from 'react-redux'
-import { AiOutlineMail } from 'react-icons/ai'
+
 import { FiLogOut } from 'react-icons/fi'
 import { BiLogInCircle } from 'react-icons/bi'
-import Cookies from 'js-cookie'
+
 import FormControlLabel from '@material-ui/core/FormControlLabel'
 import Switch from '@material-ui/core/Switch'
 import { logOut, setUnits } from '../../actions/app'
 import Title from '../Title/Title'
-import Notifications from '../Notifications'
+
 import './Topbar.scss'
 
 const Topbar = props => {
@@ -39,12 +39,12 @@ const Topbar = props => {
               }
               label="cm / in"
             />
-            <AiOutlineMail />
-            <Notifications />
+         {/*    <AiOutlineMail />
+            <Notifications /> */}
             <FiLogOut onClick={handleLogOut} />
             <div className="topbar__user">
-              <p>{Cookies.get('user')}</p>
-              <p>{Cookies.get('name')}</p>
+              <p>{sessionStorage.getItem('user')}</p>
+              <p>{sessionStorage.getItem('name')}</p>
             </div>
           </div>
         </div>

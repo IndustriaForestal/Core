@@ -6,7 +6,6 @@ import { useForm } from 'react-hook-form'
 import Card from '../../../components/Card/Card'
 import Input from '../../../components/Input/Input'
 import Button from '../../../components/Button/Button'
-import Cookies from 'js-cookie'
 
 import MaterialTable from 'material-table'
 
@@ -23,7 +22,7 @@ const CreateCustomer = props => {
   }, [])
 
   const onSubmit = data => {
-    data.user_id = Cookies.get('id')
+    data.user_id = sessionStorage.getItem('id')
     props.create(`zones/zones/${data.plant_id}`, typeAction, data).then(() => {
       props.getAll('zones/zones', 'GET_ZONES')
     })
@@ -104,7 +103,7 @@ const CreateCustomer = props => {
                   .update(`zones/zones/${rowData.id}`, 'UPDATE_PLANT', {
                     ...rowData,
                     [columnDef.field]: newValue,
-                    user_id: Cookies.get('id'),
+                    user_id: sessionStorage.getItem('id'),
                   })
                   .then(() => {
                     props.getAll('zones/zones', 'GET_ZONES')

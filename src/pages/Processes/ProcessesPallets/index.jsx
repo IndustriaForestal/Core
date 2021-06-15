@@ -32,14 +32,12 @@ const Processes = props => {
     const lookup = {}
     const lookupPallets = {}
 
-    const mapedProccesses = processes.map(process => {
-      lookup[process.id] = process.name
-      return process
+    processes.map(process => {
+      return (lookup[process.id] = process.name)
     })
 
-    const mapedPallets = pallets.map(pallet => {
-      lookupPallets[pallet.id] = pallet.model
-      return pallet
+    pallets.map(pallet => {
+      return (lookupPallets[pallet.id] = pallet.model)
     })
 
     return (

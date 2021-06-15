@@ -2,7 +2,6 @@ import React, { useEffect } from 'react'
 import { connect } from 'react-redux'
 import { BsCardImage } from 'react-icons/bs'
 import { FaPallet } from 'react-icons/fa'
-import Cookies from 'js-cookie'
 import { setTitle } from '../../actions/app'
 import IconHome from './IconHome/IconHome'
 import './Home.scss'
@@ -34,6 +33,11 @@ const Settings = props => {
             icon={<BsCardImage />}
             url="/items/type"
             text="Tipo de material"
+          />
+          <IconHome
+            icon={<BsCardImage />}
+            url="/complements"
+            text="Complementos"
           />
           <IconHome icon={<BsCardImage />} url="/wood" text="Tipo de madera" />
           <IconHome icon={<BsCardImage />} url="/qualities" text="Calidades" />

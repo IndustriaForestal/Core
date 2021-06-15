@@ -50,6 +50,9 @@ const Pallets = props => {
     units,
     stock,
     stock2,
+    complements,
+    complementsPallets,
+    complementsList,
     user,
   } = props
   const [filter, setFilter] = useState([])
@@ -106,6 +109,10 @@ const Pallets = props => {
         )
       })
       .then(() => props.getAll('items', 'GET_ITEMS'))
+      .then(() => props.getAll('complements', 'GET_COMPLEMENTS'))
+      .then(() =>
+        props.getAll('complements/pallets', 'GET_COMPLEMENTS_PALLETS')
+      )
       .then(() => props.getAll('stock', 'GET_STOCK'))
       .then(() => props.getAll('stock/items', 'GET_STOCK_2'))
     // eslint-disable-next-line
@@ -123,6 +130,8 @@ const Pallets = props => {
     }
   }
   const onSubmitItems = data => {
+    console.log(data)
+
     const verification = items.find(
       item =>
         item.height === parseFloat(data.height) &&
@@ -145,10 +154,19 @@ const Pallets = props => {
         data.item_type_id === item.item_type_id
     )
 
-    verificationRedux !== undefined
-      ? Swal.fire('La pieza ya existe!', 'No se puede repetir.', 'info')
-      : props.addItemList(data)
-
+    if (data.complement_id) {
+      const verificationComplementsRedux = itemsList.find(
+        item => item.complement_id === data.complement_id
+      )
+      verificationComplementsRedux !== undefined
+        ? Swal.fire('La pieza ya existe!', 'No se puede repetir.', 'info')
+        : props.addItemList(data)
+    } else {
+      verificationRedux !== undefined
+        ? Swal.fire('La pieza ya existe!', 'No se puede repetir.', 'info')
+        : props.addItemList(data)
+    }
+    setNail(0)
     console.log(verificationRedux)
 
     document.getElementById('formItems').reset()
@@ -200,7 +218,9 @@ const Pallets = props => {
     itemsList &&
     customers &&
     specialProcesses &&
-    items
+    items &&
+    complements &&
+    complementsPallets
   ) {
     const distinctPallets = []
     const map = new Map()
@@ -233,6 +253,12 @@ const Pallets = props => {
           props.get(`items/pallets/${id}`, 'UPDATE_NEW_PALLET_ITEMS')
         })
         .then(() => {
+          props.get(
+            `complements/pallets/${id}`,
+            'UPDATE_NEW_PALLET_COMPLEMENTS'
+          )
+        })
+        .then(() => {
           setVisible(true)
         })
     }
@@ -254,11 +280,35 @@ const Pallets = props => {
       console.log(verification)
       console.log('SQL CREATE', data)
 
-      props
-        .create(`items`, 'UPDATE_ITEMS_ID', data)
-        .then(() =>
-          props.get(`items/pallets/${newPallet.id}`, 'UPDATE_NEW_PALLET_ITEMS')
+      if (data.complement_id) {
+        const verificationComplementsRedux = complementsList.find(
+          item => parseInt(item.complement_id) === parseInt(data.complement_id)
         )
+        verificationComplementsRedux !== undefined
+          ? Swal.fire('La pieza ya existe!', 'No se puede repetir.', 'info')
+          : props
+              .create(
+                `complements/pallets/${newPallet.id}`,
+                'UPDATE_ITEMS_ID',
+                data
+              )
+              .then(() =>
+                props.get(
+                  `complements/pallets/${newPallet.id}`,
+                  'UPDATE_NEW_PALLET_COMPLEMENTS'
+                )
+              )
+      } else {
+        props
+          .create(`items`, 'UPDATE_ITEMS_ID', data)
+          .then(() =>
+            props.get(
+              `items/pallets/${newPallet.id}`,
+              'UPDATE_NEW_PALLET_ITEMS'
+            )
+          )
+      }
+      setNail(0)
     }
 
     const handleDeleteItemListSQL = id => {
@@ -267,6 +317,18 @@ const Pallets = props => {
         .deleted(`items/${id}/${newPallet.id}`, 'DELETE_ITEMS_ID')
         .then(() =>
           props.get(`items/pallets/${newPallet.id}`, 'UPDATE_NEW_PALLET_ITEMS')
+        )
+    }
+
+    const handleDeleteComplementListSQL = id => {
+      console.log('SQL DELETE')
+      props
+        .deleted(`complements/${id}/${newPallet.id}`, 'DELETE_ITEMS_ID')
+        .then(() =>
+          props.get(
+            `complements/pallets/${newPallet.id}`,
+            'UPDATE_NEW_PALLET_COMPLEMENTS'
+          )
         )
     }
 
@@ -297,42 +359,8 @@ const Pallets = props => {
           return itemStock
         })
 
-      // const itemRepeat = []
+      console.log(itemsPallet)
 
-      /*  function count() {
-        const array_elements = items
-          .filter(item => item.id_pallet === id)
-          .map(item =>
-            items
-              .filter(i => i.id === item.id)
-              .map(i => {
-                itemRepeat.push(i.id)
-                return i
-              })
-          )
-        console.log(array_elements, itemRepeat)
-
-        itemRepeat.sort()
-
-        var current = null
-        var cnt = 0
-        for (var i = 0; i < itemRepeat.length; i++) {
-          if (itemRepeat[i] != current) {
-            if (cnt > 0) {
-              console.log(current + ' comes --> ' + cnt + ' times<br>')
-            }
-            current = itemRepeat[i]
-            cnt = 1
-          } else {
-            cnt++
-          }
-        }
-        if (cnt > 0) {
-          console.log(current + ' comes --> ' + cnt + ' times')
-        }
-      }
-
-      count() */
       if (totalStock > 0 && totalStockItems > 0) {
         Swal.fire('La tarima tiene existencias!', 'No se puede borrar.', 'info')
       } else {
@@ -582,6 +610,15 @@ const Pallets = props => {
                               </li>
                             )
                           })}
+                        {complementsPallets
+                          .filter(
+                            complement => complement.pallet_id === pallet.id
+                          )
+                          .map(complement => (
+                            <li>
+                              {complement.name} - {complement.amount}
+                            </li>
+                          ))}
                       </ul>
                     </div>
                   </div>
@@ -909,13 +946,20 @@ const Pallets = props => {
                   className={errors2.amount && '--required'}
                 />
                 {nail === 4 ? (
-                  <Input
-                    type="text"
-                    name="nail"
-                    title="Clavo"
-                    passRef={register2({ required: true })}
-                    className={errors2.nail && '--required'}
-                  />
+                  <div className="inputGroup">
+                    <label htmlFor="complement_id">
+                      <span>Tipo:</span>
+                      <select name="complement_id" ref={register2}>
+                        {complements.map(complement => {
+                          return (
+                            <option key={complement.id} value={complement.id}>
+                              {complement.name}
+                            </option>
+                          )
+                        })}
+                      </select>
+                    </label>
+                  </div>
                 ) : (
                   <>
                     <Input
@@ -1010,7 +1054,7 @@ const Pallets = props => {
                     <td>Ancho</td>
                     <td>Alto</td>
                     <td>Largo</td>
-                    <td>Clavo</td>
+                    <td>Complemento</td>
                     <td>Ancho Saque</td>
                     <td>Alto Saque</td>
                     <td>Largo Saque</td>
@@ -1039,7 +1083,15 @@ const Pallets = props => {
                         <td>{item.width ? item.width : 'N/A'}</td>
                         <td>{item.height ? item.height : 'N/A'}</td>
                         <td>{item.length ? item.length : 'N/A'}</td>
-                        <td>{item.nail ? item.nail : 'N/A'}</td>
+                        <td>
+                          {item.complement_id
+                            ? complements &&
+                              complements.find(
+                                complement =>
+                                  complement.id === parseInt(item.complement_id)
+                              ).name
+                            : 'N/A'}
+                        </td>
                         <td>
                           {item.serve_width !== '' ? item.serve_width : 'N/A'}
                         </td>
@@ -1075,6 +1127,41 @@ const Pallets = props => {
                       <td colSpan="10">Sin Complementos</td>
                     </tr>
                   )}
+                  {complementsList && complementsList.length > 0
+                    ? complementsList.map((complement, index) => (
+                        <tr key={index}>
+                          <td>Complemento</td>
+                          <td>{complement.amount}</td>
+                          <td>{'N/A'}</td>
+                          <td>{'N/A'}</td>
+                          <td>{'N/A'}</td>
+                          <td>
+                            {complement.complement_id
+                              ? complements &&
+                                complements.find(
+                                  c =>
+                                    c.id === parseInt(complement.complement_id)
+                                ).name
+                              : 'N/A'}
+                          </td>
+                          <td>{'N/A'}</td>
+                          <td>{'N/A'}</td>
+                          <td>{'N/A'}</td>
+                          <td>{'N/A'}</td>
+                          <td>{'N/A'}</td>
+                          <td>
+                            <Button
+                              className="btn --danger"
+                              onClick={() =>
+                                handleDeleteComplementListSQL(complement.id)
+                              }
+                            >
+                              <AiOutlineDelete />
+                            </Button>
+                          </td>
+                        </tr>
+                      ))
+                    : null}
                 </tbody>
               </table>
             </div>
@@ -1147,7 +1234,7 @@ const Pallets = props => {
                     <td>Ancho</td>
                     <td>Alto</td>
                     <td>Largo</td>
-                    <td>Clavo</td>
+                    <td>Complemento</td>
                     <td>Ancho Saque</td>
                     <td>Alto Saque</td>
                     <td>Largo Saque</td>
@@ -1175,7 +1262,15 @@ const Pallets = props => {
                         <td>{item.width ? item.width : 'N/A'}</td>
                         <td>{item.height ? item.height : 'N/A'}</td>
                         <td>{item.length ? item.length : 'N/A'}</td>
-                        <td>{item.nail ? item.nail : 'N/A'}</td>
+                        <td>
+                          {item.complement_id
+                            ? complements &&
+                              complements.find(
+                                complement =>
+                                  complement.id === parseInt(item.complement_id)
+                              ).name
+                            : 'N/A'}
+                        </td>
                         <td>
                           {item.serve_width !== '' ? item.serve_width : 'N/A'}
                         </td>
@@ -1234,6 +1329,7 @@ const Pallets = props => {
 const mapStateToProps = state => {
   return {
     pallets: state.reducerPallets.pallets,
+    complementsList: state.reducerComplements.complementsList,
     pallet: state.reducerPallets.pallet,
     qualities: state.reducerQualities.qualities,
     wood: state.reducerWood.wood,
@@ -1249,6 +1345,8 @@ const mapStateToProps = state => {
     units: state.reducerApp.units,
     stock: state.reducerStock.stock,
     stock2: state.reducerStock.stock2,
+    complements: state.reducerComplements.complements,
+    complementsPallets: state.reducerComplements.complementsPallets,
   }
 }
 

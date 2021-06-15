@@ -1,6 +1,5 @@
 import axios from 'axios'
 import Swal from 'sweetalert2'
-import Cookies from 'js-cookie'
 
 const API_KEY_TOKEN =
   '77a5f9501bfc62140ff0402fdc9bd9cdf60c269fd9c909ee43971b3885a4ac69'
@@ -152,7 +151,6 @@ export const get = (endPoint, typeAction) => async dispatch => {
 
 export const create = (endPoint, typeAction, data) => async dispatch => {
   const storedJwt = sessionStorage.getItem('token')
-
   try {
     const res = await axios({
       url: `${process.env.REACT_APP_API}${endPoint}`,
@@ -236,7 +234,6 @@ export const createNotification = data => async dispatch => {
       headers: { Authorization: `Bearer ${storedJwt}` },
       method: 'post',
       data: {
-        userId: Cookies.get('id'),
         text: data.text,
         link: data.link,
         date: data.date,
@@ -259,9 +256,7 @@ export const updateNotification = (data, notificationId) => async dispatch => {
       url: `${process.env.REACT_APP_API}notification/${notificationId}`,
       headers: { Authorization: `Bearer ${storedJwt}` },
       method: 'put',
-      data: {
-        userId: Cookies.get('id'),
-      },
+      data: {},
     })
 
     dispatch({
@@ -282,7 +277,6 @@ export const createNotificationManual = data => async dispatch => {
       headers: { Authorization: `Bearer ${storedJwt}` },
       method: 'post',
       data: {
-        userId: Cookies.get('id'),
         text: data.text,
         link: data.link,
         date: data.date,

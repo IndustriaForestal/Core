@@ -57,11 +57,7 @@ export default function reducer(state = { newPallet: [] }, action) {
         ...state,
         newPallet: action.payload[0],
       }
-    case 'UPDATE_NEW_PALLET_ITEMS':
-      return {
-        ...state,
-        itemsList: action.payload,
-      }
+   
     default:
       return state
   }

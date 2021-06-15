@@ -25,6 +25,11 @@ export default function reducer(state = {}, action) {
         ...state,
         stockZoneItems: action.payload.data,
       }
+    case 'GET_SZ_COMPLEMENTS':
+      return {
+        ...state,
+        stockZoneComplements: action.payload.data,
+      }
     case 'GET_SZ_SAWN':
       return {
         ...state,

@@ -1,7 +1,5 @@
-import React, { useEffect, useState } from 'react'
-import { Link } from 'react-router-dom'
+import React, { useEffect } from 'react'
 import { connect } from 'react-redux'
-import { BsPlus } from 'react-icons/bs'
 import { setTitle, getAll, deleted } from '../../../actions/app'
 import Loading from '../../../components/Loading/Loading'
 import moment from 'moment'
@@ -69,11 +67,9 @@ const StockHistory = props => {
     stockHistoryRaws &&
     stockHistoryNails
   ) {
-    console.table(stockHistoryNails)
-
     let stockHistoryTotal = []
 
-    stockHistory.map(sh => {
+    stockHistory.map(sh =>
       stockHistoryTotal.push({
         id: sh.id,
         zone: 'Tarima',
@@ -90,9 +86,9 @@ const StockHistory = props => {
             : 'Ingresado Manual',
         date: moment(sh.date).format('DD-MM-YYYY HH:mm:ss'),
       })
-    })
+    )
 
-    stockHistoryItems.map(sh => {
+    stockHistoryItems.map(sh =>
       stockHistoryTotal.push({
         id: sh.id,
         zone: 'Madera Habilitada',
@@ -109,13 +105,13 @@ const StockHistory = props => {
             : 'Ingresado Manual',
         date: moment(sh.date).format('DD-MM-YYYY HH:mm:ss'),
       })
-    })
+    )
 
-    stockHistoryNails.map(sh => {
+    stockHistoryNails.map(sh =>
       stockHistoryTotal.push({
         id: sh.id,
         zone: 'Complementos',
-        name: sh.nail,
+        name: sh.name,
         amount: sh.amount,
         zone_id: 'Almacen de Clavos',
         status:
@@ -128,9 +124,9 @@ const StockHistory = props => {
             : 'Ingresado Manual',
         date: moment(sh.date).format('DD-MM-YYYY HH:mm:ss'),
       })
-    })
+    )
 
-    stockHistorySawn.map(sh => {
+    stockHistorySawn.map(sh =>
       stockHistoryTotal.push({
         id: sh.id,
         zone: 'Materia Aserrada',
@@ -147,9 +143,9 @@ const StockHistory = props => {
             : 'Ingresado Manual',
         date: moment(sh.date).format('DD-MM-YYYY HH:mm:ss'),
       })
-    })
+    )
 
-    stockHistoryRaws.map(sh => {
+    stockHistoryRaws.map(sh =>
       stockHistoryTotal.push({
         id: sh.id,
         zone: 'Materia Prima',
@@ -166,7 +162,7 @@ const StockHistory = props => {
             : 'Ingresado Manual',
         date: moment(sh.date).format('DD-MM-YYYY HH:mm:ss'),
       })
-    })
+    )
 
     return (
       <>

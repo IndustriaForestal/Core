@@ -1,4 +1,4 @@
-export default function reducerCustomers(state = {}, action) {
+export default function reducer(state = {}, action) {
   switch (action.type) {
     case 'GET_CUSTOMERS':
       return {
