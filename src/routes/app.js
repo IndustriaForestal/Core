@@ -16,6 +16,7 @@ import Material from '../pages/Material'
 import Processes from '../pages/Processes'
 import ProcessesPallets from '../pages/Processes/ProcessesPallets'
 import ProcessesItems from '../pages/Processes/ProcessesItems'
+import ProcessesReject from '../pages/Processes/ProcessesReject'
 import Items from '../pages/Items'
 import Suppliers from '../pages/Suppliers'
 import Qualities from '../pages/Qualities'
@@ -77,6 +78,7 @@ const App = ({ loggedIn }) => {
               component={ProcessesPallets}
             />
             <Route exact path="/processes/items" component={ProcessesItems} />
+            <Route exact path="/processes/reject" component={ProcessesReject} />
 
             <Route exact path="/items" component={Items} />
 
@@ -149,7 +151,11 @@ const App = ({ loggedIn }) => {
               component={CreateSubzone}
             />
             <Route exact path="/zones/createplant" component={CreatePlant} />
-            <Route exact path="/zones/workstation" component={CreateWorkStation} />
+            <Route
+              exact
+              path="/zones/workstation"
+              component={CreateWorkStation}
+            />
 
             <Route exact path="/login" component={Login} />
             <Route component={NotFound} />

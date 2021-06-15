@@ -14,6 +14,7 @@ const Processes = props => {
         Procesos: '/processes',
         'Procesos por Tarima': '/processes/pallets',
         'Procesos por Madera Habilitada': '/processes/items',
+        'Procesos por Rechazo': '/processes/reject',
       },
     }
     setTitle(topbar)

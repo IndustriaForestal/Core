@@ -1,105 +1,134 @@
 import React, { useEffect } from 'react'
-import { Link } from 'react-router-dom'
 import { connect } from 'react-redux'
-import { AiOutlineEdit, AiOutlineDelete } from 'react-icons/ai'
-import { BsPlus } from 'react-icons/bs'
-import { setTitle, getAll, deleted } from '../../actions/app'
-import Swal from 'sweetalert2'
-import Table from '../../components/Table/Table'
-import Button from '../../components/Button/Button'
-import AddButton from '../../components/AddButton/AddButton'
-import './styles.scss'
+import { getAll, create, update, setTitle, deleted } from '../../actions/app'
 
-const Suppliers = props => {
-  const { suppliers, setTitle, role } = props
+import MaterialTable from 'material-table'
 
+const CreateCustomer = props => {
+  const { material, suppliers, user } = props
+  const userId = user.id
   useEffect(() => {
     const topbar = {
       title: 'Proveedores',
-      menu: { Proveedores: '/suppliers' },
+      menu: {
+        Proveedores: '/suppliers',
+      },
     }
-    setTitle(topbar)
-    props.getAll('suppliers', 'GET_SUPPLIERS')
+    props.setTitle(topbar)
+    props.getAll('suppliers', 'GET_SUPPLIERS').then(() => {
+      props.getAll('material', 'GET_MATERIAL')
+    })
+
     // eslint-disable-next-line
   }, [])
 
-  let tableHeader
+  const editable = {
+    onRowAdd: newData =>
+      new Promise((resolve, reject) => {
+        setTimeout(() => {
+          newData.user_id = userId
+          props
+            .create(`suppliers`, 'CREATE_SUPPLIER', newData)
+            .then(() => props.getAll('suppliers', 'GET_SUPPLIERS'))
+            .then(() => resolve())
+        }, 1000)
+      }),
+    onRowUpdate: (newData, oldData) =>
+      new Promise((resolve, reject) => {
+        setTimeout(() => {
+          delete newData.id
+          newData.user_id = userId
+          props
+            .update(`suppliers/${oldData.id}`, 'UPDATE_SUPPLIER', newData)
+            .then(() => props.getAll('suppliers', 'GET_SUPPLIERS'))
+            .then(() => resolve())
+        }, 1000)
+      }),
+    onRowDelete: oldData =>
+      new Promise((resolve, reject) => {
+        setTimeout(() => {
+          props
+            .deleted(`suppliers/${oldData.id}`, 'DELETE_SUPPLIER')
+            .then(() => props.getAll('suppliers', 'GET_SUPPLIERS'))
+            .then(() => resolve())
+        }, 1000)
+      }),
+  }
 
-  if (role === 'Administrador') {
-    tableHeader = ['Nombre', 'Capacidad', 'Material', 'Acciones']
+  if (material && suppliers) {
+    const lookupItemsType = {}
+
+    material.map(item => (lookupItemsType[item.id] = item.name))
+
+    return (
+      <>
+        <MaterialTable
+          columns={[
+            { title: 'Nombre', field: 'name' },
+            { title: 'Télefono', field: 'phone' },
+            { title: 'Tiempo de entrega', field: 'delivery_time' },
+            {
+              title: 'Tipo de material',
+              field: 'material_id',
+              lookup: lookupItemsType,
+            },
+          ]}
+          localization={{
+            pagination: {
+              labelDisplayedRows: '{from}-{to} de {count}',
+              labelRowsSelect: 'Filas',
+              firstAriaLabel: 'Primera',
+              firstTooltip: 'Primera',
+              previousAriaLabel: 'Anterior',
+              previousTooltip: 'Anterior',
+              nextAriaLabel: 'Siguiente',
+              nextTooltip: 'Siguiente',
+              lastAriaLabel: 'Ultimo',
+              lastTooltip: 'Ultimo',
+            },
+            toolbar: {
+              searchTooltip: 'Buscar',
+              searchPlaceholder: 'Buscar',
+            },
+            header: {
+              actions: 'Acciones',
+            },
+            body: {
+              editRow: {
+                deleteText: '¿Eliminar?',
+                saveTooltip: 'Ok',
+                cancelTooltip: 'Cancelar',
+              },
+              editTooltip: 'Editar',
+              deleteTooltip: 'Eliminar',
+              addTooltip: 'Agregar',
+            },
+          }}
+          data={suppliers}
+          editable={editable}
+          title="Estaciones de trabajo"
+        />
+      </>
+    )
   } else {
-    tableHeader = ['Nombre', 'Capacidad', 'Material']
-  }
-
-  const handleDeleteSupplier = supplierId => {
-    Swal.fire({
-      title: '¿Estás seguro?',
-      text: 'Este proceso no se puede revertir',
-      icon: 'warning',
-      showCancelButton: true,
-      confirmButtonColor: '#3085d6',
-      cancelButtonColor: '#d33',
-      confirmButtonText: 'Si, borrar',
-    }).then(result => {
-      if (result.isConfirmed) {
-        props.deleted(`suppliers/${supplierId}`, 'DELETE_SUPPLIER')
-        Swal.fire('Borrado!', 'Borrado con exito.', 'success')
-      }
-    })
-  }
-
-  return (
-    <>
-      <Table head={tableHeader}>
-        {suppliers ? (
-          suppliers.map(supplier => (
-            <tr key={supplier._id}>
-              <td>{supplier.name}</td>
-              <td>{supplier.capacity}</td>
-              <td>{supplier.material.map(materialOne => materialOne.name)}</td>
-              {role === 'Administrador' ? (
-                <td>
-                  <Link to={`suppliers/${supplier._id}`}>
-                    <Button className="btn --warning">
-                      <AiOutlineEdit />
-                    </Button>
-                  </Link>
-                  <Button
-                    className="btn --danger"
-                    onClick={() => handleDeleteSupplier(supplier._id)}
-                  >
-                    <AiOutlineDelete />
-                  </Button>
-                </td>
-              ) : null}
-            </tr>
-          ))
-        ) : (
-          <tr>
-            <td colSpan="7">No hay registros</td>
-          </tr>
-        )}
-      </Table>
-      <Link to="/suppliers/create">
-        <AddButton>
-          <BsPlus />
-        </AddButton>
-      </Link>
-    </>
-  )
-}
-
-const mapStateToProps = state => {
-  return {
-    suppliers: state.suppliers,
-    role: state.role,
+    return <h1>Cargando</h1>
   }
 }
 
 const mapDispatchToProps = {
-  setTitle,
+  create,
   getAll,
+  update,
+  setTitle,
   deleted,
 }
 
-export default connect(mapStateToProps, mapDispatchToProps)(Suppliers)
+const mapStateToProps = state => {
+  return {
+    material: state.reducerMaterial.material,
+    suppliers: state.reducerSuppliers.suppliers,
+    user: state.reducerApp.user,
+  }
+}
+
+export default connect(mapStateToProps, mapDispatchToProps)(CreateCustomer)

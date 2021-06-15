@@ -1,12 +1,12 @@
 import React, { useEffect } from 'react'
 import { connect } from 'react-redux'
-import { setTitle, getAll, deleted, create, update } from '../../actions/app'
-import Loading from '../../components/Loading/Loading'
-import './styles.scss'
+import { setTitle, getAll, deleted, create, update } from '../../../actions/app'
+import Loading from '../../../components/Loading/Loading'
+import '../styles.scss'
 import MaterialTable from 'material-table'
 
 const Processes = props => {
-  const { processes, setTitle, user, material, processesReject } = props
+  const { setTitle, user, material, processesReject } = props
   const userId = user.id
   useEffect(() => {
     const topbar = {
@@ -19,25 +19,17 @@ const Processes = props => {
       },
     }
     setTitle(topbar)
-    props
-      .getAll('processes', 'GET_PROCESSES')
-      .then(() => {
-        props.getAll('material', 'GET_MATERIAL')
-      })
-      .then(() => {
-        props.getAll('processes/reject', 'GET_PROCESSES_REJECT')
-      })
+    props.getAll('processes/reject', 'GET_PROCESSES_REJECT').then(() => {
+      props.getAll('material', 'GET_MATERIAL')
+    })
+
     // eslint-disable-next-line
   }, [])
 
-  if (processes && material && processesReject) {
+  if (material && processesReject) {
     const lookupMaterial = {}
 
     material.map(m => (lookupMaterial[m.id] = m.name))
-
-    const lookupProcessReject = { 0: 'N/A' }
-
-    processesReject.map(m => (lookupProcessReject[m.id] = m.name))
 
     const editable = {
       onRowAdd: newData =>
@@ -45,8 +37,10 @@ const Processes = props => {
           setTimeout(() => {
             newData.user_id = userId
             props
-              .create('processes', 'CREATE_PROCESS', newData)
-              .then(() => props.getAll('processes', 'GET_PROCESSES'))
+              .create('processes/reject', 'CREATE_PROCESS', newData)
+              .then(() =>
+                props.getAll('processes/reject', 'GET_PROCESSES_REJECT')
+              )
               .then(() => resolve())
           }, 1000)
         }),
@@ -57,8 +51,14 @@ const Processes = props => {
             delete newData.id
             newData.user_id = userId
             props
-              .update(`processes/${oldData.id}`, 'UPDATE_PROCESS', newData)
-              .then(() => props.getAll('processes', 'GET_PROCESSES'))
+              .update(
+                `processes/reject/${oldData.id}`,
+                'UPDATE_PROCESS',
+                newData
+              )
+              .then(() =>
+                props.getAll('processes/reject', 'GET_PROCESSES_REJECT')
+              )
               .then(() => resolve())
           }, 1000)
         }),
@@ -66,8 +66,10 @@ const Processes = props => {
         new Promise((resolve, reject) => {
           setTimeout(() => {
             props
-              .deleted(`processes/${oldData.id}`, 'DELETE_PROCESS')
-              .then(() => props.getAll('processes', 'GET_PROCESSES'))
+              .deleted(`processes/reject/${oldData.id}`, 'DELETE_PROCESS')
+              .then(() =>
+                props.getAll('processes/reject', 'GET_PROCESSES_REJECT')
+              )
               .then(() => resolve())
           }, 1000)
         }),
@@ -87,21 +89,6 @@ const Processes = props => {
             title: 'Material de salida',
             field: 'material_out',
             lookup: lookupMaterial,
-          },
-          {
-            title: 'Rechazo 1',
-            field: 'reject_1',
-            lookup: lookupProcessReject,
-          },
-          {
-            title: 'Rechazo 2',
-            field: 'reject_2',
-            lookup: lookupProcessReject,
-          },
-          {
-            title: 'Rechazo 3',
-            field: 'reject_3',
-            lookup: lookupProcessReject,
           },
         ]}
         localization={{
@@ -135,7 +122,7 @@ const Processes = props => {
             addTooltip: 'Agregar',
           },
         }}
-        data={processes}
+        data={processesReject}
         editable={editable}
       />
     )

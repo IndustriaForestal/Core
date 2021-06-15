@@ -5,7 +5,7 @@ import { getAll, create, update, setTitle } from '../../../actions/app'
 import MaterialTable from 'material-table'
 
 const CreateCustomer = props => {
-  const { workstations, zones, user, plants } = props
+  const { workstations, zones, user, plants, processes } = props
   const userId = user.id
   useEffect(() => {
     const topbar = {
@@ -26,6 +26,9 @@ const CreateCustomer = props => {
       })
       .then(() => {
         props.getAll('zones/plants', 'GET_PLANTS')
+      })
+      .then(() => {
+        props.getAll('processes', 'GET_PROCESSES')
       })
 
     // eslint-disable-next-line
@@ -64,7 +67,7 @@ const CreateCustomer = props => {
       }),
   }
 
-  if (zones && workstations && plants) {
+  if (zones && workstations && plants && processes) {
     const lookupZones = {}
 
     const zonesPlants = zones.map(zone => {
@@ -80,6 +83,10 @@ const CreateCustomer = props => {
       zone => (lookupZones[zone.id] = `${zone.plant_name} - ${zone.name}`)
     )
 
+    const lookupProcesses = {}
+
+    processes.map(process => (lookupProcesses[process.id] = process.name))
+
     return (
       <>
         <MaterialTable
@@ -89,6 +96,7 @@ const CreateCustomer = props => {
             { title: 'Operadores', field: 'operators' },
             { title: 'Zona', field: 'zone_id', lookup: lookupZones },
             { title: 'Activa', field: 'active', lookup: { 0: 'No', 1: 'Si' } },
+            { title: 'Proceso', field: 'process_id', lookup: lookupProcesses },
           ]}
           localization={{
             pagination: {
@@ -141,6 +149,7 @@ const mapDispatchToProps = {
 
 const mapStateToProps = state => {
   return {
+    processes: state.reducerProcesses.processes,
     zones: state.reducerZones.zones,
     plants: state.reducerZones.plants,
     workstations: state.reducerZones.workstations,
