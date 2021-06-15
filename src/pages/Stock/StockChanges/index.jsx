@@ -34,6 +34,7 @@ const Nails = props => {
     stockZoneComplements,
     complements,
     units,
+    user,
   } = props
   const [type, setType] = useState(0)
   const [idSelected, setIdSelected] = useState(0)
@@ -51,6 +52,8 @@ const Nails = props => {
   const [amountRaw, setAmountRaw] = useState(0)
   const [d1, setD1] = useState(0)
   const [d2, setD2] = useState(0)
+
+  console.log(user)
 
   useEffect(() => {
     const topbar = {
@@ -173,13 +176,12 @@ const Nails = props => {
     })
 
     const handleSaveStockPallet = () => {
-      const user = sessionStorage.getItem('name')
       props
         .create(`stock/pallets/${idSelected}`, 'PALLET_HISTORY', {
           type,
           amount,
           inOut,
-          user_id: user,
+          user_id: user.name,
           state: greenDryRepair,
           zone_id: subzoneSelected,
           date: moment().format('YYYY-MM-DD HH:mm:ss'),
@@ -193,11 +195,10 @@ const Nails = props => {
     }
 
     const handleSaveStockItem = () => {
-      const user = sessionStorage.getItem('name')
       props
         .create(`stock/items/${idSelected}`, 'PALLET_HISTORY', {
           amount,
-          user_id: user,
+          user_id: user.name,
           state: greenDryRepair,
           zone_id: subzoneSelected,
           date: moment().format('YYYY-MM-DD HH:mm:ss'),
@@ -211,11 +212,10 @@ const Nails = props => {
     }
 
     const handleSaveStockNail = () => {
-      const user = sessionStorage.getItem('name')
       props
         .create(`stock/nails/${idSelected}`, 'PALLET_HISTORY', {
           amount,
-          user_id: user,
+          user_id: user.name,
           state: 'stock',
           zone_id: 1,
           date: moment().format('YYYY-MM-DD HH:mm:ss'),
@@ -265,7 +265,7 @@ const Nails = props => {
           width,
           amount,
           wood_id: woodSelected,
-          user_id: user,
+          user_id: user.name,
           state: greenDryRepair,
           zone_id: subzoneSelected,
           date: moment().format('YYYY-MM-DD HH:mm:ss'),
@@ -290,7 +290,7 @@ const Nails = props => {
         ? props
             .create(`stock/sawn/${stock.sawn_id}`, 'PALLET_HISTORY', {
               amount: negativeInput,
-              user_id: user,
+              user_id: user.name,
               zone_id: stock.zone_id,
               sz: stock.id,
               delete: true,
@@ -302,7 +302,7 @@ const Nails = props => {
         : props
             .create(`stock/sawn/${stock.sawn_id}`, 'PALLET_HISTORY', {
               amount: negativeInput,
-              user_id: user,
+              user_id: user.name,
               zone_id: stock.zone_id,
               sz: stock.id,
               delete: false,
@@ -314,8 +314,6 @@ const Nails = props => {
     }
 
     const handleSaveStockRaw = () => {
-      const user = sessionStorage.getItem('name')
-
       /* let volumen1 = length * d1 * amountRaw * 0.07854
       let volumen2 = length * d2 * amountRaw * 0.07854 */
       const volumen = length * d1 * d2 * amountRaw * 0.7854
@@ -325,7 +323,7 @@ const Nails = props => {
           m3: volumen,
           amount,
           wood_id: woodSelected,
-          user_id: user,
+          user_id: user.name,
           state: greenDryRepair,
           zone_id: subzoneSelected,
           date: moment().format('YYYY-MM-DD HH:mm:ss'),
@@ -350,7 +348,7 @@ const Nails = props => {
         ? props
             .create(`stock/pallets/${stock.pallet_id}`, 'PALLET_HISTORY', {
               amount: negativeInput,
-              user_id: user,
+              user_id: user.name,
               state: stock.state,
               zone_id: stock.zone_id,
               sz: stock.id,
@@ -363,7 +361,7 @@ const Nails = props => {
         : props
             .create(`stock/pallets/${stock.pallet_id}`, 'PALLET_HISTORY', {
               amount: negativeInput,
-              user_id: user,
+              user_id: user.name,
               state: stock.state,
               zone_id: stock.zone_id,
               sz: stock.id,
@@ -384,7 +382,7 @@ const Nails = props => {
         ? props
             .create(`stock/nails/${stock.complement_id}`, 'PALLET_HISTORY', {
               amount: negativeInput,
-              user_id: user,
+              user_id: user.name,
               state: 'stock',
               zone_id: 1,
               sz: stock.id,
@@ -400,7 +398,7 @@ const Nails = props => {
         : props
             .create(`stock/nails/${stock.complement_id}`, 'PALLET_HISTORY', {
               amount: negativeInput,
-              user_id: user,
+              user_id: user.name,
               state: 'stock',
               zone_id: 1,
               sz: stock.id,
@@ -424,7 +422,7 @@ const Nails = props => {
         ? props
             .create(`stock/items/${stock.item_id}`, 'PALLET_HISTORY', {
               amount: negativeInput,
-              user_id: user,
+              user_id: user.name,
               state: stock.state,
               zone_id: stock.zone_id,
               sz: stock.id,
@@ -437,7 +435,7 @@ const Nails = props => {
         : props
             .create(`stock/items/${stock.item_id}`, 'PALLET_HISTORY', {
               amount: negativeInput,
-              user_id: user,
+              user_id: user.name,
               state: stock.state,
               zone_id: stock.zone_id,
               sz: stock.id,
@@ -458,7 +456,7 @@ const Nails = props => {
         ? props
             .create(`stock/raws`, 'PALLET_HISTORY', {
               amount: negativeInput,
-              user_id: user,
+              user_id: user.name,
               zone_id: stock.zone_id,
               sz: stock.id,
               delete: true,
@@ -470,7 +468,7 @@ const Nails = props => {
         : props
             .create(`stock/raws`, 'PALLET_HISTORY', {
               amount: negativeInput,
-              user_id: user,
+              user_id: user.name,
               zone_id: stock.zone_id,
               sz: stock.id,
               delete: false,
@@ -1153,6 +1151,7 @@ const mapStateToProps = state => {
     stockZoneRaws: state.reducerStock.stockZoneRaws,
     stockZoneComplements: state.reducerStock.stockZoneComplements,
     units: state.reducerApp.units,
+    user: state.reducerApp.user,
   }
 }
 

@@ -1,24 +1,14 @@
 import React, { useEffect } from 'react'
-import { Link } from 'react-router-dom'
 import { connect } from 'react-redux'
-import Swal from 'sweetalert2'
-import { BsPlus } from 'react-icons/bs'
-import {
-  AiOutlineFileAdd,
-  AiOutlineEdit,
-  AiOutlineDelete,
-} from 'react-icons/ai'
-import { setTitle, getAll, deleted } from '../../actions/app'
-import { deleteProcessQuality } from './actions'
-import Card from '../../components/Card/Card'
-import Table from '../../components/Table/Table'
-import AddButton from '../../components/AddButton/AddButton'
+import { setTitle, getAll, deleted, create, update } from '../../actions/app'
 import Loading from '../../components/Loading/Loading'
-import Button from '../../components/Button/Button'
+
 import './styles.scss'
 
+import MaterialTable from 'material-table'
+
 const Qualities = props => {
-  const { qualities, setTitle, role } = props
+  const { qualities, setTitle, user } = props
 
   useEffect(() => {
     const topbar = {
@@ -35,159 +25,83 @@ const Qualities = props => {
     // eslint-disable-next-line
   }, [])
 
-  const handleDeleteQuality = qualityId => {
-    Swal.fire({
-      title: '¿Estás seguro?',
-      text: 'Este proceso no se puede revertir',
-      icon: 'warning',
-      showCancelButton: true,
-      confirmButtonColor: '#3085d6',
-      cancelButtonColor: '#d33',
-      confirmButtonText: 'Si, borrar',
-    }).then(result => {
-      if (result.isConfirmed) {
-        props.deleted(`qualities/${qualityId}`, 'DELETE_QUALITY')
-        Swal.fire('Borrado!', 'Borrado con exito.', 'success')
-      }
-    })
-  }
-
-  const handleDeleteProcessQuality = (processId, qualityId) => {
-    Swal.fire({
-      title: '¿Estás seguro?',
-      text: 'Este proceso no se puede revertir',
-      icon: 'warning',
-      showCancelButton: true,
-      confirmButtonColor: '#3085d6',
-      cancelButtonColor: '#d33',
-      confirmButtonText: 'Si, borrar',
-    }).then(result => {
-      if (result.isConfirmed) {
-        props.deleteProcessQuality(
-          `qualities/delete/${qualityId}/${processId}`,
-          'DELETE_PROCESS_QUALITY'
-        )
-        Swal.fire('Borrado!', 'Borrado con exito.', 'success')
-      }
-    })
-  }
-
-  function compare(a, b) {
-    const orderA = a.position
-    const orderB = b.position
-
-    let comparison = 0
-    if (orderA > orderB) {
-      comparison = 1
-    } else if (orderA < orderB) {
-      comparison = -1
+  if (qualities) {
+    const editable = {
+      onRowAdd: newData =>
+        new Promise((resolve, reject) => {
+          setTimeout(() => {
+            newData.user_id = user.id
+            props
+              .create('qualities', 'CREATE_QUALITY', newData)
+              .then(() => props.getAll('qualities', 'GET_QUALITIES'))
+              .then(() => resolve())
+          }, 1000)
+        }),
+      onRowUpdate: (newData, oldData) =>
+        new Promise((resolve, reject) => {
+          setTimeout(() => {
+            console.log(oldData, newData)
+            delete newData.id
+            newData.user_id = user.id
+            props
+              .update(`qualities/${oldData.id}`, 'UPDATE_QUALITY', newData)
+              .then(() => props.getAll('qualities', 'GET_QUALITIES'))
+              .then(() => resolve())
+          }, 1000)
+        }),
     }
-    return comparison
+
+    return (
+      <MaterialTable
+        title="Procesos"
+        columns={[{ title: 'Nombre', field: 'name' }]}
+        localization={{
+          pagination: {
+            labelDisplayedRows: '{from}-{to} de {count}',
+            labelRowsSelect: 'Filas',
+            firstAriaLabel: 'Primera',
+            firstTooltip: 'Primera',
+            previousAriaLabel: 'Anterior',
+            previousTooltip: 'Anterior',
+            nextAriaLabel: 'Siguiente',
+            nextTooltip: 'Siguiente',
+            lastAriaLabel: 'Ultimo',
+            lastTooltip: 'Ultimo',
+          },
+          toolbar: {
+            searchTooltip: 'Buscar',
+            searchPlaceholder: 'Buscar',
+          },
+          header: {
+            actions: 'Acciones',
+          },
+          body: {
+            editRow: {
+              deleteText: '¿Eliminar?',
+              saveTooltip: 'Ok',
+              cancelTooltip: 'Cancelar',
+            },
+            editTooltip: 'Editar',
+            deleteTooltip: 'Eliminar',
+            addTooltip: 'Agregar',
+          },
+        }}
+        detailPanel={rowData => {
+          return <div>Procesos por calidad</div>
+        }}
+        data={qualities}
+        editable={editable}
+      />
+    )
+  } else {
+    return <Loading />
   }
-
-  let tableHeader
-  role === 'Administrador'
-    ? (tableHeader = [
-        '#',
-        'Nombre',
-        'Capacidad',
-        'Duración',
-        'Personal',
-        'Usa',
-        'Acciones',
-      ])
-    : (tableHeader = [
-        '#',
-        'Nombre',
-        'Capacidad',
-        'Duración',
-        'Personal',
-        'Usa',
-      ])
-
-  return (
-    <>
-      {qualities ? (
-        qualities.map(quality => {
-          return (
-            <Card
-              key={quality._id}
-              title={`Calidad: ${quality.name}`}
-              tools={
-                <div>
-                  {role === 'Administrador' ? (
-                    <>
-                      <Link to={`qualities/add/${quality._id}`}>
-                        <AiOutlineFileAdd className="--success" />
-                      </Link>
-                      <AiOutlineDelete
-                        className="--danger"
-                        onClick={() => handleDeleteQuality(quality._id)}
-                      />
-                    </>
-                  ) : null}
-                </div>
-              }
-            >
-              {quality.process[0].processName ? (
-                <Table head={tableHeader}>
-                  {quality.process.sort(compare).map((process, index) => {
-                    return (
-                      <tr key={index}>
-                        <td>{process.position}</td>
-                        <td>{process.processName}</td>
-                        <td>{process.capacity}</td>
-                        <td>{process.duration}</td>
-                        <td>{process.people}</td>
-                        <td>{process.type === '1' ? 'Tarima' : 'P/T'}</td>
-                        {role === 'Administrador' ? (
-                          <td>
-                            <Link
-                              to={`qualities/edit/${quality._id}/${process.processId}`}
-                            >
-                              <Button className="btn --warning">
-                                <AiOutlineEdit />
-                              </Button>
-                            </Link>
-                            <Button
-                              className="btn --danger"
-                              onClick={() =>
-                                handleDeleteProcessQuality(
-                                  process.processId,
-                                  quality._id
-                                )
-                              }
-                            >
-                              <AiOutlineDelete />
-                            </Button>
-                          </td>
-                        ) : null}
-                      </tr>
-                    )
-                  })}
-                </Table>
-              ) : (
-                <h3>No hay procesos agregados</h3>
-              )}
-            </Card>
-          )
-        })
-      ) : (
-        <Loading />
-      )}
-      <Link to="/qualities/create">
-        <AddButton>
-          <BsPlus />
-        </AddButton>
-      </Link>
-    </>
-  )
 }
 
 const mapStateToProps = state => {
   return {
     qualities: state.reducerQualities.qualities,
-    role: state.reducerApp.role,
+    user: state.reducerApp.user,
   }
 }
 
@@ -195,7 +109,8 @@ const mapDispatchToProps = {
   setTitle,
   getAll,
   deleted,
-  deleteProcessQuality,
+  update,
+  create,
 }
 
 export default connect(mapStateToProps, mapDispatchToProps)(Qualities)

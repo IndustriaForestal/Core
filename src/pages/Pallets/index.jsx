@@ -497,7 +497,7 @@ const Pallets = props => {
                         <h4 className="palletCard__subtitle">
                           {
                             qualities.find(
-                              quality => quality._id === pallet.quality_id
+                              quality => quality.id === pallet.quality_id
                             ).name
                           }
                         </h4>
@@ -715,10 +715,10 @@ const Pallets = props => {
                       {qualities.map(quality => {
                         return (
                           <option
-                            key={quality._id}
-                            value={quality._id}
+                            key={quality.id}
+                            value={quality.id}
                             selected={
-                              newPallet && newPallet.quality_id === quality._id
+                              newPallet && newPallet.quality_id === quality.id
                                 ? true
                                 : false
                             }

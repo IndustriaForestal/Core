@@ -76,6 +76,7 @@ const StockHistory = props => {
         name: sh.model,
         amount: sh.amount,
         zone_id: sh.zone_id,
+        user_id: sh.user_id,
         status:
           sh.order_id !== null
             ? sh.order.paper_number
@@ -95,6 +96,7 @@ const StockHistory = props => {
         name: `${sh.height} x ${sh.width} x ${sh.length} - ${sh.wood_name}`,
         amount: sh.amount,
         zone_id: sh.zone_id,
+        user_id: sh.user_id,
         status:
           sh.order_id !== null
             ? sh.order.paper_number
@@ -114,6 +116,7 @@ const StockHistory = props => {
         name: sh.name,
         amount: sh.amount,
         zone_id: 'Almacen de Clavos',
+        user_id: sh.user_id,
         status:
           sh.order_id !== null
             ? sh.order.paper_number
@@ -133,6 +136,7 @@ const StockHistory = props => {
         name: `${sh.height} x ${sh.width} x ${sh.length} - ${sh.wood_name}`,
         amount: sh.amount,
         zone_id: sh.zone_id,
+        user_id: sh.user_id,
         status:
           sh.order_id !== null
             ? sh.order.paper_number
@@ -152,6 +156,7 @@ const StockHistory = props => {
         name: sh.id,
         amount: sh.amount,
         zone_id: sh.zone_id,
+        user_id: sh.user_id,
         status:
           sh.order_id !== null
             ? sh.order.paper_number
@@ -177,6 +182,7 @@ const StockHistory = props => {
               field: 'status',
             },
             { title: 'Fecha', field: 'date' },
+            { title: 'Usuario', field: 'user_id' },
           ]}
           localization={{
             pagination: {
