@@ -196,6 +196,12 @@ const Pallets = props => {
             )
             .then(() => props.getAll('pallets', 'GET_PALLETS'))
             .then(() => props.getAll('items', 'GET_ITEMS'))
+            .then(() =>
+              props.getAll(
+                'specialProcesses/pallets',
+                'GET_SPECIAL_PROCESSES_PALLETS'
+              )
+            )
             .then(() => document.getElementById('formTarima').reset())
             .then(() => setVisible3(false))
         } else {
@@ -203,6 +209,12 @@ const Pallets = props => {
             .functionNewPallet(newPallet, itemsList, specialProcessList)
             .then(() => props.getAll('pallets', 'GET_PALLETS'))
             .then(() => props.getAll('items', 'GET_ITEMS'))
+            .then(() =>
+              props.getAll(
+                'specialProcesses/pallets',
+                'GET_SPECIAL_PROCESSES_PALLETS'
+              )
+            )
             .then(() => document.getElementById('formTarima').reset())
             .then(() => setVisible3(false))
         }
@@ -790,15 +802,22 @@ const Pallets = props => {
                           ))
                       : null
                     : specialProcessList.length > 0
-                    ? specialProcessList.map((process, index) => (
-                        <div
-                          className="specialProcess__box"
-                          onClick={() => handleDeleteSpecialProcess(process)}
-                          key={index}
-                        >
-                          {specialProcesses.find(sp => sp.id === process).name}
-                        </div>
-                      ))
+                    ? specialProcessList.map((process, index) => {
+                        console.log(process)
+                        return (
+                          <div
+                            className="specialProcess__box"
+                            onClick={() => handleDeleteSpecialProcess(process)}
+                            key={index}
+                          >
+                            {
+                              specialProcesses.find(
+                                sp => parseInt(sp.id) === parseInt(process)
+                              ).name
+                            }
+                          </div>
+                        )
+                      })
                     : null}
                 </div>
               </div>
