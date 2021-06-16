@@ -138,7 +138,10 @@ const Pallets = props => {
         item.length === parseFloat(data.length) &&
         item.width === parseFloat(data.width) &&
         parseInt(data.wood_id) === item.wood_id &&
-        parseInt(data.item_type_id) === item.item_type_id
+        parseInt(data.item_type_id) === item.item_type_id &&
+        item.serve_width === data.serve_width &&
+        item.serve_height === data.serve_height &&
+        item.serve_length === data.serve_length
     )
 
     const id = verification !== undefined ? verification.id : 0
@@ -151,7 +154,10 @@ const Pallets = props => {
         item.length === data.length &&
         item.width === data.width &&
         data.wood_id === item.wood_id &&
-        data.item_type_id === item.item_type_id
+        data.item_type_id === item.item_type_id &&
+        item.serve_width === data.serve_width &&
+        item.serve_height === data.serve_height &&
+        item.serve_length === data.serve_length
     )
 
     if (data.complement_id) {
@@ -284,7 +290,10 @@ const Pallets = props => {
           item.length === parseFloat(data.length) &&
           item.width === parseFloat(data.width) &&
           parseInt(data.wood_id) === item.wood_id &&
-          parseInt(data.item_type_id) === item.item_type_id
+          parseInt(data.item_type_id) === item.item_type_id &&
+          item.serve_width === data.serve_width &&
+          item.serve_height === data.serve_height &&
+          item.serve_length === data.serve_length
       )
 
       const id = verification !== undefined ? verification.id : 0
