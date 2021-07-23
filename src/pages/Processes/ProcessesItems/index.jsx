@@ -37,9 +37,9 @@ const Processes = props => {
 
     items.map(
       item =>
-        (lookupPallets[
-          item.id
-        ] = `${item.length} x ${item.width} x ${item.height}`)
+      (lookupPallets[
+        item.id
+      ] = `${item.length} x ${item.width} x ${item.height} - ${item.name}`)
     )
 
     return (
@@ -59,6 +59,7 @@ const Processes = props => {
           { title: 'Orden', field: 'orden' },
           { title: 'Estimado Horas', field: 'estimated' },
           { title: 'Holgura Horas', field: 'clearance' },
+          { title: 'Merma', field: 'scrap' },
         ]}
         localization={{
           pagination: {

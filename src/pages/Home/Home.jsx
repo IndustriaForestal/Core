@@ -29,6 +29,7 @@ const Home = props => {
     case 'Administrador':
       return (
         <div className="Home">
+          <IconHome icon={<BsCardImage />} url="/orders" text="Orden de Producción" />
           <IconHome icon={<BsCardImage />} url="/stock" text="Inventarios" />
 
           <IconHome icon={<FaPallet />} url="/pallets" text="Tarimas" />

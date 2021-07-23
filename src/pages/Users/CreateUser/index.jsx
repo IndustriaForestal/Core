@@ -1,4 +1,4 @@
-import React, { useState } from 'react'
+import React, { useState, useEffect } from 'react'
 import { connect } from 'react-redux'
 import { Link } from 'react-router-dom'
 import { create, getAll } from '../../../actions/app'
@@ -8,13 +8,19 @@ import Input from '../../../components/Input/Input'
 import Button from '../../../components/Button/Button'
 
 const CreateSupplier = props => {
+  const { roles, getAll, create } = props
   const { register, handleSubmit, errors } = useForm()
   const [passwordVerify, setPasswordVerify] = useState(false)
   const [password, setPassword] = useState(false)
   const onSubmit = data => {
-    props.create('users', 'CREATE_USER', data)
+    create('users', 'CREATE_USER', data)
     document.getElementById('formUser').reset()
   }
+
+  useEffect(() => {
+    getAll('users/roles', 'GET_ROLES')
+    // eslint-disable-next-line
+  }, [])
 
   const handlePasswordVerify = e => {
     if (password === e.target.value) {
@@ -72,7 +78,11 @@ const CreateSupplier = props => {
           <label htmlFor="role">
             <span>Area:</span>
             <select name="role" ref={register}>
-              <option value="Administrador">Administrador</option>
+              {roles ? roles.map(rol => (
+                <option key={rol.id} value={rol.id}>{rol.name}</option>
+              ))
+                : null
+              }
             </select>
           </label>
         </div>
@@ -101,4 +111,10 @@ const mapDispatchToProps = {
   getAll,
 }
 
-export default connect(null, mapDispatchToProps)(CreateSupplier)
+const mapStateToProps = state => {
+  return {
+    roles: state.reducerUsers.roles,
+  }
+}
+
+export default connect(mapStateToProps, mapDispatchToProps)(CreateSupplier)

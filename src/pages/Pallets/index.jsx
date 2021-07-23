@@ -457,7 +457,8 @@ const Pallets = props => {
                   key={pallet.id}
                   title={
                     customers.filter(
-                      customer => customer._id === pallet.customer_id
+                      customer =>
+                        parseInt(customer.id) === parseInt(pallet.customer_id)
                     )[0].name
                   }
                   tools={
@@ -671,11 +672,12 @@ const Pallets = props => {
                       {customers.map(customer => {
                         return (
                           <option
-                            key={customer._id}
-                            value={customer._id}
+                            key={customer.id}
+                            value={customer.id}
                             selected={
                               newPallet &&
-                              newPallet.customer_id === customer._id
+                              parseInt(newPallet.customer_id) ===
+                                parseInt(customer.id)
                                 ? true
                                 : false
                             }
@@ -1244,7 +1246,9 @@ const Pallets = props => {
                 Cliente:
                 {newPallet.customer_id
                   ? customers.filter(
-                      customer => customer._id === newPallet.customer_id
+                      customer =>
+                        parseInt(customer.id) ===
+                        parseInt(newPallet.customer_id)
                     )[0].name
                   : null}
               </h4>

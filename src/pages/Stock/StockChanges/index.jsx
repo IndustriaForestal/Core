@@ -181,7 +181,7 @@ const Nails = props => {
           type,
           amount,
           inOut,
-          user_id: user.name,
+          user_id: user.id,
           state: greenDryRepair,
           zone_id: subzoneSelected,
           date: moment().format('YYYY-MM-DD HH:mm:ss'),
@@ -198,7 +198,7 @@ const Nails = props => {
       props
         .create(`stock/items/${idSelected}`, 'PALLET_HISTORY', {
           amount,
-          user_id: user.name,
+          user_id: user.id,
           state: greenDryRepair,
           zone_id: subzoneSelected,
           date: moment().format('YYYY-MM-DD HH:mm:ss'),
@@ -215,7 +215,7 @@ const Nails = props => {
       props
         .create(`stock/nails/${idSelected}`, 'PALLET_HISTORY', {
           amount,
-          user_id: user.name,
+          user_id: user.id,
           state: 'stock',
           zone_id: 1,
           date: moment().format('YYYY-MM-DD HH:mm:ss'),
@@ -265,7 +265,7 @@ const Nails = props => {
           width,
           amount,
           wood_id: woodSelected,
-          user_id: user.name,
+          user_id: user.id,
           state: greenDryRepair,
           zone_id: subzoneSelected,
           date: moment().format('YYYY-MM-DD HH:mm:ss'),
@@ -290,7 +290,7 @@ const Nails = props => {
         ? props
             .create(`stock/sawn/${stock.sawn_id}`, 'PALLET_HISTORY', {
               amount: negativeInput,
-              user_id: user.name,
+              user_id: user.id,
               zone_id: stock.zone_id,
               sz: stock.id,
               delete: true,
@@ -302,7 +302,7 @@ const Nails = props => {
         : props
             .create(`stock/sawn/${stock.sawn_id}`, 'PALLET_HISTORY', {
               amount: negativeInput,
-              user_id: user.name,
+              user_id: user.id,
               zone_id: stock.zone_id,
               sz: stock.id,
               delete: false,
@@ -323,7 +323,7 @@ const Nails = props => {
           m3: volumen,
           amount,
           wood_id: woodSelected,
-          user_id: user.name,
+          user_id: user.id,
           state: greenDryRepair,
           zone_id: subzoneSelected,
           date: moment().format('YYYY-MM-DD HH:mm:ss'),
@@ -348,7 +348,7 @@ const Nails = props => {
         ? props
             .create(`stock/pallets/${stock.pallet_id}`, 'PALLET_HISTORY', {
               amount: negativeInput,
-              user_id: user.name,
+              user_id: user.id,
               state: stock.state,
               zone_id: stock.zone_id,
               sz: stock.id,
@@ -361,7 +361,7 @@ const Nails = props => {
         : props
             .create(`stock/pallets/${stock.pallet_id}`, 'PALLET_HISTORY', {
               amount: negativeInput,
-              user_id: user.name,
+              user_id: user.id,
               state: stock.state,
               zone_id: stock.zone_id,
               sz: stock.id,
@@ -382,7 +382,7 @@ const Nails = props => {
         ? props
             .create(`stock/nails/${stock.complement_id}`, 'PALLET_HISTORY', {
               amount: negativeInput,
-              user_id: user.name,
+              user_id: user.id,
               state: 'stock',
               zone_id: 1,
               sz: stock.id,
@@ -398,7 +398,7 @@ const Nails = props => {
         : props
             .create(`stock/nails/${stock.complement_id}`, 'PALLET_HISTORY', {
               amount: negativeInput,
-              user_id: user.name,
+              user_id: user.id,
               state: 'stock',
               zone_id: 1,
               sz: stock.id,
@@ -422,7 +422,7 @@ const Nails = props => {
         ? props
             .create(`stock/items/${stock.item_id}`, 'PALLET_HISTORY', {
               amount: negativeInput,
-              user_id: user.name,
+              user_id: user.id,
               state: stock.state,
               zone_id: stock.zone_id,
               sz: stock.id,
@@ -435,7 +435,7 @@ const Nails = props => {
         : props
             .create(`stock/items/${stock.item_id}`, 'PALLET_HISTORY', {
               amount: negativeInput,
-              user_id: user.name,
+              user_id: user.id,
               state: stock.state,
               zone_id: stock.zone_id,
               sz: stock.id,
@@ -456,7 +456,7 @@ const Nails = props => {
         ? props
             .create(`stock/raws`, 'PALLET_HISTORY', {
               amount: negativeInput,
-              user_id: user.name,
+              user_id: user.id,
               zone_id: stock.zone_id,
               sz: stock.id,
               delete: true,
@@ -468,7 +468,7 @@ const Nails = props => {
         : props
             .create(`stock/raws`, 'PALLET_HISTORY', {
               amount: negativeInput,
-              user_id: user.name,
+              user_id: user.id,
               zone_id: stock.zone_id,
               sz: stock.id,
               delete: false,

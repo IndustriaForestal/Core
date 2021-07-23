@@ -5,10 +5,10 @@ export default function reducer(state = {}, action) {
         ...state,
         customers: action.payload.data,
       }
-    case 'GET_CUSTOMER':
+    case 'GET_CUSTOMERS_TIMES':
       return {
         ...state,
-        customer: action.payload,
+        customersTimes: action.payload.data,
       }
     case 'CREATE_CUSTOMER':
       return {

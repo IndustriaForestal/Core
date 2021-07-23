@@ -1,23 +1,30 @@
 import React, { useEffect } from 'react'
 import { connect } from 'react-redux'
-import { getAll, create, update, setTitle, deleted } from '../../actions/app'
-
+import { getAll, create, update, setTitle, deleted } from '../../../actions/app'
+import Loading from '../../../components/Loading/Loading'
 import MaterialTable from 'material-table'
 
-const CreateCustomer = props => {
-  const { material, suppliers, user } = props
+const Customers = props => {
+  const { customers, user, plants, customersTimes } = props
+
   const userId = user.id
   useEffect(() => {
     const topbar = {
-      title: 'Proveedores',
+      title: 'Clientes',
       menu: {
-        Proveedores: '/suppliers',
+        Clientes: '/customers',
+        'Tiempo de entrega': '/cusomters-time',
       },
     }
     props.setTitle(topbar)
-    props.getAll('suppliers', 'GET_SUPPLIERS').then(() => {
-      props.getAll('material', 'GET_MATERIAL')
-    })
+    props
+      .getAll('customers', 'GET_CUSTOMERS')
+      .then(() => {
+        props.getAll('zones/plants', 'GET_PLANTS')
+      })
+      .then(() => {
+        props.getAll('customers/times', 'GET_CUSTOMERS_TIMES')
+      })
 
     // eslint-disable-next-line
   }, [])
@@ -28,8 +35,8 @@ const CreateCustomer = props => {
         setTimeout(() => {
           newData.user_id = userId
           props
-            .create(`suppliers`, 'CREATE_SUPPLIER', newData)
-            .then(() => props.getAll('suppliers', 'GET_SUPPLIERS'))
+            .create(`customers/times`, 'CREATE_CUSTOMER_TIME', newData)
+            .then(() => props.getAll('customers/times', 'GET_CUSTOMERS_TIMES'))
             .then(() => resolve())
         }, 1000)
       }),
@@ -39,8 +46,12 @@ const CreateCustomer = props => {
           delete newData.id
           newData.user_id = userId
           props
-            .update(`suppliers/${oldData.id}`, 'UPDATE_SUPPLIER', newData)
-            .then(() => props.getAll('suppliers', 'GET_SUPPLIERS'))
+            .update(
+              `customers/times/${oldData.id}`,
+              'UPDATE_CUSTOMER_TIME',
+              newData
+            )
+            .then(() => props.getAll('customers/times', 'GET_CUSTOMERS_TIMES'))
             .then(() => resolve())
         }, 1000)
       }),
@@ -48,30 +59,25 @@ const CreateCustomer = props => {
       new Promise((resolve, reject) => {
         setTimeout(() => {
           props
-            .deleted(`suppliers/${oldData.id}`, 'DELETE_SUPPLIER')
-            .then(() => props.getAll('suppliers', 'GET_SUPPLIERS'))
+            .deleted(`customers/times/${oldData.id}`, 'DELETE_CUSTOMER_TIME')
+            .then(() => props.getAll('customers/times', 'GET_CUSTOMERS_TIMES'))
             .then(() => resolve())
         }, 1000)
       }),
   }
 
-  if (material && suppliers) {
+  if (customers && plants && customersTimes) {
     const lookupItemsType = {}
-
-    material.map(item => (lookupItemsType[item.id] = item.name))
-
+    const lookupCustomers = {}
+    plants.map(item => (lookupItemsType[item.id] = item.name))
+    customers.map(item => (lookupCustomers[item.id] = item.name))
     return (
       <>
         <MaterialTable
           columns={[
-            { title: 'Nombre', field: 'name' },
-            { title: 'Télefono', field: 'phone' },
-            { title: 'Tiempo de entrega', field: 'delivery_time' },
-            {
-              title: 'Tipo de material',
-              field: 'material_id',
-              lookup: lookupItemsType,
-            },
+            { title: 'Cliente', field: 'customer_id', lookup: lookupCustomers },
+            { title: 'Planta', field: 'plant_id', lookup: lookupItemsType },
+            { title: 'Horas del viaje', field: 'hours' },
           ]}
           localization={{
             pagination: {
@@ -104,14 +110,14 @@ const CreateCustomer = props => {
               addTooltip: 'Agregar',
             },
           }}
-          data={suppliers}
+          data={customersTimes}
           editable={editable}
-          title="Proveedores"
+          title="Clientes"
         />
       </>
     )
   } else {
-    return <h1>Cargando</h1>
+    return <Loading />
   }
 }
 
@@ -125,10 +131,11 @@ const mapDispatchToProps = {
 
 const mapStateToProps = state => {
   return {
-    material: state.reducerMaterial.material,
-    suppliers: state.reducerSuppliers.suppliers,
+    customers: state.reducerCustomers.customers,
+    customersTimes: state.reducerCustomers.customersTimes,
+    plants: state.reducerZones.plants,
     user: state.reducerApp.user,
   }
 }
 
-export default connect(mapStateToProps, mapDispatchToProps)(CreateCustomer)
+export default connect(mapStateToProps, mapDispatchToProps)(Customers)

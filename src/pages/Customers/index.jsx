@@ -1,138 +1,124 @@
-import React, { useEffect, useState } from 'react'
-import { Link } from 'react-router-dom'
+import React, { useEffect } from 'react'
 import { connect } from 'react-redux'
-import { AiOutlineEdit, AiOutlineDelete } from 'react-icons/ai'
-import { BsPlus } from 'react-icons/bs'
-import { setTitle, getAll, deleted } from '../../actions/app'
-import Swal from 'sweetalert2'
-import Table from '../../components/Table/Table'
-import Button from '../../components/Button/Button'
-import AddButton from '../../components/AddButton/AddButton'
-import SearchBar from '../../components/SearchBar/SearchBar'
-import './styles.scss'
+import { getAll, create, update, setTitle, deleted } from '../../actions/app'
+import Loading from '../../components/Loading/Loading'
+import MaterialTable from 'material-table'
 
 const Customers = props => {
-  const { customers, setTitle, role } = props
-  const [filter, setFilter] = useState([])
-
+  const { customers, user } = props
+  const userId = user.id
   useEffect(() => {
     const topbar = {
       title: 'Clientes',
-      menu: { Clientes: '/customers' },
+      menu: {
+        Clientes: '/customers',
+        'Tiempo de entrega': '/customers-times',
+      },
     }
-    setTitle(topbar)
+    props.setTitle(topbar)
     props.getAll('customers', 'GET_CUSTOMERS')
+
     // eslint-disable-next-line
   }, [])
 
-  let tableHeader
-  role === 'Administrador'
-    ? (tableHeader = [
-        'Nombre',
-        'Dirección',
-        'Email',
-        'Teléfono',
-        'Embarques Semana',
-        'Acciones',
-      ])
-    : (tableHeader = [
-        'Nombre',
-        'Dirección',
-        'Email',
-        'Teléfono',
-        'Embarques Semana',
-      ])
-
-  const handlerDeleteCustomer = customerID => {
-    Swal.fire({
-      title: '¿Estás seguro?',
-      text: 'Este proceso no se puede revertir',
-      icon: 'warning',
-      showCancelButton: true,
-      confirmButtonColor: '#3085d6',
-      cancelButtonColor: '#d33',
-      confirmButtonText: 'Si, borrar',
-    }).then(result => {
-      if (result.isConfirmed) {
-        props.deleted(`customers/${customerID}`, 'DELETE_CUSTOMER').then(() => {
-          props.getAll('cusomters', 'GET_CUSTOMERS')
-        })
-        Swal.fire('Borrado!', 'Borrado con exito.', 'success')
-      }
-    })
+  const editable = {
+    onRowAdd: newData =>
+      new Promise((resolve, reject) => {
+        setTimeout(() => {
+          newData.user_id = userId
+          props
+            .create(`customers`, 'CREATE_CUSTOMER', newData)
+            .then(() => props.getAll('customers', 'GET_CUSTOMERS'))
+            .then(() => resolve())
+        }, 1000)
+      }),
+    onRowUpdate: (newData, oldData) =>
+      new Promise((resolve, reject) => {
+        setTimeout(() => {
+          delete newData.id
+          newData.user_id = userId
+          props
+            .update(`customers/${oldData.id}`, 'UPDATE_CUSTOMER', newData)
+            .then(() => props.getAll('customers', 'GET_CUSTOMERS'))
+            .then(() => resolve())
+        }, 1000)
+      }),
+    onRowDelete: oldData =>
+      new Promise((resolve, reject) => {
+        setTimeout(() => {
+          props
+            .deleted(`customers/${oldData.id}`, 'DELETE_CUSTOMER')
+            .then(() => props.getAll('customers', 'GET_CUSTOMERS'))
+            .then(() => resolve())
+        }, 1000)
+      }),
   }
 
-  const handleSearch = e => {
-    const searchWord = e.target.value.toLowerCase()
-    const filterPallets = customers.filter(customer =>
-      customer.name.toLowerCase().includes(searchWord)
+  if (customers) {
+    return (
+      <>
+        <MaterialTable
+          columns={[
+            { title: 'Nombre', field: 'name' },
+            { title: 'Dirección', field: 'address' },
+            { title: 'email', field: 'email' },
+            { title: 'Télefono', field: 'phone' },
+          ]}
+          localization={{
+            pagination: {
+              labelDisplayedRows: '{from}-{to} de {count}',
+              labelRowsSelect: 'Filas',
+              firstAriaLabel: 'Primera',
+              firstTooltip: 'Primera',
+              previousAriaLabel: 'Anterior',
+              previousTooltip: 'Anterior',
+              nextAriaLabel: 'Siguiente',
+              nextTooltip: 'Siguiente',
+              lastAriaLabel: 'Ultimo',
+              lastTooltip: 'Ultimo',
+            },
+            toolbar: {
+              searchTooltip: 'Buscar',
+              searchPlaceholder: 'Buscar',
+            },
+            header: {
+              actions: 'Acciones',
+            },
+            body: {
+              editRow: {
+                deleteText: '¿Eliminar?',
+                saveTooltip: 'Ok',
+                cancelTooltip: 'Cancelar',
+              },
+              editTooltip: 'Editar',
+              deleteTooltip: 'Eliminar',
+              addTooltip: 'Agregar',
+            },
+          }}
+          data={customers}
+          editable={editable}
+          title="Clientes"
+        />
+      </>
     )
-    setFilter(filterPallets)
-  }
-
-  let tableData
-  if (filter.length > 0) {
-    tableData = filter
   } else {
-    tableData = customers
+    return <Loading />
   }
+}
 
-  return (
-    <>
-      <SearchBar onChange={handleSearch} />
-
-      <Table head={tableHeader}>
-        {customers.length > 0 ? (
-          tableData.map(customer => (
-            <tr key={customer._id}>
-              <td>{customer.name}</td>
-              <td>{customer.address}</td>
-              <td>{customer.email}</td>
-              <td>{customer.phone}</td>
-              <td>{customer.shipment}</td>
-              {role === 'Administrador' ? (
-                <td>
-                  <Link to={`customers/${customer._id}`}>
-                    <Button className="btn --warning">
-                      <AiOutlineEdit />
-                    </Button>
-                  </Link>
-                  <Button
-                    className="btn --danger"
-                    onClick={() => handlerDeleteCustomer(customer._id)}
-                  >
-                    <AiOutlineDelete />
-                  </Button>
-                </td>
-              ) : null}
-            </tr>
-          ))
-        ) : (
-          <tr>
-            <td colSpan="7">No hay registros</td>
-          </tr>
-        )}
-      </Table>
-      <Link to="/customers/create">
-        <AddButton>
-          <BsPlus />
-        </AddButton>
-      </Link>
-    </>
-  )
+const mapDispatchToProps = {
+  create,
+  getAll,
+  update,
+  setTitle,
+  deleted,
 }
 
 const mapStateToProps = state => {
   return {
     customers: state.reducerCustomers.customers,
-    role: state.reducerApp.role,
+    user: state.reducerApp.user,
   }
-}
-
-const mapDispatchToProps = {
-  setTitle,
-  getAll,
-  deleted,
 }
 
 export default connect(mapStateToProps, mapDispatchToProps)(Customers)

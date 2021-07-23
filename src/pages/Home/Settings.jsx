@@ -29,6 +29,9 @@ const Settings = props => {
     case 'Administrador':
       return (
         <div className="Home">
+          <IconHome icon={<BsCardImage />} url="/processes" text="Procesos" />
+          <IconHome icon={<BsCardImage />} url="/qualities" text="Calidades" />
+          <IconHome icon={<BsCardImage />} url="/wood" text="Tipo de madera" />
           <IconHome
             icon={<BsCardImage />}
             url="/items/type"
@@ -39,15 +42,13 @@ const Settings = props => {
             url="/complements"
             text="Complementos"
           />
-          <IconHome icon={<BsCardImage />} url="/wood" text="Tipo de madera" />
-          <IconHome icon={<BsCardImage />} url="/qualities" text="Calidades" />
           <IconHome
             icon={<BsCardImage />}
             url="/specialProcesses"
             text="Requerimientos Calidad"
           />
-          <IconHome icon={<BsCardImage />} url="/processes" text="Procesos" />
           <IconHome icon={<BsCardImage />} url="/suppliers" text="Proveedores" />
+          <IconHome icon={<BsCardImage />} url="/customers" text="Clientes" />
           <IconHome icon={<BsCardImage />} url="/zones" text="Zonas" />
 
           <IconHome icon={<FaPallet />} url="/users" text="Usuarios" />

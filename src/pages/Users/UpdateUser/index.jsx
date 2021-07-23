@@ -11,12 +11,14 @@ import Loading from '../../../components/Loading/Loading'
 const UpdateMaterialOne = props => {
   const { register, handleSubmit } = useForm()
   const { id } = useParams()
-  const { user } = props
+  const { user, roles } = props
   const [passwordVerify, setPasswordVerify] = useState(true)
   const [password, setPassword] = useState(true)
 
   useEffect(() => {
-    props.get(`users/${id}`, 'GET_USER')
+    props.get(`users/${id}`, 'GET_USER').then(() => {
+      props.getAll(`users/roles`, 'GET_ROLES')
+    })
     // eslint-disable-next-line
   }, [])
 
@@ -68,7 +70,7 @@ const UpdateMaterialOne = props => {
             type="password"
             name="confirmPassword"
             title="Confirmar Contraseña"
-            onChange={handlePasswordVerify}
+            onChange={handlePasswordVerify} 
           />
           {passwordVerify ? null : (
             <span className="--danger">Los password deben ser iguales</span>
@@ -77,8 +79,10 @@ const UpdateMaterialOne = props => {
             <label htmlFor="role">
               <span>Area:</span>
               <select name="role" ref={register}>
-                <option value={user.role}>{user.role}</option>
-                <option value="Administrador">Administrador</option>
+                <option value={user.rol_id}>{user.rol_id}</option>
+                {roles ? roles.map(rol => (
+                  <option key={rol.id} value={rol.id}>{rol.name}</option>
+                )) : null}
               </select>
             </label>
           </div>
@@ -101,6 +105,7 @@ const UpdateMaterialOne = props => {
 const mapStateToProps = state => {
   return {
     user: state.reducerUsers.user,
+    roles: state.reducerUsers.roles,
   }
 }
 

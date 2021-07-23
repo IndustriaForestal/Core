@@ -1,0 +1,426 @@
+import React, { useEffect } from 'react'
+import { connect } from 'react-redux'
+import MaterialTable from 'material-table'
+import moment from 'moment'
+import { setTitle, getAll, deleted, get, create } from '../../../actions/app'
+import { orderSavePallets, checkPallets, orderPalletStart } from '../actions'
+import Loading from '../../../components/Loading/Loading'
+import Button from '../../../components/Button/Button'
+
+const CreateOrder = props => {
+  useEffect(() => {
+    const topbar = {
+      title: 'Crear Orden Stock',
+      menu: {
+        Pedidos: '/orders',
+        'Crear Orden': '/orders/create',
+      },
+    }
+    props.setTitle(topbar)
+    props
+      .getAll('customers', 'GET_CUSTOMERS')
+      .then(() => {
+        props.getAll('pallets', 'GET_PALLETS')
+      })
+      .then(() => {
+        props.getAll('items', 'GET_ITEMS')
+      })
+      .then(() => {
+        props.getAll('stock', 'GET_STOCK')
+      })
+      .then(() => {
+        props.getAll('stock', 'GET_STOCK')
+      })
+      .then(() => {
+        props.getAll('processes', 'GET_PROCESSES')
+      })
+      .then(() => {
+        props.getAll('material', 'GET_MATERIAL')
+      })
+      .then(() => {
+        props.getAll('qualities', 'GET_QUALITIES')
+      })
+      .then(() => {
+        props.getAll('qualities/processes', 'GET_QUALITIES_PROCESSES')
+      })
+      .then(() => {
+        props.getAll('processes/pallets', 'GET_PROCESSES_PALLETS')
+      })
+      .then(() => {
+        props.getAll('processes/items', 'GET_PROCESSES_ITEMS')
+      })
+    // eslint-disable-next-line
+  }, [])
+
+  const {
+    customers,
+    pallets,
+    order,
+    stock,
+    processesPallets,
+    processesItems,
+    qualities,
+    qualitiesProcesses,
+    items,
+    processes,
+    material,
+  } = props
+
+  if (
+    customers &&
+    pallets &&
+    stock &&
+    processesPallets &&
+    processesItems &&
+    qualities &&
+    qualitiesProcesses &&
+    items &&
+    processes &&
+    material
+  ) {
+    //   *Mapear las calidades y agregar procesos adicionales
+
+    const getQualityMap = pallet => {
+      const palletFull = pallets.find(
+        p => parseInt(p.id) === parseInt(pallet.pallet_id)
+      )
+      const qualityProcesses = qualitiesProcesses.filter(
+        quality =>
+          parseInt(quality.quality_id) === parseInt(palletFull.quality_id)
+      )
+
+      const palletProcesses = processesPallets.filter(
+        process => parseInt(process.pallet_id) === parseInt(palletFull.id)
+      )
+
+      const palletItems = items.filter(
+        item => parseInt(item.id_pallet) === parseInt(palletFull.id)
+      )
+
+      const palletItemsProcesses = getItemsProcess(palletItems)
+
+      let qualityFull = []
+      // eslint-disable-next-line
+      qualityProcesses.map(process => {
+        qualityFull.push(process)
+        // eslint-disable-next-line
+        palletProcesses.map(pallet => {
+          if (process.position === pallet.orden) {
+            qualityFull.push(pallet)
+          }
+        })
+        // eslint-disable-next-line
+        palletItemsProcesses.map(item => {
+          if (process.position === item.orden) {
+            qualityFull.push(item)
+          }
+        })
+      })
+
+      qualityFull = qualityFull.map(item => {
+        const processDetail = processes.find(
+          process => parseInt(process.id) === parseInt(item.process_id)
+        )
+        return {
+          ...item,
+          material_in: material.find(
+            m => parseInt(m.id) === parseInt(processDetail.material_in)
+          ).name,
+          material_in_id: material.find(
+            m => parseInt(m.id) === parseInt(processDetail.material_in)
+          ).id,
+          process_name: processDetail.name,
+        }
+      })
+
+      return qualityFull
+    }
+
+    const getItemsProcess = palletItems => {
+      let concatArrays = []
+
+      palletItems.map(item =>
+        processesItems
+          .filter(process => parseInt(process.item_id) === parseInt(item.id))
+          .map(process => concatArrays.push(process))
+      )
+
+      return concatArrays
+    }
+
+    const getTimeProduction = (qualityFinal, pallet) => {
+      let initialDate = moment(pallet.date)
+
+      const timeProduction = qualityFinal.reverse().map(process => {
+        const time = process.estimated ? process.estimated : process.duration
+        initialDate = initialDate.subtract(time, 'hours')
+
+        return {
+          ...process,
+          time: initialDate.format('DD-MM-YYYY HH:mm:ss'),
+        }
+      })
+
+      return timeProduction
+    }
+
+    const handleSearchAndSlice = (timeProduction, pallet) => {
+      let stage = 'Trozo'
+
+      if (
+        parseInt(pallet.amount_stock) > 0 ||
+        parseInt(pallet.amount_stock_supplier) > 0
+      ) {
+        stage = 'Tarima'
+      }
+
+      if (
+        pallet.amount_items.length > 0 ||
+        pallet.amount_items_supplier.length > 0
+      ) {
+        stage = 'Madera Habilitada'
+      }
+
+      if (
+        pallet.amount_sawn.length > 0 ||
+        pallet.amount_sawn_supplier.length > 0
+      ) {
+        stage = 'Trozo'
+      }
+
+      const search = timeProduction.map(time => time.material_in)
+
+      const indexForSlice = search.lastIndexOf(stage)
+
+      const timeSliced = timeProduction.slice(0, indexForSlice + 1)
+
+      return timeSliced
+    }
+
+    const handleSearchAndSliceTimes = (timeProduction, pallet) => {
+      let stage = 'Trozo'
+
+      if (
+        parseInt(pallet.amount_stock) > 0 ||
+        parseInt(pallet.amount_stock_supplier) > 0
+      ) {
+        stage = 'Tarima'
+      }
+
+      if (
+        pallet.amount_items.length > 0 ||
+        pallet.amount_items_supplier.length > 0
+      ) {
+        stage = 'Madera Habilitada'
+      }
+
+      if (
+        pallet.amount_sawn.length > 0 ||
+        pallet.amount_sawn_supplier.length > 0
+      ) {
+        stage = 'Trozo'
+      }
+
+      const search = timeProduction.map(time => time.material_in)
+
+      const indexForSlice = search.lastIndexOf(stage)
+
+      const timeSliced = timeProduction.slice(0, indexForSlice + 1)
+
+      if (pallet.amount_stock > 0 || pallet.amount_stock_supplier > 0) {
+        const indexForSlicePallet = search.lastIndexOf('Tarima')
+        const timeSlicedPallet = timeProduction.slice(
+          0,
+          indexForSlicePallet + 1
+        )
+
+        const time = timeSlicedPallet[timeSlicedPallet.length - 1].time
+
+        props.orderPalletStart({
+          id: pallet.pallet_id,
+          time,
+          stage: 'pallets_time',
+        })
+      }
+      if (
+        pallet.amount_items.length > 0 ||
+        pallet.amount_items_supplier.length > 0
+      ) {
+        const indexForSliceItems = search.lastIndexOf('Madera Habilitada')
+        const timeSlicedItems = timeProduction.slice(0, indexForSliceItems + 1)
+        const time = timeSlicedItems[timeSlicedItems.length - 1].time
+
+        props.orderPalletStart({
+          id: pallet.pallet_id,
+          time,
+          stage: 'items_time',
+        })
+      }
+      if (
+        pallet.amount_sawn.length > 0 ||
+        pallet.amount_sawn_supplier.length > 0
+      ) {
+        const indexForSliceSwan = search.lastIndexOf('Trozo')
+        const timeSlicedSwan = timeProduction.slice(0, indexForSliceSwan + 1)
+        const time = timeSlicedSwan[timeSlicedSwan.length - 1].time
+
+        props.orderPalletStart({
+          id: pallet.pallet_id,
+          time,
+          stage: 'sawn_time',
+        })
+      }
+
+      return timeSliced
+    }
+
+    const lookupPallets = {}
+
+    pallets.map(item => (lookupPallets[item.id] = item.model))
+
+    const mapedOrder = order.pallets.map(pallet => {
+      const qualityFinal = getQualityMap(pallet)
+      const timeProduction = getTimeProduction(qualityFinal, pallet)
+      const timeSliced = handleSearchAndSlice(timeProduction, pallet)
+
+      return {
+        ...pallet,
+        timeProduction: timeSliced,
+      }
+    })
+
+    const handleTimes = order => {
+      order.pallets.map(pallet => {
+        const qualityFinal = getQualityMap(pallet)
+        const timeProduction = getTimeProduction(qualityFinal, pallet)
+        const timeSliced = handleSearchAndSliceTimes(timeProduction, pallet)
+
+        return {
+          ...pallet,
+          timeProduction: timeSliced,
+        }
+      })
+    }
+
+    return (
+      <>
+        <MaterialTable
+          title="Completar Orden"
+          columns={[
+            {
+              title: 'Modelo',
+              field: 'pallet_id',
+              lookup: lookupPallets,
+            },
+            { title: 'Cantidad', field: 'amount' },
+            { title: 'Entrega', field: 'date' },
+          ]}
+          localization={{
+            pagination: {
+              labelDisplayedRows: '{from}-{to} de {count}',
+              labelRowsSelect: 'Filas',
+              firstAriaLabel: 'Primera',
+              firstTooltip: 'Primera',
+              previousAriaLabel: 'Anterior',
+              previousTooltip: 'Anterior',
+              nextAriaLabel: 'Siguiente',
+              nextTooltip: 'Siguiente',
+              lastAriaLabel: 'Ultimo',
+              lastTooltip: 'Ultimo',
+            },
+            toolbar: {
+              searchTooltip: 'Buscar',
+              searchPlaceholder: 'Buscar',
+            },
+            header: {
+              actions: 'Acciones',
+            },
+            body: {
+              editRow: {
+                deleteText: '¿Eliminar?',
+                saveTooltip: 'Ok',
+                cancelTooltip: 'Cancelar',
+              },
+              editTooltip: 'Editar',
+              deleteTooltip: 'Eliminar',
+              addTooltip: 'Agregar',
+            },
+          }}
+          data={mapedOrder}
+          detailPanel={rowData => {
+            return (
+              <>
+                <table
+                  style={{
+                    width: '100%',
+                    padding: '15px',
+                    textAlign: 'center',
+                  }}
+                >
+                  <thead>
+                    <tr>
+                      <th>Proceso</th>
+                      <th>Materiales</th>
+                      <th>Inicio</th>
+                    </tr>
+                  </thead>
+                  <tbody>
+                    {rowData.timeProduction.map((process, index) => (
+                      <tr key={index}>
+                        <td>{process.process_name}</td>
+                        <td>{process.material_in}</td>
+                        <td>{process.time}</td>
+                      </tr>
+                    ))}
+                  </tbody>
+                </table>
+              </>
+            )
+          }}
+          options={{
+            rowStyle: rowData => ({
+              backgroundColor: rowData.check === 1 ? '#90be6d' : null,
+              color: rowData.check === 1 ? '#FFFFFF' : null,
+            }),
+          }}
+        />
+        <Button className="btn --danger" onClick={() => props.history.goBack()}>
+          Cancelar
+        </Button>
+        <Button onClick={() => handleTimes(order)}>Finalizar</Button>
+      </>
+    )
+  } else {
+    return <Loading />
+  }
+}
+
+const mapStateToProps = state => {
+  return {
+    customers: state.reducerCustomers.customers,
+    stock: state.reducerStock.stock,
+    pallets: state.reducerPallets.pallets,
+    items: state.reducerItems.items,
+    order: state.reducerOrders.order,
+    user: state.reducerApp.user,
+    processesPallets: state.reducerProcesses.processesPallets,
+    processes: state.reducerProcesses.processes,
+    processesItems: state.reducerProcesses.processesItems,
+    qualities: state.reducerQualities.qualities,
+    qualitiesProcesses: state.reducerQualities.qualitiesProcesses,
+    material: state.reducerMaterial.material,
+  }
+}
+
+const mapDispatchToProps = {
+  setTitle,
+  getAll,
+  get,
+  deleted,
+  create,
+  orderSavePallets,
+  checkPallets,
+  orderPalletStart,
+}
+
+export default connect(mapStateToProps, mapDispatchToProps)(CreateOrder)

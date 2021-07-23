@@ -6,7 +6,14 @@ import './styles.scss'
 import MaterialTable from 'material-table'
 
 const Processes = props => {
-  const { processes, setTitle, user, material, processesReject } = props
+  const {
+    processes,
+    setTitle,
+    user,
+    material,
+    processesReject,
+    materialState,
+  } = props
   const userId = user.id
   useEffect(() => {
     const topbar = {
@@ -25,19 +32,22 @@ const Processes = props => {
         props.getAll('material', 'GET_MATERIAL')
       })
       .then(() => {
+        props.getAll('material/state', 'GET_MATERIAL_STATE')
+      })
+      .then(() => {
         props.getAll('processes/reject', 'GET_PROCESSES_REJECT')
       })
     // eslint-disable-next-line
   }, [])
 
-  if (processes && material && processesReject) {
+  if (processes && material && processesReject && materialState) {
     const lookupMaterial = {}
+    const lookupProcessReject = { 0: 'N/A' }
+    const lookupMaterialState = { 0: 'N/A' }
 
     material.map(m => (lookupMaterial[m.id] = m.name))
-
-    const lookupProcessReject = { 0: 'N/A' }
-
     processesReject.map(m => (lookupProcessReject[m.id] = m.name))
+    materialState.map(m => (lookupMaterialState[m.id] = m.name))
 
     const editable = {
       onRowAdd: newData =>
@@ -84,9 +94,19 @@ const Processes = props => {
             lookup: lookupMaterial,
           },
           {
+            title: 'Estado de madera de entrada',
+            field: 'state_in',
+            lookup: lookupMaterialState,
+          },
+          {
             title: 'Material de salida',
             field: 'material_out',
             lookup: lookupMaterial,
+          },
+          {
+            title: 'Estado de madera de salida',
+            field: 'state_out',
+            lookup: lookupMaterialState,
           },
           {
             title: 'Rechazo 1',
@@ -149,6 +169,7 @@ const mapStateToProps = state => {
     processes: state.reducerProcesses.processes,
     processesReject: state.reducerProcesses.processesReject,
     material: state.reducerMaterial.material,
+    materialState: state.reducerMaterial.materialState,
     user: state.reducerApp.user,
   }
 }

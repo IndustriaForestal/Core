@@ -22,17 +22,28 @@ export default function reducer(state = {}, action) {
       return {
         ...state,
         qualities: state.qualities.filter(
-          quality => quality._id !== action.payload
+          quality => quality.id !== action.payload
         ),
       }
-    case 'ADD_PROCESS_QUALITY':
+    case 'GET_QUALITIES_PROCESSES':
+      return {
+        ...state,
+        qualitiesProcesses: action.payload.data,
+      }
+    case 'CREATE_QUALITY_PROCESS':
       return {
         ...state,
       }
-    // ! Hack para regresar las calidades al state (actions ln 36)
-    case 'DELETE_PROCESS_QUALITY':
+    case 'UPDATE_QUALITY_PROCESS':
       return {
         ...state,
+      }
+    case 'DELETE_QUALITY_PROCESS':
+      return {
+        ...state,
+        qualitiesProcesses: state.qualitiesProcesses.filter(
+          quality => quality.id !== action.payload
+        ),
       }
     default:
       return state

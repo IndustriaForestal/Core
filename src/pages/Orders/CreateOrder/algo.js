@@ -42,7 +42,8 @@ const CreateOrder = props => {
   const [selectedDate, setDate] = useState(new Date())
   const [customerSelected, setCustomer] = useState(0)
   const [palletsOrder, setPalletsOrder] = useState([])
-  const [timeTravel, setTimeTravel] = useState(0)
+  const [customerTime, setCustomerTime] = useState(0)
+  const [plant, setPlant] = useState(0)
 
   const userId = user.id
 
@@ -115,7 +116,7 @@ const CreateOrder = props => {
       )
 
       if (time !== undefined) {
-        return setTimeTravel(time.hours)
+        return setCustomerTime(time.hours)
       } else {
         const Toast = Swal.mixin({
           toast: true,
@@ -134,7 +135,7 @@ const CreateOrder = props => {
     return (
       <>
         <Card title="Nueva Orden">
-          <h1>Order ID #01</h1>
+          <h1>Order ID #1</h1>
           <Select
             onChange={e => setCustomer(e.value)}
             options={customers.map(customer => {
@@ -153,7 +154,6 @@ const CreateOrder = props => {
               }
             })}
           />
-          {timeTravel > 0 ? <h3>Tiempo de viaje: {timeTravel} hrs.</h3> : null}
           <ThemeProvider theme={theme}>
             <MuiPickersUtilsProvider utils={MomentUtils} locale={'es'}>
               <DateTimePicker
@@ -165,6 +165,9 @@ const CreateOrder = props => {
               />
             </MuiPickersUtilsProvider>
           </ThemeProvider>
+          {customerTime > 0 ? (
+            <h3>Tiempo de viaje: {customerTime} hrs.</h3>
+          ) : null}
         </Card>
         <MaterialTable
           title="Paso 1: Dar de alta los requerimientos de la orden"

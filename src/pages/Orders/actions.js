@@ -92,3 +92,40 @@ export const updateDatePalletOrder = (orderId, data) => async dispatch => {
     console.log(error)
   }
 }
+
+export const orderSavePallets = payload => ({
+  type: 'ORDER_SAVE_PALLETS',
+  payload,
+})
+
+export const checkPallets = payload => ({
+  type: 'ORDER_CHECK_PALLETS',
+  payload,
+})
+
+export const orderNonStage = payload => ({
+  type: 'ORDER_NON_STAGE',
+  payload,
+})
+
+export const orderPalletStock = payload => ({
+  type: 'ORDER_PALLET_STOCK',
+  payload,
+})
+
+export const orderStageOption = payload => ({
+  type: 'ORDER_STAGE_OPTION',
+  payload,
+})
+export const orderPalletItem = payload => ({
+  type: 'ORDER_PALLET_ITEM',
+  payload,
+})
+export const orderPalletSawn = payload => ({
+  type: 'ORDER_PALLET_SAWN',
+  payload,
+})
+export const orderPalletStart = payload => ({
+  type: 'ORDER_PALLET_START',
+  payload,
+})

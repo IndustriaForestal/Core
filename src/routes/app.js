@@ -10,8 +10,7 @@ import HomeQuality from '../pages/Home/Quality'
 import NotFound from '../pages/NotFound'
 import Login from '../pages/Login'
 import Customers from '../pages/Customers'
-import CreateCustomer from '../pages/Customers/CreateCustomer'
-import EditCustomer from '../pages/Customers/EditCustomer'
+import CustomersTimes from '../pages/Customers/CustomerTimes'
 import Material from '../pages/Material'
 import Processes from '../pages/Processes'
 import ProcessesPallets from '../pages/Processes/ProcessesPallets'
@@ -20,6 +19,7 @@ import ProcessesReject from '../pages/Processes/ProcessesReject'
 import Items from '../pages/Items'
 import Suppliers from '../pages/Suppliers'
 import Qualities from '../pages/Qualities'
+import QualitiesProcesses from '../pages/Qualities/QualitiesProcesses'
 import CreateQuality from '../pages/Qualities/CreateQuality'
 import AddProcess from '../pages/Qualities/AddProcess'
 import SpecialProcesses from '../pages/SpecialProcesses'
@@ -33,19 +33,20 @@ import StockChanges from '../pages/Stock/StockChanges'
 import StockHistory from '../pages/Stock/StockHistory'
 import StockSawn from '../pages/Stock/StockSawn'
 import Orders from '../pages/Orders'
-import MainOrder from '../pages/Orders/OrderMain'
-import OrderProduction from '../pages/Orders/OrderProduction'
+import OrdersStock from '../pages/Orders/OrderStock'
+import OrdersStockItems from '../pages/Orders/OrderStockItems'
+import OrdersStockSawn from '../pages/Orders/OrderStockSawn'
+import OrderEstimated from '../pages/Orders/OrderEstimated'
+import OrderPreview from '../pages/Orders/OrderPreview'
+
 import CreateOrder from '../pages/Orders/CreateOrder'
-import UpdateOrder from '../pages/Orders/UpdateOrder'
-import OrderIntern from '../pages/Orders/OrderIntern'
-import OrderDetails from '../pages/Orders/OrderDetails'
 import Raws from '../pages/Raws'
 import CreateRaw from '../pages/Raws/CreateRaw'
 import UpdateRaw from '../pages/Raws/UpdateRaw'
 import Users from '../pages/Users'
 import CreateUser from '../pages/Users/CreateUser'
 import UpdateUser from '../pages/Users/UpdateUser'
-import OrderShipments from '../pages/Orders/OrderShipments'
+
 import SettingsHome from '../pages/Home/Settings'
 import ItemType from '../pages/Items/ItemType'
 import Wood from '../pages/Wood'
@@ -64,8 +65,7 @@ const App = ({ loggedIn }) => {
           <Switch>
             <Route exact path="/" component={Home} />
             <Route exact path="/customers" component={Customers} />
-            <Route exact path="/customers/create" component={CreateCustomer} />
-            <Route exact path="/customers/:id" component={EditCustomer} />
+            <Route exact path="/customers-times" component={CustomersTimes} />
 
             <Route exact path="/complements" component={Complements} />
 
@@ -85,6 +85,11 @@ const App = ({ loggedIn }) => {
             <Route exact path="/suppliers" component={Suppliers} />
 
             <Route exact path="/qualities" component={Qualities} />
+            <Route
+              exact
+              path="/qualities/processes"
+              component={QualitiesProcesses}
+            />
             <Route exact path="/qualities/create" component={CreateQuality} />
             <Route exact path="/qualities/add/:id" component={AddProcess} />
 
@@ -106,8 +111,22 @@ const App = ({ loggedIn }) => {
             <Route exact path="/stockHistory" component={StockHistory} />
 
             <Route exact path="/orders" component={Orders} />
-            <Route exact path="/orders/main/:id" component={MainOrder} />
             <Route exact path="/orders/create" component={CreateOrder} />
+            <Route exact path="/orders/stock" component={OrdersStock} />
+            <Route
+              exact
+              path="/orders/stock-items"
+              component={OrdersStockItems}
+            />
+            <Route
+              exact
+              path="/orders/stock-sawn"
+              component={OrdersStockSawn}
+            />
+            <Route exact path="/orders/estimated" component={OrderEstimated} />
+            <Route exact path="/orders/preview" component={OrderPreview} />
+
+            {/* <Route exact path="/orders/main/:id" component={MainOrder} />
             <Route exact path="/orders/update/:id" component={UpdateOrder} />
             <Route
               exact
@@ -120,7 +139,7 @@ const App = ({ loggedIn }) => {
               exact
               path="/orders/shipments/:id"
               component={OrderShipments}
-            />
+            /> */}
 
             <Route exact path="/raws" component={Raws} />
             <Route exact path="/raws/create" component={CreateRaw} />

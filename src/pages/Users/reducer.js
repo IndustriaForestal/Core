@@ -22,7 +22,31 @@ export default function reducerProducts(state = [], action) {
     case 'DELETE_USER':
       return {
         ...state,
-        users: state.users.filter(user => user._id !== action.payload),
+        roles: state.roles.filter(rol => rol.id !== action.payload),
+      }
+    case 'GET_ROLES':
+      return {
+        ...state,
+        roles: action.payload.data,
+        rol: null,
+      }
+    case 'GET_ROL':
+      return {
+        ...state,
+        rol: action.payload,
+      }
+    case 'CREATE_ROL':
+      return {
+        ...state,
+      }
+    case 'UPDATE_ROL':
+      return {
+        ...state,
+      }
+    case 'DELETE_ROL':
+      return {
+        ...state,
+        roles: state.roles.filter(rol => rol.id !== action.payload),
       }
     default:
       return state

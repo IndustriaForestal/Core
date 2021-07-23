@@ -35,9 +35,9 @@ const Aside = () => {
               </Link>
             </li>
             <li className="aside__nav__item">
-              <Link to="/users" className="aside__nav__link">
+              <Link to="/home-settings" className="aside__nav__link">
                 <FiUsers className="aside__nav__icon" />
-                <span className="aside__nav__text">Usuarios</span>
+                <span className="aside__nav__text">Configuración</span>
               </Link>
             </li>
           </ul>
