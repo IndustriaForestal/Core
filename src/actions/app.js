@@ -74,6 +74,15 @@ export const cleanStock = payload => ({
   payload,
 })
 
+export const setModal = payload => ({
+  type: 'SET_MODAL',
+  payload,
+})
+export const setModalReview = payload => ({
+  type: 'SET_MODAL_REVIEW',
+  payload,
+})
+
 export const setUser = (payload, redirectionUrl) => async dispatch => {
   const { user, password } = payload
   try {
@@ -123,6 +132,7 @@ export const getAll = (endPoint, typeAction) => async dispatch => {
       headers: { Authorization: `Bearer ${storedJwt}` },
       method: 'get',
     })
+    console.log(res.data)
     dispatch({
       type: typeAction,
       payload: res.data,
@@ -220,6 +230,58 @@ export const deleted = (endpoint, typeAction) => async dispatch => {
     })
   } catch (error) {
     console.log(error)
+  }
+}
+
+//CREATE ATTACHMENT
+
+export const createFile = (endPoint, typeAction, data) => async dispatch => {
+
+  const storedJwt = sessionStorage.getItem('token')
+
+  const formData = new FormData()
+  Object.keys(data).map(key => {
+    if (key === 'pdf' || key === 'logo') {
+      return formData.append(key, data[key][0])
+    } else {
+      return formData.append(key, data[key])
+    }
+  })
+
+  try {
+    await axios({
+      url: `${process.env.REACT_APP_API}${endPoint}`,
+      headers: {
+        Authorization: `Bearer ${storedJwt}`,
+        'Content-Type': 'multipart/form-data',
+      },
+      method: 'post',
+      data: formData,
+    })
+
+    dispatch({
+      type: typeAction,
+    })
+
+    const Toast = Swal.mixin({
+      toast: true,
+      position: 'top-end',
+      showConfirmButton: false,
+      timer: 1500,
+    })
+    Toast.fire({
+      icon: 'success',
+      title: 'Se guardo correctamente',
+    })
+  } catch (error) {
+    console.log(error)
+    Swal.fire({
+      title: 'Error!',
+      text: 'Ah ocurrido un error',
+      icon: 'error',
+      confirmButtonColor: '#3085d6',
+      confirmButtonText: 'Aceptar',
+    })
   }
 }
 

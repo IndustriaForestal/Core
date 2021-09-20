@@ -14,6 +14,7 @@ import reducerMaterial from '../pages/Material/reducer'
 import reducerComplements from '../pages/Complements/reducer'
 import reducerSuppliers from '../pages/Suppliers/reducer'
 import reducerOrders from '../pages/Orders/reducer'
+import reducerSchedule from '../pages/Schedule/reducer'
 
 const reducer = combineReducers({
   reducerApp,
@@ -31,6 +32,7 @@ const reducer = combineReducers({
   reducerComplements,
   reducerSuppliers,
   reducerOrders,
+  reducerSchedule
 })
 
 export default reducer

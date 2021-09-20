@@ -218,8 +218,13 @@ const CreateOrder = props => {
       let onTime = false
 
       const timeProduction = qualityFinal.reverse().map(process => {
-        const time = process.estimated ? process.estimated : process.duration
-        initialDate = initialDate.subtract(time, 'hours')
+        const timeMultipler = pallet.amount / process.amount
+
+        const time = process.estimated
+          ? process.estimated + Math.ceil(process.clearance / 2)
+          : process.duration + Math.ceil(process.slack / 2)
+        console.log(time)
+        initialDate = initialDate.subtract(time * timeMultipler, 'hours')
         onTime = moment().isBefore(initialDate, 'hours')
 
         return {
@@ -345,7 +350,6 @@ const CreateOrder = props => {
     const countRaw = countOnTime(mapedOrder, 3)
 
     const previewOptions = mapedOrder => {
-      console.log(mapedOrder)
       // eslint-disable-next-line
       mapedOrder.map(pallet => {
         if (

@@ -56,6 +56,14 @@ import CreateSubzone from '../pages/Zones/CreateSubzone'
 import CreateZone from '../pages/Zones/CreateZone'
 import CreateWorkStation from '../pages/Zones/CreateWorkStation'
 import Complements from '../pages/Complements'
+import Calendar from '../pages/Calendar'
+import Dashboard from '../pages/Dashboard'
+import DashboardProcess from '../pages/Dashboard/Process'
+import DashboardReject from '../pages/Dashboard/Reject'
+import StockSuppliers from '../pages/Stock/StockSuppliers'
+import StockSuppliersHistory from '../pages/Stock/StockSuppliersHistory'
+
+import Schedule from '../pages/Schedule'
 
 const App = ({ loggedIn }) => {
   if (loggedIn) {
@@ -64,6 +72,11 @@ const App = ({ loggedIn }) => {
         <Layout>
           <Switch>
             <Route exact path="/" component={Home} />
+            <Route exact path="/schedule" component={Schedule} />
+            <Route exact path="/dashboard" component={Dashboard} />
+            <Route exact path="/dashboard/processes" component={DashboardProcess} />
+            <Route exact path="/dashboard/reject" component={DashboardReject} />
+            <Route exact path="/calendar" component={Calendar} />
             <Route exact path="/customers" component={Customers} />
             <Route exact path="/customers-times" component={CustomersTimes} />
 
@@ -108,6 +121,8 @@ const App = ({ loggedIn }) => {
             <Route exact path="/stockSawn" component={StockSawn} />
             <Route exact path="/stock/update/:id" component={StockUpdate} />
             <Route exact path="/stockChanges" component={StockChanges} />
+            <Route exact path="/stockSuppliers" component={StockSuppliers} />
+            <Route exact path="/stockSuppliersHistory" component={StockSuppliersHistory} />
             <Route exact path="/stockHistory" component={StockHistory} />
 
             <Route exact path="/orders" component={Orders} />
@@ -125,21 +140,6 @@ const App = ({ loggedIn }) => {
             />
             <Route exact path="/orders/estimated" component={OrderEstimated} />
             <Route exact path="/orders/preview" component={OrderPreview} />
-
-            {/* <Route exact path="/orders/main/:id" component={MainOrder} />
-            <Route exact path="/orders/update/:id" component={UpdateOrder} />
-            <Route
-              exact
-              path="/orders/create/:id"
-              component={OrderProduction}
-            />
-            <Route exact path="/orders/intern/:id" component={OrderIntern} />
-            <Route exact path="/orders/details/:id" component={OrderDetails} />
-            <Route
-              exact
-              path="/orders/shipments/:id"
-              component={OrderShipments}
-            /> */}
 
             <Route exact path="/raws" component={Raws} />
             <Route exact path="/raws/create" component={CreateRaw} />

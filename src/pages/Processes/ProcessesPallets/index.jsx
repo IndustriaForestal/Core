@@ -11,10 +11,12 @@ const Processes = props => {
     const topbar = {
       title: 'Procesos',
       menu: {
+        'Procesos por Rechazo': '/processes/reject',
         Procesos: '/processes',
+        Calidades: '/qualities',
+        'Procesos por calidades': '/qualities/processes',
         'Procesos por Tarima': '/processes/pallets',
         'Procesos por Madera Habilitada': '/processes/items',
-        'Procesos por Rechazo': '/processes/reject',
       },
     }
     setTitle(topbar)
@@ -56,6 +58,7 @@ const Processes = props => {
             lookup: lookupPallets,
           },
           { title: 'Orden', field: 'orden' },
+          { title: 'Cantidad', field: 'amount' },
           { title: 'Estimado Horas', field: 'estimated' },
           { title: 'Holgura Horas', field: 'clearance' },
           { title: 'Merma', field: 'scrap' },

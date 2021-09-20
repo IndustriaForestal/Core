@@ -10,6 +10,8 @@ const reducer = (
       role: sessionStorage.getItem('role'),
     },
     units: false,
+    modal: { state: false },
+    modalReview: { state: false },
   },
   action
 ) => {
@@ -18,6 +20,16 @@ const reducer = (
       return {
         ...state,
         topbar: action.payload,
+      }
+    case 'SET_MODAL':
+      return {
+        ...state,
+        modal: action.payload,
+      }
+    case 'SET_MODAL_REVIEW':
+      return {
+        ...state,
+        modalReview: action.payload,
       }
     case 'SET_WRAPER':
       return {

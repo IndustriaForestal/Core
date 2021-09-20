@@ -14,14 +14,17 @@ const Qualities = props => {
     const topbar = {
       title: 'Calidades',
       menu: {
+        'Procesos por Rechazo': '/processes/reject',
+        Procesos: '/processes',
         Calidades: '/qualities',
         'Procesos por calidades': '/qualities/processes',
+        'Procesos por Tarima': '/processes/pallets',
+        'Procesos por Madera Habilitada': '/processes/items',
       },
     }
     setTitle(topbar)
-    props
-      .getAll('qualities', 'GET_QUALITIES')
-     
+    props.getAll('qualities', 'GET_QUALITIES')
+
     // eslint-disable-next-line
   }, [])
 

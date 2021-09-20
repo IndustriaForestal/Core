@@ -21,7 +21,7 @@
     position: relative;
   }
   &__event{
-    background-color: var(--primary);
+    background-color: var(--naranja);
     color: var(--white);
     width: 90%;
     border-radius: 5px;
@@ -29,6 +29,22 @@
     text-align: center;
     margin: 5px 0;
     cursor: pointer;
+    &.--Cancelada{
+      background-color: var(--danger);
+    }
+    &.--Enviado{
+      background-color: var(--success);
+    }
+    &.--Reprogramacion{
+      background-color: var(--primary);
+    }
+    &.--Termino{
+      background-color: var(--white);
+      color: var(--dark);
+    }
+    &.--Pendiente{
+      background-color: var(--rosa);
+    }
   }
   &__counter{
     position: absolute;

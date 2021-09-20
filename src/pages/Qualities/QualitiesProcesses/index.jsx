@@ -14,8 +14,12 @@ const Qualities = props => {
     const topbar = {
       title: 'Calidades',
       menu: {
+        'Procesos por Rechazo': '/processes/reject',
+        Procesos: '/processes',
         Calidades: '/qualities',
         'Procesos por calidades': '/qualities/processes',
+        'Procesos por Tarima': '/processes/pallets',
+        'Procesos por Madera Habilitada': '/processes/items',
       },
     }
     setTitle(topbar)
@@ -90,9 +94,10 @@ const Qualities = props => {
       <MaterialTable
         title="Procesos por calidad"
         columns={[
-          { title: 'Posición', field: 'position' },
           { title: 'Calidad', field: 'quality_id', lookup: lookupQualities },
+          { title: 'Posición', field: 'position' },
           { title: 'Proceso', field: 'process_id', lookup: lookupProcesses },
+          { title: 'Cantidad', field: 'amount' },
           { title: 'Duración', field: 'duration' },
           { title: 'Holgura', field: 'slack' },
           { title: 'Merma', field: 'scrap' },

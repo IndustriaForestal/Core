@@ -6,6 +6,7 @@ import { setTitle, getAll, deleted, get, create } from '../../../actions/app'
 import { orderSavePallets, checkPallets, orderPalletStart } from '../actions'
 import Loading from '../../../components/Loading/Loading'
 import Button from '../../../components/Button/Button'
+import Swal from 'sweetalert2'
 
 const CreateOrder = props => {
   useEffect(() => {
@@ -78,6 +79,31 @@ const CreateOrder = props => {
     processes &&
     material
   ) {
+    // *Creando Orden de producción por
+
+    const handleCreateOrderProduction = orderPallets => {
+      Swal.fire({
+        title: '¿Estás seguro?',
+        text: 'Este proceso no se puede revertir',
+        icon: 'warning',
+        showCancelButton: true,
+        confirmButtonColor: '#3085d6',
+        cancelButtonColor: '#d33',
+        confirmButtonText: 'Si, crear',
+      }).then(result => {
+        if (result.isConfirmed) {
+          props.create(
+            'orders',
+            'CREATE_ORDER',
+            { ...order, pallets: orderPallets }
+          )
+          .then(() => {
+            props.history.push('/')
+          })
+        }
+      })
+    }
+
     //   *Mapear las calidades y agregar procesos adicionales
 
     const getQualityMap = pallet => {
@@ -102,17 +128,17 @@ const CreateOrder = props => {
       let qualityFull = []
       // eslint-disable-next-line
       qualityProcesses.map(process => {
-        qualityFull.push(process)
+        qualityFull.push({ ...process, type_process: 0 })
         // eslint-disable-next-line
         palletProcesses.map(pallet => {
           if (process.position === pallet.orden) {
-            qualityFull.push(pallet)
+            qualityFull.push({ ...pallet, type_process: 1 })
           }
         })
         // eslint-disable-next-line
         palletItemsProcesses.map(item => {
           if (process.position === item.orden) {
-            qualityFull.push(item)
+            qualityFull.push({ ...item, type_process: 2 })
           }
         })
       })
@@ -151,13 +177,22 @@ const CreateOrder = props => {
     const getTimeProduction = (qualityFinal, pallet) => {
       let initialDate = moment(pallet.date)
 
+      let onTime = false
+
       const timeProduction = qualityFinal.reverse().map(process => {
-        const time = process.estimated ? process.estimated : process.duration
-        initialDate = initialDate.subtract(time, 'hours')
+        const timeMultipler = pallet.amount / process.amount
+
+        const time = process.estimated
+          ? process.estimated + Math.ceil(process.clearance / 2)
+          : process.duration + Math.ceil(process.slack / 2)
+
+        initialDate = initialDate.subtract(time * timeMultipler, 'hours')
+        onTime = moment().isBefore(initialDate, 'hours')
 
         return {
           ...process,
-          time: initialDate.format('DD-MM-YYYY HH:mm:ss'),
+          time: initialDate.format('YYYY-MM-DD HH:mm:ss'),
+          onTime,
         }
       })
 
@@ -173,17 +208,16 @@ const CreateOrder = props => {
       ) {
         stage = 'Tarima'
       }
-
       if (
         pallet.amount_items.length > 0 ||
         pallet.amount_items_supplier.length > 0
       ) {
         stage = 'Madera Habilitada'
       }
-
       if (
-        pallet.amount_sawn.length > 0 ||
-        pallet.amount_sawn_supplier.length > 0
+        pallet.amount_sawn &&
+        (pallet.amount_sawn.length > 0 ||
+          pallet.amount_sawn_supplier.length > 0)
       ) {
         stage = 'Trozo'
       }
@@ -198,7 +232,7 @@ const CreateOrder = props => {
     }
 
     const handleSearchAndSliceTimes = (timeProduction, pallet) => {
-      let stage = 'Trozo'
+      let stage
 
       if (
         parseInt(pallet.amount_stock) > 0 ||
@@ -206,17 +240,16 @@ const CreateOrder = props => {
       ) {
         stage = 'Tarima'
       }
-
       if (
         pallet.amount_items.length > 0 ||
         pallet.amount_items_supplier.length > 0
       ) {
         stage = 'Madera Habilitada'
       }
-
       if (
-        pallet.amount_sawn.length > 0 ||
-        pallet.amount_sawn_supplier.length > 0
+        pallet.amount_sawn &&
+        (pallet.amount_sawn.length > 0 ||
+          pallet.amount_sawn_supplier.length > 0)
       ) {
         stage = 'Trozo'
       }
@@ -387,7 +420,9 @@ const CreateOrder = props => {
         <Button className="btn --danger" onClick={() => props.history.goBack()}>
           Cancelar
         </Button>
-        <Button onClick={() => handleTimes(order)}>Finalizar</Button>
+        <Button onClick={() => handleCreateOrderProduction(mapedOrder)}>
+          Finalizar
+        </Button>
       </>
     )
   } else {

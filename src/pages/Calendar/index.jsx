@@ -21,23 +21,23 @@ const CalendarOrders = props => {
       .then(() => {
         props.setWraper(true)
       })
-          // eslint-disable-next-line
+    // eslint-disable-next-line
   }, [])
 
   let eventList = []
 
   if (orders) {
-       // eslint-disable-next-line
+    // eslint-disable-next-line
     orders.map(order => {
       if (order.pallets) {
-           // eslint-disable-next-line
+        // eslint-disable-next-line
         order.pallets.map(pallet => {
           if (pallet.orderDateDelivery) {
             eventList.push({
               title: `${pallet.model}: ${pallet.amount}`,
               start: moment(pallet.orderDateDelivery).toDate(),
               end: moment(pallet.orderDateDelivery).toDate(),
-              orderId: `/orders/shipments/${order._id}`,
+              orderId: `/orders/shipments/${order.id}`,
             })
           }
         })
@@ -52,24 +52,20 @@ const CalendarOrders = props => {
   if (orders && customers) {
     const newCalendar = customers.map(customer => {
       let ordersArray = []
-      const ordersCusomter = orders.filter(
-        order => order.customerId._id === customer._id
-      )
-   // eslint-disable-next-line
-      ordersCusomter.map(oc => {
-           // eslint-disable-next-line
-        oc.pallets.map(pallet => {
-          ordersArray.push({ ...pallet, orderId: oc._id })
+      const ordersCusomter = orders
+        .filter(order => order.customer_id === customer.id)
+        .map(oc => {
+          ordersArray.push({ ...oc, orderId: oc.id })
         })
-      })
+
       let calendarOrders = []
 
       for (let i = 0; i < 60; i++) {
         let calendarDay = []
-           // eslint-disable-next-line
+        // eslint-disable-next-line
         ordersArray.map(order => {
           if (
-            moment(order.orderDateDelivery).format('YYYY-MM-DD') ===
+            moment(order.delivery).format('YYYY-MM-DD') ===
             moment().add(i, 'days').format('YYYY-MM-DD')
           ) {
             calendarDay.push(order)
@@ -79,7 +75,7 @@ const CalendarOrders = props => {
       }
 
       return {
-        _id: customer._id,
+        id: customer.id,
         name: customer.name,
         orders: calendarOrders,
       }
@@ -102,32 +98,35 @@ const CalendarOrders = props => {
             <div className="calendarPro__head">Fecha</div>
 
             {days.map(day => (
-              <div className="calendarPro__day">{day}</div>
+              <div key={day} className="calendarPro__day">
+                {day}
+              </div>
             ))}
           </div>
-          {newCalendar.map(row => {
+          {newCalendar.map((row, index) => {
             return (
-              <div className="calendarPro__column">
+              <div kye={index} className="calendarPro__column">
                 <div className="calendarPro__head">{row.name}</div>
-                {row.orders.map((order, i) => {
+                {row.orders.map((order, index) => {
                   if (order.length > 0) {
                     return (
-                      <div className="calendarPro__day">
+                      <div key={index} className="calendarPro__day">
                         <span className="calendarPro__counter">
                           {order.length}
                         </span>
                         {order.map(o => (
                           <div
-                            className="calendarPro__event"
+                            key={o.orderId}
+                            className={`calendarPro__event --${o.state}`}
                             onClick={() => handleClickEvent(o.orderId)}
                           >
-                            {o.model} {o.amount} {o.orderNumber}
+                            {o.orderId}
                           </div>
                         ))}
                       </div>
                     )
                   } else {
-                    return <div className="calendarPro__day"></div>
+                    return <div key={index} className="calendarPro__day"></div>
                   }
                 })}
               </div>
@@ -143,8 +142,8 @@ const CalendarOrders = props => {
 
 const mapStateToProps = state => {
   return {
-    orders: state.orders,
-    customers: state.customers,
+    orders: state.reducerOrders.orders,
+    customers: state.reducerCustomers.customers,
   }
 }
 

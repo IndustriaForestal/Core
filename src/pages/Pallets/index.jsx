@@ -561,12 +561,17 @@ const Pallets = props => {
                           .map(item => {
                             return (
                               <li key={item.id} className="palletCard__item">
-                                {
-                                  itemsType.filter(
+                                {itemsType.filter(
+                                  itemType => itemType.id === item.item_type_id
+                                ) &&
+                                itemsType.filter(
+                                  itemType => itemType.id === item.item_type_id
+                                ).length > 0
+                                  ? `${itemsType.filter(
                                     itemType =>
                                       itemType.id === item.item_type_id
-                                  )[0].name
-                                }{' '}
+                                  )[0].name} - `
+                                  : 'Error'}{' '}
                                 {item.item_type_id === 4 ? (
                                   <span>
                                     {item.amount_new} {item.nail}

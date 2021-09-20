@@ -65,6 +65,11 @@ export default function reducer(state = {}, action) {
         ...state,
         stockHistoryRaws: action.payload.data,
       }
+    case 'GET_SH_SUPPLIERS':
+      return {
+        ...state,
+        stockHistorySuppliers: action.payload.data,
+      }
     default:
       return state
   }

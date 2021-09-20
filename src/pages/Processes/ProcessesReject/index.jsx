@@ -6,30 +6,41 @@ import '../styles.scss'
 import MaterialTable from 'material-table'
 
 const Processes = props => {
-  const { setTitle, user, material, processesReject } = props
+  const { setTitle, user, material, processesReject, qualities } = props
   const userId = user.id
   useEffect(() => {
     const topbar = {
       title: 'Procesos',
       menu: {
+        'Procesos por Rechazo': '/processes/reject',
         Procesos: '/processes',
+        Calidades: '/qualities',
+        'Procesos por calidades': '/qualities/processes',
         'Procesos por Tarima': '/processes/pallets',
         'Procesos por Madera Habilitada': '/processes/items',
-        'Procesos por Rechazo': '/processes/reject',
       },
     }
     setTitle(topbar)
-    props.getAll('processes/reject', 'GET_PROCESSES_REJECT').then(() => {
-      props.getAll('material', 'GET_MATERIAL')
-    })
+    props
+      .getAll('processes/reject', 'GET_PROCESSES_REJECT')
+      .then(() => {
+        props.getAll('material', 'GET_MATERIAL')
+      })
+      .then(() => {
+        props.getAll('qualities', 'GET_QUALITIES')
+      })
 
     // eslint-disable-next-line
   }, [])
 
-  if (material && processesReject) {
+  if (material && processesReject && qualities) {
     const lookupMaterial = {}
 
     material.map(m => (lookupMaterial[m.id] = m.name))
+
+    const lookupQualities = {}
+
+    qualities.map(item => (lookupQualities[item.id] = item.name))
 
     const editable = {
       onRowAdd: newData =>
@@ -90,6 +101,11 @@ const Processes = props => {
             field: 'material_out',
             lookup: lookupMaterial,
           },
+          {
+            title: 'Calidad',
+            field: 'quality_id',
+            lookup: lookupQualities,
+          },
         ]}
         localization={{
           pagination: {
@@ -133,6 +149,7 @@ const Processes = props => {
 
 const mapStateToProps = state => {
   return {
+    qualities: state.reducerQualities.qualities,
     processes: state.reducerProcesses.processes,
     processesReject: state.reducerProcesses.processesReject,
     material: state.reducerMaterial.material,

@@ -32,7 +32,7 @@ const ItemType = props => {
 
   return (
     <>
-      <Card title="Crear Materia Prima">
+     {/*  <Card title="Crear Materia Prima">
         <form
           id="formItemType"
           className="formItemType"
@@ -51,7 +51,7 @@ const ItemType = props => {
             </Button>
           </div>
         </form>
-      </Card>
+      </Card> */}
       <MaterialTable
         columns={[
           { title: 'Id', field: 'id' },

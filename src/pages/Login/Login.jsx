@@ -22,13 +22,7 @@ const Login = props => {
     <div className="login">
       <div className="login__container">
         <div className="login__container__left">
-          <img
-            src={logoFull}
-            alt=""
-            onClick={() => {
-              window.location.href = 'https://marathongroup.mx'
-            }}
-          />
+          <img src={logoFull} alt="" />
         </div>
         <div className="login__container__right">
           <form onSubmit={hanlderSubmit}>

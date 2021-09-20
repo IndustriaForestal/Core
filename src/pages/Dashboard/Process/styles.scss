@@ -1,0 +1,42 @@
+.dashboard {
+    &__header {
+      display: grid;
+      grid-auto-rows: auto;
+      gap: 10px;
+    }
+    &__name {
+      padding: 15px;
+      height: 50px;
+      display: flex;
+      justify-content: center;
+      align-items: center;
+      background-color: var(--white);
+      text-align: center;
+    }
+    &__production {
+      box-sizing: border-box;
+    }
+    &__item {
+      margin-top: 10px;
+      background-color: var(--white);
+      padding: 15px;
+      border: 1px solid var(--gray-light);
+      span {
+        display: inline-block;
+        margin-bottom: 10px;
+      }
+      &.--success {
+        background-color: var(--success);
+        color: var(--white);
+      }
+      &.--danger {
+        background-color: var(--danger);
+        color: var(--white);
+      }
+      &:hover {
+        box-shadow: var(--boxShadowHover);
+        cursor: pointer;
+      }
+    }
+  }
+  

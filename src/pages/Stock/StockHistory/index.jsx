@@ -79,7 +79,7 @@ const StockHistory = props => {
         user_id: sh.user_id,
         status:
           sh.order_id !== null
-            ? sh.order.paper_number
+            ? 'sh.order.paper_number'
             : sh.process_id !== null
             ? sh.process_name
             : sh.supplier_id !== null
@@ -99,7 +99,7 @@ const StockHistory = props => {
         user_id: sh.user_id,
         status:
           sh.order_id !== null
-            ? sh.order.paper_number
+            ? 'sh.order.paper_number'
             : sh.process_id !== null
             ? sh.process_name
             : sh.supplier_id !== null
@@ -119,7 +119,7 @@ const StockHistory = props => {
         user_id: sh.user_id,
         status:
           sh.order_id !== null
-            ? sh.order.paper_number
+            ? 'sh.order.paper_number'
             : sh.process_id !== null
             ? sh.process_name
             : sh.supplier_id !== null
@@ -139,7 +139,7 @@ const StockHistory = props => {
         user_id: sh.user_id,
         status:
           sh.order_id !== null
-            ? sh.order.paper_number
+            ? 'sh.order.paper_number'
             : sh.process_id !== null
             ? sh.process_name
             : sh.supplier_id !== null
@@ -159,7 +159,7 @@ const StockHistory = props => {
         user_id: sh.user_id,
         status:
           sh.order_id !== null
-            ? sh.order.paper_number
+            ? 'sh.order.paper_number'
             : sh.process_id !== null
             ? sh.process_name
             : sh.supplier_id !== null

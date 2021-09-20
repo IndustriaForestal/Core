@@ -3,18 +3,20 @@ import { Link } from 'react-router-dom'
 import { connect } from 'react-redux'
 import { updatePalletsStock, completeOrder } from './actions'
 import { BsPlus } from 'react-icons/bs'
-import { setTitle, getAll, deleted } from '../../actions/app'
+import { setTitle, getAll, deleted, create } from '../../actions/app'
 import AddButton from '../../components/AddButton/AddButton'
 import Loading from '../../components/Loading/Loading'
+import Button from '../../components/Button/Button'
 import MaterialTable from 'material-table'
+import Swal from 'sweetalert2'
 import './styles.scss'
 
 const Orders = props => {
-  const { setTitle, orders } = props
+  const { setTitle, orders, customers } = props
   useEffect(() => {
     const topbar = {
       title: 'Pedidos de Clientes',
-      menu: { 'Pedidos de Clientes': '/orders' },
+      menu: { 'Pedidos de Clientes': '/orders', Calendario: '/calendar' },
     }
     setTitle(topbar)
     props
@@ -28,15 +30,48 @@ const Orders = props => {
     // eslint-disable-next-line
   }, [])
 
-  if (orders) {
+  const handleCancel = id => {
+    Swal.fire({
+      title: '¿Estás seguro?',
+      text: 'Este proceso no se puede revertir',
+      icon: 'warning',
+      showCancelButton: true,
+      confirmButtonColor: '#3085d6',
+      cancelButtonColor: '#d33',
+      confirmButtonText: 'Si, cancelar',
+    }).then(result => {
+      if (result.isConfirmed) {
+        props.create(`orders/cancel/${id}`, 'CANCEL', { id }).then(() => {
+          props.getAll('orders', 'GET_ORDERS')
+        })
+      }
+    })
+  }
+
+  if (orders && customers) {
+    const lookupCustomers = {}
+    customers.map(m => (lookupCustomers[m.id] = m.name))
+
     return (
       <>
         <MaterialTable
           columns={[
-            { title: 'Planta', field: 'sucursal' },
-            { title: 'Usuario', field: 'paperNumber' },
-            { title: 'Cliente', field: 'customerId.name' },
-            { title: '# Pedido', field: 'pallets[0].orderNumber' },
+            { title: 'ID', field: 'id' },
+            { title: 'Estado', field: 'state' },
+            { title: 'Cliente', field: 'customer_id', lookup: lookupCustomers },
+            {
+              title: 'Acciones',
+              field: 'state',
+              render: rowData =>
+                rowData.state !== 'Cancelada' ? (
+                  <Button
+                    className="btn --danger"
+                    onClick={() => handleCancel(rowData.id)}
+                  >
+                    Cancelar
+                  </Button>
+                ) : null,
+            },
           ]}
           localization={{
             pagination: {
@@ -69,7 +104,7 @@ const Orders = props => {
               addTooltip: 'Agregar',
             },
           }}
-          data={[]}
+          data={orders}
           title="Pedidos"
         />
 
@@ -88,7 +123,7 @@ const Orders = props => {
 const mapStateToProps = state => {
   return {
     orders: state.reducerOrders.orders,
-    custoemrs: state.reducerCustomers.custoemrs,
+    customers: state.reducerCustomers.customers,
     user: state.reducerApp.user,
   }
 }
@@ -99,6 +134,7 @@ const mapDispatchToProps = {
   completeOrder,
   getAll,
   deleted,
+  create,
 }
 
 export default connect(mapStateToProps, mapDispatchToProps)(Orders)

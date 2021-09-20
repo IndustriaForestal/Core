@@ -1,0 +1,121 @@
+import React, { useState } from 'react'
+import { connect } from 'react-redux'
+import {
+  setTitle,
+  setModal,
+  setWraper,
+  getAll,
+  deleted,
+  create,
+  update,
+} from '../../../actions/app'
+
+import Rodal from 'rodal'
+import Button from '../../../components/Button/Button'
+
+const DashboardProduction = props => {
+  const { processes, ordersRequeriment, items, workstations, modal } = props
+  const [workstation, setWorkstation] = useState('')
+  const order = props.modal.order
+
+  if (order && processes && ordersRequeriment && items && workstations) {
+    const itemsRequerimient = ordersRequeriment
+      .filter(requeriment => requeriment.order_id === order.order_id)
+      .map(requeriment => {
+        return {
+          item: items.find(item => item.id === requeriment.item_id),
+          amount: requeriment.amount,
+        }
+      })
+
+    const process =
+      processes.find(process => process.id === order.process_id) || {}
+
+    const handleStart = () => {
+      if (workstation !== '') {
+        props
+          .update(`orders/start/${order.id}`, 'START_ORDER', { workstation })
+          .then(() => {
+            props.getAll('orders/production', 'GET_ORDERS_PRODUCTION')
+          })
+          .then(() => {
+            props.setModal(false)
+          })
+      } else {
+        console.log('Seleccionar Workstation')
+      }
+    }
+
+    return (
+      <Rodal
+        visible={modal.state}
+        height={500}
+        width={1100}
+        onClose={() => props.setModal({ state: false, order: {}, stage: 0 })}
+      >
+        <div>
+          <h1>Proceso Regular: {process.name}</h1>
+          <h3>Tarima: {order.model}</h3>
+          {process.material_in === 4 || process.material_in === 3 ? (
+            <div>
+              {itemsRequerimient.map(item => (
+                <div key={item.id}>
+                  {item.item.length} x {item.item.width} x {item.item.height} -{' '}
+                  {item.amount}
+                </div>
+              ))}
+            </div>
+          ) : (
+            order.amount
+          )}
+          <select name="Process" onChange={e => setWorkstation(e.target.value)}>
+            <option value="">Seleccionar</option>
+            {workstations
+              .filter(ws => ws.process_id === order.process_id)
+              .map(ws => (
+                <option key={ws.id} value={ws.id}>
+                  {ws.workstation}
+                </option>
+              ))}
+          </select>
+          <Button onClick={handleStart}>Iniciar</Button>
+        </div>
+      </Rodal>
+    )
+  } else {
+    return (
+      <Rodal
+        visible={modal.state}
+        height={500}
+        width={1100}
+        onClose={() => props.setModal({ state: false, order: {}, stage: 0 })}
+      >
+        <div>Cargando</div>
+      </Rodal>
+    )
+  }
+}
+
+const mapDispatchToProps = {
+  setTitle,
+  setModal,
+  setWraper,
+  getAll,
+  deleted,
+  create,
+  update,
+}
+
+const mapStateToProps = state => {
+  return {
+    user: state.reducerApp.user,
+    modal: state.reducerApp.modal,
+    processes: state.reducerProcesses.processes,
+    ordersProduction: state.reducerOrders.ordersProduction,
+    ordersRequeriment: state.reducerOrders.ordersRequeriment,
+    workstations: state.reducerZones.workstations,
+    items: state.reducerItems.items,
+  }
+}
+
+export default connect(mapStateToProps, mapDispatchToProps)(DashboardProduction)

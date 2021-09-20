@@ -7,8 +7,7 @@ import MaterialTable from 'material-table'
 import './styles.scss'
 
 const SpecialProcesses = props => {
-  const { specialProcesses, setTitle } = props
-
+  const { specialProcesses, setTitle, material } = props
 
   useEffect(() => {
     const topbar = {
@@ -16,10 +15,12 @@ const SpecialProcesses = props => {
       menu: { 'Requerimientos de calidad': '/specialProcesses' },
     }
     setTitle(topbar)
-    props.getAll('specialProcesses', 'GET_SPECIAL_PROCESSES')
+    props.getAll('specialProcesses', 'GET_SPECIAL_PROCESSES').then(() => {
+      props.getAll('material', 'GET_MATERIAL')
+    })
     // eslint-disable-next-line
   }, [])
-  if (specialProcesses) {
+  if (specialProcesses && material) {
     const specialProcessesMaped = specialProcesses.map(specialProcess => {
       return {
         ...specialProcess,
@@ -27,12 +28,15 @@ const SpecialProcesses = props => {
       }
     })
 
+    const lookupMaterial = {}
+    material.map(m => (lookupMaterial[m.id] = m.name))
     return (
       <MaterialTable
         title="Requerimientos Calidad"
         columns={[
           { title: 'Nombre', field: 'name' },
           { title: 'Severidad', field: 'severity' },
+          { title: 'Material', field: 'material_id', lookup: lookupMaterial },
         ]}
         localization={{
           pagination: {
@@ -122,6 +126,7 @@ const SpecialProcesses = props => {
 const mapStateToProps = state => {
   return {
     specialProcesses: state.reducerSpecialProcesses.specialProcesses,
+    material: state.reducerMaterial.material,
   }
 }
 
