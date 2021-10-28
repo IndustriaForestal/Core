@@ -61,7 +61,7 @@ const Processes = props => {
           { title: 'Cantidad', field: 'amount' },
           { title: 'Estimado Horas', field: 'estimated' },
           { title: 'Holgura Horas', field: 'clearance' },
-          { title: 'Merma', field: 'scrap' },
+          { title: '% Merma', field: 'scrap' },
         ]}
         localization={{
           pagination: {

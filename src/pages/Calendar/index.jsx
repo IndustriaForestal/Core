@@ -1,4 +1,4 @@
-import React, { useEffect } from 'react'
+import React, { useEffect, useState } from 'react'
 import moment from 'moment'
 import 'moment/locale/es-mx'
 import { connect } from 'react-redux'
@@ -11,6 +11,7 @@ moment.locale('es')
 
 const CalendarOrders = props => {
   const { orders, customers } = props
+  const [active, setActive] = useState(false)
 
   useEffect(() => {
     props
@@ -132,6 +133,34 @@ const CalendarOrders = props => {
               </div>
             )
           })}
+        </div>
+        <div
+          className={`calendarPro__colors ${active ? '--active' : ''}`}
+          onClick={() => setActive(!active)}
+        >
+          <ul>
+            <li>
+              <span style={{ backgroundColor: 'var(--naranja)' }}></span> Nueva
+            </li>
+            <li>
+              <span style={{ backgroundColor: 'var(--danger)' }}></span>{' '}
+              Cacelada
+            </li>
+            <li>
+              <span style={{ backgroundColor: 'var(--success)' }}></span>{' '}
+              Enviado
+            </li>
+            <li>
+              <span style={{ backgroundColor: 'var(--primary)' }}></span>{' '}
+              Reprogramación
+            </li>
+            <li>
+              <span style={{ backgroundColor: 'var(--white)' }}></span> Termino
+            </li>
+            <li>
+              <span style={{ backgroundColor: 'var(--rosa)' }}></span> Pendiente
+            </li>
+          </ul>
         </div>
       </>
     )

@@ -43,9 +43,13 @@ import CreateOrder from '../pages/Orders/CreateOrder'
 import Raws from '../pages/Raws'
 import CreateRaw from '../pages/Raws/CreateRaw'
 import UpdateRaw from '../pages/Raws/UpdateRaw'
+
 import Users from '../pages/Users'
 import CreateUser from '../pages/Users/CreateUser'
 import UpdateUser from '../pages/Users/UpdateUser'
+import UserRoles from '../pages/Users/Roles'
+import UserScreens from '../pages/Users/Screens'
+import UserNotifications from '../pages/Users/Notifications'
 
 import SettingsHome from '../pages/Home/Settings'
 import ItemType from '../pages/Items/ItemType'
@@ -59,9 +63,16 @@ import Complements from '../pages/Complements'
 import Calendar from '../pages/Calendar'
 import Dashboard from '../pages/Dashboard'
 import DashboardProcess from '../pages/Dashboard/Process'
+import DashboardStock from '../pages/Dashboard/Stock'
+import DashboardStockDetaills from '../pages/Dashboard/StockDetaills'
 import DashboardReject from '../pages/Dashboard/Reject'
+import DashboardReview from '../pages/Dashboard/Review'
+import DashboardHistory from '../pages/Dashboard/History'
+
 import StockSuppliers from '../pages/Stock/StockSuppliers'
 import StockSuppliersHistory from '../pages/Stock/StockSuppliersHistory'
+
+import PurchaseOrder from '../pages/PurchaseOrder'
 
 import Schedule from '../pages/Schedule'
 
@@ -74,8 +85,28 @@ const App = ({ loggedIn }) => {
             <Route exact path="/" component={Home} />
             <Route exact path="/schedule" component={Schedule} />
             <Route exact path="/dashboard" component={Dashboard} />
-            <Route exact path="/dashboard/processes" component={DashboardProcess} />
+            <Route
+              exact
+              path="/dashboard/processes"
+              component={DashboardProcess}
+            />
+            <Route
+              exact
+              path="/dashboard/processes/:id"
+              component={DashboardReview}
+            />
+            <Route exact path="/dashboard/stock" component={DashboardStock} />
+            <Route
+              exact
+              path="/dashboard/stock/:id"
+              component={DashboardStockDetaills}
+            />
             <Route exact path="/dashboard/reject" component={DashboardReject} />
+            <Route
+              exact
+              path="/dashboard/history"
+              component={DashboardHistory}
+            />
             <Route exact path="/calendar" component={Calendar} />
             <Route exact path="/customers" component={Customers} />
             <Route exact path="/customers-times" component={CustomersTimes} />
@@ -122,7 +153,11 @@ const App = ({ loggedIn }) => {
             <Route exact path="/stock/update/:id" component={StockUpdate} />
             <Route exact path="/stockChanges" component={StockChanges} />
             <Route exact path="/stockSuppliers" component={StockSuppliers} />
-            <Route exact path="/stockSuppliersHistory" component={StockSuppliersHistory} />
+            <Route
+              exact
+              path="/stockSuppliersHistory"
+              component={StockSuppliersHistory}
+            />
             <Route exact path="/stockHistory" component={StockHistory} />
 
             <Route exact path="/orders" component={Orders} />
@@ -147,6 +182,9 @@ const App = ({ loggedIn }) => {
 
             <Route exact path="/users" component={Users} />
             <Route exact path="/users/create" component={CreateUser} />
+            <Route exact path="/users/roles" component={UserRoles} />
+            <Route exact path="/users/screens" component={UserScreens} />
+            <Route exact path="/users/notifications" component={UserNotifications} />
             <Route exact path="/users/:id" component={UpdateUser} />
 
             <Route exact path="/home-quality" component={HomeQuality} />
@@ -175,6 +213,7 @@ const App = ({ loggedIn }) => {
               path="/zones/workstation"
               component={CreateWorkStation}
             />
+            <Route exact path="/purchase-orders" component={PurchaseOrder} />
 
             <Route exact path="/login" component={Login} />
             <Route component={NotFound} />

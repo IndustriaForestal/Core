@@ -98,9 +98,9 @@ const Qualities = props => {
           { title: 'Posición', field: 'position' },
           { title: 'Proceso', field: 'process_id', lookup: lookupProcesses },
           { title: 'Cantidad', field: 'amount' },
-          { title: 'Duración', field: 'duration' },
-          { title: 'Holgura', field: 'slack' },
-          { title: 'Merma', field: 'scrap' },
+          { title: 'Duración Hrs', field: 'duration' },
+          { title: 'Holgura Hrs', field: 'slack' },
+          { title: '% Merma', field: 'scrap' },
         ]}
         localization={{
           pagination: {

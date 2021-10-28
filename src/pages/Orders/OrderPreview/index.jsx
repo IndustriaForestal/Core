@@ -53,6 +53,15 @@ const CreateOrder = props => {
       .then(() => {
         props.getAll('suppliers', 'GET_SUPPLIERS')
       })
+      .then(() => {
+        props.getAll('schedule', 'GET_SCHEDULE')
+      })
+      .then(() => {
+        props.getAll('schedule/holidays', 'GET_SCHEDULE_HOLIDAYS')
+      })
+      .then(() => {
+        props.getAll('schedule/config', 'GET_SCHEDULE_CONFIG')
+      })
     // eslint-disable-next-line
   }, [])
 
@@ -69,6 +78,9 @@ const CreateOrder = props => {
     processes,
     material,
     suppliers,
+    schedule,
+    scheduleHolidays,
+    scheduleConfig,
   } = props
 
   if (
@@ -82,7 +94,10 @@ const CreateOrder = props => {
     items &&
     processes &&
     material &&
-    suppliers
+    suppliers &&
+    schedule &&
+    scheduleHolidays &&
+    scheduleConfig
   ) {
     //   *Mapear las calidades y agregar procesos adicionales
 
@@ -174,12 +189,7 @@ const CreateOrder = props => {
     const handleSearchAndSliceSupplier = (timeProduction, pallet) => {
       const suppliersPerStage = getTimeProductionSuppliers()
 
-      const stage =
-        pallet.check_stage === 1
-          ? 'Tarima'
-          : pallet.check_stage === 2
-          ? 'Madera Habilitada'
-          : 'Trozo'
+      const stage = pallet.check_stage === 1 ? 'Tarima' : 'Madera Habilitada'
 
       const materialStage =
         pallet.check_stage !== 1 && pallet.check_stage !== 2
@@ -197,6 +207,8 @@ const CreateOrder = props => {
           .supplier.delivery_time
       )
 
+      console.log(timeSliced)
+
       const time = moment(timeSliced[indexForSlice].time).subtract(
         delivery_time,
         'hours'
@@ -212,6 +224,8 @@ const CreateOrder = props => {
       return timeSliced
     }
 
+    /* Funcion que crea tiempos estimados de proceso */
+
     const getTimeProduction = (qualityFinal, pallet) => {
       let initialDate = moment(pallet.date)
 
@@ -223,8 +237,14 @@ const CreateOrder = props => {
         const time = process.estimated
           ? process.estimated + Math.ceil(process.clearance / 2)
           : process.duration + Math.ceil(process.slack / 2)
-        console.log(time)
-        initialDate = initialDate.subtract(time * timeMultipler, 'hours')
+
+        const hrsWork = scheduleConfig[0].end - scheduleConfig[0].start
+
+        const days = parseInt((time / hrsWork).toFixed(0))
+        const hours = time % hrsWork
+
+        initialDate = initialDate.subtract(hours * timeMultipler, 'hours')
+        initialDate = initialDate.subtract(days * timeMultipler, 'days')
         onTime = moment().isBefore(initialDate, 'hours')
 
         return {
@@ -659,6 +679,9 @@ const mapStateToProps = state => {
     qualitiesProcesses: state.reducerQualities.qualitiesProcesses,
     material: state.reducerMaterial.material,
     suppliers: state.reducerSuppliers.suppliers,
+    schedule: state.reducerSchedule.schedule,
+    scheduleHolidays: state.reducerSchedule.scheduleHolidays,
+    scheduleConfig: state.reducerSchedule.scheduleConfig,
   }
 }
 

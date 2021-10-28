@@ -98,11 +98,23 @@ export const setUser = (payload, redirectionUrl) => async dispatch => {
       },
     })
 
+    const screensUser = await axios({
+      url: `${process.env.REACT_APP_API}users/screens`,
+      headers: { Authorization: `Bearer ${res.data.token}` },
+      method: 'get',
+    })
+
+    const accessScreen = screensUser
+      ? screensUser.data.data.filter(s => s.name === res.data.user.role)
+      : []
+
     sessionStorage.setItem('token', res.data.token)
     sessionStorage.setItem('user', res.data.user.user)
     sessionStorage.setItem('name', res.data.user.name)
     sessionStorage.setItem('id', res.data.user.id)
     sessionStorage.setItem('role', res.data.user.role)
+    sessionStorage.setItem('workstation_id', res.data.user.workstation_id)
+    sessionStorage.setItem('accessScreen', JSON.stringify(accessScreen))
 
     window.location.href = redirectionUrl
 
@@ -110,6 +122,7 @@ export const setUser = (payload, redirectionUrl) => async dispatch => {
       type: 'LOGIN_REQUEST',
     })
   } catch (error) {
+    console.log(error)
     Swal.fire({
       icon: 'error',
       title: 'Oops...',
@@ -132,7 +145,7 @@ export const getAll = (endPoint, typeAction) => async dispatch => {
       headers: { Authorization: `Bearer ${storedJwt}` },
       method: 'get',
     })
-    console.log(res.data)
+
     dispatch({
       type: typeAction,
       payload: res.data,
@@ -236,7 +249,6 @@ export const deleted = (endpoint, typeAction) => async dispatch => {
 //CREATE ATTACHMENT
 
 export const createFile = (endPoint, typeAction, data) => async dispatch => {
-
   const storedJwt = sessionStorage.getItem('token')
 
   const formData = new FormData()

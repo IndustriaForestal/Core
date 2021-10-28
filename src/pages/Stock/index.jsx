@@ -64,6 +64,7 @@ const Nails = props => {
             searchPlaceholder: 'Buscar',
           },
         }}
+        options={{ exportButton: true, exportAllData: true }}
         data={stock}
         title="Inventario Tarimas"
       />

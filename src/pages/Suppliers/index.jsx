@@ -66,7 +66,7 @@ const CreateCustomer = props => {
           columns={[
             { title: 'Nombre', field: 'name' },
             { title: 'Télefono', field: 'phone' },
-            { title: 'Tiempo de entrega', field: 'delivery_time' },
+            { title: 'Tiempo de entrega hrs.', field: 'delivery_time' },
             {
               title: 'Tipo de material',
               field: 'material_id',

@@ -1,6 +1,6 @@
 const reducer = (
   state = {
-    topbar: { title: 'Demo', menu: { Menu1: '/' } },
+    topbar: { title: '', menu: { Regresar: '/' } },
     loggedIn: false,
     wraper: false,
     user: {
@@ -8,6 +8,8 @@ const reducer = (
       name: sessionStorage.getItem('name'),
       id: sessionStorage.getItem('id'),
       role: sessionStorage.getItem('role'),
+      accessScreen: JSON.parse(sessionStorage.getItem('accessScreen')),
+      workstation_id: sessionStorage.getItem('workstation_id'),
     },
     units: false,
     modal: { state: false },

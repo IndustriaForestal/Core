@@ -11,17 +11,42 @@ import AddButton from '../../components/AddButton/AddButton'
 import './styles.scss'
 
 const Users = props => {
-  const { users, setTitle } = props
+  const { users, setTitle, workstations, zones, plants } = props
 
   useEffect(() => {
     const topbar = {
       title: 'Usuarios',
-      menu: { Usuarios: '/users' },
+      menu: {
+        Usuarios: '/users',
+        Roles: '/users/roles',
+        'Pantallas Roles': '/users/screens',
+        'Notificaciones por Roles': '/users/notifications',
+      },
     }
     setTitle(topbar)
-    props.getAll('users', 'GET_USERS')
+    props
+      .getAll('users', 'GET_USERS')
+      .then(() => {
+        props.getAll('zones/workstations', 'GET_WORKSTATIONS')
+      })
+      .then(() => {
+        props.getAll('zones/plants', 'GET_PLANTS')
+      })
+      .then(() => {
+        props.getAll('zones/zones', 'GET_ZONES')
+      })
     // eslint-disable-next-line
   }, [])
+
+  const lookupWorkstations = {}
+  workstations &&
+    workstations.map(item => (lookupWorkstations[item.id] = item.workstation))
+
+  const lookupPlants = {}
+  plants && plants.map(item => (lookupPlants[item.id] = item.name))
+
+  const lookupZones = {}
+  zones && zones.map(item => (lookupZones[item.id] = item.name))
 
   const handleDeleteUser = userId => {
     Swal.fire({
@@ -57,6 +82,21 @@ const Users = props => {
           {
             title: 'Rol',
             field: 'role',
+          },
+          {
+            title: 'Planta',
+            field: 'plant_id',
+            lookup: lookupPlants,
+          },
+          {
+            title: 'Zona',
+            field: 'zone_id',
+            lookup: lookupZones,
+          },
+          {
+            title: 'Area de trabajo',
+            field: 'workstation_id',
+            lookup: lookupWorkstations,
           },
           {
             title: 'Acciones',
@@ -111,6 +151,9 @@ const Users = props => {
 const mapStateToProps = state => {
   return {
     users: state.reducerUsers.users,
+    workstations: state.reducerZones.workstations,
+    zones: state.reducerZones.zones,
+    plants: state.reducerZones.plants,
   }
 }
 

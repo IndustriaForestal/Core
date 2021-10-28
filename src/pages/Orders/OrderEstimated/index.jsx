@@ -65,6 +65,9 @@ const CreateOrder = props => {
     items,
     processes,
     material,
+    schedule,
+    scheduleHolidays,
+    scheduleConfig,
   } = props
 
   if (
@@ -77,7 +80,10 @@ const CreateOrder = props => {
     qualitiesProcesses &&
     items &&
     processes &&
-    material
+    material &&
+    schedule &&
+    scheduleHolidays &&
+    scheduleConfig
   ) {
     // *Creando Orden de producción por
 
@@ -92,14 +98,14 @@ const CreateOrder = props => {
         confirmButtonText: 'Si, crear',
       }).then(result => {
         if (result.isConfirmed) {
-          props.create(
-            'orders',
-            'CREATE_ORDER',
-            { ...order, pallets: orderPallets }
-          )
-          .then(() => {
-            props.history.push('/')
-          })
+          props
+            .create('orders', 'CREATE_ORDER', {
+              ...order,
+              pallets: orderPallets,
+            })
+            .then(() => {
+              props.history.push('/')
+            })
         }
       })
     }
@@ -186,7 +192,14 @@ const CreateOrder = props => {
           ? process.estimated + Math.ceil(process.clearance / 2)
           : process.duration + Math.ceil(process.slack / 2)
 
-        initialDate = initialDate.subtract(time * timeMultipler, 'hours')
+        const hrsWork = scheduleConfig[0].end - scheduleConfig[0].start
+
+        const days = parseInt((time / hrsWork).toFixed(0))
+        const hours = time % hrsWork
+
+        initialDate = initialDate.subtract(hours * timeMultipler, 'hours')
+        initialDate = initialDate.subtract(days * timeMultipler, 'days')
+
         onTime = moment().isBefore(initialDate, 'hours')
 
         return {
@@ -444,6 +457,9 @@ const mapStateToProps = state => {
     qualities: state.reducerQualities.qualities,
     qualitiesProcesses: state.reducerQualities.qualitiesProcesses,
     material: state.reducerMaterial.material,
+    schedule: state.reducerSchedule.schedule,
+    scheduleHolidays: state.reducerSchedule.scheduleHolidays,
+    scheduleConfig: state.reducerSchedule.scheduleConfig,
   }
 }
 

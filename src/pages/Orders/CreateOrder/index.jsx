@@ -133,8 +133,8 @@ const CreateOrder = props => {
 
     return (
       <>
-        <Card title="Nueva Orden">
-          <h1>Order ID #01</h1>
+        <Card title="Nueva Orden" style={{position: 'relative', zIndex: '99'}}>
+          <h1>Datos</h1>
           <Select
             onChange={e => setCustomer(e.value)}
             options={customers.map(customer => {

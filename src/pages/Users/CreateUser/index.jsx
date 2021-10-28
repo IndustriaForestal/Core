@@ -8,7 +8,7 @@ import Input from '../../../components/Input/Input'
 import Button from '../../../components/Button/Button'
 
 const CreateSupplier = props => {
-  const { roles, getAll, create } = props
+  const { roles, getAll, create, workstations, zones, plants } = props
   const { register, handleSubmit, errors } = useForm()
   const [passwordVerify, setPasswordVerify] = useState(false)
   const [password, setPassword] = useState(false)
@@ -19,6 +19,15 @@ const CreateSupplier = props => {
 
   useEffect(() => {
     getAll('users/roles', 'GET_ROLES')
+      .then(() => {
+        getAll('zones/workstations', 'GET_WORKSTATIONS')
+      })
+      .then(() => {
+        props.getAll('zones/plants', 'GET_PLANTS')
+      })
+      .then(() => {
+        props.getAll('zones/zones', 'GET_ZONES')
+      })
     // eslint-disable-next-line
   }, [])
 
@@ -76,13 +85,57 @@ const CreateSupplier = props => {
 
         <div className="inputGroup">
           <label htmlFor="role">
-            <span>Area:</span>
+            <span>Rol:</span>
             <select name="role" ref={register}>
-              {roles ? roles.map(rol => (
-                <option key={rol.id} value={rol.id}>{rol.name}</option>
-              ))
-                : null
-              }
+              {roles
+                ? roles.map(rol => (
+                    <option key={rol.id} value={rol.id}>
+                      {rol.name}
+                    </option>
+                  ))
+                : null}
+            </select>
+          </label>
+        </div>
+
+        <div className="inputGroup">
+          <label htmlFor="plant_id">
+            <span>Planta:</span>
+            <select name="plant_id" ref={register}>
+              <option value="">Seleccionar</option>
+              {plants
+                ? plants.map(w => (
+                    <option key={w.id} value={w.id}>
+                      {w.name}
+                    </option>
+                  ))
+                : null}
+            </select>
+          </label>
+          <label htmlFor="zone_id">
+            <span>Area de trabajo:</span>
+            <select name="zone_id" ref={register}>
+              <option value="">Area de trabajo</option>
+              {zones
+                ? zones.map(w => (
+                    <option key={w.id} value={w.id}>
+                      {w.name}
+                    </option>
+                  ))
+                : null}
+            </select>
+          </label>
+          <label htmlFor="workstation">
+            <span>Area de trabajo:</span>
+            <select name="workstation" ref={register}>
+              <option value="">Area de trabajo</option>
+              {workstations
+                ? workstations.map(w => (
+                    <option key={w.id} value={w.id}>
+                      {w.workstation}
+                    </option>
+                  ))
+                : null}
             </select>
           </label>
         </div>
@@ -114,6 +167,9 @@ const mapDispatchToProps = {
 const mapStateToProps = state => {
   return {
     roles: state.reducerUsers.roles,
+    zones: state.reducerZones.zones,
+    plants: state.reducerZones.plants,
+    workstations: state.reducerZones.workstations,
   }
 }
 

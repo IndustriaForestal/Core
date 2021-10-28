@@ -25,18 +25,21 @@ const CreateOrder = props => {
         props.getAll('items', 'GET_ITEMS')
       })
       .then(() => {
+        props.getAll('items/type', 'GET_ITEMS_TYPE')
+      })
+      .then(() => {
         props.getAll('stock/items', 'GET_STOCK_2')
       })
     // eslint-disable-next-line
   }, [])
 
-  const { customers, pallets, order, stock, items } = props
+  const { customers, pallets, order, stock, items, itemsType } = props
 
   const handleNext = () => {
     props.history.push('/orders/estimated')
   }
 
-  if (customers && pallets && stock && items) {
+  if (customers && pallets && stock && items && itemsType) {
     const lookupPallets = {}
 
     pallets.map(item => (lookupPallets[item.id] = item.model))
@@ -192,7 +195,16 @@ const CreateOrder = props => {
 
                         return (
                           <tr key={index}>
-                            <td>{`${item.length} x ${item.width} x ${item.height} - ${item.name}`}</td>
+                            <td>
+                              {`${item.length} x ${item.width} x ${item.height} - ${item.name}`}{' '}
+                              {itemsType.find(
+                                i => i.id === item.item_type_id
+                              ) !== undefined
+                                ? itemsType.find(
+                                    i => i.id === item.item_type_id
+                                  ).name
+                                : 'Erro Sin Material '}
+                            </td>
                             <td>
                               {item.amount_new *
                                 (rowData.amount -
@@ -272,6 +284,7 @@ const mapStateToProps = state => {
     stock: state.reducerStock.stock2,
     pallets: state.reducerPallets.pallets,
     items: state.reducerItems.items,
+    itemsType: state.reducerItems.itemsType,
     order: state.reducerOrders.order,
     user: state.reducerApp.user,
   }

@@ -1,6 +1,36 @@
 export default function reducer(
   state = {
-    order: {},
+    /* order: {
+      customer_id: 1,
+      date: '2021-10-06T20:32:00.000Z',
+      pallets: [
+        {
+          pallet_id: '15',
+          amount: '1000',
+          user_id: '1',
+          check: 0,
+          check_type: null,
+          check_stage: 0,
+          none_stage: 0,
+          amount_stock: 0,
+          amount_items: [],
+          amount_sawn: [],
+          amount_stock_supplier: 0,
+          amount_items_supplier: [],
+          amount_sawn_supplier: [],
+          stage1: 0,
+          stage1_supplier: 0,
+          stage2: 0,
+          stage2_supplier: 0,
+          stage3: 0,
+          stage3_supplier: 0,
+          date: '2021-12-01 12:00:00',
+          tableData: {
+            id: 0,
+          },
+        },
+      ],
+    }, */
   },
   action
 ) {
@@ -9,6 +39,16 @@ export default function reducer(
       return {
         ...state,
         orders: action.payload.data,
+      }
+    case 'GET_ORDERS_WORKSTATIONS':
+      return {
+        ...state,
+        ordersWorkstations: action.payload.data,
+      }
+    case 'GET_ORDERS_HISTORY':
+      return {
+        ...state,
+        ordersHistory: action.payload.data,
       }
     case 'GET_ORDERS_PRODUCTION':
       return {

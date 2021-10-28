@@ -15,7 +15,7 @@ import Button from '../../../components/Button/Button'
 
 const DashboardProduction = props => {
   const { processes, ordersRequeriment, items, workstations, modal } = props
-  const [workstation, setWorkstation] = useState('')
+  const [arrayWorkstation, setWorkstationID] = useState([])
   const order = props.modal.order
 
   if (order && processes && ordersRequeriment && items && workstations) {
@@ -32,9 +32,9 @@ const DashboardProduction = props => {
       processes.find(process => process.id === order.process_id) || {}
 
     const handleStart = () => {
-      if (workstation !== '') {
+      if (arrayWorkstation.length > 0) {
         props
-          .update(`orders/start/${order.id}`, 'START_ORDER', { workstation })
+          .update(`orders/start/${order.id}`, 'START_ORDER', arrayWorkstation)
           .then(() => {
             props.getAll('orders/production', 'GET_ORDERS_PRODUCTION')
           })
@@ -56,7 +56,8 @@ const DashboardProduction = props => {
         <div>
           <h1>Proceso Regular: {process.name}</h1>
           <h3>Tarima: {order.model}</h3>
-          {process.material_in === 4 || process.material_in === 3 ? (
+          {process.id === 36 ? null : process.material_in === 4 ||
+            process.material_in === 3 ? (
             <div>
               {itemsRequerimient.map(item => (
                 <div key={item.id}>
@@ -68,16 +69,53 @@ const DashboardProduction = props => {
           ) : (
             order.amount
           )}
-          <select name="Process" onChange={e => setWorkstation(e.target.value)}>
+          <select
+            name="Process"
+            onChange={e =>
+              e.target.value !== ''
+                ? setWorkstationID([...arrayWorkstation, e.target.value])
+                : null
+            }
+          >
             <option value="">Seleccionar</option>
             {workstations
-              .filter(ws => ws.process_id === order.process_id)
+              .filter(
+                ws => ws.process_id === order.process_id && ws.active === 1
+              )
               .map(ws => (
                 <option key={ws.id} value={ws.id}>
                   {ws.workstation}
+                  {console.log(ws)}
                 </option>
               ))}
           </select>
+          <table>
+            <thead>
+              <tr>
+                <th>Estacion de trabajo asiganda</th>
+              </tr>
+            </thead>
+            <tbody>
+              {arrayWorkstation.map(w => (
+                <tr>
+                  <td>
+                    {
+                      workstations.find(item => item.id === parseInt(w))
+                        .workstation
+                    }
+                  </td>
+                  <td
+                    onClick={() =>
+                      setWorkstationID(arrayWorkstation.filter(ws => ws !== w))
+                    }
+                  >
+                    X
+                  </td>
+                </tr>
+              ))}
+            </tbody>
+          </table>
+
           <Button onClick={handleStart}>Iniciar</Button>
         </div>
       </Rodal>

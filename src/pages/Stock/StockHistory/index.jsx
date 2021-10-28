@@ -83,7 +83,7 @@ const StockHistory = props => {
             : sh.process_id !== null
             ? sh.process_name
             : sh.supplier_id !== null
-            ? sh.supplier_name
+            ? `Ingreso proveedor: ${sh.supplier_name}`
             : 'Ingresado Manual',
         date: moment(sh.date).format('DD-MM-YYYY HH:mm:ss'),
       })

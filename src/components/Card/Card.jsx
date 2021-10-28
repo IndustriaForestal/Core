@@ -6,9 +6,10 @@ const Card = ({
   children,
   tools,
   className = 'card',
+  style
 }) => {
   return (
-    <div className={className}>
+    <div className={className} style={style}>
       <div className="card__head">
         {title}
         {tools ? tools : null}

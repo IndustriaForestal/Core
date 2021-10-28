@@ -56,9 +56,9 @@ const Zones = props => {
           { title: 'Planta', field: 'plant_name' },
           { title: 'Zona', field: 'zone_name' },
           { title: 'Sub-Zon ID', field: 'id' },
-          { title: 'Alto', field: 'height' },
-          { title: 'Largo', field: 'length' },
-          { title: 'Ancho', field: 'width' },
+          { title: 'Alto m', field: 'height' },
+          { title: 'Largo m', field: 'length' },
+          { title: 'Ancho m', field: 'width' },
         ]}
         localization={{
           pagination: {

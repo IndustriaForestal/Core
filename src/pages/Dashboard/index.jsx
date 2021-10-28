@@ -14,9 +14,24 @@ import './styles.scss'
 import Loading from '../../components/Loading/Loading'
 
 const Dashbaord = props => {
-  const { user, processes, ordersProduction, ordersRequeriment } = props
-  const [visible, setVisible] = useState(false)
+  const {
+    user,
+    processes,
+    orders,
+    ordersProduction,
+    ordersRequeriment,
+    customers,
+    pallets,
+    qualities,
+    workstations,
+    ordersWorkstations,
+    zones,
+    plants,
+  } = props
   const role = user.role
+  const [orderSelected, setOrderSelected] = useState(0)
+  const [plant, setPlant] = useState(0)
+  const [zone, setZone] = useState(0)
 
   useEffect(() => {
     const topbar = {
@@ -24,7 +39,9 @@ const Dashbaord = props => {
       menu: {
         Dashbaord: '/dashboard',
         'Dashbaord Proceso': '/dashboard/processes',
+        'Dashbaord Inventario': '/dashboard/stock',
         'Dashbaord Rechazo': '/dashboard/reject',
+        'Dashbaord Historial': '/dashboard/history',
       },
     }
     props.setTitle(topbar)
@@ -38,109 +55,204 @@ const Dashbaord = props => {
         props.getAll('orders/requeriment', 'GET_ORDERS_REQUERIMENT')
       })
       .then(() => {
-        props.getAll('items', 'GET_ITEMS')
+        props.getAll('orders', 'GET_ORDERS')
+      })
+      .then(() => {
+        props.getAll('customers', 'GET_CUSTOMERS')
+      })
+      .then(() => {
+        props.getAll('pallets', 'GET_PALLETS')
+      })
+      .then(() => {
+        props.getAll('qualities', 'GET_QUALITIES')
+      })
+      .then(() => {
+        props.getAll('zones/workstations', 'GET_WORKSTATIONS')
+      })
+      .then(() => {
+        props.getAll('orders/workstations', 'GET_ORDERS_WORKSTATIONS')
+      })
+      .then(() => {
+        props.getAll('zones/plants', 'GET_PLANTS')
+      })
+      .then(() => {
+        props.getAll('zones/zones', 'GET_ZONES')
       })
   }, [])
 
-  if (processes && ordersProduction && ordersRequeriment) {
+  if (
+    processes &&
+    orders &&
+    ordersProduction &&
+    ordersRequeriment &&
+    customers &&
+    pallets &&
+    qualities &&
+    workstations &&
+    ordersWorkstations &&
+    zones &&
+    plants
+  ) {
+    const data =
+      zone !== 0
+        ? workstations.filter(o => o.zone_id === zone)
+        : workstations
+
     switch (role) {
       case 'Administrador':
         return (
           <div className="dashboard">
+            <label htmlFor="filter">
+              Filtrar Planta
+              <select
+                name="filter"
+                onChange={e => setPlant(parseInt(e.target.value))}
+              >
+                <option value="0">Todas</option>
+                {plants.map(o => (
+                  <option key={o.id} value={o.id}>
+                    {o.name}
+                  </option>
+                ))}
+              </select>
+            </label>
+            <label htmlFor="filter">
+              Filtrar Zona
+              <select
+                name="filter"
+                onChange={e => setZone(parseInt(e.target.value))}
+              >
+                <option value="0">Todas</option>
+                {zones
+                  .filter(o =>
+                    plant !== 0 ? o.plant_id === parseInt(plant) : o
+                  )
+                  .map(o => (
+                    <option key={o.id} value={o.id}>
+                      {
+                        plants.find(
+                          p => parseInt(p.id) === parseInt(o.plant_id)
+                        ).name
+                      }{' '}
+                      {o.name}
+                    </option>
+                  ))}
+              </select>
+            </label>
+
             <div
               className="dashboard__header"
               style={{
-                gridTemplateColumns: `repeat(${processes.length}, 200px)`,
+                gridTemplateColumns: `repeat(${data.length}, 200px)`,
               }}
             >
-              {processes.map(process => (
-                <div key={process.id}>
-                  <div className="dashboard__name">{process.name}</div>
+              {data.map(workstation => (
+                <div key={workstation.id}>
+                  <div className="dashboard__name">
+                    {workstation.workstation}
+                  </div>
                   <div className="dashboard__production">
-                    {ordersProduction.filter(
-                      order =>
-                        order.ready === 0 && order.process_id === process.id
+                    {ordersWorkstations.filter(
+                      order => order.workstation_id === workstation.id
                     ).length > 0
-                      ? ordersProduction
+                      ? ordersWorkstations
                           .filter(
-                            order =>
-                              order.ready === 0 &&
-                              order.process_id === process.id
+                            order => order.workstation_id === workstation.id
                           )
-                          .sort((a, b) => moment(a.time) - moment(b.time))
-                          .map(order => (
-                            <div
-                              className={`dashboard__item ${
-                                moment(order.time).isBefore(moment())
-                                  ? '--danger'
-                                  : null
-                              }`}
-                              key={order.id}
-                              onClick={() =>
-                                props.setModal({ state: true, order, stage: 0 })
+                          .map(x => {
+                            const order = ordersProduction.find(
+                              o =>
+                                parseInt(o.ready) === 1 &&
+                                parseInt(o.id) === parseInt(x.id)
+                            )
+
+                            if (order !== undefined) {
+                              const id = order.order_id
+
+                              const ordersArray = ordersProduction.filter(
+                                o => o.order_id === id
+                              )
+                              let validation
+
+                              if (
+                                parseInt(order.order_number) ===
+                                ordersArray.length - 1
+                              ) {
+                                validation = true
+                              } else {
+                                const item = ordersArray.find(
+                                  o =>
+                                    parseInt(o.order_number) ===
+                                    parseInt(order.order_number) + 1
+                                )
+
+                                if (item !== undefined && item.ready > 2) {
+                                  validation = true
+                                } else {
+                                  validation = false
+                                }
                               }
-                            >
-                              <span>Pedido# {order.order_id}</span>
-                              <span>Tarima: {order.model}</span>
-                              <span>
-                                Entrega:{' '}
-                                {moment(order.time).format('DD-MM-YYYY HH:mm')}
-                              </span>
-                            </div>
-                          ))
-                      : null}
-                    {ordersProduction.filter(
-                      order =>
-                        order.ready === 1 && order.process_id === process.id
-                    ).length > 0
-                      ? ordersProduction
-                          .filter(
-                            order =>
-                              order.ready === 1 &&
-                              order.process_id === process.id
-                          )
-                          .sort((a, b) => moment(a.time) - moment(b.time))
-                          .map(order => (
-                            <div
-                              className="dashboard__item --warning"
-                              key={order.id}
-                              onClick={() =>
-                                props.setModal({ state: true, order, stage: 1 })
-                              }
-                            >
-                              <span>Pedido# {order.order_id}</span>
-                              <span>Tarima: {order.model}</span>
-                              <span>
-                                Entrega:{' '}
-                                {moment(order.time).format('DD-MM-YYYY HH:mm')}
-                              </span>
-                            </div>
-                          ))
-                      : null}
-                    {ordersProduction.filter(
-                      order =>
-                        order.ready === 2 && order.process_id === process.id
-                    ).length > 0
-                      ? ordersProduction
-                          .filter(
-                            order =>
-                              order.ready === 2 &&
-                              order.process_id === process.id
-                          )
-                          .sort((a, b) => moment(a.time) - moment(b.time))
-                          .map(order => (
-                            <div
-                              className="dashboard__item --success"
-                              key={order.id}
-                            >
-                              <span>Pedido# {order.order_id}</span>
-                              <span>Tarima: {order.model}</span>
-                              <span>
-                                Entrega:{' '}
-                                {moment(order.time).format('DD-MM-YYYY HH:mm')}
-                              </span>
-                            </div>
-                          ))
+
+                              return (
+                                <div
+                                  className={`dashboard__item ${
+                                    moment(order.time).isBefore(moment())
+                                      ? '--danger'
+                                      : null
+                                  } ${validation === true ? '' : '--disabled'}`}
+                                  key={order.id}
+                                >
+                                  <span>Pedido# {order.order_id}</span>
+                                  <span>
+                                    Cliente:
+                                    {customers.find(
+                                      c =>
+                                        c.id ===
+                                        orders.find(
+                                          o => o.id === order.order_id
+                                        ).customer_id
+                                    ) !== undefined
+                                      ? customers.find(
+                                          c =>
+                                            c.id ===
+                                            orders.find(
+                                              o => o.id === order.order_id
+                                            ).customer_id
+                                        ).name
+                                      : 'N/A'}
+                                  </span>
+                                  <span>
+                                    Calidad:
+                                    {qualities.find(
+                                      c =>
+                                        c.id ===
+                                        pallets.find(
+                                          o => o.id === order.pallet_id
+                                        ).quality_id
+                                    ) !== undefined
+                                      ? qualities.find(
+                                          c =>
+                                            c.id ===
+                                            pallets.find(
+                                              o => o.id === order.pallet_id
+                                            ).quality_id
+                                        ).name
+                                      : 'N/A'}
+                                  </span>
+                                  <span>Tarima: {order.model}</span>
+                                  <span>Cantidad: {order.amount}</span>
+                                  <span>
+                                    Entrega:{' '}
+                                    {moment(order.time).format(
+                                      'DD-MM-YYYY HH:mm'
+                                    )}
+                                  </span>
+                                </div>
+                              )
+                            } else {
+                              return null
+                            }
+                          })
                       : null}
                   </div>
                 </div>
@@ -172,9 +284,17 @@ const mapStateToProps = state => {
     user: state.reducerApp.user,
     modal: state.reducerApp.modal,
     processes: state.reducerProcesses.processes,
+    orders: state.reducerOrders.orders,
     ordersProduction: state.reducerOrders.ordersProduction,
     ordersRequeriment: state.reducerOrders.ordersRequeriment,
+    ordersWorkstations: state.reducerOrders.ordersWorkstations,
     items: state.reducerItems.items,
+    customers: state.reducerCustomers.customers,
+    pallets: state.reducerPallets.pallets,
+    qualities: state.reducerQualities.qualities,
+    workstations: state.reducerZones.workstations,
+    zones: state.reducerZones.zones,
+    plants: state.reducerZones.plants,
   }
 }
 

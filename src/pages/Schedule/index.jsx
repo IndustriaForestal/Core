@@ -3,6 +3,7 @@ import { connect } from 'react-redux'
 import { setTitle, getAll, deleted, create, update } from '../../actions/app'
 import Loading from '../../components/Loading/Loading'
 import MaterialTable from 'material-table'
+import moment from 'moment'
 
 const Processes = props => {
   const { setTitle, schedule, scheduleHolidays, scheduleConfig } = props
@@ -140,7 +141,12 @@ const Processes = props => {
               addTooltip: 'Agregar',
             },
           }}
-          data={scheduleHolidays}
+          data={scheduleHolidays.map(d => {
+            return ({
+              ...d,
+              day: moment(d.day).format('DD-MM-YYYY'),
+            })
+          })}
           editable={editable2}
         />
       </>
