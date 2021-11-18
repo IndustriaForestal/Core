@@ -50,8 +50,6 @@ const Orders = props => {
 
   if (orders && customers) {
     const lookupCustomers = {}
-    customers.map(m => (lookupCustomers[m.id] = m.name))
-
     return (
       <>
         <MaterialTable

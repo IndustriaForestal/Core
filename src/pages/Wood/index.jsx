@@ -7,10 +7,11 @@ import MaterialTable from 'material-table'
 const TypeMaterial = props => {
   const { wood, setTitle, user } = props
   const userId = user.id
+  
   useEffect(() => {
     const topbar = {
-      title: 'MaderaMadera',
-      menu: { 'Tipo de Madera': '/wood' },
+      title: 'Especie de Madera',
+      menu: { 'Especie de Madera': '/wood' },
     }
     setTitle(topbar)
     props.getAll('wood', 'GET_WOOD')
@@ -60,6 +61,10 @@ const TypeMaterial = props => {
             field: 'quality_id',
             lookup: { 1: 'A', 2: 'B', 3: 'C' },
           },
+          {
+            title: '% de contracción',
+            field: 'contraction',
+          },
         ]}
         localization={{
           pagination: {
@@ -93,7 +98,7 @@ const TypeMaterial = props => {
           },
         }}
         data={wood}
-        title="Pedidos"
+        title="Especie de madera"
         editable={editable}
       />
     </>

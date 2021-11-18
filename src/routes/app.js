@@ -68,6 +68,7 @@ import DashboardStockDetaills from '../pages/Dashboard/StockDetaills'
 import DashboardReject from '../pages/Dashboard/Reject'
 import DashboardReview from '../pages/Dashboard/Review'
 import DashboardHistory from '../pages/Dashboard/History'
+import DashboardKanban from '../pages/Dashboard/Kanban'
 
 import StockSuppliers from '../pages/Stock/StockSuppliers'
 import StockSuppliersHistory from '../pages/Stock/StockSuppliersHistory'
@@ -106,6 +107,11 @@ const App = ({ loggedIn }) => {
               exact
               path="/dashboard/history"
               component={DashboardHistory}
+            />
+            <Route
+              exact
+              path="/dashboard/kanban"
+              component={DashboardKanban}
             />
             <Route exact path="/calendar" component={Calendar} />
             <Route exact path="/customers" component={Customers} />

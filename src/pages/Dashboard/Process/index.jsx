@@ -30,6 +30,15 @@ const Dashbaord = props => {
   const role = user.role
 
   useEffect(() => {
+    const topbar = {
+      title: 'Orden de producción',
+      menu: {
+        'Orden de producción': '/dashboard/processes',
+        'Orden de producción rechazo': '/dashboard/reject',
+        'Orden de producción historial': '/dashboard/history',
+      },
+    }
+    props.setTitle(topbar)
     props.setWraper(true)
     props
       .getAll('processes', 'GET_PROCESSES')

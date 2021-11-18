@@ -239,12 +239,13 @@ const CreateOrder = props => {
           : process.duration + Math.ceil(process.slack / 2)
 
         const hrsWork = scheduleConfig[0].end - scheduleConfig[0].start
-
         const days = parseInt((time / hrsWork).toFixed(0))
         const hours = time % hrsWork
 
         initialDate = initialDate.subtract(hours * timeMultipler, 'hours')
+        console.log(initialDate.format('YYYY-MMM-DD HH:mm:ss'), '<--- horas')
         initialDate = initialDate.subtract(days * timeMultipler, 'days')
+        console.log(initialDate.format('YYYY-MMM-DD HH:mm:ss'), '<--- dias')
         onTime = moment().isBefore(initialDate, 'hours')
 
         return {

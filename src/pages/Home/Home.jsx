@@ -33,19 +33,24 @@ const Home = props => {
           />
           <IconHome
             icon={<BsCardImage />}
+            url="/dashboard/processes"
+            text="Orden de Producción"
+          />
+          <IconHome
+            icon={<BsCardImage />}
             url="/orders"
             text="Orden de Embarque"
+          />
+          <IconHome
+            icon={<FaPallet />}
+            url="/purchase-orders"
+            text="Orden de Compra"
           />
           <IconHome icon={<BsCardImage />} url="/stock" text="Inventarios" />
           <IconHome
             icon={<BsCardImage />}
             url="/stockSuppliers"
             text="Entradas Proveedores"
-          />
-          <IconHome
-            icon={<FaPallet />}
-            url="/purchase-orders"
-            text="Orden de Compra"
           />
           <IconHome icon={<FaPallet />} url="/pallets" text="Tarimas" />
         </div>

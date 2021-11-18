@@ -1,6 +1,6 @@
 export default function reducer(
   state = {
-    /* order: {
+    order: {
       customer_id: 1,
       date: '2021-10-06T20:32:00.000Z',
       pallets: [
@@ -30,7 +30,7 @@ export default function reducer(
           },
         },
       ],
-    }, */
+    },
   },
   action
 ) {

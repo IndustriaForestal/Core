@@ -21,11 +21,11 @@ const Dashbaord = props => {
 
   useEffect(() => {
     const topbar = {
-      title: 'Dashbaord',
+      title: 'Orden de producción',
       menu: {
-        Dashbaord: '/dashboard',
-        'Dashbaord Proceso': '/dashboard/processes',
-        'Dashbaord Rechazo': '/dashboard/reject',
+        'Orden de producción': '/dashboard/processes',
+        'Orden de producción rechazo': '/dashboard/reject',
+        'Orden de producción historial': '/dashboard/history',
       },
     }
     props.setTitle(topbar)

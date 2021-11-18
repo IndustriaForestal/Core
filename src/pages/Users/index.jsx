@@ -94,7 +94,7 @@ const Users = props => {
             lookup: lookupZones,
           },
           {
-            title: 'Area de trabajo',
+            title: 'Estación de trabajo',
             field: 'workstation_id',
             lookup: lookupWorkstations,
           },

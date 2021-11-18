@@ -29,7 +29,7 @@ const Dashbaord = props => {
     plants,
   } = props
   const role = user.role
-  const [orderSelected, setOrderSelected] = useState(0)
+  const [workstation, setWorkstation] = useState(0)
   const [plant, setPlant] = useState(0)
   const [zone, setZone] = useState(0)
 
@@ -38,10 +38,10 @@ const Dashbaord = props => {
       title: 'Dashbaord',
       menu: {
         Dashbaord: '/dashboard',
-        'Dashbaord Proceso': '/dashboard/processes',
         'Dashbaord Inventario': '/dashboard/stock',
+        /*  'Dashbaord Proceso': '/dashboard/processes',
         'Dashbaord Rechazo': '/dashboard/reject',
-        'Dashbaord Historial': '/dashboard/history',
+        'Dashbaord Historial': '/dashboard/history', */
       },
     }
     props.setTitle(topbar)
@@ -94,7 +94,9 @@ const Dashbaord = props => {
     plants
   ) {
     const data =
-      zone !== 0
+      workstation !== 0
+        ? workstations.filter(o => o.id === workstation)
+        : zone !== 0
         ? workstations.filter(o => o.zone_id === zone)
         : workstations
 
@@ -125,7 +127,7 @@ const Dashbaord = props => {
                 <option value="0">Todas</option>
                 {zones
                   .filter(o =>
-                    plant !== 0 ? o.plant_id === parseInt(plant) : o
+                    plant !== 0 ? parseInt(o.plant_id) === parseInt(plant) : o
                   )
                   .map(o => (
                     <option key={o.id} value={o.id}>
@@ -135,6 +137,25 @@ const Dashbaord = props => {
                         ).name
                       }{' '}
                       {o.name}
+                    </option>
+                  ))}
+              </select>
+            </label>
+            <label htmlFor="filter">
+              Filtrar Zona de trabajo
+              <select
+                name="filter"
+                onChange={e => setWorkstation(parseInt(e.target.value))}
+              >
+                <option value="0">Todas</option>
+                {workstations
+                  .filter(o =>
+                    zone !== 0 ? parseInt(o.zone_id) === parseInt(zone) : o
+                  )
+                  .map(o => (
+                    <option key={o.id} value={o.id}>
+                      {console.log(o, zone)}
+                      {o.workstation}
                     </option>
                   ))}
               </select>

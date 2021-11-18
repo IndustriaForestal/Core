@@ -208,6 +208,7 @@ const CreateOrder = props => {
           editable={editable}
         />
         <Button onClick={() => handleNext()}>Siguiente</Button>
+        <Button>Pendiente de aprobación</Button>
       </>
     )
   } else {

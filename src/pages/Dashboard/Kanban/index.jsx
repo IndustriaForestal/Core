@@ -8,10 +8,10 @@ import {
   deleted,
   create,
   update,
-} from '../../actions/app'
+} from '../../../actions/app'
 import moment from 'moment'
-import './styles.scss'
-import Loading from '../../components/Loading/Loading'
+import '../styles.scss'
+import Loading from '../../../components/Loading/Loading'
 
 const Dashbaord = props => {
   const {

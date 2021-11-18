@@ -15,8 +15,8 @@ const ItemType = props => {
 
   useEffect(() => {
     const topbar = {
-      title: 'Tipo de Complemento',
-      menu: { 'Tipo de Complemento': '/items/type' },
+      title: 'Tipo de Pieza',
+      menu: { 'Tipo de Pieza': '/items/type' },
     }
     setTitle(topbar)
     props.getAll('items/type', 'GET_ITEMS_TYPE')
@@ -76,7 +76,7 @@ const ItemType = props => {
           },
         }}
         data={itemsType}
-        title="Pedidos"
+        title="Piezas"
       />
     </>
   )

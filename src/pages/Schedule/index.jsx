@@ -9,7 +9,7 @@ const Processes = props => {
   const { setTitle, schedule, scheduleHolidays, scheduleConfig } = props
   useEffect(() => {
     const topbar = {
-      title: 'Procesos',
+      title: 'Horarios laborales',
       menu: {
         Horarios: '/schedule',
       },
@@ -65,7 +65,7 @@ const Processes = props => {
     return (
       <>
         <MaterialTable
-          title="Horaios"
+          title="Horarios"
           columns={[
             { title: 'Nombre', field: 'name' },
             { title: 'Porcentaje', field: 'amount' },

@@ -140,11 +140,11 @@ const CalendarOrders = props => {
         >
           <ul>
             <li>
-              <span style={{ backgroundColor: 'var(--naranja)' }}></span> Nueva
+              <span style={{ backgroundColor: 'var(--naranja)' }}></span> En proceso de fabricación
             </li>
             <li>
               <span style={{ backgroundColor: 'var(--danger)' }}></span>{' '}
-              Cacelada
+              Re programación externa o <br /> cancelación por parte del cliente 
             </li>
             <li>
               <span style={{ backgroundColor: 'var(--success)' }}></span>{' '}
@@ -152,14 +152,26 @@ const CalendarOrders = props => {
             </li>
             <li>
               <span style={{ backgroundColor: 'var(--primary)' }}></span>{' '}
-              Reprogramación
+              Reprogramación interna
             </li>
             <li>
-              <span style={{ backgroundColor: 'var(--white)' }}></span> Termino
+              <span style={{ backgroundColor: 'var(--white)' }}></span> Termino (Finalizado)
             </li>
             <li>
-              <span style={{ backgroundColor: 'var(--rosa)' }}></span> Pendiente
+              <span style={{ backgroundColor: 'var(--rosa)' }}></span> Aprobación de dirección <br /> pendiente 
             </li>
+            <li>
+              <span style={{ backgroundColor: 'var(--warning)' }}></span> Confirmados pendientes <br /> por producir
+            </li>
+            {/* 
+            Verde: enviado 
+            Azul: re programación interna
+            Blanco: fabricado, en proceso de término
+            Rojo: re programación externa o cancelación o parte del cliente 
+            Naranja: en proceso de fabricación 
+            Rosa: aprobación de dirección pendiente 
+            Amarillo: confirmados pendientes por producir
+            */}
           </ul>
         </div>
       </>

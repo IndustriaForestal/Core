@@ -96,16 +96,6 @@ const Processes = props => {
             field: 'material_in',
             lookup: lookupMaterial,
           },
-          {
-            title: 'Material de salida',
-            field: 'material_out',
-            lookup: lookupMaterial,
-          },
-          {
-            title: 'Calidad',
-            field: 'quality_id',
-            lookup: lookupQualities,
-          },
         ]}
         localization={{
           pagination: {

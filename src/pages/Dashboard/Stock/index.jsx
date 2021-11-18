@@ -32,10 +32,10 @@ const Dashbaord = props => {
       title: 'Dashbaord',
       menu: {
         Dashbaord: '/dashboard',
-        'Dashbaord Proceso': '/dashboard/processes',
         'Dashbaord Inventario': '/dashboard/stock',
+      /*   'Dashbaord Proceso': '/dashboard/processes',
         'Dashbaord Rechazo': '/dashboard/reject',
-        'Dashbaord Historial': '/dashboard/history',
+        'Dashbaord Historial': '/dashboard/history', */
       },
     }
     props.setTitle(topbar)
