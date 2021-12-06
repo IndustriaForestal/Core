@@ -180,11 +180,15 @@ const CreateOrder = props => {
       return concatArrays
     }
 
+    /* Funcion que crea tiempos estimados de proceso */
+
     const getTimeProduction = (qualityFinal, pallet) => {
       let initialDate = moment(pallet.date)
-
+      // Se resta un dia a la fecha de entrega de la tarima
+      initialDate = initialDate.subtract(1, 'days').hour(scheduleConfig[0].end)
       let onTime = false
 
+      // Se obtiene el tiempo de produccion de cada material
       const timeProduction = qualityFinal.reverse().map(process => {
         const timeMultipler = pallet.amount / process.amount
 
@@ -192,13 +196,53 @@ const CreateOrder = props => {
           ? process.estimated + Math.ceil(process.clearance / 2)
           : process.duration + Math.ceil(process.slack / 2)
 
-        const hrsWork = scheduleConfig[0].end - scheduleConfig[0].start
+        const start = scheduleConfig[0].start
+        const end = scheduleConfig[0].end
+        const hours = Math.ceil(time * timeMultipler)
 
-        const days = parseInt((time / hrsWork).toFixed(0))
-        const hours = time % hrsWork
+        // Proceso de estufado base de datos id 44 tabla processes
+        if (process.process_id === 44 || process.process_id === 50) {
+          initialDate = initialDate.subtract(hours, 'hours')
+          const startDate = moment(initialDate).hour(start).minute(0).second(0)
+          const endDate = moment(initialDate).hour(end).minute(0).second(0)
+          if (
+            !moment(initialDate).isSameOrAfter(startDate) &&
+            moment(initialDate).isSameOrBefore(endDate)
+          ) {
+            initialDate = initialDate.subtract(1, 'days').hour(end).minute(0)
+          } else if (
+            moment(initialDate).isSameOrAfter(startDate) &&
+            !moment(initialDate).isSameOrBefore(endDate)
+          ) {
+            initialDate = initialDate.hour(end).minute(0)
+          }
+        
+        } else {
+          const tempDate = moment(initialDate).subtract(hours, 'hours')
+          const startDate = moment(tempDate).hour(start).minute(0).second(0)
+          const endDate = moment(tempDate).hour(end).minute(0).second(0)
+          
+          if (
+            moment(tempDate).isSameOrAfter(startDate) &&
+            moment(tempDate).isSameOrBefore(endDate)
+          ) {
+    
+            initialDate = initialDate.subtract(hours, 'hours')
+          } else {
+          
+            let hoursLeft = initialDate.diff(startDate, 'hours')
+            let hoursNextDay = hours - hoursLeft
 
-        initialDate = initialDate.subtract(hours * timeMultipler, 'hours')
-        initialDate = initialDate.subtract(days * timeMultipler, 'days')
+            while (hoursNextDay > 0) {
+              initialDate = initialDate.subtract(hoursLeft, 'hours')
+              initialDate = initialDate.subtract(1, 'days').hour(end).minute(0)
+              initialDate = initialDate.subtract(hoursNextDay, 'hours')
+
+              hoursNextDay = 0
+            }
+           
+          }
+        }
 
         onTime = moment().isBefore(initialDate, 'hours')
 
@@ -211,7 +255,6 @@ const CreateOrder = props => {
 
       return timeProduction
     }
-
     const handleSearchAndSlice = (timeProduction, pallet) => {
       let stage = 'Trozo'
 

@@ -228,9 +228,11 @@ const CreateOrder = props => {
 
     const getTimeProduction = (qualityFinal, pallet) => {
       let initialDate = moment(pallet.date)
-
+      // Se resta un dia a la fecha de entrega de la tarima
+      initialDate = initialDate.subtract(1, 'days').hour(scheduleConfig[0].end)
       let onTime = false
 
+      // Se obtiene el tiempo de produccion de cada material
       const timeProduction = qualityFinal.reverse().map(process => {
         const timeMultipler = pallet.amount / process.amount
 
@@ -238,14 +240,72 @@ const CreateOrder = props => {
           ? process.estimated + Math.ceil(process.clearance / 2)
           : process.duration + Math.ceil(process.slack / 2)
 
-        const hrsWork = scheduleConfig[0].end - scheduleConfig[0].start
-        const days = parseInt((time / hrsWork).toFixed(0))
-        const hours = time % hrsWork
+        const start = scheduleConfig[0].start
+        const end = scheduleConfig[0].end
+        const hrsWork = end - start
+        const hours = Math.ceil(time * timeMultipler)
 
-        initialDate = initialDate.subtract(hours * timeMultipler, 'hours')
-        console.log(initialDate.format('YYYY-MMM-DD HH:mm:ss'), '<--- horas')
-        initialDate = initialDate.subtract(days * timeMultipler, 'days')
-        console.log(initialDate.format('YYYY-MMM-DD HH:mm:ss'), '<--- dias')
+        // Proceso de estufado base de datos id 44 tabla processes o HT
+        if (process.process_id === 44 || process.process_id === 50) {
+          // Si el preceso de estufado termina fuera del horario de trabajo se asigna el horario más sercano
+          initialDate = initialDate.subtract(hours, 'hours')
+          const startDate = moment(initialDate).hour(start).minute(0).second(0)
+          const endDate = moment(initialDate).hour(end).minute(0).second(0)
+          if (
+            !moment(initialDate).isSameOrAfter(startDate) &&
+            moment(initialDate).isSameOrBefore(endDate)
+          ) {
+            initialDate = initialDate.subtract(1, 'days').hour(end).minute(0)
+          } else if (
+            moment(initialDate).isSameOrAfter(startDate) &&
+            !moment(initialDate).isSameOrBefore(endDate)
+          ) {
+            initialDate = initialDate.hour(end).minute(0)
+          }
+          /*  console.log(
+            initialDate.format('YYYY-MMM-DD HH:mm:ss'),
+            'estufado o ht',
+            moment(initialDate).isSameOrAfter(startDate),
+            moment(initialDate).isSameOrBefore(endDate)
+          ) */
+        } else {
+          const tempDate = moment(initialDate).subtract(hours, 'hours')
+          const startDate = moment(tempDate).hour(start).minute(0).second(0)
+          const endDate = moment(tempDate).hour(end).minute(0).second(0)
+          /* console.log(
+            moment(tempDate).isSameOrAfter(startDate) &&
+              moment(tempDate).isSameOrBefore(endDate),
+            startDate.format('YYYY-MMM-DD HH:mm:ss'),
+            tempDate.format('YYYY-MMM-DD HH:mm:ss'),
+            initialDate.format('YYYY-MMM-DD HH:mm:ss'),
+            hours
+          ) */
+          if (
+            moment(tempDate).isSameOrAfter(startDate) &&
+            moment(tempDate).isSameOrBefore(endDate)
+          ) {
+            /*  console.log('en horario') */
+            initialDate = initialDate.subtract(hours, 'hours')
+          } else {
+            /* console.log('fuera de horario') */
+            let hoursLeft = initialDate.diff(startDate, 'hours')
+            let hoursNextDay = hours - hoursLeft
+
+            while (hoursNextDay > 0) {
+              initialDate = initialDate.subtract(hoursLeft, 'hours')
+              initialDate = initialDate.subtract(1, 'days').hour(end).minute(0)
+              initialDate = initialDate.subtract(hoursNextDay, 'hours')
+
+              hoursNextDay = 0
+            }
+            /*  console.log(hoursLeft, hoursNextDay) */
+          }
+        }
+
+        /*  initialDate = initialDate.subtract(hours * timeMultipler, 'hours')
+        
+        initialDate = initialDate.subtract(days * timeMultipler, 'days') */
+
         onTime = moment().isBefore(initialDate, 'hours')
 
         return {

@@ -54,7 +54,8 @@ const DashboardProduction = props => {
         onClose={() => props.setModal({ state: false, order: {}, stage: 0 })}
       >
         <div>
-          <h1>Proceso Regular: {process.name}</h1>
+          {console.log(process, order, 'Process')}
+          <h1>Proceso {order.type_process === 0 ? 'Regular' : 'Especial'}: {process.name}</h1>
           <h3>Tarima: {order.model}</h3>
           {process.id === 36 ? null : process.material_in === 4 ||
             process.material_in === 3 ? (

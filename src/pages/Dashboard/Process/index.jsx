@@ -345,9 +345,9 @@ const Dashbaord = props => {
                       <div
                         className={`dashboard__item`}
                         key={order.id}
-                        onClick={() =>
+                       /*  onClick={() =>
                           props.history.push(`/dashboard/processes/${order.id}`)
-                        }
+                        } */
                       >
                         <span>Pedido# {order.order_id}</span>
                         <span>Tarima: {order.model}</span>

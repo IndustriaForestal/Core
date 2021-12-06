@@ -6,7 +6,7 @@ export default function reducer(
       pallets: [
         {
           pallet_id: '15',
-          amount: '1000',
+          amount: '100',
           user_id: '1',
           check: 0,
           check_type: null,
@@ -24,7 +24,7 @@ export default function reducer(
           stage2_supplier: 0,
           stage3: 0,
           stage3_supplier: 0,
-          date: '2021-12-01 12:00:00',
+          date: '2021-12-31 12:00:00',
           tableData: {
             id: 0,
           },

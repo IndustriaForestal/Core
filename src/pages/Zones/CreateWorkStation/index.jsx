@@ -97,6 +97,8 @@ const CreateCustomer = props => {
             { title: 'Zona', field: 'zone_id', lookup: lookupZones },
             { title: 'Activa', field: 'active', lookup: { 0: 'No', 1: 'Si' } },
             { title: 'Proceso', field: 'process_id', lookup: lookupProcesses },
+            { title: 'Horas extra', field: 'extra', lookup: { 0: 'No', 1: 'Si' } },
+            { title: 'Proceso Especial', field: 'special', lookup: { 0: 'No', 1: 'Si' } },
           ]}
           localization={{
             pagination: {
