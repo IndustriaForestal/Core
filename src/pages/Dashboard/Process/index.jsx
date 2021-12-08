@@ -185,7 +185,7 @@ const Dashbaord = props => {
                             parseInt(order.order_number) + 1
                         )
 
-                        parseInt(item.ready) > 2
+                        item !== undefined && parseInt(item.ready) > 2
                           ? (validation = true)
                           : (validation = false)
                       }
