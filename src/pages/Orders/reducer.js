@@ -40,6 +40,16 @@ export default function reducer(
         ...state,
         orders: action.payload.data,
       }
+    case 'GET_ORDERS_CUSTOMERS':
+      return {
+        ...state,
+        ordersCustomers: action.payload.data,
+      }
+    case 'GET_ORDERS_CUSTOMERS_DETAILS':
+      return {
+        ...state,
+        ordersCustomersDetails: action.payload.data,
+      }
     case 'GET_ORDERS_WORKSTATIONS':
       return {
         ...state,

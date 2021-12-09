@@ -33,6 +33,9 @@ import StockChanges from '../pages/Stock/StockChanges'
 import StockHistory from '../pages/Stock/StockHistory'
 import StockSawn from '../pages/Stock/StockSawn'
 import Orders from '../pages/Orders'
+import OrdersCustomers from '../pages/Orders/Customers'
+import OrdersCustomersDetails from '../pages/Orders/CustomersDetails'
+import OrdersCustomersCreate from '../pages/Orders/CustomersCreate'
 import OrdersStock from '../pages/Orders/OrderStock'
 import OrdersStockItems from '../pages/Orders/OrderStockItems'
 import OrdersStockSawn from '../pages/Orders/OrderStockSawn'
@@ -172,6 +175,9 @@ const App = ({ loggedIn }) => {
             />
             <Route exact path="/stockHistory" component={StockHistory} />
 
+            <Route exact path="/orders-customers" component={OrdersCustomers} />
+            <Route exact path="/orders-customers/create" component={OrdersCustomersCreate} />
+            <Route exact path="/orders-customers/:id" component={OrdersCustomersDetails} />
             <Route exact path="/orders" component={Orders} />
             <Route exact path="/orders/create" component={CreateOrder} />
             <Route exact path="/orders/stock" component={OrdersStock} />
