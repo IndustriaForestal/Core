@@ -7,6 +7,7 @@ import { BiLogInCircle } from 'react-icons/bi'
 
 import FormControlLabel from '@material-ui/core/FormControlLabel'
 import Switch from '@material-ui/core/Switch'
+import Notifications from '../Notifications'
 import { logOut, setUnits } from '../../actions/app'
 import Title from '../Title/Title'
 
@@ -39,8 +40,9 @@ const Topbar = props => {
               }
               label="cm / in"
             />
-         {/*    <AiOutlineMail />
-            <Notifications /> */}
+            {/*    <AiOutlineMail />
+             */}
+            <Notifications />
             <FiLogOut onClick={handleLogOut} />
             <div className="topbar__user">
               <p>{sessionStorage.getItem('user')}</p>

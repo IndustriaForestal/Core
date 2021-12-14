@@ -34,6 +34,7 @@ const Dashbaord = props => {
       title: 'Dashboard de calidad',
       menu: {
         'Dashboard de calidad': '/dashboard/review-home',
+        'Historial de calidad': '/dashboard/review-home/history',
       },
     }
     props.setTitle(topbar)

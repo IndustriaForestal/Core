@@ -74,6 +74,7 @@ import DashboardReview from '../pages/Dashboard/Review'
 import DashboardHistory from '../pages/Dashboard/History'
 import DashboardKanban from '../pages/Dashboard/Kanban'
 import DashboardReviewHome from '../pages/Dashboard/DashboardReview'
+import DashboardReviewHomeHistory from '../pages/Dashboard/HistoryQuality'
 
 import StockSuppliers from '../pages/Stock/StockSuppliers'
 import StockSuppliersHistory from '../pages/Stock/StockSuppliersHistory'
@@ -118,6 +119,11 @@ const App = ({ loggedIn }) => {
               exact
               path="/dashboard/review-home"
               component={DashboardReviewHome}
+            />
+            <Route
+              exact
+              path="/dashboard/review-home/history"
+              component={DashboardReviewHomeHistory}
             />
             <Route exact path="/calendar" component={Calendar} />
             <Route exact path="/customers" component={Customers} />

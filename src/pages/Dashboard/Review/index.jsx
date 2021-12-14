@@ -305,7 +305,7 @@ const Review = props => {
                 <>
                   <input
                     type="text"
-                    placeholder="Piest Tabla"
+                    placeholder="Pies Tabla"
                     ref={register}
                     name="raw_pie"
                   />
@@ -338,7 +338,7 @@ const Review = props => {
                 <>
                   <input
                     type="text"
-                    placeholder="Piest Tabla"
+                    placeholder="Pies Tabla"
                     ref={register}
                     name="raw_pie"
                   />
