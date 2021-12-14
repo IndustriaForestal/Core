@@ -46,11 +46,11 @@ const Home = props => {
             url="/orders-customers"
             text="Pedidos Clientes"
           />
-          <IconHome
+        {/*   <IconHome
             icon={<BsCardImage />}
             url="/orders"
             text="Orden de Embarque"
-          />
+          /> */}
           <IconHome
             icon={<FaPallet />}
             url="/purchase-orders"

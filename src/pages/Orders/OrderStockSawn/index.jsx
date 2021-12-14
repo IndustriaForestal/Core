@@ -132,7 +132,7 @@ const CreateOrder = props => {
                   <thead>
                     <tr>
                       <th>Madera Habilitada</th>
-                      <th>Cantidad</th>
+                      <th>Cantidad a producir</th>
                     </tr>
                   </thead>
                   <tbody>

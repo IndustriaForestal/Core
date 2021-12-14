@@ -43,6 +43,7 @@ import OrderEstimated from '../pages/Orders/OrderEstimated'
 import OrderPreview from '../pages/Orders/OrderPreview'
 
 import CreateOrder from '../pages/Orders/CreateOrder'
+import CreateOrderNew from '../pages/Orders/CreateOrderNew'
 import Raws from '../pages/Raws'
 import CreateRaw from '../pages/Raws/CreateRaw'
 import UpdateRaw from '../pages/Raws/UpdateRaw'
@@ -112,11 +113,7 @@ const App = ({ loggedIn }) => {
               path="/dashboard/history"
               component={DashboardHistory}
             />
-            <Route
-              exact
-              path="/dashboard/kanban"
-              component={DashboardKanban}
-            />
+            <Route exact path="/dashboard/kanban" component={DashboardKanban} />
             <Route
               exact
               path="/dashboard/review-home"
@@ -176,10 +173,19 @@ const App = ({ loggedIn }) => {
             <Route exact path="/stockHistory" component={StockHistory} />
 
             <Route exact path="/orders-customers" component={OrdersCustomers} />
-            <Route exact path="/orders-customers/create" component={OrdersCustomersCreate} />
-            <Route exact path="/orders-customers/:id" component={OrdersCustomersDetails} />
+            <Route
+              exact
+              path="/orders-customers/create"
+              component={OrdersCustomersCreate}
+            />
+            <Route
+              exact
+              path="/orders-customers/:id"
+              component={OrdersCustomersDetails}
+            />
             <Route exact path="/orders" component={Orders} />
             <Route exact path="/orders/create" component={CreateOrder} />
+            <Route exact path="/orders/create/:id" component={CreateOrderNew} />
             <Route exact path="/orders/stock" component={OrdersStock} />
             <Route
               exact
@@ -202,7 +208,11 @@ const App = ({ loggedIn }) => {
             <Route exact path="/users/create" component={CreateUser} />
             <Route exact path="/users/roles" component={UserRoles} />
             <Route exact path="/users/screens" component={UserScreens} />
-            <Route exact path="/users/notifications" component={UserNotifications} />
+            <Route
+              exact
+              path="/users/notifications"
+              component={UserNotifications}
+            />
             <Route exact path="/users/:id" component={UpdateUser} />
 
             <Route exact path="/home-quality" component={HomeQuality} />

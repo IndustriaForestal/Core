@@ -89,9 +89,7 @@ const Qualities = props => {
             addTooltip: 'Agregar',
           },
         }}
-        detailPanel={rowData => {
-          return <div>Procesos por calidad</div>
-        }}
+     
         data={qualities}
         editable={editable}
       />

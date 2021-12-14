@@ -76,7 +76,7 @@ const CreateOrder = props => {
     const header = [
       'Madera',
       'Cantidad Requerida',
-      'Cantidad Restante',
+      'Cantidad Pendiente',
       'Secas',
       'Humedas',
       'Reparación',
@@ -109,7 +109,7 @@ const CreateOrder = props => {
             title={`${
               pallets.find(p => parseInt(p.id) === parseInt(pallet.pallet_id))
                 .model
-            } Cantidad: ${pallet.amount} Cantidad Restante: ${
+            } Cantidad: ${pallet.amount} Cantidad Pendiente: ${
               pallet.amount - pallet.amount_stock - pallet.amount_stock_supplier
             }`}
           >

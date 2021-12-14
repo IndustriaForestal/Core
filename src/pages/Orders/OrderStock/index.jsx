@@ -75,7 +75,7 @@ const CreateOrder = props => {
             },
             { title: 'Cantidad', field: 'amount' },
             {
-              title: 'Restante',
+              title: 'Pendiente',
               field: 'amount',
               render: rowData => (
                 <div>

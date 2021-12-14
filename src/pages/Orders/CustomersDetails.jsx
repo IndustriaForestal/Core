@@ -2,28 +2,30 @@ import React, { useEffect } from 'react'
 import { Link, useParams } from 'react-router-dom'
 import { connect } from 'react-redux'
 import { updatePalletsStock, completeOrder } from './actions'
-import { BsPlus } from 'react-icons/bs'
 import { setTitle, getAll, deleted, create } from '../../actions/app'
-import AddButton from '../../components/AddButton/AddButton'
 import Loading from '../../components/Loading/Loading'
 import Button from '../../components/Button/Button'
 import MaterialTable from 'material-table'
 import Swal from 'sweetalert2'
 import './styles.scss'
+import moment from 'moment'
 
 const Orders = props => {
-  const { setTitle, pallets, ordersCustomersDetails } = props
+  const { setTitle, pallets, orders, ordersCustomersDetails } = props
   const { id } = useParams()
   useEffect(() => {
     const topbar = {
       title: 'Pedidos de Clientes',
-      menu: { 'Pedidos de Clientes': '/orders', Calendario: '/calendar' },
+      menu: { 'Pedidos de Clientes': '/orders-customers', Calendario: '/calendar' },
     }
     setTitle(topbar)
     props
       .getAll(`orders/customers/${id}`, 'GET_ORDERS_CUSTOMERS_DETAILS')
       .then(() => {
         props.getAll('pallets', 'GET_PALLETS')
+      })
+      .then(() => {
+        props.getAll('orders', 'GET_ORDERS')
       })
 
     // eslint-disable-next-line
@@ -50,6 +52,17 @@ const Orders = props => {
   if (ordersCustomersDetails && pallets) {
     const lookupPallets = {}
     pallets.map(m => (lookupPallets[m.id] = m.model))
+
+    const data = ordersCustomersDetails.map(o => {
+
+      // const delivered = orders.filter(x => parseInt(x.order_id) === parseInt(o.id) && x.state !== 'Enviado').map(y => y)
+
+      return {
+        ...o,
+        delivery: moment(o.delivery).format('DD-MM-YYYY HH:mm:SS'),
+      }
+    })
+
     return (
       <>
         <MaterialTable
@@ -58,13 +71,15 @@ const Orders = props => {
             { title: 'Tarima', field: 'pallet_id', lookup: lookupPallets },
             { title: 'Cantidad', field: 'amount' },
             { title: 'Solicitadas', field: 'ready' },
+            { title: 'Entregadas', field: 'ready' },
+            { title: 'Fecha Limite', field: 'delivery' },
             {
               title: 'Acciones',
               field: 'state',
               render: rowData =>
                 rowData.state !== 'Cancelada' ? (
                   <>
-                    <Link to={`/orders/create`}>
+                    <Link to={`/orders/create/${id}`}>
                       <Button className="btn --success">Embarque</Button>{' '}
                     </Link>
                   </>
@@ -102,7 +117,7 @@ const Orders = props => {
               addTooltip: 'Agregar',
             },
           }}
-          data={ordersCustomersDetails}
+          data={data}
           title="Pedidos"
         />
       </>
@@ -117,6 +132,7 @@ const mapStateToProps = state => {
     ordersCustomers: state.reducerOrders.ordersCustomers,
     ordersCustomersDetails: state.reducerOrders.ordersCustomersDetails,
     pallets: state.reducerPallets.pallets,
+    orders: state.reducerOrders.orders,
     user: state.reducerApp.user,
   }
 }
