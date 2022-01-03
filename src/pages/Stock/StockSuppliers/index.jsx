@@ -10,6 +10,8 @@ import {
   createFile,
 } from '../../../actions/app'
 import { inToCm } from '../../../utils'
+import moment from 'moment'
+import MaterialTable from 'material-table'
 import Card from '../../../components/Card/Card'
 import Input from '../../../components/Input/Input'
 import Button from '../../../components/Button/Button'
@@ -34,11 +36,13 @@ const Nails = props => {
     units,
     qualities,
     suppliers,
+    purchaseOrdersSuppliers,
   } = props
   const [type, setType] = useState(0)
   const [plantSelected, setPlant] = useState(null)
   const [zoneSelected, setZone] = useState(null)
-
+  const [orderSupplier, setSupplier] = useState(null)
+  const [orderPurchase, setOrderPurchase] = useState(null)
   const { register, handleSubmit, errors } = useForm()
 
   useEffect(() => {
@@ -95,11 +99,17 @@ const Nails = props => {
       .then(() => {
         props.getAll('qualities', 'GET_QUALITIES')
       })
+      .then(() => {
+        props.getAll(
+          'purchaseOrders/suppliers',
+          'GET_PURCHASE_ORDERS_SUPPLIERS'
+        )
+      })
     // eslint-disable-next-line
   }, [])
 
   const handleChangeStock = e => {
-    setType(parseInt(e.target.value))
+    setType(parseInt(e))
   }
 
   if (
@@ -117,7 +127,8 @@ const Nails = props => {
     stockZoneComplements &&
     complements &&
     suppliers &&
-    qualities
+    qualities &&
+    purchaseOrdersSuppliers
   ) {
     const palletsOptions = pallets.map(pallet => {
       return {
@@ -145,6 +156,9 @@ const Nails = props => {
     })
 
     const onSubmit = data => {
+      orderPurchase !== null
+        ? (data.orderPurchase = orderPurchase)
+        : (orderPurchase = null)
       props
         .createFile(`stock/supplier/pallets/${1}`, 'PALLET_HISTORY', data)
         .then(() => {
@@ -152,13 +166,82 @@ const Nails = props => {
         })
     }
 
+    const handleOrderSupplier = id => {
+      const order = purchaseOrdersSuppliers.find(item => item.id === id)
+      handleChangeStock(
+        order.pallet_id !== null ? 1 : order.item_id !== null ? 3 : 5
+      )
+      setOrderPurchase(order.id)
+      setSupplier(order.supplier_id)
+    }
+
+    const dataTableOrder = purchaseOrdersSuppliers.map(order => {
+      return {
+        ...order,
+        delivery: moment(order.delivery).format('DD/MM/YYYY HH:mm'),
+        amount:
+          order.pallet_id !== null
+            ? `${order.amount} pzas`
+            : order.item_id !== null
+            ? `${order.amount} pzas`
+            : `${order.amount} pies tabla`,
+        product:
+          order.pallet_id !== null
+            ? order.model
+            : order.item_id !== null
+            ? `${order.length} x ${order.width} x ${order.height}`
+            : 'Trozo',
+      }
+    })
+
     return (
       <>
+        <MaterialTable
+          columns={[
+            { title: 'Orden de compra #', field: 'id' },
+            { title: 'Proveedor', field: 'name' },
+            { title: 'Producto', field: 'product' },
+            { title: 'Cantidad', field: 'amount' },
+            { title: 'Fecha', field: 'delivery' },
+            {
+              title: 'Acciones',
+              field: 'amount',
+              render: rowData => (
+                <Button onClick={() => handleOrderSupplier(rowData.id)}>
+                  Seleccionar
+                </Button>
+              ),
+            },
+          ]}
+          localization={{
+            pagination: {
+              labelDisplayedRows: '{from}-{to} de {count}',
+              labelRowsSelect: 'Filas',
+              firstAriaLabel: 'Primera',
+              firstTooltip: 'Primera',
+              previousAriaLabel: 'Anterior',
+              previousTooltip: 'Anterior',
+              nextAriaLabel: 'Siguiente',
+              nextTooltip: 'Siguiente',
+              lastAriaLabel: 'Ultimo',
+              lastTooltip: 'Ultimo',
+            },
+            toolbar: {
+              searchTooltip: 'Buscar',
+              searchPlaceholder: 'Buscar',
+            },
+          }}
+          data={dataTableOrder}
+          title="Ordenes de compra"
+        />
         <Card title="Entrada Proveedor">
           <div className="inputGroup">
             <label htmlFor="processId">
               <span>Inventario:</span>
-              <select onChange={e => handleChangeStock(e)} name="processId">
+              <select
+                onChange={e => handleChangeStock(e.target.value)}
+                name="processId"
+              >
                 <option value="0">Seleccionar</option>
                 <option value="1">Tarima</option>
                 <option value="2">Complementos</option>
@@ -177,9 +260,15 @@ const Nails = props => {
                   <span>Proveedor:</span>
                   <select name="supplierId" ref={register}>
                     <option value="0">Seleccionar</option>
-                    {suppliers.map(supplier => (
-                      <option value={supplier.id}>{supplier.name}</option>
-                    ))}
+                    {suppliers.map(supplier =>
+                      parseInt(orderSupplier) === parseInt(supplier.id) ? (
+                        <option selected value={supplier.id}>
+                          {supplier.name}
+                        </option>
+                      ) : (
+                        <option value={supplier.id}>{supplier.name}</option>
+                      )
+                    )}
                   </select>
                 </label>
               </div>
@@ -301,11 +390,18 @@ const Nails = props => {
               <div className="inputGroup">
                 <label htmlFor="supplierId">
                   <span>Proveedor:</span>
+
                   <select name="supplierId" ref={register}>
                     <option value="0">Seleccionar</option>
-                    {suppliers.map(supplier => (
-                      <option value={supplier.id}>{supplier.name}</option>
-                    ))}
+                    {suppliers.map(supplier =>
+                      parseInt(orderSupplier) === parseInt(supplier.id) ? (
+                        <option selected value={supplier.id}>
+                          {supplier.name}
+                        </option>
+                      ) : (
+                        <option value={supplier.id}>{supplier.name}</option>
+                      )
+                    )}
                   </select>
                 </label>
               </div>
@@ -342,9 +438,15 @@ const Nails = props => {
                   <span>Proveedor:</span>
                   <select name="supplierId" ref={register}>
                     <option value="0">Seleccionar</option>
-                    {suppliers.map(supplier => (
-                      <option value={supplier.id}>{supplier.name}</option>
-                    ))}
+                    {suppliers.map(supplier =>
+                      parseInt(orderSupplier) === parseInt(supplier.id) ? (
+                        <option selected value={supplier.id}>
+                          {supplier.name}
+                        </option>
+                      ) : (
+                        <option value={supplier.id}>{supplier.name}</option>
+                      )
+                    )}
                   </select>
                 </label>
               </div>
@@ -468,9 +570,15 @@ const Nails = props => {
                   <span>Proveedor:</span>
                   <select name="supplierId" ref={register}>
                     <option value="0">Seleccionar</option>
-                    {suppliers.map(supplier => (
-                      <option value={supplier.id}>{supplier.name}</option>
-                    ))}
+                    {suppliers.map(supplier =>
+                      parseInt(orderSupplier) === parseInt(supplier.id) ? (
+                        <option selected value={supplier.id}>
+                          {supplier.name}
+                        </option>
+                      ) : (
+                        <option value={supplier.id}>{supplier.name}</option>
+                      )
+                    )}
                   </select>
                 </label>
               </div>
@@ -615,9 +723,15 @@ const Nails = props => {
                   <span>Proveedor:</span>
                   <select name="supplierId" ref={register}>
                     <option value="0">Seleccionar</option>
-                    {suppliers.map(supplier => (
-                      <option value={supplier.id}>{supplier.name}</option>
-                    ))}
+                    {suppliers.map(supplier =>
+                      parseInt(orderSupplier) === parseInt(supplier.id) ? (
+                        <option selected value={supplier.id}>
+                          {supplier.name}
+                        </option>
+                      ) : (
+                        <option value={supplier.id}>{supplier.name}</option>
+                      )
+                    )}
                   </select>
                 </label>
               </div>
@@ -757,6 +871,7 @@ const Nails = props => {
                 name="type_product"
                 ref={register}
               />
+
               <Button type="submit">Guardar</Button>
             </Card>
           </form>
@@ -787,6 +902,8 @@ const mapStateToProps = state => {
     units: state.reducerApp.units,
     user: state.reducerApp.user,
     qualities: state.reducerQualities.qualities,
+    purchaseOrdersSuppliers:
+      state.reducerPurchaseOrders.purchaseOrdersSuppliers,
   }
 }
 

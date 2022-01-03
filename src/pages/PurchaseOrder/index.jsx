@@ -1,14 +1,33 @@
-import React, { useEffect } from 'react'
+import React, { useEffect, useState } from 'react'
 import { connect } from 'react-redux'
+import moment from 'moment'
 import { setTitle, getAll, deleted, create, update } from '../../actions/app'
 import Loading from '../../components/Loading/Loading'
 import './styles.scss'
 import MaterialTable from 'material-table'
 import Button from '../../components/Button/Button'
 
+import { DateTimePicker, MuiPickersUtilsProvider } from '@material-ui/pickers'
+// pick a date util library
+import MomentUtils from '@date-io/moment'
+import { createMuiTheme, ThemeProvider } from '@material-ui/core/styles'
+import 'moment/locale/es'
+
 const Processes = props => {
-  const { purchaseOrders, user, pallets, items, suppliers } = props
+  const {
+    purchaseOrders,
+    user,
+    pallets,
+    items,
+    suppliers,
+    purchaseOrdersSuppliers,
+  } = props
   const userId = user.id
+  const [order, setOrder] = useState([])
+  const [amount, setAmount] = useState()
+  const [supplier, setSupplier] = useState()
+  const [selectedDate, setDate] = useState(new Date())
+
   useEffect(() => {
     const topbar = {
       title: 'Ordenes de compra',
@@ -28,42 +47,106 @@ const Processes = props => {
       .then(() => {
         props.getAll('suppliers', 'GET_SUPPLIERS')
       })
-
+      .then(() => {
+        props.getAll(
+          'purchaseOrders/suppliers',
+          'GET_PURCHASE_ORDERS_SUPPLIERS'
+        )
+      })
     // eslint-disable-next-line
   }, [])
 
-  if (purchaseOrders && pallets && items && suppliers) {
-    const data = purchaseOrders.map(po => {
-      const item = items.find(p => p.id === po.item_id)
+  useEffect(() => {
+    if (purchaseOrdersSuppliers) {
+      setOrder(purchaseOrdersSuppliers)
+    }
+    // eslint-disable-next-line
+  }, [purchaseOrdersSuppliers])
 
-      return {
-        ...po,
-        product:
-          po.pallet_id !== null
-            ? `Tarima: ${pallets.find(p => p.id === po.pallet_id).model}`
-            : po.item_id !== null && item !== undefined
-            ? `Madera Habilitada: ${item.length} x ${item.width} x ${item.height}`
-            : 'Trozo',
-      }
+  const theme = createMuiTheme({
+    palette: {
+      primary: { main: '#40b5ed' },
+      secondary: { main: '#949494' },
+    },
+  })
+
+  const handleSaveSupplier = id => {
+    setOrder([
+      ...order,
+      { order_id: id, supplier_id: supplier, amount, date: selectedDate },
+    ])
+  }
+
+  const handleDeleteOrder = (id, supplier_id) => {
+    setOrder(
+      order.filter(
+        item => !(item.order_id === id && item.supplier_id === supplier_id)
+      )
+    )
+  }
+
+  const handleSave = id => {
+    const data = order.filter(
+      item => item.order_id === id && item.id === undefined
+    )
+    props.create('purchaseOrders', 'CREATE_PURCHASE_ORDER', data)
+  }
+
+  const handleDeleteBD = id => {
+    props.deleted(`purchaseOrders/${id}`, 'DELETE_PURCHASE_ORDER').then(() => {
+      props.getAll('purchaseOrders/suppliers', 'GET_PURCHASE_ORDERS_SUPPLIERS')
     })
+  }
+
+  if (
+    purchaseOrders &&
+    pallets &&
+    items &&
+    suppliers &&
+    purchaseOrdersSuppliers
+  ) {
+    const data = purchaseOrders
+      .filter(po => po.amount > 0)
+      .map(po => {
+        const item = items.find(p => p.id === po.item_id)
+        return {
+          ...po,
+          delivery: moment(po.delivery).format('DD/MM/YYYY HH:mm:ss'),
+          product:
+            po.pallet_id !== null
+              ? `Tarima: ${pallets.find(p => p.id === po.pallet_id).model}`
+              : po.item_id !== null && item !== undefined
+              ? `Madera Habilitada: ${item.length} x ${item.width} x ${item.height}`
+              : 'Trozo',
+        }
+      })
 
     return (
       <MaterialTable
         title="Orden de compra a proveedores"
         columns={[
-          { title: 'Orden de Embarque', field: 'order_id' },
+          {
+            title: 'Orden de Embarque',
+            field: 'order_id',
+          },
           { title: 'Compra', field: 'product' },
-          { title: 'Cantidad necesaria', field: 'amount' },
+          { title: 'Fecha limite', field: 'delivery' },
+          {
+            title: 'Cantidad necesaria',
+            field: 'amount',
+          },
           {
             title: 'Cantidad comprada',
             field: 'amount',
-            render: rowData => <input type="number" />,
+            render: rowData => (
+              <input type="number" onChange={e => setAmount(e.target.value)} />
+            ),
           },
           {
             title: 'Proveedor',
             field: 'amount',
             render: rowData => (
-              <select name="filter">
+              <select name="filter" onChange={e => setSupplier(e.target.value)}>
                 <option value="0">Seleccionar</option>
                 {suppliers.map(s => (
                   <option key={s.id} value={s.id}>
@@ -74,9 +157,30 @@ const Processes = props => {
             ),
           },
           {
+            title: 'Fecha estimada de entrega',
+            field: 'amount',
+            render: rowData => (
+              <ThemeProvider theme={theme}>
+                <MuiPickersUtilsProvider utils={MomentUtils} locale={'es'}>
+                  <DateTimePicker
+                    okLabel="Guardar"
+                    clearLabel="Limpiar"
+                    cancelLabel="Cancelar"
+                    value={selectedDate}
+                    onChange={setDate}
+                  />
+                </MuiPickersUtilsProvider>
+              </ThemeProvider>
+            ),
+          },
+          {
             title: 'Acciones',
             field: 'amount',
-            render: rowData => <Button>Agregar</Button>,
+            render: rowData => (
+              <Button onClick={() => handleSaveSupplier(rowData.order_id)}>
+                Agregar
+              </Button>
+            ),
           },
         ]}
         localization={{
@@ -123,19 +227,65 @@ const Processes = props => {
               >
                 <thead>
                   <tr>
-                    <th>Proceso</th>
-                    <th>Materiales</th>
-                    <th>Inicio</th>
+                    <th>Cantidad</th>
+                    <th>Proveedor</th>
+                    <th>Fecha estimada de entrega</th>
+                    <th>Acciones</th>
                   </tr>
                 </thead>
                 <tbody>
-                  {rowData.dataSuppliers.filter(d => d.id === rowData.id).map((d) => (
-                    <tr key={d.id}>
-                      <td>{process.process_name}</td>
-                      <td>{process.material_in}</td>
-                      <td>{process.time}</td>
-                    </tr>
-                  ))}
+                  {order
+                    .filter(d => d.order_id === rowData.order_id)
+                    .map((d, i) => (
+                      <tr key={i}>
+                        <td>{d.amount}</td>
+                        <td>
+                          {suppliers.find(
+                            supplier =>
+                              parseInt(supplier.id) === parseInt(d.supplier_id)
+                          ) !== undefined
+                            ? suppliers.find(
+                                supplier =>
+                                  parseInt(supplier.id) ===
+                                  parseInt(d.supplier_id)
+                              ).name
+                            : 'Proveedor eliminado'}
+                        </td>
+                        <td>
+                          {d.delivery !== undefined
+                            ? moment(d.delivery).format('YYYY-MM-DD HH:mm:ss')
+                            : moment(d.date).format('YYYY-MM-DD HH:mm:ss')}
+                        </td>
+                        <td>
+                          {console.log(d.id)}
+                          {d.id !== undefined ? null : (
+                            <Button
+                              className="btn --success"
+                              onClick={() => handleSave(d.order_id)}
+                            >
+                              Guardar
+                            </Button>
+                          )}
+                          {d.id !== undefined ? (
+                            <Button
+                              className="btn --danger"
+                              onClick={() => handleDeleteBD(d.id)}
+                            >
+                              X
+                            </Button>
+                          ) : (
+                            <Button
+                              className="btn --danger"
+                              onClick={() =>
+                                handleDeleteOrder(d.order_id, d.supplier_id)
+                              }
+                            >
+                              X
+                            </Button>
+                          )}
+                        </td>
+                      </tr>
+                    ))}
                 </tbody>
               </table>
             </>
@@ -155,6 +305,8 @@ const mapStateToProps = state => {
     pallets: state.reducerPallets.pallets,
     user: state.reducerApp.user,
     suppliers: state.reducerSuppliers.suppliers,
+    purchaseOrdersSuppliers:
+      state.reducerPurchaseOrders.purchaseOrdersSuppliers,
   }
 }
 

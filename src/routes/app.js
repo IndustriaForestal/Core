@@ -69,6 +69,7 @@ import Dashboard from '../pages/Dashboard'
 import DashboardProcess from '../pages/Dashboard/Process'
 import DashboardStock from '../pages/Dashboard/Stock'
 import DashboardStockDetaills from '../pages/Dashboard/StockDetaills'
+import DashboardStockReview from '../pages/Dashboard/StockReview'
 import DashboardReject from '../pages/Dashboard/Reject'
 import DashboardReview from '../pages/Dashboard/Review'
 import DashboardHistory from '../pages/Dashboard/History'
@@ -103,6 +104,11 @@ const App = ({ loggedIn }) => {
               component={DashboardReview}
             />
             <Route exact path="/dashboard/stock" component={DashboardStock} />
+            <Route
+              exact
+              path="/dashboard/stock-review/:id"
+              component={DashboardStockReview}
+            />
             <Route
               exact
               path="/dashboard/stock/:id"

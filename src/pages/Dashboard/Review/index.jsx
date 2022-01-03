@@ -27,11 +27,17 @@ const Review = props => {
     processesReject,
   } = props
   const { register, handleSubmit } = useForm()
+
   const onSubmit = data => {
-    props.create('orders/history', 'CREATE_HISTORY', data).then(() => {
+     props.create('orders/history', 'CREATE_HISTORY', data).then(() => {
       props.history.goBack()
     })
+
+    // if (next === true) {
+    //   console.log(data)
+    // }
   }
+
   const { id } = useParams()
   const [next, setNext] = useState(false)
 
@@ -354,6 +360,12 @@ const Review = props => {
                     : 'pallet'
                 }
                 name="type"
+                ref={register}
+              />
+              <input
+                type="hidden"
+                value={process.id === 36 ? true : false}
+                name="trozo"
                 ref={register}
               />
               <input
