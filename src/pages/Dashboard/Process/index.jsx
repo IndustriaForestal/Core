@@ -114,7 +114,6 @@ const Dashbaord = props => {
           )
         : ordersProduction
 
-    console.log(ordersWorkstations)
 
     return (
       <div className="dashboard">
@@ -185,7 +184,7 @@ const Dashbaord = props => {
                             parseInt(order.order_number) + 1
                         )
 
-                        item !== undefined && parseInt(item.ready) > 3
+                        item !== undefined && parseInt(item.ready) > 2
                           ? (validation = true)
                           : (validation = false)
                       }
