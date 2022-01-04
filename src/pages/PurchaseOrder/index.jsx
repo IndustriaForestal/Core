@@ -106,7 +106,19 @@ const Processes = props => {
     purchaseOrdersSuppliers
   ) {
     const data = purchaseOrders
-      .filter(po => po.amount > 0)
+      .filter(po => {
+        let validation
+        let initialValue = 0
+        const orders = purchaseOrdersSuppliers
+          .filter(item => item.order_id === po.id && item.ready === 1)
+          .reduce((count, i) => count + parseInt(i.amount), initialValue)
+
+        orders >= parseInt(po.amount)
+          ? (validation = false)
+          : (validation = true)
+
+        return po.amount > 0 && validation
+      })
       .map(po => {
         const item = items.find(p => p.id === po.item_id)
         return {
@@ -257,7 +269,6 @@ const Processes = props => {
                             : moment(d.date).format('YYYY-MM-DD HH:mm:ss')}
                         </td>
                         <td>
-                          {console.log(d.id)}
                           {d.id !== undefined ? null : (
                             <Button
                               className="btn --success"

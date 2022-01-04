@@ -175,7 +175,7 @@ const Nails = props => {
       setSupplier(order.supplier_id)
     }
 
-    const dataTableOrder = purchaseOrdersSuppliers.map(order => {
+    const dataTableOrder = purchaseOrdersSuppliers.filter(order => order.ready === 0).map(order => {
       return {
         ...order,
         delivery: moment(order.delivery).format('DD/MM/YYYY HH:mm'),
