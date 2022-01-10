@@ -28,16 +28,6 @@ const Review = props => {
   } = props
   const { register, handleSubmit } = useForm()
 
-  const onSubmit = data => {
-     props.create('orders/history', 'CREATE_HISTORY', data).then(() => {
-      props.history.goBack()
-    })
-
-    // if (next === true) {
-    //   console.log(data)
-    // }
-  }
-
   const { id } = useParams()
   const [next, setNext] = useState(false)
 
@@ -71,6 +61,12 @@ const Review = props => {
       })
   }, [])
 
+  const onSubmit = data => {
+    props.create('orders/history', 'CREATE_HISTORY', data).then(() => {
+      props.history.goBack()
+    })
+  }
+
   if (
     processes &&
     ordersProduction &&
@@ -94,8 +90,6 @@ const Review = props => {
           amount: requeriment.amount,
         }
       })
-
-    console.log(order)
 
     const process =
       processes.find(process => process.id === order.process_id) || {}

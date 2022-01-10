@@ -60,13 +60,31 @@
     align-items: center;
     box-shadow: var(--boxShadow);
   }
+  &__add {
+    position: absolute;
+    z-index: 2;
+    right: 0;
+    height: 20px;
+    width: 20px;
+    color: var(--white);
+    background-color: var(--success);
+    border-radius: 50%;
+    display: flex;
+    justify-content: center;
+    align-items: center;
+    box-shadow: var(--boxShadow);
+    cursor: pointer;
+    &:hover {
+      box-shadow: var(--boxShadowHover);
+    }
+  }
   &__colors {
     position: absolute;
     background-color: var(--white);
     top: 50%;
     right: 0;
     transform: translate(100%, -50%);
-    transition: all .3s ease-in;
+    transition: all 0.3s ease-in;
     ul {
       list-style: none;
       padding: 15px;

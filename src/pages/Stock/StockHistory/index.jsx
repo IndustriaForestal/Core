@@ -1,5 +1,6 @@
 import React, { useEffect } from 'react'
 import { connect } from 'react-redux'
+import { cmToFbm, cmToIn } from '../../../utils'
 import { setTitle, getAll, deleted } from '../../../actions/app'
 import Loading from '../../../components/Loading/Loading'
 import moment from 'moment'
@@ -14,6 +15,7 @@ const StockHistory = props => {
     stockHistoryNails,
     stockHistorySawn,
     stockHistoryRaws,
+    units,
   } = props
 
   useEffect(() => {
@@ -93,7 +95,11 @@ const StockHistory = props => {
       stockHistoryTotal.push({
         id: sh.id,
         zone: 'Madera Habilitada',
-        name: `${sh.height} x ${sh.width} x ${sh.length} - ${sh.wood_name}`,
+        name: units
+          ? `${cmToIn(sh.height).toFixed(3)} x ${cmToIn(sh.width).toFixed(
+              3
+            )} x ${cmToIn(sh.length).toFixed(3)} - ${sh.wood_name}`
+          : `${sh.height} x ${sh.width} x ${sh.length} - ${sh.wood_name}`,
         amount: sh.amount,
         zone_id: sh.zone_id,
         user_id: sh.user_id,
@@ -133,7 +139,11 @@ const StockHistory = props => {
       stockHistoryTotal.push({
         id: sh.id,
         zone: 'Materia Aserrada',
-        name: `${sh.height} x ${sh.width} x ${sh.length} - ${sh.wood_name}`,
+        name: units
+          ? `${cmToIn(sh.height).toFixed(3)} x ${cmToIn(sh.width).toFixed(
+              3
+            )} x ${cmToIn(sh.length).toFixed(3)} - ${sh.wood_name}`
+          : `${sh.height} x ${sh.width} x ${sh.length} - ${sh.wood_name}`,
         amount: sh.amount,
         zone_id: sh.zone_id,
         user_id: sh.user_id,
@@ -154,7 +164,7 @@ const StockHistory = props => {
         id: sh.id,
         zone: 'Materia Prima',
         name: sh.id,
-        amount: sh.amount,
+        amount: units ? cmToFbm(sh.amount).toFixed(3) : sh.amount,
         zone_id: sh.zone_id,
         user_id: sh.user_id,
         status:
@@ -222,6 +232,7 @@ const mapStateToProps = state => {
     stockHistorySawn: state.reducerStock.stockHistorySawn,
     stockHistoryRaws: state.reducerStock.stockHistoryRaws,
     stockHistoryNails: state.reducerStock.stockHistoryNails,
+    units: state.reducerApp.units,
   }
 }
 

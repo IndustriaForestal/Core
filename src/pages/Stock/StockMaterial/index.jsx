@@ -1,11 +1,11 @@
 import React, { useEffect } from 'react'
-
+import { cmToFbm } from '../../../utils'
 import { connect } from 'react-redux'
 import { setTitle, getAll, deleted, cleanStock } from '../../../actions/app'
 import MaterialTable from 'material-table'
 
 const StockSwan = props => {
-  const { stock, setTitle } = props
+  const { stock, setTitle, units } = props
 
   useEffect(() => {
     const topbar = {
@@ -27,6 +27,21 @@ const StockSwan = props => {
   }, [])
 
   if (stock) {
+    const data = stock
+      .filter(s => s.m3 > 0)
+      .map(item => {
+        if (units) {
+          return {
+            ...item,
+            m3: `${cmToFbm(item.m3).toFixed(3)} fbm`,
+          }
+        } else {
+          return {
+            ...item,
+            m3: `${item.m3.toFixed(3)} cm3`,
+          }
+        }
+      })
 
     return (
       <>
@@ -55,7 +70,7 @@ const StockSwan = props => {
               searchPlaceholder: 'Buscar',
             },
           }}
-          data={stock.filter(s => s.m3 > 0)}
+          data={data}
           title="Materia Prima"
         />
       </>
@@ -69,6 +84,7 @@ const mapStateToProps = state => {
   return {
     stock: state.reducerStock.stock,
     role: state.reducerApp.role,
+    units: state.reducerApp.units,
   }
 }
 

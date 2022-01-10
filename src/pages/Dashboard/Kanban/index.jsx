@@ -1,5 +1,6 @@
-import React, { useEffect, useState } from 'react'
+import React, { useEffect, useState, useMemo } from 'react'
 import { connect } from 'react-redux'
+import { useLocation } from 'react-router-dom'
 import {
   setTitle,
   setWraper,
@@ -26,6 +27,14 @@ const Dashbaord = props => {
   } = props
   const role = user.role
   const [orderSelected, setOrderSelected] = useState(0)
+
+  function useQuery() {
+    const { search } = useLocation()
+
+    return useMemo(() => new URLSearchParams(search), [search])
+  }
+
+  let query = useQuery()
 
   useEffect(() => {
     const topbar = {
@@ -60,6 +69,10 @@ const Dashbaord = props => {
       .then(() => {
         props.getAll('qualities', 'GET_QUALITIES')
       })
+
+    if (query.get('id') !== null) {
+      setOrderSelected(parseInt(query.get('id')))
+    }
   }, [])
 
   if (

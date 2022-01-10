@@ -216,20 +216,17 @@ const CreateOrder = props => {
           ) {
             initialDate = initialDate.hour(end).minute(0)
           }
-        
         } else {
           const tempDate = moment(initialDate).subtract(hours, 'hours')
           const startDate = moment(tempDate).hour(start).minute(0).second(0)
           const endDate = moment(tempDate).hour(end).minute(0).second(0)
-          
+
           if (
             moment(tempDate).isSameOrAfter(startDate) &&
             moment(tempDate).isSameOrBefore(endDate)
           ) {
-    
             initialDate = initialDate.subtract(hours, 'hours')
           } else {
-          
             let hoursLeft = initialDate.diff(startDate, 'hours')
             let hoursNextDay = hours - hoursLeft
 
@@ -240,7 +237,6 @@ const CreateOrder = props => {
 
               hoursNextDay = 0
             }
-           
           }
         }
 
@@ -248,6 +244,7 @@ const CreateOrder = props => {
 
         return {
           ...process,
+          amount: pallet.amount,
           time: initialDate.format('YYYY-MM-DD HH:mm:ss'),
           onTime,
         }

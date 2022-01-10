@@ -94,21 +94,23 @@ const Orders = props => {
                   alignItems: 'center',
                 }}
               >
-                {orders.filter(
-                  o => parseInt(o.order_id) === parseInt(rowData.id)
-                ).length > 0 ? (
-                  orders
-                    .filter(o => parseInt(o.order_id) === parseInt(rowData.id))
-                    .map(o => (
-                      <table>
-                        <thead>
-                          <tr>
-                            <th># Embarque</th>
-                            <th>Estado Actual</th>
-                            <th>Accion</th>
-                          </tr>
-                        </thead>
-                        <tbody>
+                <table>
+                  <thead>
+                    <tr>
+                      <th># Embarque</th>
+                      <th>Estado Actual</th>
+                      <th>Accion</th>
+                    </tr>
+                  </thead>
+                  <tbody>
+                    {orders.filter(
+                      o => parseInt(o.order_id) === parseInt(rowData.id)
+                    ).length > 0 ? (
+                      orders
+                        .filter(
+                          o => parseInt(o.order_id) === parseInt(rowData.id)
+                        )
+                        .map(o => (
                           <tr>
                             <td>{o.id}</td>
                             <td>{o.state}</td>
@@ -121,14 +123,14 @@ const Orders = props => {
                               </Button>
                             </td>
                           </tr>
-                        </tbody>
-                      </table>
-                    ))
-                ) : (
-                  <div>
-                    <h3>Sin Embarques Programados</h3>
-                  </div>
-                )}
+                        ))
+                    ) : (
+                      <div>
+                        <h3>Sin Embarques Programados</h3>
+                      </div>
+                    )}
+                  </tbody>
+                </table>
               </div>
             )
           }}

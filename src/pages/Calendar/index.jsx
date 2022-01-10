@@ -47,7 +47,7 @@ const CalendarOrders = props => {
   }
 
   const handleClickEvent = e => {
-    props.history.push(`/orders/shipments/${e}`)
+    props.history.push(`/dashboard/kanban?id=${e}`)
   }
 
   if (orders && customers) {
@@ -87,6 +87,10 @@ const CalendarOrders = props => {
       days.push(moment().add(i, 'days').format('YYYY-MM-DD'))
     }
 
+    const handleAdd = () => {
+      console.log(newCalendar)
+    }
+
     return (
       <>
         <div
@@ -108,10 +112,20 @@ const CalendarOrders = props => {
             return (
               <div kye={index} className="calendarPro__column">
                 <div className="calendarPro__head">{row.name}</div>
-                {row.orders.map((order, index) => {
+                {row.orders.map((order, i) => {
                   if (order.length > 0) {
                     return (
-                      <div key={index} className="calendarPro__day">
+                      <div
+                        key={i}
+                        className="calendarPro__day"
+                        onClick={() => console.log(order)}
+                      >
+                        <span
+                          className="calendarPro__add"
+                          onClick={() => handleAdd()}
+                        >
+                          +
+                        </span>
                         <span className="calendarPro__counter">
                           {order.length}
                         </span>
@@ -127,7 +141,16 @@ const CalendarOrders = props => {
                       </div>
                     )
                   } else {
-                    return <div key={index} className="calendarPro__day"></div>
+                    return (
+                      <div key={i} className="calendarPro__day">
+                        <span
+                          className="calendarPro__add"
+                          onClick={() => handleAdd()}
+                        >
+                          +
+                        </span>
+                      </div>
+                    )
                   }
                 })}
               </div>
@@ -140,11 +163,12 @@ const CalendarOrders = props => {
         >
           <ul>
             <li>
-              <span style={{ backgroundColor: 'var(--naranja)' }}></span> En proceso de fabricación
+              <span style={{ backgroundColor: 'var(--naranja)' }}></span> En
+              proceso de fabricación
             </li>
             <li>
-              <span style={{ backgroundColor: 'var(--danger)' }}></span>{' '}
-              Re programación externa o <br /> cancelación por parte del cliente 
+              <span style={{ backgroundColor: 'var(--danger)' }}></span> Re
+              programación externa o <br /> cancelación por parte del cliente
             </li>
             <li>
               <span style={{ backgroundColor: 'var(--success)' }}></span>{' '}
@@ -155,13 +179,16 @@ const CalendarOrders = props => {
               Reprogramación interna
             </li>
             <li>
-              <span style={{ backgroundColor: 'var(--white)' }}></span> Termino (Finalizado)
+              <span style={{ backgroundColor: 'var(--white)' }}></span> Termino
+              (Finalizado)
             </li>
             <li>
-              <span style={{ backgroundColor: 'var(--rosa)' }}></span> Aprobación de dirección <br /> pendiente 
+              <span style={{ backgroundColor: 'var(--rosa)' }}></span>{' '}
+              Aprobación de dirección <br /> pendiente
             </li>
             <li>
-              <span style={{ backgroundColor: 'var(--warning)' }}></span> Confirmados pendientes <br /> por producir
+              <span style={{ backgroundColor: 'var(--warning)' }}></span>{' '}
+              Confirmados pendientes <br /> por producir
             </li>
             {/* 
             Verde: enviado 
