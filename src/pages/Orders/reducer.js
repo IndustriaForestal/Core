@@ -70,6 +70,11 @@ export default function reducer(
         ...state,
         ordersRequeriment: action.payload.data,
       }
+    case 'GET_ORDERS_DETAILS':
+      return {
+        ...state,
+        ordersDetails: action.payload.data,
+      }
     case 'GET_ORDERS_REJECT':
       return {
         ...state,

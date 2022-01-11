@@ -35,6 +35,9 @@
     &.--Enviado {
       background-color: var(--success);
     }
+    &.--Completado {
+      background-color: var(--success);
+    }
     &.--Reprogramacion {
       background-color: var(--primary);
     }

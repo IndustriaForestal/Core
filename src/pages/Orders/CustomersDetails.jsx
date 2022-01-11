@@ -11,12 +11,16 @@ import './styles.scss'
 import moment from 'moment'
 
 const Orders = props => {
-  const { setTitle, pallets, orders, ordersCustomersDetails } = props
+  const { setTitle, pallets, orders, ordersCustomersDetails, ordersDetails } =
+    props
   const { id } = useParams()
   useEffect(() => {
     const topbar = {
       title: 'Pedidos de Clientes',
-      menu: { 'Pedidos de Clientes': '/orders-customers', Calendario: '/calendar' },
+      menu: {
+        'Pedidos de Clientes': '/orders-customers',
+        Calendario: '/calendar',
+      },
     }
     setTitle(topbar)
     props
@@ -26,6 +30,9 @@ const Orders = props => {
       })
       .then(() => {
         props.getAll('orders', 'GET_ORDERS')
+      })
+      .then(() => {
+        props.getAll('orders/details', 'GET_ORDERS_DETAILS')
       })
 
     // eslint-disable-next-line
@@ -49,16 +56,20 @@ const Orders = props => {
     })
   }
 
-  if (ordersCustomersDetails && pallets) {
+  if (ordersCustomersDetails && pallets && ordersDetails) {
     const lookupPallets = {}
     pallets.map(m => (lookupPallets[m.id] = m.model))
 
     const data = ordersCustomersDetails.map(o => {
-
       // const delivered = orders.filter(x => parseInt(x.order_id) === parseInt(o.id) && x.state !== 'Enviado').map(y => y)
+
+      const count = ordersDetails
+        .filter(order => parseInt(order.order_id) === parseInt(id))
+        .reduce((acc, order) => acc + order.amount, 0)
 
       return {
         ...o,
+        count,
         delivery: moment(o.delivery).format('DD-MM-YYYY HH:mm:SS'),
       }
     })
@@ -70,8 +81,8 @@ const Orders = props => {
             { title: 'ID', field: 'id' },
             { title: 'Tarima', field: 'pallet_id', lookup: lookupPallets },
             { title: 'Cantidad', field: 'amount' },
-            { title: 'Solicitadas', field: 'ready' },
-            { title: 'Entregadas', field: 'ready' },
+            { title: 'Solicitadas', field: 'count' },
+            { title: 'Entregadas', field: 'count' },
             { title: 'Fecha Limite', field: 'delivery' },
             {
               title: 'Acciones',
@@ -79,9 +90,13 @@ const Orders = props => {
               render: rowData =>
                 rowData.state !== 'Cancelada' ? (
                   <>
-                    <Link to={`/orders/create/${id}`}>
-                      <Button className="btn --success">Embarque</Button>{' '}
-                    </Link>
+                    {rowData.count < rowData.amount ? (
+                      <Link to={`/orders/create/${id}`}>
+                        <Button className="btn">Embarque</Button>{' '}
+                      </Link>
+                    ) : (
+                      <Button className="btn --success">Completar</Button>
+                    )}
                   </>
                 ) : null,
             },
@@ -131,6 +146,7 @@ const mapStateToProps = state => {
   return {
     ordersCustomers: state.reducerOrders.ordersCustomers,
     ordersCustomersDetails: state.reducerOrders.ordersCustomersDetails,
+    ordersDetails: state.reducerOrders.ordersDetails,
     pallets: state.reducerPallets.pallets,
     orders: state.reducerOrders.orders,
     user: state.reducerApp.user,

@@ -3,7 +3,7 @@ import { Link } from 'react-router-dom'
 import { connect } from 'react-redux'
 import { updatePalletsStock, completeOrder } from './actions'
 import { BsPlus } from 'react-icons/bs'
-import { setTitle, getAll, deleted, create } from '../../actions/app'
+import { setTitle, getAll, deleted, create, update } from '../../actions/app'
 import AddButton from '../../components/AddButton/AddButton'
 import Loading from '../../components/Loading/Loading'
 import Button from '../../components/Button/Button'
@@ -13,7 +13,8 @@ import Swal from 'sweetalert2'
 import './styles.scss'
 
 const Orders = props => {
-  const { setTitle, ordersCustomers, customers, orders } = props
+  const { setTitle, ordersCustomers, customers, orders, ordersProduction } =
+    props
   useEffect(() => {
     const topbar = {
       title: 'Pedidos de Clientes',
@@ -33,6 +34,9 @@ const Orders = props => {
       })
       .then(() => {
         props.getAll('customers', 'GET_CUSTOMERS')
+      })
+      .then(() => {
+        props.getAll('orders/production', 'GET_ORDERS_PRODUCTION')
       })
     // eslint-disable-next-line
   }, [])
@@ -60,7 +64,24 @@ const Orders = props => {
     })
   }
 
-  if (ordersCustomers && customers && orders) {
+  const handleComplete = id => {
+    props
+      .update(`orders/completed/${id}`, 'Completed', { id })
+      .then(() => {
+        props.getAll('pallets', 'GET_PALLETS')
+      })
+      .then(() => {
+        props.getAll('orders', 'GET_ORDERS')
+      })
+      .then(() => {
+        props.getAll('customers', 'GET_CUSTOMERS')
+      })
+      .then(() => {
+        props.getAll('orders/production', 'GET_ORDERS_PRODUCTION')
+      })
+  }
+
+  if (ordersCustomers && customers && orders && ordersProduction) {
     const lookupCustomers = {}
     customers.map(m => (lookupCustomers[m.id] = m.name))
     return (
@@ -115,12 +136,32 @@ const Orders = props => {
                             <td>{o.id}</td>
                             <td>{o.state}</td>
                             <td>
-                              <Button
-                                className="btn --danger"
-                                onClick={() => handleCancel(o.id)}
-                              >
-                                Cancelar
-                              </Button>
+                              {o.state === 'Completado' ? (
+                                'Completado'
+                              ) : ordersProduction
+                                  .filter(p => p.order_id === o.id)
+                                  .find(x => x.order_number === 0) !==
+                                undefined ? (
+                                ordersProduction
+                                  .filter(p => p.order_id === o.id)
+                                  .find(x => x.order_number === 0).ready > 2 ? (
+                                  <Button
+                                    className="btn --success"
+                                    onClick={() => handleComplete(o.id)}
+                                  >
+                                    Completar
+                                  </Button>
+                                ) : (
+                                  <Button
+                                    className="btn --danger"
+                                    onClick={() => handleCancel(o.id)}
+                                  >
+                                    Cancelar
+                                  </Button>
+                                )
+                              ) : (
+                                'Error data'
+                              )}
                             </td>
                           </tr>
                         ))
@@ -190,6 +231,7 @@ const mapStateToProps = state => {
   return {
     ordersCustomers: state.reducerOrders.ordersCustomers,
     customers: state.reducerCustomers.customers,
+    ordersProduction: state.reducerOrders.ordersProduction,
     user: state.reducerApp.user,
     orders: state.reducerOrders.orders,
   }
@@ -200,6 +242,7 @@ const mapDispatchToProps = {
   updatePalletsStock,
   completeOrder,
   getAll,
+  update,
   deleted,
   create,
 }
