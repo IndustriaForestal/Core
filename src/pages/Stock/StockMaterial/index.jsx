@@ -50,7 +50,11 @@ const StockSwan = props => {
             { title: 'id', field: 'id' },
             { title: 'Volumen', field: 'm3' },
             { title: 'Especie', field: 'name' },
-            { title: 'Estado', field: 'state' },
+            {
+              title: 'Estado',
+              field: 'state',
+              lookup: { damp: 'Humedo / Verde', dry: 'Seca' },
+            },
           ]}
           localization={{
             pagination: {

@@ -114,7 +114,6 @@ const Dashbaord = props => {
           )
         : ordersProduction
 
-
     return (
       <div className="dashboard">
         {role === 'Administrador' ? (
@@ -275,7 +274,11 @@ const Dashbaord = props => {
                             : null
                         }`}
                         key={order.id}
-                        onClick={() => handleEnd(order.id)}
+                        onClick={
+                          order.delivered === 1
+                            ? () => handleEnd(order.id)
+                            : null
+                        }
                       >
                         <span>
                           {console.log(order)}
@@ -284,8 +287,9 @@ const Dashbaord = props => {
                             : null}
                         </span>
                         <span>
-                          Origen de madera:{' '}
-                          {order.next === 0 ? 'Proceso Anterior' : 'Inventario'}
+                          {order.delivered === 0
+                            ? 'Esperar entrega de madera'
+                            : null}
                         </span>
                         <span>Pedido# {order.order_id}</span>
                         <span>
@@ -344,7 +348,7 @@ const Dashbaord = props => {
                       <div
                         className={`dashboard__item`}
                         key={order.id}
-                       /*  onClick={() =>
+                        /*  onClick={() =>
                           props.history.push(`/dashboard/processes/${order.id}`)
                         } */
                       >
