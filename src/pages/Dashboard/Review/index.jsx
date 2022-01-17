@@ -29,7 +29,7 @@ const Review = props => {
   const { register, handleSubmit } = useForm()
 
   const { id } = useParams()
-  const [next, setNext] = useState(false)
+  const [next, setNext] = useState(true)
 
   useEffect(() => {
     props.setWraper(true)
@@ -290,7 +290,7 @@ const Review = props => {
                   ))}
               </ul>
             )}
-            <div>
+           {/*  <div>
               <select
                 name="next"
                 ref={register}
@@ -299,7 +299,7 @@ const Review = props => {
                 <option value="0">Siguiente Proceso</option>
                 <option value="1">Inventario</option>
               </select>
-            </div>
+            </div> */}
             {process.id === 36 ? (
               next === true ? (
                 <>

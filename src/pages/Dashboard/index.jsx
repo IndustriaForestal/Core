@@ -38,8 +38,8 @@ const Dashbaord = props => {
       title: 'Dashbaord',
       menu: {
         Dashbaord: '/dashboard',
-        'Dashbaord Inventario': '/dashboard/stock',
-        /*  'Dashbaord Proceso': '/dashboard/processes',
+        /* 'Dashbaord Inventario': '/dashboard/stock',
+         'Dashbaord Proceso': '/dashboard/processes',
         'Dashbaord Rechazo': '/dashboard/reject',
         'Dashbaord Historial': '/dashboard/history', */
       },

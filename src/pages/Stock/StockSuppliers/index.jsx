@@ -158,7 +158,7 @@ const Nails = props => {
     const onSubmit = data => {
       orderPurchase !== null
         ? (data.orderPurchase = orderPurchase)
-        : (orderPurchase = null)
+        : (data.orderPurchase = null)
       props
         .createFile(`stock/supplier/pallets/${1}`, 'PALLET_HISTORY', data)
         .then(() => {
@@ -175,24 +175,26 @@ const Nails = props => {
       setSupplier(order.supplier_id)
     }
 
-    const dataTableOrder = purchaseOrdersSuppliers.filter(order => order.ready === 0).map(order => {
-      return {
-        ...order,
-        delivery: moment(order.delivery).format('DD/MM/YYYY HH:mm'),
-        amount:
-          order.pallet_id !== null
-            ? `${order.amount} pzas`
-            : order.item_id !== null
-            ? `${order.amount} pzas`
-            : `${order.amount} pies tabla`,
-        product:
-          order.pallet_id !== null
-            ? order.model
-            : order.item_id !== null
-            ? `${order.length} x ${order.width} x ${order.height}`
-            : 'Trozo',
-      }
-    })
+    const dataTableOrder = purchaseOrdersSuppliers
+      .filter(order => order.ready === 0)
+      .map(order => {
+        return {
+          ...order,
+          delivery: moment(order.delivery).format('DD/MM/YYYY HH:mm'),
+          amount:
+            order.pallet_id !== null
+              ? `${order.amount} pzas`
+              : order.item_id !== null
+              ? `${order.amount} pzas`
+              : `${order.amount} pies tabla`,
+          product:
+            order.pallet_id !== null
+              ? order.model
+              : order.item_id !== null
+              ? `${order.length} x ${order.width} x ${order.height}`
+              : 'Trozo',
+        }
+      })
 
     return (
       <>
@@ -418,6 +420,63 @@ const Nails = props => {
                   </select>
                 </label>
               </div>
+              <div className="inputGroup">
+                <label htmlFor="processId">
+                  <span>Planta:</span>
+                  <select
+                    name="processId"
+                    onChange={e => setPlant(e.target.value)}
+                  >
+                    <option value="">Seleccionar</option>
+                    {plants.map(plant => (
+                      <option key={plant.id} value={plant.id}>
+                        {plant.name}
+                      </option>
+                    ))}
+                  </select>
+                </label>
+              </div>
+              {plantSelected !== null ? (
+                <div className="inputGroup">
+                  <label htmlFor="processId">
+                    <span>Zona:</span>
+                    <select
+                      name="processId"
+                      onChange={e => setZone(e.target.value)}
+                    >
+                      <option value="">Seleccionar</option>
+                      {zones
+                        .filter(zone => zone.plant_id === plantSelected)
+                        .map(zone => (
+                          <option key={zone.id} value={zone.id}>
+                            {zone.name}
+                          </option>
+                        ))}
+                    </select>
+                  </label>
+                </div>
+              ) : null}
+
+              {zoneSelected !== null ? (
+                <div className="inputGroup">
+                  <label htmlFor="zoneId">
+                    <span>SubZona:</span>
+                    <select name="zoneId" ref={register}>
+                      <option value="">Seleccionar</option>
+                      {subzones
+                        .filter(
+                          subzone =>
+                            parseInt(subzone.zone_id) === parseInt(zoneSelected)
+                        )
+                        .map(subzone => (
+                          <option key={subzone.id} value={subzone.id}>
+                            {subzone.id}
+                          </option>
+                        ))}
+                    </select>
+                  </label>
+                </div>
+              ) : null}
 
               <Input title="Cantidad" name="amount" passRef={register} />
               <input

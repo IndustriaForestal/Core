@@ -4,6 +4,10 @@ import Swal from 'sweetalert2'
 const API_KEY_TOKEN =
   '77a5f9501bfc62140ff0402fdc9bd9cdf60c269fd9c909ee43971b3885a4ac69'
 
+export const logOut = () => ({
+  type: 'LOG_OUT',
+})
+
 axios.interceptors.response.use(
   function (response) {
     return response
@@ -130,10 +134,6 @@ export const setUser = (payload, redirectionUrl) => async dispatch => {
     })
   }
 }
-
-export const logOut = () => ({
-  type: 'LOG_OUT',
-})
 
 //CRUD
 

@@ -37,6 +37,11 @@ const Home = props => {
             text="Dashboard Calidad"
           />
           <IconHome
+            icon={<RiDashboardLine />}
+            url="/dashboard/stock"
+            text="Dashboard Inventario"
+          />
+          <IconHome
             icon={<BsCardImage />}
             url="/dashboard/processes"
             text="Orden de Producción"

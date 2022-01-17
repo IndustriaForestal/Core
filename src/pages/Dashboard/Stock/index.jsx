@@ -165,6 +165,24 @@ const Dashbaord = props => {
                           {moment(order.time).format('DD-MM-YYYY HH:mm')}
                         </span>
                         <span>
+                          Mover de{' '}
+                          {data.find(
+                            o =>
+                              parseInt(o.order_id) ===
+                                parseInt(order.order_id) &&
+                              parseInt(o.order_number) ===
+                                parseInt(order.order_number) + 1
+                          ) !== undefined
+                            ? data.find(
+                                o =>
+                                  parseInt(o.order_id) ===
+                                    parseInt(order.order_id) &&
+                                  parseInt(o.order_number) ===
+                                    parseInt(order.order_number) + 1
+                              ).zone_id
+                            : 'Error ID de Zona'}
+                        </span>
+                        <span>
                           Mover a{' '}
                           {ordersWorkstations.filter(o => o.id === order.id) !==
                           undefined
@@ -183,16 +201,14 @@ const Dashbaord = props => {
             <div className="dashboard__production">
               {data.filter(
                 order =>
-                  parseInt(order.ready) === 3 &&
-                  parseInt(order.next) === 1 &&
-                  parseInt(order.delivered) !== 1
+                  parseInt(order.ready) === 3 && parseInt(order.next) === 1
               ).length > 0
                 ? data
                     .filter(
                       order =>
                         parseInt(order.ready) === 3 &&
                         parseInt(order.next) === 1 &&
-                        parseInt(order.delivered) !== 1
+                        order.zone_id === null
                     )
                     .sort((a, b) => moment(a.time) - moment(b.time))
                     .map(order => (
