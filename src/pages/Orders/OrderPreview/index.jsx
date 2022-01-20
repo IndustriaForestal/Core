@@ -122,6 +122,8 @@ const CreateOrder = props => {
 
       let qualityFull = []
 
+      // *Agregar procesos especiales de pallet y de items a la calidad final
+
       qualityProcesses.map(process => {
         qualityFull.push(process)
         palletProcesses.map(pallet => {
@@ -157,6 +159,8 @@ const CreateOrder = props => {
 
       return qualityFull
     }
+
+    // * Obtiene procesos de los items de un pallet
 
     const getItemsProcess = palletItems => {
       let concatArrays = []
@@ -224,7 +228,7 @@ const CreateOrder = props => {
       return timeSliced
     }
 
-    /* Funcion que crea tiempos estimados de proceso */
+    // * Funcion que crea tiempos estimados de proceso
 
     const getTimeProduction = (qualityFinal, pallet) => {
       let initialDate = moment(pallet.date)
@@ -332,45 +336,14 @@ const CreateOrder = props => {
 
       const timeSliced = timeProduction.slice(0, indexForSlice + 1)
 
+      console.log(search, indexForSlice, timeSliced)
+
       return timeSliced
     }
 
     const lookupPallets = {}
 
     pallets.map(item => (lookupPallets[item.id] = item.model))
-
-    const mapedOrder = order.pallets.map(pallet => {
-      const qualityFinal = getQualityMap(pallet)
-      const timeProduction = getTimeProduction(qualityFinal, pallet)
-      const timeSliced3 = handleSearchAndSlice(timeProduction, pallet)
-      const timeSliced2 = handleSearchAndSlice(timeProduction, {
-        check_stage: 2,
-      })
-      const timeSliced = handleSearchAndSlice(timeProduction, {
-        check_stage: 1,
-      })
-
-      const timeSlicedSupplier3 = handleSearchAndSliceSupplier(
-        timeProduction,
-        pallet
-      )
-      const timeSlicedSupplier2 = handleSearchAndSliceSupplier(timeProduction, {
-        check_stage: 2,
-      })
-      const timeSlicedSupplier = handleSearchAndSliceSupplier(timeProduction, {
-        check_stage: 1,
-      })
-
-      return {
-        ...pallet,
-        timeProduction: timeSliced,
-        timeProduction2: timeSliced2,
-        timeProduction3: timeSliced3,
-        timeProductionSupplier: timeSlicedSupplier,
-        timeProductionSupplier2: timeSlicedSupplier2,
-        timeProductionSupplier3: timeSlicedSupplier3,
-      }
-    })
 
     const countOnTime = (mapedOrder, stage) => {
       if (stage === 1) {
@@ -426,11 +399,7 @@ const CreateOrder = props => {
       }
     }
 
-    const countPallet = countOnTime(mapedOrder, 1)
-    const countItem = countOnTime(mapedOrder, 2)
-    const countRaw = countOnTime(mapedOrder, 3)
-
-    const previewOptions = mapedOrder => {
+    const previewOptions = (mapedOrder, aserrada) => {
       // eslint-disable-next-line
       mapedOrder.map(pallet => {
         if (
@@ -441,6 +410,7 @@ const CreateOrder = props => {
             id: pallet.pallet_id,
             stage: 'stage1',
             check: 1,
+            sawnStage: aserrada,
           })
         }
         if (
@@ -451,6 +421,7 @@ const CreateOrder = props => {
             id: pallet.pallet_id,
             stage: 'stage2',
             check: 1,
+            sawnStage: aserrada,
           })
         }
         if (
@@ -461,6 +432,7 @@ const CreateOrder = props => {
             id: pallet.pallet_id,
             stage: 'stage3',
             check: 1,
+            sawnStage: aserrada,
           })
         }
         if (
@@ -472,6 +444,7 @@ const CreateOrder = props => {
             id: pallet.pallet_id,
             stage: 'stage1_supplier',
             check: 1,
+            sawnStage: aserrada,
           })
         }
         if (
@@ -483,6 +456,7 @@ const CreateOrder = props => {
             id: pallet.pallet_id,
             stage: 'stage2_supplier',
             check: 1,
+            sawnStage: aserrada,
           })
         }
         if (
@@ -494,10 +468,48 @@ const CreateOrder = props => {
             id: pallet.pallet_id,
             stage: 'stage3_supplier',
             check: 1,
+            sawnStage: aserrada,
           })
         }
       })
     }
+
+    const mapedOrder = order.pallets.map(pallet => {
+      const qualityFinal = getQualityMap(pallet) // * Crea la calidad completa con procesos especialies
+      const timeProduction = getTimeProduction(qualityFinal, pallet)
+      const timeSliced3 = handleSearchAndSlice(timeProduction, pallet)
+      const timeSliced2 = handleSearchAndSlice(timeProduction, {
+        check_stage: 2,
+      })
+      const timeSliced = handleSearchAndSlice(timeProduction, {
+        check_stage: 1,
+      })
+
+      const timeSlicedSupplier3 = handleSearchAndSliceSupplier(
+        timeProduction,
+        pallet
+      )
+      const timeSlicedSupplier2 = handleSearchAndSliceSupplier(timeProduction, {
+        check_stage: 2,
+      })
+      const timeSlicedSupplier = handleSearchAndSliceSupplier(timeProduction, {
+        check_stage: 1,
+      })
+
+      return {
+        ...pallet,
+        timeProduction: timeSliced,
+        timeProduction2: timeSliced2,
+        timeProduction3: timeSliced3,
+        timeProductionSupplier: timeSlicedSupplier,
+        timeProductionSupplier2: timeSlicedSupplier2,
+        timeProductionSupplier3: timeSlicedSupplier3,
+      }
+    })
+
+    const countPallet = countOnTime(mapedOrder, 1)
+    const countItem = countOnTime(mapedOrder, 2)
+    const countRaw = countOnTime(mapedOrder, 3)
 
     return (
       <>
@@ -712,7 +724,7 @@ const CreateOrder = props => {
           <Button
             onClick={() => {
               props.history.push('/orders/stock-sawn')
-              previewOptions(mapedOrder)
+              previewOptions(mapedOrder, true)
             }}
           >
             Madera Aserrada

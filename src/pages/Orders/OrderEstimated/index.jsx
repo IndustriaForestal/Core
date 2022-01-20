@@ -279,7 +279,15 @@ const CreateOrder = props => {
 
       const indexForSlice = search.lastIndexOf(stage)
 
-      const timeSliced = timeProduction.slice(0, indexForSlice + 1)
+      let timeSliced
+
+      if (stage === 'Trozo' && pallet.sawnStage === true) {
+        timeSliced = timeProduction.slice(0, indexForSlice)
+      } else {
+        timeSliced = timeProduction.slice(0, indexForSlice + 1)
+      }
+
+      console.log(stage, search, indexForSlice, timeSliced, pallet)
 
       return timeSliced
     }

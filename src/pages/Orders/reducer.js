@@ -5,7 +5,7 @@ export default function reducer(
       date: '2021-10-06T20:32:00.000Z',
       pallets: [
         {
-          pallet_id: '15',
+          pallet_id: '13',
           amount: '100',
           user_id: '1',
           check: 0,
@@ -253,11 +253,12 @@ export default function reducer(
         order: {
           ...state.order,
           pallets: state.order.pallets.map(pallet => {
+            console.log(pallet)
             if (pallet.pallet_id === action.payload.id) {
-              console.log(action.payload)
               return {
                 ...pallet,
                 [action.payload.stage]: action.payload.check,
+                sawnStage: action.payload.sawnStage,
               }
             } else {
               return pallet
