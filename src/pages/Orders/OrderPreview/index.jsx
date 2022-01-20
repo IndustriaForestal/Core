@@ -708,6 +708,16 @@ const CreateOrder = props => {
             Madera Habilitada
           </Button>
         ) : null}
+        {countItem ? (
+          <Button
+            onClick={() => {
+              props.history.push('/orders/stock-sawn')
+              previewOptions(mapedOrder)
+            }}
+          >
+            Madera Aserrada
+          </Button>
+        ) : null}
         {countRaw ? (
           <Button
             onClick={() => {

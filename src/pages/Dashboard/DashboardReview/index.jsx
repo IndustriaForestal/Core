@@ -21,12 +21,14 @@ const Dashbaord = props => {
     processes,
     ordersProduction,
     ordersRequeriment,
+    orders,
     workstations,
     pallets,
     qualities,
     ordersWorkstations,
   } = props
   const [processSelected, setProcess] = useState('')
+  const [orderSelected, setOrderSelected] = useState(0)
   const role = user.role
 
   useEffect(() => {
@@ -74,6 +76,9 @@ const Dashbaord = props => {
       .then(() => {
         props.getAll('qualities', 'GET_QUALITIES')
       })
+      .then(() => {
+        props.getAll('orders', 'GET_ORDERS')
+      })
   }, [])
 
   useEffect(() => {
@@ -95,17 +100,23 @@ const Dashbaord = props => {
     workstations &&
     pallets &&
     qualities &&
-    ordersWorkstations
+    ordersWorkstations &&
+    orders
   ) {
+    const ordersProductionFiltered =
+      orderSelected !== 0
+        ? ordersProduction.filter(o => o.order_id === orderSelected)
+        : ordersProduction
+
     const data =
       parseInt(user.workstation_id) > 0
-        ? ordersProduction.filter(
+        ? ordersProductionFiltered.filter(
             o =>
               o.process_id ===
               workstations.find(w => w.id === parseInt(user.workstation_id))
                 .process_id
           )
-        : ordersProduction
+        : ordersProductionFiltered
 
     return (
       <div className="dashboard">
@@ -134,6 +145,22 @@ const Dashbaord = props => {
             </h1>
           </div>
         )}
+        <label htmlFor="filter">
+          Filtrar por Orden
+          <select
+            name="filter"
+            onChange={e => setOrderSelected(parseInt(e.target.value))}
+          >
+            <option value="0">Todas</option>
+            {orders
+              .filter(o => o.state !== 'Enviado')
+              .map(o => (
+                <option key={o.id} value={o.id}>
+                  {o.id}
+                </option>
+              ))}
+          </select>
+        </label>
         <div
           className="dashboard__header"
           style={{
@@ -206,6 +233,7 @@ const mapStateToProps = state => {
     workstations: state.reducerZones.workstations,
     items: state.reducerItems.items,
     pallets: state.reducerPallets.pallets,
+    orders: state.reducerOrders.orders,
     qualities: state.reducerQualities.qualities,
   }
 }

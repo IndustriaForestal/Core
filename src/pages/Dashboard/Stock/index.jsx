@@ -24,9 +24,11 @@ const Dashbaord = props => {
     workstations,
     pallets,
     qualities,
+    orders,
     ordersWorkstations,
   } = props
   const [processSelected, setProcess] = useState('')
+  const [orderSelected, setOrderSelected] = useState(0)
   const role = user.role
 
   useEffect(() => {
@@ -73,6 +75,9 @@ const Dashbaord = props => {
       .then(() => {
         props.getAll('qualities', 'GET_QUALITIES')
       })
+      .then(() => {
+        props.getAll('orders', 'GET_ORDERS')
+      })
   }, [])
 
   useEffect(() => {
@@ -94,17 +99,23 @@ const Dashbaord = props => {
     workstations &&
     pallets &&
     qualities &&
-    ordersWorkstations
+    ordersWorkstations &&
+    orders
   ) {
+    const ordersProductionFiltered =
+      orderSelected !== 0
+        ? ordersProduction.filter(o => o.order_id === orderSelected)
+        : ordersProduction
+
     const data =
       parseInt(user.workstation_id) > 0
-        ? ordersProduction.filter(
+        ? ordersProductionFiltered.filter(
             o =>
               o.process_id ===
               workstations.find(w => w.id === parseInt(user.workstation_id))
                 .process_id
           )
-        : ordersProduction
+        : ordersProductionFiltered
 
     const delivered = id => {
       Swal.fire({
@@ -129,6 +140,22 @@ const Dashbaord = props => {
 
     return (
       <div className="dashboard">
+        <label htmlFor="filter">
+          Filtrar por Orden
+          <select
+            name="filter"
+            onChange={e => setOrderSelected(parseInt(e.target.value))}
+          >
+            <option value="0">Todas</option>
+            {orders
+              .filter(o => o.state !== 'Enviado')
+              .map(o => (
+                <option key={o.id} value={o.id}>
+                  {o.id}
+                </option>
+              ))}
+          </select>
+        </label>
         <div
           className="dashboard__header"
           style={{
@@ -180,6 +207,8 @@ const Dashbaord = props => {
                                   parseInt(o.order_number) ===
                                     parseInt(order.order_number) + 1
                               ).zone_id
+                            : order.process_id === 36
+                            ? 'Recepción'
                             : 'Error ID de Zona'}
                         </span>
                         <span>
@@ -264,6 +293,7 @@ const mapStateToProps = state => {
     items: state.reducerItems.items,
     pallets: state.reducerPallets.pallets,
     qualities: state.reducerQualities.qualities,
+    orders: state.reducerOrders.orders,
   }
 }
 

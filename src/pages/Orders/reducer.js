@@ -1,6 +1,6 @@
 export default function reducer(
   state = {
-    /* order: {
+    order: {
       customer_id: 1,
       date: '2021-10-06T20:32:00.000Z',
       pallets: [
@@ -24,13 +24,13 @@ export default function reducer(
           stage2_supplier: 0,
           stage3: 0,
           stage3_supplier: 0,
-          date: '2021-12-31 12:00:00',
+          date: '2022-01-31 12:00:00',
           tableData: {
             id: 0,
           },
         },
       ],
-    }, */
+    },
   },
   action
 ) {
