@@ -95,8 +95,9 @@ const CreateOrder = props => {
                   pallet.amount_stock_supplier) -
               amount_items_stage2 -
               amount_items_stage2_suppliers
-
-            amount_sawn.push({ id: item.id, amount: newAmountItem })
+            if (newAmountItem > 0) {
+              amount_sawn.push({ id: item.id, amount: newAmountItem })
+            }
           })
 
         if (pallet.stage3 === 1 || pallet.stage3_supplier === 1) {

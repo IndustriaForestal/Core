@@ -350,6 +350,7 @@ const CreateOrder = props => {
       if (material === 1) {
         const amount = stock.find(s => parseInt(s.id) === parseInt(palletId))
         const amountTotal = amount.dry + amount.damp
+        console.log(amountTotal, amount)
         if (amountTotal > 1) {
           validation = true
         }
