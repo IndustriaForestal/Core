@@ -5,6 +5,21 @@ export default function reducer(state = {}, action) {
         ...state,
         stock: action.payload.data,
       }
+    case 'GET_STOCK_ITEMS':
+      return {
+        ...state,
+        stockItems: action.payload.data,
+      }
+    case 'GET_STOCK_SAWN':
+      return {
+        ...state,
+        stockSawn: action.payload.data,
+      }
+    case 'GET_STOCK_RAWS':
+      return {
+        ...state,
+        stockRaws: action.payload.data,
+      }
     case 'CLEAN_STOCK':
       return {
         ...state,

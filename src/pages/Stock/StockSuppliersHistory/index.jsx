@@ -88,7 +88,7 @@ const Nails = props => {
             },
           }}
           data={data}
-          title="Inventario Clavos"
+          title="Historial Proveedores"
         />
       </>
     )

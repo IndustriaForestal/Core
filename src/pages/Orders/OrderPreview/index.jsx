@@ -27,12 +27,6 @@ const CreateOrder = props => {
         props.getAll('items', 'GET_ITEMS')
       })
       .then(() => {
-        props.getAll('stock', 'GET_STOCK')
-      })
-      .then(() => {
-        props.getAll('stock', 'GET_STOCK')
-      })
-      .then(() => {
         props.getAll('processes', 'GET_PROCESSES')
       })
       .then(() => {
@@ -62,6 +56,18 @@ const CreateOrder = props => {
       .then(() => {
         props.getAll('schedule/config', 'GET_SCHEDULE_CONFIG')
       })
+      .then(() => {
+        props.getAll('stock', 'GET_STOCK')
+      })
+      .then(() => {
+        props.getAll('stock/items', 'GET_STOCK_ITEMS')
+      })
+      .then(() => {
+        props.getAll('stock/sawn', 'GET_STOCK_SAWN')
+      })
+      .then(() => {
+        props.getAll('stock/raws', 'GET_STOCK_RAWS')
+      })
     // eslint-disable-next-line
   }, [])
 
@@ -70,6 +76,9 @@ const CreateOrder = props => {
     pallets,
     order,
     stock,
+    stockItems,
+    stockSawn,
+    stockRaws,
     processesPallets,
     processesItems,
     qualities,
@@ -97,7 +106,10 @@ const CreateOrder = props => {
     suppliers &&
     schedule &&
     scheduleHolidays &&
-    scheduleConfig
+    scheduleConfig &&
+    stockItems &&
+    stockSawn &&
+    stockRaws
   ) {
     //   *Mapear las calidades y agregar procesos adicionales
 
@@ -210,8 +222,6 @@ const CreateOrder = props => {
         suppliersPerStage.find(supplier => supplier.id === materialStage)
           .supplier.delivery_time
       )
-
-      console.log(timeSliced)
 
       const time = moment(timeSliced[indexForSlice].time).subtract(
         delivery_time,
@@ -331,12 +341,48 @@ const CreateOrder = props => {
           : 'Trozo'
 
       const search = timeProduction.map(time => time.material_in)
-
       const indexForSlice = search.lastIndexOf(stage)
-
       const timeSliced = timeProduction.slice(0, indexForSlice + 1)
+      const material = timeSliced[timeSliced.length - 1].material_in_id
+      const palletId = pallet.pallet_id
+      let validation = false
 
-      console.log(search, indexForSlice, timeSliced)
+      if (material === 1) {
+        const amount = stock.find(s => parseInt(s.id) === parseInt(palletId))
+        const amountTotal = amount.dry + amount.damp
+        if (amountTotal > 1) {
+          validation = true
+        }
+      }
+
+      if (material === 2) {
+        items
+          .filter(item => parseInt(item.pallet_id) === parseInt(palletId))
+          .map(item => {
+            const amount = stockItems.find(
+              s => parseInt(s.id) === parseInt(item.id)
+            )
+            const amountTotal = amount.dry + amount.damp
+            if (amountTotal > 0) {
+              validation = true
+            }
+
+            return amountTotal
+          })
+      }
+
+      if (material === 4) {
+        const amount = stockRaws.reduce((acc, raw) => {
+          return acc + parseFloat(raw.m3)
+        }, 0)
+        if (amount > 0) {
+          validation = true
+        }
+      }
+
+      if (validation === false) {
+        timeSliced[timeSliced.length - 1].onTime = false
+      }
 
       return timeSliced
     }
@@ -480,9 +526,11 @@ const CreateOrder = props => {
       const timeSliced3 = handleSearchAndSlice(timeProduction, pallet)
       const timeSliced2 = handleSearchAndSlice(timeProduction, {
         check_stage: 2,
+        pallet_id: pallet.pallet_id,
       })
       const timeSliced = handleSearchAndSlice(timeProduction, {
         check_stage: 1,
+        pallet_id: pallet.pallet_id,
       })
 
       const timeSlicedSupplier3 = handleSearchAndSliceSupplier(
@@ -491,9 +539,11 @@ const CreateOrder = props => {
       )
       const timeSlicedSupplier2 = handleSearchAndSliceSupplier(timeProduction, {
         check_stage: 2,
+        pallet_id: pallet.pallet_id,
       })
       const timeSlicedSupplier = handleSearchAndSliceSupplier(timeProduction, {
         check_stage: 1,
+        pallet_id: pallet.pallet_id,
       })
 
       return {
@@ -507,9 +557,33 @@ const CreateOrder = props => {
       }
     })
 
+    // * Verifica si hay material suficiente en stock para cada pallet
+
+    const inStock = (mapedOrder, stage) => {
+      if (stage === 1) {
+        const verify = mapedOrder.find(
+          pallet =>
+            pallet.timeProduction[pallet.timeProduction.length - 1].onTime ===
+            false
+        )
+        const verifySupplier = mapedOrder.find(
+          pallet =>
+            pallet.timeProductionSupplier[
+              pallet.timeProductionSupplier.length - 1
+            ].onTime === false
+        )
+
+        return verify === undefined || verifySupplier === undefined
+          ? true
+          : false
+      }
+    }
+
     const countPallet = countOnTime(mapedOrder, 1)
     const countItem = countOnTime(mapedOrder, 2)
     const countRaw = countOnTime(mapedOrder, 3)
+
+    const checkMaterialPallet = inStock(mapedOrder, 1)
 
     return (
       <>
@@ -566,6 +640,27 @@ const CreateOrder = props => {
               ),
             },
             {
+              title: 'Madera Aserrada',
+              field: 'amount',
+              render: rowData => (
+                <div
+                  className={
+                    rowData.timeProduction3[rowData.timeProduction3.length - 1]
+                      .onTime
+                      ? '--success'
+                      : '--danger'
+                  }
+                >
+                  {rowData.timeProduction3[rowData.timeProduction3.length - 1]
+                    .onTime ? (
+                    <MdDone />
+                  ) : (
+                    <MdClear />
+                  )}
+                </div>
+              ),
+            },
+            {
               title: 'Trozo',
               field: 'amount',
               render: rowData => (
@@ -611,6 +706,29 @@ const CreateOrder = props => {
             },
             {
               title: 'Madera Habilitada Proveedor',
+              field: 'amount',
+              render: rowData => (
+                <div
+                  className={
+                    rowData.timeProductionSupplier2[
+                      rowData.timeProductionSupplier2.length - 1
+                    ].onTime
+                      ? '--success'
+                      : '--danger'
+                  }
+                >
+                  {rowData.timeProductionSupplier2[
+                    rowData.timeProductionSupplier2.length - 1
+                  ].onTime ? (
+                    <MdDone />
+                  ) : (
+                    <MdClear />
+                  )}
+                </div>
+              ),
+            },
+            {
+              title: 'Madera Aserrada Proveedor',
               field: 'amount',
               render: rowData => (
                 <div
@@ -751,6 +869,9 @@ const mapStateToProps = state => {
   return {
     customers: state.reducerCustomers.customers,
     stock: state.reducerStock.stock,
+    stockItems: state.reducerStock.stockItems,
+    stockSawn: state.reducerStock.stockSawn,
+    stockRaws: state.reducerStock.stockRaws,
     pallets: state.reducerPallets.pallets,
     items: state.reducerItems.items,
     order: state.reducerOrders.order,

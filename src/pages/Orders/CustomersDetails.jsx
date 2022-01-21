@@ -22,6 +22,7 @@ const Orders = props => {
         Calendario: '/calendar',
       },
     }
+
     setTitle(topbar)
     props
       .getAll(`orders/customers/${id}`, 'GET_ORDERS_CUSTOMERS_DETAILS')
@@ -66,6 +67,10 @@ const Orders = props => {
       const count = ordersDetails
         .filter(order => parseInt(order.order_id) === parseInt(id))
         .reduce((acc, order) => acc + order.amount, 0)
+
+      console.log(
+        ordersDetails.filter(order => parseInt(order.order_id) === parseInt(id))
+      )
 
       return {
         ...o,
