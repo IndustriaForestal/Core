@@ -105,6 +105,7 @@ const Nails = props => {
           'GET_PURCHASE_ORDERS_SUPPLIERS'
         )
       })
+
     // eslint-disable-next-line
   }, [])
 
@@ -162,14 +163,23 @@ const Nails = props => {
       props
         .createFile(`stock/supplier/pallets/${1}`, 'PALLET_HISTORY', data)
         .then(() => {
-          setType(0)
+          props.getAll(
+            'purchaseOrders/suppliers',
+            'GET_PURCHASE_ORDERS_SUPPLIERS'
+          )
         })
     }
 
     const handleOrderSupplier = id => {
       const order = purchaseOrdersSuppliers.find(item => item.id === id)
       handleChangeStock(
-        order.pallet_id !== null ? 1 : order.item_id !== null ? 3 : 5
+        order.pallet_id !== null
+          ? 1
+          : order.item_id !== null
+          ? 3
+          : order.complement_id !== null
+          ? 2
+          : 5
       )
       setOrderPurchase(order.id)
       setSupplier(order.supplier_id)
@@ -186,12 +196,16 @@ const Nails = props => {
               ? `${order.amount} pzas`
               : order.item_id !== null
               ? `${order.amount} pzas`
+              : order.complement_id !== null
+              ? `${order.amount} pzas`
               : `${order.amount} pies tabla`,
           product:
             order.pallet_id !== null
               ? order.model
               : order.item_id !== null
               ? `${order.length} x ${order.width} x ${order.height}`
+              : order.complement_id !== null
+              ? order.cname
               : 'Trozo',
         }
       })
@@ -412,6 +426,17 @@ const Nails = props => {
                   <span>Inventario:</span>
                   <select name="productId" ref={register}>
                     <option value="">Seleccionar</option>
+                    {/* {orderPurchase !== null
+                      ? nailsOptions.map(nail => (
+                          <option key={data} value={data}>
+                            {nail.label}
+                          </option>
+                        ))
+                      : nailsOptions.map(nail => (
+                          <option key={nail.value} value={nail.value}>
+                            {nail.label}
+                          </option>
+                        ))} */}
                     {nailsOptions.map(nail => (
                       <option key={nail.value} value={nail.value}>
                         {nail.label}

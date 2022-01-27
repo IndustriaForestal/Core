@@ -50,12 +50,6 @@ const CreateOrder = props => {
       .then(() => {
         props.getAll('processes/items', 'GET_PROCESSES_ITEMS')
       })
-      .then(() => {
-        props.getAll('complements', 'GET_COMPLEMENTS')
-      })
-      .then(() =>
-        props.getAll('complements/pallets', 'GET_COMPLEMENTS_PALLETS')
-      )
     // eslint-disable-next-line
   }, [])
 
@@ -74,8 +68,6 @@ const CreateOrder = props => {
     schedule,
     scheduleHolidays,
     scheduleConfig,
-    complements,
-    complementsPallets,
   } = props
 
   if (
@@ -91,9 +83,7 @@ const CreateOrder = props => {
     material &&
     schedule &&
     scheduleHolidays &&
-    scheduleConfig &&
-    complements &&
-    complementsPallets
+    scheduleConfig
   ) {
     // *Creando Orden de producción por
 
@@ -108,18 +98,15 @@ const CreateOrder = props => {
         confirmButtonText: 'Si, crear',
       }).then(result => {
         if (result.isConfirmed) {
-          /*  props
+          props
             .create('orders', 'CREATE_ORDER', {
               ...order,
               pallets: orderPallets,
             })
             .then(() => {
               props.history.push('/')
-            }) */
-          console.log({
-            ...order,
-            pallets: orderPallets,
-          })
+            })
+            console.log(orderPallets)
         }
       })
     }
@@ -230,8 +217,7 @@ const CreateOrder = props => {
           ) {
             initialDate = initialDate.hour(end).minute(0)
           }
-        } else if (process.process_id === 41) {
-          // * proceso aserrio dividir en items
+        } else if (process.process_id === 41) { // * proceso aserrio dividir en items
           const tempDate = moment(initialDate).subtract(hours, 'hours')
           const startDate = moment(tempDate).hour(start).minute(0).second(0)
           const endDate = moment(tempDate).hour(end).minute(0).second(0)
@@ -289,7 +275,6 @@ const CreateOrder = props => {
 
       return timeProduction
     }
-
     const handleSearchAndSlice = (timeProduction, pallet) => {
       let stage = 'Trozo'
 
@@ -406,28 +391,6 @@ const CreateOrder = props => {
       return timeSliced
     }
 
-    // * Obtiene complementos por tarima
-
-    const getComplements = pallet => {
-      const required =
-        parseInt(pallet.amount) -
-        (parseInt(pallet.amount_stock) + parseInt(pallet.amount_stock_supplier))
-
-      const complementsRequired = complementsPallets
-        .filter(
-          complement =>
-            parseInt(complement.pallet_id) === parseInt(pallet.pallet_id)
-        )
-        .map(complement => {
-          return {
-            ...complement,
-            amount: parseInt(complement.amount) * required,
-          }
-        })
-
-      return complementsRequired
-    }
-
     const lookupPallets = {}
 
     pallets.map(item => (lookupPallets[item.id] = item.model))
@@ -436,11 +399,9 @@ const CreateOrder = props => {
       const qualityFinal = getQualityMap(pallet)
       const timeProduction = getTimeProduction(qualityFinal, pallet)
       const timeSliced = handleSearchAndSlice(timeProduction, pallet)
-      const complementsRequired = getComplements(pallet)
 
       return {
         ...pallet,
-        complements: complementsRequired,
         timeProduction: timeSliced,
       }
     })
@@ -570,8 +531,6 @@ const mapStateToProps = state => {
     schedule: state.reducerSchedule.schedule,
     scheduleHolidays: state.reducerSchedule.scheduleHolidays,
     scheduleConfig: state.reducerSchedule.scheduleConfig,
-    complements: state.reducerComplements.complements,
-    complementsPallets: state.reducerComplements.complementsPallets,
   }
 }
 

@@ -21,6 +21,7 @@ const Processes = props => {
     items,
     suppliers,
     purchaseOrdersSuppliers,
+    complements,
   } = props
   const userId = user.id
   const [order, setOrder] = useState([])
@@ -52,6 +53,9 @@ const Processes = props => {
           'purchaseOrders/suppliers',
           'GET_PURCHASE_ORDERS_SUPPLIERS'
         )
+      })
+      .then(() => {
+        props.getAll('complements', 'GET_COMPLEMENTS')
       })
     // eslint-disable-next-line
   }, [])
@@ -103,7 +107,8 @@ const Processes = props => {
     pallets &&
     items &&
     suppliers &&
-    purchaseOrdersSuppliers
+    purchaseOrdersSuppliers &&
+    complements
   ) {
     const data = purchaseOrders
       .filter(po => {
@@ -129,6 +134,10 @@ const Processes = props => {
               ? `Tarima: ${pallets.find(p => p.id === po.pallet_id).model}`
               : po.item_id !== null && item !== undefined
               ? `Madera Habilitada: ${item.length} x ${item.width} x ${item.height}`
+              : po.complement_id !== null
+              ? `Complemento: ${
+                  complements.find(c => c.id === po.complement_id).name
+                }`
               : 'Trozo',
         }
       })
@@ -318,6 +327,7 @@ const mapStateToProps = state => {
     suppliers: state.reducerSuppliers.suppliers,
     purchaseOrdersSuppliers:
       state.reducerPurchaseOrders.purchaseOrdersSuppliers,
+    complements: state.reducerComplements.complements,
   }
 }
 

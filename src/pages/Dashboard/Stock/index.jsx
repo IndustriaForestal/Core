@@ -209,7 +209,7 @@ const Dashbaord = props => {
                               ).zone_id
                             : order.process_id === 36
                             ? 'Recepción'
-                            : 'Error ID de Zona'}
+                            : 'Inventario'}
                         </span>
                         <span>
                           Mover a{' '}
