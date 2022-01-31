@@ -58,6 +58,11 @@ const reducer = (
         ...state,
         loggedIn: false,
       }
+    case 'GET_NOTIFICATIONS':
+      return {
+        ...state,
+        notifications: action.payload.data,
+      }
     default:
       return state
   }

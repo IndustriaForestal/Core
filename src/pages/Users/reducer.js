@@ -37,6 +37,22 @@ export default function reducerProducts(
         pathname: 'dashboard1processes',
         name: 'Dashboard de procesos',
       },
+      {
+        pathname: 'dashboard/review-home',
+        name: 'Dashboard de Calidad',
+      },
+      {
+        pathname: 'dashboard/stock',
+        name: 'Dashboard de Inventario',
+      },
+      {
+        pathname: 'orders-customers',
+        name: 'Pedidos de Clientes',
+      },
+      {
+        pathname: 'purchase-orders',
+        name: 'Orden de Compra',
+      },
     ],
   },
   action

@@ -37,7 +37,7 @@ const Notifications = props => {
       <>
         <AiOutlineBell
           className={`notifications__toggle ${
-            notifications.filter(notification => notification.read === 0)
+            notifications.filter(notification => notification.readed === 0)
               .length > 0
               ? '--active'
               : ''
@@ -51,17 +51,17 @@ const Notifications = props => {
           >
             <AiOutlineClose />
           </li>
-          {notifications.filter(notification => notification.read === 0)
+          {notifications.filter(notification => notification.readed === 0)
             .length > 0 ? (
             notifications
-              .filter(notification => notification.read === 0)
+              .filter(notification => notification.readed === 0)
               .map(notification => {
                 return (
                   <li
-                    key={notification._id}
+                    key={notification.id}
                     className="notifications__item"
                     onClick={() =>
-                      handleRead(notification.link, notification._id)
+                      handleRead(notification.link, notification.id)
                     }
                   >
                     <div className="box">
@@ -87,7 +87,7 @@ const Notifications = props => {
 
 const mapStateToProps = state => {
   return {
-    notifications: state.notifications,
+    notifications: state.reducerApp.notifications,
   }
 }
 

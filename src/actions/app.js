@@ -8,31 +8,6 @@ export const logOut = () => ({
   type: 'LOG_OUT',
 })
 
-axios.interceptors.response.use(
-  function (response) {
-    return response
-  },
-  function (error) {
-    if (error.response.status === 401) {
-      Swal.fire({
-        title: 'Sesión Expirada',
-        text: 'Su sesión ha expirado',
-        icon: 'warning',
-        confirmButtonColor: '#3085d6',
-        confirmButtonText: 'Aceptar',
-      }).then(result => {
-        if (result.isConfirmed) {
-          logOut()
-          sessionStorage.clear()
-          window.location.href = '/login'
-        }
-      })
-    } else {
-      return Promise.reject(error)
-    }
-  }
-)
-
 export const setTitle = payload => ({
   type: 'SET_TITLE',
   payload,
@@ -365,3 +340,49 @@ export const createNotificationManual = data => async dispatch => {
     console.log(error)
   }
 }
+
+axios.interceptors.response.use(
+  async function (response) {
+    if (response.status === 201) {
+      console.log(response, 'response')
+
+      const storedJwt = sessionStorage.getItem('token')
+
+      try {
+        await axios({
+          url: `${process.env.REACT_APP_API}notifications`,
+          headers: { Authorization: `Bearer ${storedJwt}` },
+          method: 'post',
+          data: {
+            text: `${response.data.message}`,
+            link: '/',
+            date: new Date(),
+            read: 0,
+          },
+        })
+      } catch (error) {
+        console.log(error)
+      }
+    }
+    return response
+  },
+  function (error) {
+    if (error.response.status === 401) {
+      Swal.fire({
+        title: 'Sesión Expirada',
+        text: 'Su sesión ha expirado',
+        icon: 'warning',
+        confirmButtonColor: '#3085d6',
+        confirmButtonText: 'Aceptar',
+      }).then(result => {
+        if (result.isConfirmed) {
+          logOut()
+          sessionStorage.clear()
+          window.location.href = '/login'
+        }
+      })
+    } else {
+      return Promise.reject(error)
+    }
+  }
+)

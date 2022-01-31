@@ -47,7 +47,7 @@ const Complements = props => {
 
     return (
       <MaterialTable
-        title="Pantallas por usuario"
+        title="Pantallas por roles"
         columns={[
           { title: 'Rol', field: 'role_id', lookup: lookupRoles },
           { title: 'Url', field: 'pathname', lookup: lookupScreens },
