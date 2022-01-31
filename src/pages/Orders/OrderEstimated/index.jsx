@@ -108,14 +108,14 @@ const CreateOrder = props => {
         confirmButtonText: 'Si, crear',
       }).then(result => {
         if (result.isConfirmed) {
-          /*  props
+          props
             .create('orders', 'CREATE_ORDER', {
               ...order,
               pallets: orderPallets,
             })
             .then(() => {
               props.history.push('/')
-            }) */
+            })
           console.log({
             ...order,
             pallets: orderPallets,
