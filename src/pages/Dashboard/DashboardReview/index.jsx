@@ -26,6 +26,7 @@ const Dashbaord = props => {
     pallets,
     qualities,
     ordersWorkstations,
+    items,
   } = props
   const [processSelected, setProcess] = useState('')
   const [orderSelected, setOrderSelected] = useState(0)
@@ -36,6 +37,7 @@ const Dashbaord = props => {
       title: 'Dashboard de calidad',
       menu: {
         'Dashboard de calidad': '/dashboard/review-home',
+        'Historial orden de producción': '/dashboard/history',
         'Historial de calidad': '/dashboard/review-home/history',
       },
     }
@@ -101,9 +103,9 @@ const Dashbaord = props => {
     pallets &&
     qualities &&
     ordersWorkstations &&
-    orders
+    orders &&
+    items
   ) {
-
     console.log(ordersWorkstations)
 
     const ordersProductionFiltered =
@@ -169,22 +171,45 @@ const Dashbaord = props => {
                         parseInt(order.ready) === 2
                     )
                     .sort((a, b) => moment(a.time) - moment(b.time))
-                    .map(order => (
-                      <div
-                        className={`dashboard__item`}
-                        key={order.id}
-                        onClick={() =>
-                          props.history.push(`/dashboard/processes/${order.id}`)
-                        }
-                      >
-                        <span>Pedido# {order.order_id}</span>
-                        <span>Tarima: {order.model}</span>
-                        <span>
-                          Entrega:{' '}
-                          {moment(order.time).format('DD-MM-YYYY HH:mm')}
-                        </span>
-                      </div>
-                    ))
+                    .map(order => {
+                      const item = items.find(i => i.id === order.item_id)
+                      return (
+                        <div
+                          className={`dashboard__item`}
+                          key={order.id}
+                          onClick={() =>
+                            props.history.push(
+                              `/dashboard/processes/${order.id}`
+                            )
+                          }
+                        >
+                          <span>Pedido# {order.order_id}</span>
+                          <span>Tarima: {order.model}</span>
+                          {order.item_id !== null ? (
+                            <span>
+                              Complemento:{' '}
+                              {item !== undefined
+                                ? `${item.length} x ${item.width} x ${item.height}`
+                                : 'N/A'}
+                            </span>
+                          ) : null}
+                          <span>
+                            Entrega:{' '}
+                            {moment(order.time).format('DD-MM-YYYY HH:mm')}
+                          </span>
+                          <span>
+                            Zona de trabajo:{' '}
+                            {ordersWorkstations.filter(
+                              o => o.id === order.id
+                            ) !== undefined
+                              ? ordersWorkstations
+                                  .filter(o => o.id === order.id)
+                                  .map(o => o.workstation)
+                              : 'N/A'}
+                          </span>
+                        </div>
+                      )
+                    })
                 : null}
             </div>
           </div>

@@ -14,7 +14,7 @@ const Nails = props => {
   if (ordersHistory) {
     const data = ordersHistory.map(o => {
       const product =
-        o.type === 'pallet'
+        o.process_id !== 41
           ? o.pname
           : `${o.ilength} x ${o.iwidth} x ${o.iheight} cm`
       return {
@@ -23,6 +23,8 @@ const Nails = props => {
         created: moment(o.created).format('DD-MM-YYYY HH:mm:ss'),
       }
     })
+
+    console.log(data)
 
     return (
       <>
