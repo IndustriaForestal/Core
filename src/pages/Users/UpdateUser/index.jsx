@@ -11,7 +11,7 @@ import Loading from '../../../components/Loading/Loading'
 const UpdateMaterialOne = props => {
   const { register, handleSubmit } = useForm()
   const { id } = useParams()
-  const { user, roles, workstations } = props
+  const { user, roles, workstations, zones, plants } = props
   const [passwordVerify, setPasswordVerify] = useState(true)
   const [password, setPassword] = useState(true)
 
@@ -23,6 +23,12 @@ const UpdateMaterialOne = props => {
       })
       .then(() => {
         props.getAll('zones/workstations', 'GET_WORKSTATIONS')
+      })
+      .then(() => {
+        props.getAll('zones/plants', 'GET_PLANTS')
+      })
+      .then(() => {
+        props.getAll('zones/zones', 'GET_ZONES')
       })
     // eslint-disable-next-line
   }, [])
@@ -40,7 +46,7 @@ const UpdateMaterialOne = props => {
     }
   }
 
-  if (user && roles && workstations) {
+  if (user && roles && workstations && zones && plants) {
     return (
       <Card title="Editar Usuario" className="card -warning">
         <form
@@ -100,6 +106,40 @@ const UpdateMaterialOne = props => {
             </label>
           </div>
           <div className="inputGroup">
+            <label htmlFor="plant_id">
+              <span>Planta:</span>
+              <select name="plant_id" ref={register}>
+                <option value={user.plant_id}>
+                  {plants.find(p => p.id === user.plant_id) !== undefined
+                    ? plants.find(p => p.id === user.plant_id).name
+                    : 'Error'}
+                </option>
+                {plants
+                  ? plants.map(w => (
+                      <option key={w.id} value={w.id}>
+                        {w.name}
+                      </option>
+                    ))
+                  : null}
+              </select>
+            </label>
+            <label htmlFor="zone_id">
+              <span>Zona:</span>
+              <select name="zone_id" ref={register}>
+                <option value={user.zone_id}>
+                  {zones.find(z => z.id === user.zone_id) !== undefined
+                    ? zones.find(z => z.id === user.zone_id).name
+                    : 'Error'}
+                </option>
+                {zones
+                  ? zones.map(w => (
+                      <option key={w.id} value={w.id}>
+                        {w.name}
+                      </option>
+                    ))
+                  : null}
+              </select>
+            </label>
             <label htmlFor="workstation">
               <span>Area de trabajo:</span>
               <select name="workstation" ref={register}>
@@ -113,7 +153,7 @@ const UpdateMaterialOne = props => {
                   <option value="">Quitar area de trabajo</option>
                 ) : null}
 
-                {workstations 
+                {workstations
                   ? workstations
                       .filter(w => w.id !== user.workstation_id)
                       .map(w => (
@@ -145,6 +185,8 @@ const mapStateToProps = state => {
   return {
     user: state.reducerUsers.user,
     roles: state.reducerUsers.roles,
+    zones: state.reducerZones.zones,
+    plants: state.reducerZones.plants,
     workstations: state.reducerZones.workstations,
   }
 }

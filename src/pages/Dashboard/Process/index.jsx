@@ -26,6 +26,7 @@ const Dashbaord = props => {
     qualities,
     orders,
     ordersWorkstations,
+    items,
   } = props
   const [processSelected, setProcess] = useState('')
   const [orderSelected, setOrderSelected] = useState(0)
@@ -108,7 +109,8 @@ const Dashbaord = props => {
     pallets &&
     qualities &&
     ordersWorkstations &&
-    orders
+    orders &&
+    items
   ) {
     const ordersProductionFiltered =
       orderSelected !== 0
@@ -193,18 +195,42 @@ const Dashbaord = props => {
                     .map(order => {
                       const id = order.order_id
 
-                      const ordersArray = ordersProduction.filter(
-                        o => o.order_id === id
+                      const ordersArray = ordersProduction
+                        .filter(o => o.order_id === id)
+                        .sort(
+                          (a, b) =>
+                            moment(a.order_number) - moment(b.order_number)
+                        )
+
+                      function removeDuplicates(originalArray, prop) {
+                        const newArray = []
+                        const lookupObject = {}
+
+                        for (const i in originalArray) {
+                          lookupObject[originalArray[i][prop]] =
+                            originalArray[i]
+                        }
+
+                        for (const i in lookupObject) {
+                          newArray.push(lookupObject[i])
+                        }
+                        return newArray
+                      }
+
+                      const uniqueArray = removeDuplicates(
+                        ordersArray,
+                        'order_number'
                       )
+
                       let validation
 
                       if (
                         parseInt(order.order_number) ===
-                        ordersArray.length - 1
+                        uniqueArray.length - 1 
                       ) {
                         validation = true
                       } else {
-                        const item = ordersArray.find(
+                        const item = uniqueArray.find(
                           o =>
                             parseInt(o.order_number) ===
                             parseInt(order.order_number) + 1
@@ -214,6 +240,8 @@ const Dashbaord = props => {
                           ? (validation = true)
                           : (validation = false)
                       }
+
+                      const item = items.find(i => i.id === order.item_id)
 
                       if (validation === true) {
                         return (
@@ -247,6 +275,14 @@ const Dashbaord = props => {
                                 : 'N/A'}
                             </span>
                             <span>Tarima: {order.model}</span>
+                            {order.item_id !== null ? (
+                              <span>
+                                Complemento:{' '}
+                                {item !== undefined
+                                  ? `${item.length} x ${item.width} x ${item.height}`
+                                  : 'N/A'}
+                              </span>
+                            ) : null}
                             <span>Cantidad: {order.amount}</span>
                             <span>
                               Entrega:{' '}
@@ -266,6 +302,14 @@ const Dashbaord = props => {
                           >
                             <span>Pedido# {order.order_id}</span>
                             <span>Tarima: {order.model}</span>
+                            {order.item_id !== null ? (
+                              <span>
+                                Complemento:{' '}
+                                {item !== undefined
+                                  ? `${item.length} x ${item.width} x ${item.height}`
+                                  : 'N/A'}
+                              </span>
+                            ) : null}
                             <span>
                               Entrega:{' '}
                               {moment(order.time).format('DD-MM-YYYY HH:mm')}
@@ -293,65 +337,77 @@ const Dashbaord = props => {
                         parseInt(order.ready) === 1
                     )
                     .sort((a, b) => moment(a.time) - moment(b.time))
-                    .map(order => (
-                      <div
-                        className={`dashboard__item ${
-                          moment(order.time).isBefore(moment())
-                            ? '--danger'
-                            : null
-                        }`}
-                        key={order.id}
-                        onClick={
-                          order.delivered === 1
-                            ? () => handleEnd(order.id)
-                            : null
-                        }
-                      >
-                        <span>
-                          {console.log(order)}
-                          {order.require_stock === 1
-                            ? 'Esperar madera de inventario'
-                            : null}
-                        </span>
-                        <span>
-                          {order.delivered === 0
-                            ? 'Esperar entrega de madera'
-                            : null}
-                        </span>
-                        <span>Pedido# {order.order_id}</span>
-                        <span>
-                          Calidad:
-                          {qualities.find(
-                            c =>
-                              c.id ===
-                              pallets.find(o => o.id === order.pallet_id)
-                                .quality_id
-                          ) !== undefined
-                            ? qualities.find(
-                                c =>
-                                  c.id ===
-                                  pallets.find(o => o.id === order.pallet_id)
-                                    .quality_id
-                              ).name
-                            : 'N/A'}
-                        </span>
-                        <span>Tarima: {order.model}</span>
-                        <span>Cantidad: {order.amount}</span>
-                        <span>
-                          Zona de trabajo:{' '}
-                          {ordersWorkstations.filter(o => o.id === order.id) !==
-                          undefined
-                            ? ordersWorkstations
-                                .filter(o => o.id === order.id)
-                                .map(o => o.workstation)
-                            : 'N/A'}
-                        </span>
-                        <span>
-                          Entrega:{' '}
-                          {moment(order.time).format('DD-MM-YYYY HH:mm')}
-                        </span>
-                      </div>
-                    ))
+                    .map(order => {
+                      const item = items.find(i => i.id === order.item_id)
+                      return (
+                        <div
+                          className={`dashboard__item ${
+                            moment(order.time).isBefore(moment())
+                              ? '--danger'
+                              : null
+                          }`}
+                          key={order.id}
+                          onClick={
+                            order.delivered === 1
+                              ? () => handleEnd(order.id)
+                              : null
+                          }
+                        >
+                          <span>
+                            {console.log(order)}
+                            {order.require_stock === 1
+                              ? 'Esperar madera de inventario'
+                              : null}
+                          </span>
+                          <span>
+                            {order.delivered === 0
+                              ? 'Esperar entrega de madera'
+                              : null}
+                          </span>
+                          <span>Pedido# {order.order_id}</span>
+                          <span>
+                            Calidad:
+                            {qualities.find(
+                              c =>
+                                c.id ===
+                                pallets.find(o => o.id === order.pallet_id)
+                                  .quality_id
+                            ) !== undefined
+                              ? qualities.find(
+                                  c =>
+                                    c.id ===
+                                    pallets.find(o => o.id === order.pallet_id)
+                                      .quality_id
+                                ).name
+                              : 'N/A'}
+                          </span>
+                          <span>Tarima: {order.model}</span>
+                          {order.item_id !== null ? (
+                            <span>
+                              Complemento:{' '}
+                              {item !== undefined
+                                ? `${item.length} x ${item.width} x ${item.height}`
+                                : 'N/A'}
+                            </span>
+                          ) : null}
+                          <span>Cantidad: {order.amount}</span>
+                          <span>
+                            Zona de trabajo:{' '}
+                            {ordersWorkstations.filter(
+                              o => o.id === order.id
+                            ) !== undefined
+                              ? ordersWorkstations
+                                  .filter(o => o.id === order.id)
+                                  .map(o => o.workstation)
+                              : 'N/A'}
+                          </span>
+                          <span>
+                            Entrega:{' '}
+                            {moment(order.time).format('DD-MM-YYYY HH:mm')}
+                          </span>
+                        </div>
+                      )
+                    })
                 : null}
             </div>
           </div>
@@ -371,23 +427,33 @@ const Dashbaord = props => {
                         parseInt(order.ready) === 2
                     )
                     .sort((a, b) => moment(a.time) - moment(b.time))
-                    .map(order => (
-                      <div
-                        className={`dashboard__item`}
-                        key={order.id}
-                        /*  onClick={() =>
-                          props.history.push(`/dashboard/processes/${order.id}`)
-                        } */
-                      >
-                        <span>Pedido# {order.order_id}</span>
-                        <span>Tarima: {order.model}</span>
-
-                        <span>
-                          Entrega:{' '}
-                          {moment(order.time).format('DD-MM-YYYY HH:mm')}
-                        </span>
-                      </div>
-                    ))
+                    .map(order => {
+                      const item = items.find(i => i.id === order.item_id)
+                      return (
+                        <div
+                          className={`dashboard__item`}
+                          key={order.id}
+                          /*  onClick={() =>
+                            props.history.push(`/dashboard/processes/${order.id}`)
+                          } */
+                        >
+                          <span>Pedido# {order.order_id}</span>
+                          <span>Tarima: {order.model}</span>
+                          {order.item_id !== null ? (
+                            <span>
+                              Complemento:{' '}
+                              {item !== undefined
+                                ? `${item.length} x ${item.width} x ${item.height}`
+                                : 'N/A'}
+                            </span>
+                          ) : null}
+                          <span>
+                            Entrega:{' '}
+                            {moment(order.time).format('DD-MM-YYYY HH:mm')}
+                          </span>
+                        </div>
+                      )
+                    })
                 : null}
             </div>
           </div>

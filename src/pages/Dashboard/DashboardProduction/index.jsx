@@ -54,18 +54,21 @@ const DashboardProduction = props => {
         onClose={() => props.setModal({ state: false, order: {}, stage: 0 })}
       >
         <div>
-          {console.log(process, order, 'Process')}
-          <h1>Proceso {order.type_process === 0 ? 'Regular' : 'Especial'}: {process.name}</h1>
+          <h1>
+            Proceso {order.type_process === 0 ? 'Regular' : 'Especial'}:{' '}
+            {process.name}
+          </h1>
           <h3>Tarima: {order.model}</h3>
-          {process.id === 36 ? null : process.material_in === 4 ||
-            process.material_in === 3 ? (
+          {process.id === 36 ? null : order.item_id !== null ? (
             <div>
-              {itemsRequerimient.map(item => (
-                <div key={item.id}>
-                  {item.item.length} x {item.item.width} x {item.item.height} -{' '}
-                  {item.amount}
-                </div>
-              ))}
+              {itemsRequerimient
+                .filter(i => i.item.id === order.item_id)
+                .map(item => (
+                  <div key={item.id}>
+                    {item.item.length} x {item.item.width} x {item.item.height}{' '}
+                    - {item.amount}
+                  </div>
+                ))}
             </div>
           ) : (
             order.amount
@@ -79,14 +82,14 @@ const DashboardProduction = props => {
             }
           >
             <option value="">Seleccionar</option>
+            {console.log(workstations)}
             {workstations
               .filter(
-                ws => ws.process_id === order.process_id && ws.active === 1
+                ws => ws.process_id === order.process_id && ws.active === 1 && ws.free === 0
               )
               .map(ws => (
                 <option key={ws.id} value={ws.id}>
                   {ws.workstation}
-                  {console.log(ws)}
                 </option>
               ))}
           </select>

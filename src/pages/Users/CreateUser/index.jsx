@@ -113,9 +113,9 @@ const CreateSupplier = props => {
             </select>
           </label>
           <label htmlFor="zone_id">
-            <span>Area de trabajo:</span>
+            <span>Zona:</span>
             <select name="zone_id" ref={register}>
-              <option value="">Area de trabajo</option>
+              <option value="">Zona</option>
               {zones
                 ? zones.map(w => (
                     <option key={w.id} value={w.id}>

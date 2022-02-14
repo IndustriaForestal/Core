@@ -103,48 +103,34 @@ const Dashbaord = props => {
     ordersWorkstations &&
     orders
   ) {
+
+    console.log(ordersWorkstations)
+
     const ordersProductionFiltered =
       orderSelected !== 0
         ? ordersProduction.filter(o => o.order_id === orderSelected)
         : ordersProduction
 
     const data =
-      parseInt(user.workstation_id) > 0
-        ? ordersProductionFiltered.filter(
+      parseInt(user.workstation_id) === 0
+        ? ordersProductionFiltered
+        : ordersProductionFiltered.filter(
             o =>
               o.process_id ===
               workstations.find(w => w.id === parseInt(user.workstation_id))
                 .process_id
           )
-        : ordersProductionFiltered
 
     return (
       <div className="dashboard">
-        {role === 'Administrador' ? (
-          <select name="Process" onChange={e => setProcess(e.target.value)}>
-            <option value="">Seleccionar</option>
-            {processes.map(process => (
-              <option key={process.id} value={process.id}>
-                {process.name}
-              </option>
-            ))}
-          </select>
-        ) : (
-          <div>
-            <h1>
-              Proceso:{' '}
-              {
-                processes.find(
-                  p =>
-                    p.id ===
-                    workstations.find(
-                      w => w.id === parseInt(user.workstation_id)
-                    ).process_id
-                ).name
-              }
-            </h1>
-          </div>
-        )}
+        <select name="Process" onChange={e => setProcess(e.target.value)}>
+          <option value="">Seleccionar</option>
+          {processes.map(process => (
+            <option key={process.id} value={process.id}>
+              {process.name}
+            </option>
+          ))}
+        </select>
         <label htmlFor="filter">
           Filtrar por Orden
           <select

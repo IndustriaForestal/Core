@@ -22,6 +22,9 @@ const Home = props => {
     }
     props.setTitle(topbar)
   })
+
+  console.log(user)
+
   switch (role) {
     case 'Administrador':
       return (

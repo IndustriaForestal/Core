@@ -358,6 +358,7 @@ axios.interceptors.response.use(
             link: '/',
             date: new Date(),
             read: 0,
+            rol: response.data.notifcation
           },
         })
       } catch (error) {

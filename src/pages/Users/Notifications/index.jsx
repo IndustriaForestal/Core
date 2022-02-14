@@ -6,27 +6,35 @@ import Loading from '../../../components/Loading/Loading'
 import MaterialTable from 'material-table'
 
 const Complements = props => {
-  const { screens, roles, userPathname } = props
+  const { screens, roles, userPathname, notificationsRoles, notificationsUsers } =
+    props
   useEffect(() => {
-    props.getAll('users/screens', 'GET_SCREENS').then(() => {
-      props.getAll('users/roles', 'GET_ROLES')
-    })
+    props
+      .getAll('users/screens', 'GET_SCREENS')
+      .then(() => {
+        props.getAll('users/roles', 'GET_ROLES')
+      })
+      .then(() => {
+        props.getAll('users/notifications', 'GET_NOTIFICATIONS_ROLES')
+      })
     // eslint-disable-next-line
   }, [])
 
-  if (screens && roles && userPathname) {
+  if (screens && roles && userPathname && notificationsRoles) {
     const lookupRoles = {}
     const lookupScreens = {}
     roles.map(item => (lookupRoles[item.id] = item.name))
     userPathname.map(item => (lookupScreens[item.pathname] = item.name))
+
+    console.log(lookupRoles)
 
     const editable = {
       onRowAdd: newData =>
         new Promise((resolve, reject) => {
           setTimeout(() => {
             props
-              .create('users/screens', 'CREATE', newData)
-              .then(() => props.getAll('users/screens', 'GET_SCREENS'))
+              .create('users/notifications', 'CREATE', newData)
+              .then(() => props.getAll('users/notifications', 'GET_NOTIFICATIONS_ROLES'))
               .then(() => resolve())
           }, 1000)
         }),
@@ -36,10 +44,10 @@ const Complements = props => {
           setTimeout(() => {
             props
               .deleted(
-                `users/screens/${oldData.pathname}/${oldData.role_id}`,
+                `users/notifications/${oldData.id}`,
                 'DELETE'
               )
-              .then(() => props.getAll('users/screens', 'GET_SCREENS'))
+              .then(() => props.getAll('users/notifications', 'GET_NOTIFICATIONS_ROLES'))
               .then(() => resolve())
           }, 1000)
         }),
@@ -49,8 +57,8 @@ const Complements = props => {
       <MaterialTable
         title="Notificaciones por usuario"
         columns={[
-          { title: 'Rol', field: 'role_id', lookup: lookupRoles },
-          { title: 'Notificaciones', field: 'pathname', lookup: lookupScreens },
+          { title: 'Rol', field: 'rol_id', lookup: lookupRoles },
+          { title: 'Notificaciones', field: 'notification',  lookup: notificationsUsers },
         ]}
         localization={{
           pagination: {
@@ -83,7 +91,7 @@ const Complements = props => {
             addTooltip: 'Agregar',
           },
         }}
-        data={screens}
+        data={notificationsRoles}
         editable={editable}
       />
     )
@@ -97,6 +105,8 @@ const mapStateToProps = state => {
     screens: state.reducerUsers.screens,
     roles: state.reducerUsers.roles,
     userPathname: state.reducerUsers.userPathname,
+    notificationsRoles: state.reducerUsers.notificationsRoles,
+    notificationsUsers: state.reducerUsers.notificationsUsers,
   }
 }
 

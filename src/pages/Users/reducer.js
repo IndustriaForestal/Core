@@ -54,6 +54,12 @@ export default function reducerProducts(
         name: 'Orden de Compra',
       },
     ],
+    notificationsUsers: {
+      complemento: 'complemento',
+      clientes: 'clientes',
+      pedidos: 'pedidos',
+      tarimas: 'tarimas',
+    },
   },
   action
 ) {
@@ -68,6 +74,11 @@ export default function reducerProducts(
       return {
         ...state,
         user: action.payload,
+      }
+    case 'GET_NOTIFICATIONS_ROLES':
+      return {
+        ...state,
+        notificationsRoles: action.payload.data,
       }
     case 'GET_ROLES':
       return {

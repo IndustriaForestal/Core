@@ -7,7 +7,7 @@ const Nails = props => {
   const { ordersHistory } = props
 
   useEffect(() => {
-    props.getAll('orders/history', 'GET_ORDERS_HISTORY')
+    props.getAll('orders/history/quality', 'GET_ORDERS_HISTORY')
     // eslint-disable-next-line
   }, [])
 
@@ -31,14 +31,8 @@ const Nails = props => {
             { title: 'Orden#', field: 'id' },
             { title: 'Producto', field: 'product' },
             { title: 'Catidad Requerida', field: 'amount' },
-            { title: 'Catidad', field: 'amount_final' },
             { title: 'Proceso', field: 'proname' },
-            { title: 'Humedad Entrada', field: 'damp_start' },
-            { title: 'Humedad Salida', field: 'damp_end' },
-            { title: 'Muestra', field: 'sample' },
-            { title: 'Rechazo 1', field: 'r1' },
-            { title: 'Rechazo 2', field: 'r2' },
-            { title: 'Rechazo 3', field: 'r3' },
+            { title: 'Requerimiento', field: 'requeriment' },
             { title: 'Terminado', field: 'created' },
           ]}
           localization={{

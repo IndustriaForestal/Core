@@ -11,14 +11,17 @@ import moment from 'moment'
 import { getAll, update, setSocket } from '../../actions/app'
 import './styles.scss'
 
-
-
 const Notifications = props => {
-  const { notifications } = props
+  const { notifications, user, notificationsRoles, roles } = props
   const [toggle, setToggle] = useState(false)
   const history = useHistory()
   useEffect(() => {
-    props.getAll('notifications', 'GET_NOTIFICATIONS')
+    props
+      .getAll('notifications', 'GET_NOTIFICATIONS')
+      .then(() => {
+        props.getAll('users/notifications', 'GET_NOTIFICATIONS_ROLES')
+      })
+      .then(() => props.getAll('users/roles', 'GET_ROLES'))
     // eslint-disable-next-line
   }, [])
 
@@ -32,13 +35,29 @@ const Notifications = props => {
       .then(() => props.getAll('notifications', 'GET_NOTIFICATIONS'))
   }
 
-  if (notifications) {
+  if (notifications && user && notificationsRoles && roles) {
+    const roleId = roles.find(role => role.name === user.role)
+    const filterForNotification = notificationsRoles.filter(
+      notification => notification.rol_id === roleId.id
+    )
+
+    let data = []
+
+    if (user.role === 'Administrador') {
+      data = notifications
+    } else {
+      filterForNotification.map(n => {
+        notifications
+          .filter(notification => notification.rol === n.notification)
+          .map(n => data.push(n))
+      })
+    }
+
     return (
       <>
         <AiOutlineBell
           className={`notifications__toggle ${
-            notifications.filter(notification => notification.readed === 0)
-              .length > 0
+            data.filter(notification => notification.readed === 0).length > 0
               ? '--active'
               : ''
           }`}
@@ -53,7 +72,7 @@ const Notifications = props => {
           </li>
           {notifications.filter(notification => notification.readed === 0)
             .length > 0 ? (
-            notifications
+            data
               .filter(notification => notification.readed === 0)
               .map(notification => {
                 return (
@@ -88,6 +107,9 @@ const Notifications = props => {
 const mapStateToProps = state => {
   return {
     notifications: state.reducerApp.notifications,
+    notificationsRoles: state.reducerUsers.notificationsRoles,
+    user: state.reducerApp.user,
+    roles: state.reducerUsers.roles,
   }
 }
 
