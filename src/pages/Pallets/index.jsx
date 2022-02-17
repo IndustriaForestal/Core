@@ -459,7 +459,17 @@ const Pallets = props => {
                     customers.filter(
                       customer =>
                         parseInt(customer.id) === parseInt(pallet.customer_id)
-                    )[0].name
+                    ) !== undefined &&
+                    customers.filter(
+                      customer =>
+                        parseInt(customer.id) === parseInt(pallet.customer_id)
+                    ).length > 0
+                      ? customers.filter(
+                          customer =>
+                            parseInt(customer.id) ===
+                            parseInt(pallet.customer_id)
+                        )[0].name
+                      : 'Error'
                   }
                   tools={
                     role === 'Administrador' ? (
@@ -567,10 +577,12 @@ const Pallets = props => {
                                 itemsType.filter(
                                   itemType => itemType.id === item.item_type_id
                                 ).length > 0
-                                  ? `${itemsType.filter(
-                                    itemType =>
-                                      itemType.id === item.item_type_id
-                                  )[0].name} - `
+                                  ? `${
+                                      itemsType.filter(
+                                        itemType =>
+                                          itemType.id === item.item_type_id
+                                      )[0].name
+                                    } - `
                                   : 'Error'}{' '}
                                 {item.item_type_id === 4 ? (
                                   <span>

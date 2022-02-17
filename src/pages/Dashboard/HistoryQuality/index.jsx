@@ -32,7 +32,7 @@ const Nails = props => {
           columns={[
             { title: 'Orden#', field: 'id' },
             { title: 'Producto', field: 'product' },
-            { title: 'Catidad Requerida', field: 'amount' },
+            { title: 'Cantidad Requerida', field: 'amount' },
             { title: 'Proceso', field: 'proname' },
             { title: 'Requerimiento', field: 'requeriment' },
             { title: 'Terminado', field: 'created' },
