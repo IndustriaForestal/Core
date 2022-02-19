@@ -64,6 +64,7 @@ const Pallets = props => {
   const [cut, setCut] = useState(false)
   const [nail, setNail] = useState(0)
   const [specialProcessList, setSpecialProcessList] = useState([])
+  const [customerSelected, setCustomerSelected] = useState(0)
   const { register, handleSubmit, errors } = useForm()
   const {
     register: register2,
@@ -78,6 +79,7 @@ const Pallets = props => {
       title: 'Tarimas',
       menu: {
         Tarimas: '/pallets',
+        'Tarimas Lista': '/pallets-list',
         /*  Complementos: '/items',
         Clavos: '/nails',
         Calidades: '/qualities', */
@@ -130,8 +132,6 @@ const Pallets = props => {
     }
   }
   const onSubmitItems = data => {
-    console.log(data)
-
     const verification = items.find(
       item =>
         item.height === parseFloat(data.height) &&
@@ -146,7 +146,6 @@ const Pallets = props => {
 
     const id = verification !== undefined ? verification.id : 0
     data.id = id
-    console.log(verification)
 
     const verificationRedux = itemsList.find(
       item =>
@@ -173,7 +172,6 @@ const Pallets = props => {
         : props.addItemList(data)
     }
     setNail(0)
-    console.log(verificationRedux)
 
     document.getElementById('formItems').reset()
   }
@@ -264,6 +262,12 @@ const Pallets = props => {
       tableData = distinctPallets
     }
 
+    if (customerSelected > 0) {
+      tableData = tableData.filter(
+        pallet => parseInt(pallet.customer_id) === parseInt(customerSelected)
+      )
+    }
+
     const handleEditPallet = id => {
       props
         .get(`pallets/${id}`, 'UPDATE_NEW_PALLET')
@@ -298,8 +302,6 @@ const Pallets = props => {
 
       const id = verification !== undefined ? verification.id : 0
       data.id = id
-      console.log(verification)
-      console.log('SQL CREATE', data)
 
       if (data.complement_id) {
         const verificationComplementsRedux = complementsList.find(
@@ -333,7 +335,6 @@ const Pallets = props => {
     }
 
     const handleDeleteItemListSQL = id => {
-      console.log('SQL DELETE')
       props
         .deleted(`items/${id}/${newPallet.id}`, 'DELETE_ITEMS_ID')
         .then(() =>
@@ -342,7 +343,6 @@ const Pallets = props => {
     }
 
     const handleDeleteComplementListSQL = id => {
-      console.log('SQL DELETE')
       props
         .deleted(`complements/${id}/${newPallet.id}`, 'DELETE_ITEMS_ID')
         .then(() =>
@@ -379,8 +379,6 @@ const Pallets = props => {
             itemStock.dry + itemStock.damp + itemStock.repair + itemStock.stock
           return itemStock
         })
-
-      console.log(itemsPallet)
 
       if (totalStock > 0 && totalStockItems > 0) {
         Swal.fire('La tarima tiene existencias!', 'No se puede borrar.', 'info')
@@ -446,224 +444,241 @@ const Pallets = props => {
         })
     }
 
+    console.log(tableData)
+
     return (
       <>
         <SearchBar onChange={handleSearch} />
+        <select
+          name="Process"
+          onChange={e => setCustomerSelected(e.target.value)}
+        >
+          <option value="0">Todos</option>
+          {customers.map(customer => (
+            <option key={customer.id} value={customer.id}>
+              {customer.name}
+            </option>
+          ))}
+        </select>
         <div className="palletsContainer">
           {pallets.length > 0 ? (
-            tableData.map(pallet => {
-              return (
-                <Card
-                  key={pallet.id}
-                  title={
-                    customers.filter(
-                      customer =>
-                        parseInt(customer.id) === parseInt(pallet.customer_id)
-                    ) !== undefined &&
-                    customers.filter(
-                      customer =>
-                        parseInt(customer.id) === parseInt(pallet.customer_id)
-                    ).length > 0
-                      ? customers.filter(
-                          customer =>
-                            parseInt(customer.id) ===
-                            parseInt(pallet.customer_id)
-                        )[0].name
-                      : 'Error'
-                  }
-                  tools={
-                    role === 'Administrador' ? (
-                      <div>
-                        <AiOutlineEdit
-                          className="--warning"
-                          onClick={() => handleEditPallet(pallet.id)}
-                        />
-                        <AiOutlineDelete
-                          className="--danger"
-                          onClick={() => handleDeletePallet(pallet.id)}
-                        />
-                      </div>
-                    ) : null
-                  }
-                >
-                  <div className="palletCard">
-                    <div className="palletCard__body">
-                      {pallet.img !== 'undefined' ? (
-                        <img
-                          className="palletCard__img"
-                          src={`${process.env.REACT_APP_API}docs/pallets/${pallet.img}`}
-                          alt="Tarima"
-                        />
-                      ) : null}
+            tableData
+              .sort((a, b) => a.model.toLowerCase() - b.model.toLowerCase())
+              .map(pallet => {
+                return (
+                  <Card
+                    key={pallet.id}
+                    title={
+                      customers.filter(
+                        customer =>
+                          parseInt(customer.id) === parseInt(pallet.customer_id)
+                      ) !== undefined &&
+                      customers.filter(
+                        customer =>
+                          parseInt(customer.id) === parseInt(pallet.customer_id)
+                      ).length > 0
+                        ? customers.filter(
+                            customer =>
+                              parseInt(customer.id) ===
+                              parseInt(pallet.customer_id)
+                          )[0].name
+                        : 'Error'
+                    }
+                    tools={
+                      role === 'Administrador' ? (
+                        <div>
+                          <AiOutlineEdit
+                            className="--warning"
+                            onClick={() => handleEditPallet(pallet.id)}
+                          />
+                          <AiOutlineDelete
+                            className="--danger"
+                            onClick={() => handleDeletePallet(pallet.id)}
+                          />
+                        </div>
+                      ) : null
+                    }
+                  >
+                    <div className="palletCard">
+                      <div className="palletCard__body">
+                        {pallet.img !== 'undefined' ? (
+                          <img
+                            className="palletCard__img"
+                            src={`${process.env.REACT_APP_API}docs/pallets/${pallet.img}`}
+                            alt="Tarima"
+                          />
+                        ) : null}
 
-                      <div className="palletCard__info">
-                        <h2 className="palletCard__title">{pallet.model}</h2>
-                        <h3 className="palletCard__subtitle">
-                          {pallet.description}
-                        </h3>
-                        <h3 className="palletCard__subtitle">
-                          {pallet.color_comment !== null
-                            ? `Pintura ${pallet.color_comment}`
-                            : null}
-                        </h3>
-                        <h3 className="palletCard__subtitle">
-                          {pallet.logo_comment !== null
-                            ? `Sello ${pallet.logo_comment}`
-                            : null}
-                        </h3>
-                        <h4 className="palletCard__subtitle">
-                          {units
-                            ? (parseFloat(pallet.width) / 2.54).toFixed(2)
-                            : pallet.width}{' '}
-                          {units ? 'in' : 'cm'} -{' '}
-                          {units
-                            ? (parseFloat(pallet.height) / 2.54).toFixed(2)
-                            : pallet.height}{' '}
-                          {units ? 'in' : 'cm'} - {''}
-                          {units
-                            ? (parseFloat(pallet.length) / 2.54).toFixed(2)
-                            : pallet.length}{' '}
-                          {units ? 'in' : 'cm'}
-                          {/* 2.54 */}
-                        </h4>
-                        <h4 className="palletCard__subtitle">
-                          {
-                            qualities.find(
-                              quality => quality.id === pallet.quality_id
-                            ).name
-                          }
-                        </h4>
-                        {specialProcessesPallets.filter(
-                          sp => sp.id === pallet.id
-                        ).length > 0 ? (
-                          <ul className="palletCard__list">
-                            {specialProcessesPallets
-                              .filter(sp => sp.id === pallet.id)
-                              .map((sp, index) => (
-                                <li key={index} className="palletCard__item">
-                                  {specialProcesses.find(
-                                    special =>
-                                      special.id ===
-                                      parseInt(sp.special_process_id)
-                                  )
-                                    ? specialProcesses.find(
-                                        special =>
-                                          special.id ===
-                                          parseInt(sp.special_process_id)
-                                      ).name
-                                    : null}
+                        <div className="palletCard__info">
+                          <h2 className="palletCard__title">{pallet.model}</h2>
+                          <h3 className="palletCard__subtitle">
+                            {pallet.description}
+                          </h3>
+                          <h3 className="palletCard__subtitle">
+                            {pallet.color_comment !== null
+                              ? `Pintura ${pallet.color_comment}`
+                              : null}
+                          </h3>
+                          <h3 className="palletCard__subtitle">
+                            {pallet.logo_comment !== null
+                              ? `Sello ${pallet.logo_comment}`
+                              : null}
+                          </h3>
+                          <h4 className="palletCard__subtitle">
+                            {units
+                              ? (parseFloat(pallet.width) / 2.54).toFixed(2)
+                              : pallet.width}{' '}
+                            {units ? 'in' : 'cm'} -{' '}
+                            {units
+                              ? (parseFloat(pallet.height) / 2.54).toFixed(2)
+                              : pallet.height}{' '}
+                            {units ? 'in' : 'cm'} - {''}
+                            {units
+                              ? (parseFloat(pallet.length) / 2.54).toFixed(2)
+                              : pallet.length}{' '}
+                            {units ? 'in' : 'cm'}
+                            {/* 2.54 */}
+                          </h4>
+                          <h4 className="palletCard__subtitle">
+                            {
+                              qualities.find(
+                                quality => quality.id === pallet.quality_id
+                              ).name
+                            }
+                          </h4>
+                          {specialProcessesPallets.filter(
+                            sp => sp.id === pallet.id
+                          ).length > 0 ? (
+                            <ul className="palletCard__list">
+                              {specialProcessesPallets
+                                .filter(sp => sp.id === pallet.id)
+                                .map((sp, index) => (
+                                  <li key={index} className="palletCard__item">
+                                    {specialProcesses.find(
+                                      special =>
+                                        special.id ===
+                                        parseInt(sp.special_process_id)
+                                    )
+                                      ? specialProcesses.find(
+                                          special =>
+                                            special.id ===
+                                            parseInt(sp.special_process_id)
+                                        ).name
+                                      : null}
+                                  </li>
+                                ))}
+                            </ul>
+                          ) : (
+                            <ul className="palletCard__list">
+                              <li className="palletCard__item --nonDelete">
+                                Sin procesos especiales
+                              </li>
+                            </ul>
+                          )}
+                        </div>
+                      </div>
+                      <div className="palletCard__specs">
+                        <ul className="palletCard__list">
+                          {items
+                            .filter(item => item.id_pallet === pallet.id)
+                            .map(item => {
+                              return (
+                                <li key={item.id} className="palletCard__item">
+                                  {itemsType.filter(
+                                    itemType =>
+                                      itemType.id === item.item_type_id
+                                  ) &&
+                                  itemsType.filter(
+                                    itemType =>
+                                      itemType.id === item.item_type_id
+                                  ).length > 0
+                                    ? `${
+                                        itemsType.filter(
+                                          itemType =>
+                                            itemType.id === item.item_type_id
+                                        )[0].name
+                                      } - `
+                                    : 'Error'}{' '}
+                                  {item.item_type_id === 4 ? (
+                                    <span>
+                                      {item.amount_new} {item.nail}
+                                    </span>
+                                  ) : (
+                                    <span>
+                                      {item.amount_new}{' '}
+                                      {units
+                                        ? (
+                                            parseFloat(item.width) / 2.54
+                                          ).toFixed(2)
+                                        : item.width}{' '}
+                                      {units ? 'in' : 'cm'} -{' '}
+                                      {units
+                                        ? (
+                                            parseFloat(item.height) / 2.54
+                                          ).toFixed(2)
+                                        : item.height}{' '}
+                                      {units ? 'in' : 'cm'} - {''}
+                                      {units
+                                        ? (
+                                            parseFloat(item.length) / 2.54
+                                          ).toFixed(2)
+                                        : item.length}{' '}
+                                      {units ? 'in' : 'cm'}
+                                      {item.serve_width !== null ? (
+                                        <span>
+                                          {' '}
+                                          <HiOutlineArrowRight />
+                                          {' Saque '}
+                                          {units
+                                            ? (
+                                                parseFloat(item.serve_width) /
+                                                2.54
+                                              ).toFixed(2)
+                                            : item.serve_width}
+                                          {units ? 'in' : 'cm'} - {''}
+                                          {units
+                                            ? (
+                                                parseFloat(item.serve_height) /
+                                                2.54
+                                              ).toFixed(2)
+                                            : item.serve_height}{' '}
+                                          {units ? 'in' : 'cm'} - {''}
+                                          {units
+                                            ? (
+                                                parseFloat(item.serve_length) /
+                                                2.54
+                                              ).toFixed(2)
+                                            : item.serve_length}{' '}
+                                          {units ? 'in' : 'cm'} - {''}
+                                          {units
+                                            ? (
+                                                parseFloat(item.serve_start) /
+                                                2.54
+                                              ).toFixed(2)
+                                            : item.serve_start}{' '}
+                                          {units ? 'in' : 'cm'}
+                                        </span>
+                                      ) : null}
+                                    </span>
+                                  )}
                                 </li>
-                              ))}
-                          </ul>
-                        ) : (
-                          <ul className="palletCard__list">
-                            <li className="palletCard__item --nonDelete">
-                              Sin procesos especiales
-                            </li>
-                          </ul>
-                        )}
+                              )
+                            })}
+                          {complementsPallets
+                            .filter(
+                              complement => complement.pallet_id === pallet.id
+                            )
+                            .map(complement => (
+                              <li>
+                                {complement.name} - {complement.amount}
+                              </li>
+                            ))}
+                        </ul>
                       </div>
                     </div>
-                    <div className="palletCard__specs">
-                      <ul className="palletCard__list">
-                        {items
-                          .filter(item => item.id_pallet === pallet.id)
-                          .map(item => {
-                            return (
-                              <li key={item.id} className="palletCard__item">
-                                {itemsType.filter(
-                                  itemType => itemType.id === item.item_type_id
-                                ) &&
-                                itemsType.filter(
-                                  itemType => itemType.id === item.item_type_id
-                                ).length > 0
-                                  ? `${
-                                      itemsType.filter(
-                                        itemType =>
-                                          itemType.id === item.item_type_id
-                                      )[0].name
-                                    } - `
-                                  : 'Error'}{' '}
-                                {item.item_type_id === 4 ? (
-                                  <span>
-                                    {item.amount_new} {item.nail}
-                                  </span>
-                                ) : (
-                                  <span>
-                                    {item.amount_new}{' '}
-                                    {units
-                                      ? (parseFloat(item.width) / 2.54).toFixed(
-                                          2
-                                        )
-                                      : item.width}{' '}
-                                    {units ? 'in' : 'cm'} -{' '}
-                                    {units
-                                      ? (
-                                          parseFloat(item.height) / 2.54
-                                        ).toFixed(2)
-                                      : item.height}{' '}
-                                    {units ? 'in' : 'cm'} - {''}
-                                    {units
-                                      ? (
-                                          parseFloat(item.length) / 2.54
-                                        ).toFixed(2)
-                                      : item.length}{' '}
-                                    {units ? 'in' : 'cm'}
-                                    {item.serve_width !== null ? (
-                                      <span>
-                                        {' '}
-                                        <HiOutlineArrowRight />
-                                        {' Saque '}
-                                        {units
-                                          ? (
-                                              parseFloat(item.serve_width) /
-                                              2.54
-                                            ).toFixed(2)
-                                          : item.serve_width}
-                                        {units ? 'in' : 'cm'} - {''}
-                                        {units
-                                          ? (
-                                              parseFloat(item.serve_height) /
-                                              2.54
-                                            ).toFixed(2)
-                                          : item.serve_height}{' '}
-                                        {units ? 'in' : 'cm'} - {''}
-                                        {units
-                                          ? (
-                                              parseFloat(item.serve_length) /
-                                              2.54
-                                            ).toFixed(2)
-                                          : item.serve_length}{' '}
-                                        {units ? 'in' : 'cm'} - {''}
-                                        {units
-                                          ? (
-                                              parseFloat(item.serve_start) /
-                                              2.54
-                                            ).toFixed(2)
-                                          : item.serve_start}{' '}
-                                        {units ? 'in' : 'cm'}
-                                      </span>
-                                    ) : null}
-                                  </span>
-                                )}
-                              </li>
-                            )
-                          })}
-                        {complementsPallets
-                          .filter(
-                            complement => complement.pallet_id === pallet.id
-                          )
-                          .map(complement => (
-                            <li>
-                              {complement.name} - {complement.amount}
-                            </li>
-                          ))}
-                      </ul>
-                    </div>
-                  </div>
-                </Card>
-              )
-            })
+                  </Card>
+                )
+              })
           ) : (
             <h2>Sin registros</h2>
           )}
@@ -1266,7 +1281,18 @@ const Pallets = props => {
                       customer =>
                         parseInt(customer.id) ===
                         parseInt(newPallet.customer_id)
-                    )[0].name
+                    ) !== undefined &&
+                    customers.filter(
+                      customer =>
+                        parseInt(customer.id) ===
+                        parseInt(newPallet.customer_id)
+                    ).length > 0
+                    ? customers.filter(
+                        customer =>
+                          parseInt(customer.id) ===
+                          parseInt(newPallet.customer_id)
+                      )[0].name
+                    : 'Error'
                   : null}
               </h4>
               <h4>Modelo: {newPallet.model}</h4>
