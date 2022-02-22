@@ -1165,7 +1165,9 @@ const Pallets = props => {
                         </td>
                         <td>{item.start !== '' ? item.start : 'N/A'}</td>
                         <td>
-                          {item.wood_id > 0
+                          {item.wood_id > 0 &&
+                          wood.find(w => w.id === parseInt(item.wood_id)) !==
+                            undefined
                             ? wood.find(w => w.id === parseInt(item.wood_id))
                                 .name
                             : 'N/A'}
@@ -1276,24 +1278,17 @@ const Pallets = props => {
               )}
               <h4>
                 Cliente:
-                {newPallet.customer_id
-                  ? customers.filter(
+                {newPallet.customer_id &&
+                customers.find(
+                  customer =>
+                    parseInt(customer.id) === parseInt(newPallet.customer_id)
+                ) !== undefined
+                  ? customers.find(
                       customer =>
                         parseInt(customer.id) ===
                         parseInt(newPallet.customer_id)
-                    ) !== undefined &&
-                    customers.filter(
-                      customer =>
-                        parseInt(customer.id) ===
-                        parseInt(newPallet.customer_id)
-                    ).length > 0
-                    ? customers.filter(
-                        customer =>
-                          parseInt(customer.id) ===
-                          parseInt(newPallet.customer_id)
-                      )[0].name
-                    : 'Error'
-                  : null}
+                    ).name
+                  : 'Error'}
               </h4>
               <h4>Modelo: {newPallet.model}</h4>
               <h4>Ancho: {newPallet.width}</h4>
@@ -1357,7 +1352,9 @@ const Pallets = props => {
                         </td>
                         <td>{item.start !== '' ? item.start : 'N/A'}</td>
                         <td>
-                          {item.wood_id > 0
+                          {item.wood_id > 0 &&
+                          wood.find(w => w.id === parseInt(item.wood_id)) !==
+                            undefined
                             ? wood.find(w => w.id === parseInt(item.wood_id))
                                 .name
                             : 'N/A'}
