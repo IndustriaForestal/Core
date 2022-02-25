@@ -1,4 +1,4 @@
-import React, { useEffect } from 'react'
+import React, { useEffect, useState } from 'react'
 import { Link } from 'react-router-dom'
 import { connect } from 'react-redux'
 import { updatePalletsStock, completeOrder } from './actions'
@@ -15,6 +15,7 @@ import './styles.scss'
 const Orders = props => {
   const { setTitle, ordersCustomers, customers, orders, ordersProduction } =
     props
+  const [description, setDescription] = useState('')
   useEffect(() => {
     const topbar = {
       title: 'Pedidos de Clientes',
@@ -41,6 +42,10 @@ const Orders = props => {
     // eslint-disable-next-line
   }, [])
 
+  const handleInput = (e, id) => {
+    setDescription(e.target.value)
+  }
+
   const handleCancel = id => {
     Swal.fire({
       title: '¿Estás seguro?',
@@ -53,7 +58,7 @@ const Orders = props => {
     }).then(result => {
       if (result.isConfirmed) {
         props
-          .create(`orders/cancel/${id}`, 'CANCEL', { id })
+          .create(`orders/cancel/${id}`, 'CANCEL', { id, description })
           .then(() => {
             props.getAll('orders', 'GET_ORDERS_CUSTOMERS')
           })
@@ -89,6 +94,7 @@ const Orders = props => {
         <MaterialTable
           columns={[
             { title: 'ID', field: 'id' },
+            { title: 'Orden Compra', field: 'op' },
             { title: 'Estado', field: 'state' },
             { title: 'Cliente', field: 'customer_id', lookup: lookupCustomers },
             { title: 'Fecha Limite', field: 'delivery' },
@@ -120,7 +126,7 @@ const Orders = props => {
                     <tr>
                       <th># Embarque</th>
                       <th>Estado Actual</th>
-                      <th>Accion</th>
+                      <th colSpan={2}>Accion</th>
                     </tr>
                   </thead>
                   <tbody>
@@ -135,6 +141,17 @@ const Orders = props => {
                           <tr>
                             <td>{o.id}</td>
                             <td>{o.state}</td>
+                            {o.state !== 'Cancelada' &&
+                            o.state !== 'Completado' ? (
+                              <td>
+                                <input
+                                  type="text"
+                                  onKeyPress={e => {
+                                    handleInput(e, o.id)
+                                  }}
+                                />
+                              </td>
+                            ) : null}
                             <td>
                               {o.state === 'Completado' ? (
                                 'Completado'

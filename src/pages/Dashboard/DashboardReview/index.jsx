@@ -34,9 +34,9 @@ const Dashbaord = props => {
 
   useEffect(() => {
     const topbar = {
-      title: 'Dashboard de calidad',
+      title: 'Pizarron de calidad',
       menu: {
-        'Dashboard de calidad': '/dashboard/review-home',
+        'Pizarron de calidad': '/dashboard/review-home',
         'Historial orden de producción': '/dashboard/history',
         'Historial de calidad': '/dashboard/review-home/history',
       },

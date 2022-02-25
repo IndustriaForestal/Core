@@ -43,6 +43,15 @@ const Processes = props => {
   }, [])
 
   if (processes && material && processesReject && materialState) {
+
+    console.log(processes.sort((a, b) => a.name.toLowerCase() - b.name.toLowerCase()))
+
+    function SortArray(x, y){
+      if (x.name < y.name) {return -1;}
+      if (x.name > y.name) {return 1;}
+      return 0;
+  }
+
     const lookupMaterial = {}
     const lookupProcessReject = { 0: 'N/A' }
     const lookupMaterialState = { 0: 'N/A' }
@@ -157,7 +166,7 @@ const Processes = props => {
             addTooltip: 'Agregar',
           },
         }}
-        data={processes}
+        data={processes.sort(SortArray)}
         editable={editable}
       />
     )

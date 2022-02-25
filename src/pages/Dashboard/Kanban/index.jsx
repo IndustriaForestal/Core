@@ -38,13 +38,13 @@ const Dashbaord = props => {
 
   useEffect(() => {
     const topbar = {
-      title: 'Dashbaord',
+      title: 'Pizarron',
       menu: {
-        Dashbaord: '/dashboard',
-        'Dashbaord Proceso': '/dashboard/processes',
-        'Dashbaord Inventario': '/dashboard/stock',
-        'Dashbaord Rechazo': '/dashboard/reject',
-        'Dashbaord Historial': '/dashboard/history',
+        Pizarron: '/dashboard',
+        'Pizarron Proceso': '/dashboard/processes',
+        'Pizarron Inventario': '/dashboard/stock',
+        'Pizarron Rechazo': '/dashboard/reject',
+        'Pizarron Historial': '/dashboard/history',
       },
     }
     props.setTitle(topbar)

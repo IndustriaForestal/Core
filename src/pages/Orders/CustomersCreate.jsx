@@ -8,6 +8,7 @@ import { setTitle, getAll, deleted, get, create } from '../../actions/app'
 import Loading from '../../components/Loading/Loading'
 import Card from '../../components/Card/Card'
 import Button from '../../components/Button/Button'
+import Input from '../../components/Input/Input'
 
 import { DateTimePicker, MuiPickersUtilsProvider } from '@material-ui/pickers'
 // pick a date util library
@@ -43,6 +44,7 @@ const CreateOrder = props => {
   const [selectedDate, setDate] = useState(new Date())
   const [customerSelected, setCustomer] = useState(0)
   const [palletsOrder, setPalletsOrder] = useState([])
+  const [op, setOp] = useState('')
 
   const userId = user.id
 
@@ -59,6 +61,7 @@ const CreateOrder = props => {
         customer_id: customerSelected,
         date: selectedDate,
         pallets: palletsOrder,
+        op,
       })
       .then(() => props.history.goBack())
   }
@@ -105,6 +108,12 @@ const CreateOrder = props => {
                 label: customer.name,
               }
             })}
+          />
+          <Input
+            title="Orden de compra"
+            type="text"
+            name="op"
+            onChange={e => setOp(e.target.value)}
           />
           <ThemeProvider theme={theme}>
             <MuiPickersUtilsProvider utils={MomentUtils} locale={'es'}>

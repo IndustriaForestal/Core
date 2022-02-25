@@ -197,6 +197,7 @@ const CreateOrder = props => {
               }
             })}
           />
+         
           {timeTravel > 0 ? <h3>Tiempo de viaje: {timeTravel} hrs.</h3> : null}
           <ThemeProvider theme={theme}>
             <MuiPickersUtilsProvider utils={MomentUtils} locale={'es'}>

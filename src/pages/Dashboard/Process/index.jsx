@@ -27,6 +27,7 @@ const Dashbaord = props => {
     orders,
     ordersWorkstations,
     items,
+    itemsType,
   } = props
   const [processSelected, setProcess] = useState('')
   const [orderSelected, setOrderSelected] = useState(0)
@@ -56,6 +57,9 @@ const Dashbaord = props => {
       })
       .then(() => {
         props.getAll('items', 'GET_ITEMS')
+      })
+      .then(() => {
+        props.getAll('items/type', 'GET_ITEMS_TYPE')
       })
       .then(() => {
         props.getAll('zones/workstations', 'GET_WORKSTATIONS')
@@ -110,7 +114,8 @@ const Dashbaord = props => {
     qualities &&
     ordersWorkstations &&
     orders &&
-    items
+    items &&
+    itemsType
   ) {
     const ordersProductionFiltered =
       orderSelected !== 0
@@ -226,7 +231,7 @@ const Dashbaord = props => {
 
                       if (
                         parseInt(order.order_number) ===
-                        uniqueArray.length - 1 
+                        uniqueArray.length - 1
                       ) {
                         validation = true
                       } else {
@@ -283,7 +288,18 @@ const Dashbaord = props => {
                                   : 'N/A'}
                               </span>
                             ) : null}
-                            <span>Cantidad: {order.amount}</span>
+                            <span>
+                              Cantidad: {order.amount} {' '}
+                              {order.item_id !== null
+                                ? itemsType.find(
+                                    i => i.id === item.item_type_id
+                                  ) !== undefined
+                                  ? itemsType.find(
+                                      i => i.id === item.item_type_id
+                                    ).name
+                                  : 'Error Material'
+                                : null}
+                            </span>
                             <span>
                               Entrega:{' '}
                               {moment(order.time).format('DD-MM-YYYY HH:mm')}
@@ -490,6 +506,7 @@ const mapStateToProps = state => {
     items: state.reducerItems.items,
     pallets: state.reducerPallets.pallets,
     qualities: state.reducerQualities.qualities,
+    itemsType: state.reducerItems.itemsType,
   }
 }
 
