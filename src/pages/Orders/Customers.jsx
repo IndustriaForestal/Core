@@ -1,4 +1,4 @@
-import React, { useEffect, useState } from 'react'
+import React, { useEffect } from 'react'
 import { Link } from 'react-router-dom'
 import { connect } from 'react-redux'
 import { updatePalletsStock, completeOrder } from './actions'
@@ -15,7 +15,6 @@ import './styles.scss'
 const Orders = props => {
   const { setTitle, ordersCustomers, customers, orders, ordersProduction } =
     props
-  const [description, setDescription] = useState('')
   useEffect(() => {
     const topbar = {
       title: 'Pedidos de Clientes',
@@ -42,23 +41,35 @@ const Orders = props => {
     // eslint-disable-next-line
   }, [])
 
-  const handleInput = (e, id) => {
-    setDescription(e.target.value)
-  }
-
   const handleCancel = id => {
     Swal.fire({
       title: '¿Estás seguro?',
       text: 'Este proceso no se puede revertir',
       icon: 'warning',
+      input: 'text',
+      inputAttributes: {
+        autocapitalize: 'off',
+      },
       showCancelButton: true,
+      confirmButtonText: 'Si, cancelar',
+      showLoaderOnConfirm: true,
       confirmButtonColor: '#3085d6',
       cancelButtonColor: '#d33',
-      confirmButtonText: 'Si, cancelar',
+      inputValidator: value => {
+        if (!value) {
+          return 'La descripción es requerida'
+        }
+      },
+      allowOutsideClick: () => !Swal.isLoading(),
     }).then(result => {
       if (result.isConfirmed) {
+        const desc = result.value
         props
-          .create(`orders/cancel/${id}`, 'CANCEL', { id, description })
+          .create(`orders/cancel/${id}`, 'CANCEL', {
+            id,
+            desc,
+            status: 'Cancelada',
+          })
           .then(() => {
             props.getAll('orders', 'GET_ORDERS_CUSTOMERS')
           })
@@ -141,17 +152,6 @@ const Orders = props => {
                           <tr>
                             <td>{o.id}</td>
                             <td>{o.state}</td>
-                            {o.state !== 'Cancelada' &&
-                            o.state !== 'Completado' ? (
-                              <td>
-                                <input
-                                  type="text"
-                                  onKeyPress={e => {
-                                    handleInput(e, o.id)
-                                  }}
-                                />
-                              </td>
-                            ) : null}
                             <td>
                               {o.state === 'Completado' ? (
                                 'Completado'
@@ -171,13 +171,15 @@ const Orders = props => {
                                 ) : (
                                   <Button
                                     className="btn --danger"
-                                    onClick={() => handleCancel(o.id)}
+                                    onClick={() => {
+                                      handleCancel(o.id)
+                                    }}
                                   >
                                     Cancelar
                                   </Button>
                                 )
                               ) : (
-                                'Error data'
+                                o.description
                               )}
                             </td>
                           </tr>
