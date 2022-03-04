@@ -289,7 +289,7 @@ const Dashbaord = props => {
                               </span>
                             ) : null}
                             <span>
-                              Cantidad: {order.amount} {' '}
+                              Cantidad: {order.amount}{' '}
                               {order.item_id !== null
                                 ? itemsType.find(
                                     i => i.id === item.item_type_id
@@ -406,7 +406,18 @@ const Dashbaord = props => {
                                 : 'N/A'}
                             </span>
                           ) : null}
-                          <span>Cantidad: {order.amount}</span>
+                          <span>
+                            Cantidad: {order.amount}{' '}
+                            {order.item_id !== null
+                              ? itemsType.find(
+                                  i => i.id === item.item_type_id
+                                ) !== undefined
+                                ? itemsType.find(
+                                    i => i.id === item.item_type_id
+                                  ).name
+                                : 'Error Material'
+                              : null}
+                          </span>
                           <span>
                             Zona de trabajo:{' '}
                             {ordersWorkstations.filter(

@@ -61,6 +61,9 @@ const Nails = props => {
           }}
           data={stock}
           title="Inventario Clavos"
+          options={{
+            exportButton: true,
+          }}
         />
       </>
     )

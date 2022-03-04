@@ -97,6 +97,9 @@ const Nails = props => {
             }}
             data={stockItems}
             title="Madera Habilitada"
+            options={{
+              exportButton: true,
+            }}
           />
         </>
       )

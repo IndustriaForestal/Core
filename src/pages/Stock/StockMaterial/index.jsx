@@ -76,6 +76,9 @@ const StockSwan = props => {
           }}
           data={data}
           title="Materia Prima"
+          options={{
+            exportButton: true,
+          }}
         />
       </>
     )
