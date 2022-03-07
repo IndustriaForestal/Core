@@ -235,8 +235,6 @@ const Nails = props => {
     }
 
     const handleSaveStockSawn = () => {
-      const user = sessionStorage.getItem('id')
-
       let heighConverted
       let lengthConverted
       let widthConverted
@@ -288,7 +286,6 @@ const Nails = props => {
     }
 
     const hanldeUpdateStockZoneSawn = stock => {
-      const user = sessionStorage.getItem('id')
       const negativeInput = parseInt(inputOut) * -1
       inputOut > stock.amount
         ? console.log('Mayor')
@@ -346,7 +343,6 @@ const Nails = props => {
     }
 
     const hanldeUpdateStockZone = stock => {
-      const user = sessionStorage.getItem('id')
       const negativeInput = parseInt(inputOut) * -1
       inputOut > stock.amount
         ? console.log('Mayor')
@@ -380,7 +376,6 @@ const Nails = props => {
     }
 
     const hanldeUpdateStockZoneNails = stock => {
-      const user = sessionStorage.getItem('id')
       const negativeInput = parseInt(inputOut) * -1
       inputOut > stock.amount
         ? console.log('Mayor')
@@ -420,7 +415,6 @@ const Nails = props => {
     }
 
     const hanldeUpdateStockZoneItems = stock => {
-      const user = sessionStorage.getItem('id')
       const negativeInput = parseInt(inputOut) * -1
       inputOut > stock.amount
         ? console.log('Mayor')
@@ -454,7 +448,6 @@ const Nails = props => {
     }
 
     const hanldeUpdateStockZoneRaws = stock => {
-      const user = sessionStorage.getItem('id')
       const negativeInput = parseInt(inputOut) * -1
       inputOut > stock.m3
         ? console.log('Mayor')
