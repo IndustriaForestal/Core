@@ -38,12 +38,23 @@ const Nails = props => {
     suppliers,
     purchaseOrdersSuppliers,
   } = props
-  const [type, setType] = useState(0)
+  const [type, setType] = useState(5)
   const [plantSelected, setPlant] = useState(null)
   const [zoneSelected, setZone] = useState(null)
   const [orderSupplier, setSupplier] = useState(null)
   const [orderPurchase, setOrderPurchase] = useState(null)
+  const [diameters, setDiameters] = useState([])
+  const [d1, setD1] = useState(0)
+  const [d2, setD2] = useState(0)
   const { register, handleSubmit, errors } = useForm()
+
+  const addDiameter = id => {
+    setDiameters([...diameters, { id, d1, d2 }])
+  }
+
+  const removeDiameter = id => {
+    setDiameters(diameters.filter(d => d.id !== id))
+  }
 
   useEffect(() => {
     const topbar = {
@@ -157,6 +168,8 @@ const Nails = props => {
     })
 
     const onSubmit = data => {
+      data.diameters = JSON.stringify(diameters)
+
       orderPurchase !== null
         ? (data.orderPurchase = orderPurchase)
         : (data.orderPurchase = null)
@@ -851,20 +864,7 @@ const Nails = props => {
                 name="pdf"
                 title={`Archivo Forestal`}
               />
-              <Input
-                type="number"
-                name="d1"
-                step="any"
-                title="Diametro 1 cm"
-                passRef={register}
-              />
-              <Input
-                type="number"
-                name="d2"
-                step="any"
-                title="Diametro 2 cm"
-                passRef={register}
-              />
+
               <Input
                 type="number"
                 name="length"
@@ -872,14 +872,60 @@ const Nails = props => {
                 title="Largo cm"
                 passRef={register}
               />
-              <Input
-                type="number"
-                name="amount"
-                step="any"
-                title="Cantidad"
-                passRef={register}
-              />
 
+              <table>
+                <thead>
+                  <tr>
+                    <th>Diametro 1</th>
+                    <th>Diametro 2</th>
+                  </tr>
+                </thead>
+                <tbody>
+                  {diameters.map(diameter => {
+                    return (
+                      <tr key={diameter.id}>
+                        <td>{diameter.d1}</td>
+                        <td>{diameter.d2}</td>
+                        <td>
+                          <Button
+                            className="btn --danger"
+                            onClick={() => removeDiameter(diameter.id)}
+                          >
+                            X
+                          </Button>
+                        </td>
+                      </tr>
+                    )
+                  })}
+                </tbody>
+              </table>
+              <div
+                style={{
+                  display: 'flex',
+                  justifyContent: 'space-between',
+                  width: '100%',
+                }}
+              >
+                <Input
+                  onChange={e => setD1(e.target.value)}
+                  type="number"
+                  name="d1"
+                  step="any"
+                  title="Diametro 1 cm"
+                  className={'input__width'}
+                />
+                <Input
+                  className={'input__width'}
+                  onChange={e => setD2(e.target.value)}
+                  type="number"
+                  name="d2"
+                  step="any"
+                  title="Diametro 2 cm"
+                />
+                <Button onClick={() => addDiameter(diameters.length + 1)}>
+                  +
+                </Button>
+              </div>
               <div className="inputGroup">
                 <label htmlFor="processId">
                   <span>Planta:</span>

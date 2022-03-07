@@ -49,11 +49,17 @@ const Nails = props => {
   const [length, setLength] = useState(0)
   const [width, setWidth] = useState(0)
   const [inputOut, setAmountInputOut] = useState(0)
-  const [amountRaw, setAmountRaw] = useState(0)
+  const [diameters, setDiameters] = useState([])
   const [d1, setD1] = useState(0)
   const [d2, setD2] = useState(0)
 
-  console.log(user)
+  const addDiameter = id => {
+    setDiameters([...diameters, { id, d1, d2 }])
+  }
+
+  const removeDiameter = id => {
+    setDiameters(diameters.filter(d => d.id !== id))
+  }
 
   useEffect(() => {
     const topbar = {
@@ -316,12 +322,12 @@ const Nails = props => {
     const handleSaveStockRaw = () => {
       /* let volumen1 = length * d1 * amountRaw * 0.07854
       let volumen2 = length * d2 * amountRaw * 0.07854 */
-      const volumen = length * d1 * d2 * amountRaw * 0.7854
 
       props
         .create(`stock/raws`, 'PALLET_HISTORY', {
-          m3: volumen,
-          amount,
+          diameters,
+          amount: 1,
+          length,
           wood_id: woodSelected,
           user_id: user.id,
           state: greenDryRepair,
@@ -973,33 +979,65 @@ const Nails = props => {
         {type === 5 ? (
           inOut === 0 ? (
             <Card title="Madera Trozo">
-              <Input
-                onChange={e => setD1(e.target.value)}
-                type="number"
-                name="d1"
-                step="any"
-                title="Diametro 1 cm"
-              />
-              <Input
-                onChange={e => setD2(e.target.value)}
-                type="number"
-                name="d2"
-                step="any"
-                title="Diametro 2 cm"
-              />
+              <table>
+                <thead>
+                  <tr>
+                    <th>Diametro 1</th>
+                    <th>Diametro 2</th>
+                  </tr>
+                </thead>
+                <tbody>
+                  {diameters.map(diameter => {
+                    return (
+                      <tr key={diameter.id}>
+                        <td>{diameter.d1}</td>
+                        <td>{diameter.d2}</td>
+                        <td>
+                          <Button
+                            className="btn --danger"
+                            onClick={() => removeDiameter(diameter.id)}
+                          >
+                            X
+                          </Button>
+                        </td>
+                      </tr>
+                    )
+                  })}
+                </tbody>
+              </table>
+              <div
+                style={{
+                  display: 'flex',
+                  justifyContent: 'space-between',
+                  width: '100%',
+                }}
+              >
+                <Input
+                  onChange={e => setD1(e.target.value)}
+                  type="number"
+                  name="d1"
+                  step="any"
+                  title="Diametro 1 cm"
+                  className={'input__width'}
+                />
+                <Input
+                  className={'input__width'}
+                  onChange={e => setD2(e.target.value)}
+                  type="number"
+                  name="d2"
+                  step="any"
+                  title="Diametro 2 cm"
+                />
+                <Button onClick={() => addDiameter(diameters.length + 1)}>
+                  +
+                </Button>
+              </div>
               <Input
                 onChange={e => setLength(e.target.value)}
                 type="number"
                 name="length"
                 step="any"
                 title="Largo cm"
-              />
-              <Input
-                onChange={e => setAmountRaw(e.target.value)}
-                type="number"
-                name="amount"
-                step="any"
-                title="Cantidad"
               />
 
               <div className="inputGroup">
