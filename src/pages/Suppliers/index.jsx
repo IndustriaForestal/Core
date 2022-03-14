@@ -1,11 +1,13 @@
-import React, { useEffect } from 'react'
+import React, { useEffect, useState, memo } from 'react'
 import { connect } from 'react-redux'
 import { getAll, create, update, setTitle, deleted } from '../../actions/app'
+import { SketchPicker } from 'react-color'
 
 import MaterialTable from 'material-table'
 
 const CreateCustomer = props => {
   const { material, suppliers, user } = props
+  const [color, setColor] = useState('#ffffff')
   const userId = user.id
   useEffect(() => {
     const topbar = {
@@ -22,11 +24,14 @@ const CreateCustomer = props => {
     // eslint-disable-next-line
   }, [])
 
+  console.log(color)
+
   const editable = {
     onRowAdd: newData =>
       new Promise((resolve, reject) => {
         setTimeout(() => {
           newData.user_id = userId
+          newData.color = color.hex
           props
             .create(`suppliers`, 'CREATE_SUPPLIER', newData)
             .then(() => props.getAll('suppliers', 'GET_SUPPLIERS'))
@@ -38,6 +43,7 @@ const CreateCustomer = props => {
         setTimeout(() => {
           delete newData.id
           newData.user_id = userId
+          newData.color = color.hex
           props
             .update(`suppliers/${oldData.id}`, 'UPDATE_SUPPLIER', newData)
             .then(() => props.getAll('suppliers', 'GET_SUPPLIERS'))
@@ -55,17 +61,46 @@ const CreateCustomer = props => {
       }),
   }
 
+  const handleChangeColor = color => {
+    setColor(color)
+  }
+
   if (material && suppliers) {
     const lookupItemsType = {}
 
     material.map(item => (lookupItemsType[item.id] = item.name))
 
+    const Item = memo(() => (
+      <SketchPicker color={color} onChangeComplete={handleChangeColor} />
+    ))
+
     return (
       <>
+        {/*  */}
         <MaterialTable
           columns={[
             { title: 'Nombre', field: 'name' },
             { title: 'Télefono', field: 'phone' },
+            { title: 'Dirección', field: 'address' },
+            { title: 'RFC', field: 'rfc' },
+            {
+              title: 'Color',
+              field: 'color',
+              editComponent: rowData => (
+                <div>
+                  <Item />
+                </div>
+              ),
+              render: rowData => (
+                <div
+                  style={{
+                    backgroundColor: `${rowData.color}`,
+                    height: '20px',
+                    width: '20px',
+                  }}
+                ></div>
+              ),
+            },
             { title: 'Tiempo de entrega hrs.', field: 'delivery_time' },
             {
               title: 'Tipo de material',

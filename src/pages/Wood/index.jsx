@@ -56,6 +56,7 @@ const TypeMaterial = props => {
       <MaterialTable
         columns={[
           { title: 'Nombre', field: 'name' },
+          { title: 'Factor', field: 'factor' },
           {
             title: 'Calidad',
             field: 'quality_id',

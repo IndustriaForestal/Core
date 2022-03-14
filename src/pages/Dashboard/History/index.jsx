@@ -20,9 +20,12 @@ const Nails = props => {
       return {
         ...o,
         product,
-        created: moment(o.created).format('DD-MM-YYYY HH:mm:ss'),
+        start: moment(o.start).format('DD-MM-YYYY HH:mm:ss'),
+        end: moment(o.end).format('DD-MM-YYYY HH:mm:ss'),
       }
     })
+
+    console.log(ordersHistory)
 
     return (
       <>
@@ -39,7 +42,8 @@ const Nails = props => {
             { title: 'Rechazo 1', field: 'r1' },
             { title: 'Rechazo 2', field: 'r2' },
             { title: 'Rechazo 3', field: 'r3' },
-            { title: 'Terminado', field: 'created' },
+            { title: 'Inicio', field: 'start' },
+            { title: 'Terminado', field: 'end' },
           ]}
           localization={{
             pagination: {

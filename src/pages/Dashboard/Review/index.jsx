@@ -25,6 +25,8 @@ const Review = props => {
     qualityRequest,
     specialProcesses,
     processesReject,
+    purchaseOrdersSuppliers,
+    suppliers,
   } = props
   const { register, handleSubmit } = useForm()
 
@@ -59,6 +61,15 @@ const Review = props => {
           'GET_SPECIAL_PROCESSES_PALLETS'
         )
       })
+      .then(() => {
+        props.getAll(
+          'purchaseOrders/suppliers',
+          'GET_PURCHASE_ORDERS_SUPPLIERS'
+        )
+      })
+      .then(() => {
+        props.getAll('suppliers', 'GET_SUPPLIERS')
+      })
   }, [])
 
   const onSubmit = data => {
@@ -75,9 +86,10 @@ const Review = props => {
     workstations &&
     qualityRequest &&
     specialProcesses &&
-    processesReject
+    processesReject &&
+    purchaseOrdersSuppliers &&
+    suppliers
   ) {
-
     const order =
       ordersProduction.find(o => o.id === parseInt(id)) !== undefined
         ? ordersProduction.find(o => o.id === parseInt(id))
@@ -95,10 +107,29 @@ const Review = props => {
     const process =
       processes.find(process => process.id === order.process_id) || {}
 
+    const purchaseOrder = purchaseOrdersSuppliers.find(
+      po => po.order_id === order.order_id
+    )
+
+    const supplier = suppliers.find(s => s.id === purchaseOrder?.supplier_id)
+
     return (
       <Card title="Revisión de calidad">
         <form onSubmit={handleSubmit(onSubmit)} className="review">
           <div className="review__section">
+            <h1>
+              Proveedor:{' '}
+              {supplier !== undefined ? supplier.name : 'Sin Proveedor'}
+              {supplier !== undefined ? (
+                <div
+                  style={{
+                    backgroundColor: `${supplier.color}`,
+                    height: '20px',
+                    width: '20px',
+                  }}
+                ></div>
+              ) : null}
+            </h1>
             <h1>Revisión: {process.name}</h1>
             <h3>Tarima: {order.model}</h3>
             {process.id === 36 ? null : order.item_id !== null ? (
@@ -414,6 +445,9 @@ const mapStateToProps = state => {
     qualityRequest: state.reducerSpecialProcesses.specialProcessesPallets,
     specialProcesses: state.reducerSpecialProcesses.specialProcesses,
     processesReject: state.reducerProcesses.processesReject,
+    purchaseOrdersSuppliers:
+      state.reducerPurchaseOrders.purchaseOrdersSuppliers,
+    suppliers: state.reducerSuppliers.suppliers,
   }
 }
 
