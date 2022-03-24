@@ -11,8 +11,8 @@ const Customers = props => {
     const topbar = {
       title: 'Clientes',
       menu: {
-        Clientes: '/customers',
-        'Tiempo de entrega': '/customers-times',
+        'Datos Fiscales': '/customers',
+        'Datos de Entrega': '/customers-times',
       },
     }
     props.setTitle(topbar)
@@ -60,6 +60,7 @@ const Customers = props => {
         <MaterialTable
           columns={[
             { title: 'Nombre', field: 'name' },
+            { title: 'RFC', field: 'rfc' },
             { title: 'Dirección', field: 'address' },
             { title: 'email', field: 'email' },
             { title: 'Télefono', field: 'phone' },

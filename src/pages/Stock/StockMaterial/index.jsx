@@ -1,11 +1,14 @@
-import React, { useEffect } from 'react'
+import React, { useEffect, useState } from 'react'
 import { cmToFbm } from '../../../utils'
 import { connect } from 'react-redux'
 import { setTitle, getAll, deleted, cleanStock } from '../../../actions/app'
 import MaterialTable from 'material-table'
 
 const StockSwan = props => {
-  const { stock, setTitle, units } = props
+  const { stock, setTitle, units, workstations, zones, plants } = props
+  const [workstation, setWorkstation] = useState(0)
+  const [plant, setPlant] = useState(0)
+  const [zone, setZone] = useState(0)
 
   useEffect(() => {
     const topbar = {
@@ -22,11 +25,21 @@ const StockSwan = props => {
     }
 
     setTitle(topbar)
-    props.getAll('stock/raws', 'GET_STOCK')
+    props
+      .getAll('stock/raws', 'GET_STOCK')
+      .then(() => {
+        props.getAll('zones/workstations', 'GET_WORKSTATIONS')
+      })
+      .then(() => {
+        props.getAll('zones/plants', 'GET_PLANTS')
+      })
+      .then(() => {
+        props.getAll('zones/zones', 'GET_ZONES')
+      })
     // eslint-disable-next-line
   }, [])
 
-  if (stock) {
+  if (stock && workstations && zones && plants) {
     const data = stock
       .filter(s => s.m3 > 0)
       .map(item => {
@@ -92,6 +105,9 @@ const mapStateToProps = state => {
     stock: state.reducerStock.stock,
     role: state.reducerApp.role,
     units: state.reducerApp.units,
+    workstations: state.reducerZones.workstations,
+    zones: state.reducerZones.zones,
+    plants: state.reducerZones.plants,
   }
 }
 

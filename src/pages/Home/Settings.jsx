@@ -47,6 +47,7 @@ const Settings = props => {
             url="/specialProcesses"
             text="Requerimientos Calidad"
           />
+          <IconHome icon={<BsCardImage />} url="/colors" text="Colores" />
           <IconHome icon={<BsCardImage />} url="/suppliers" text="Proveedores" />
           <IconHome icon={<BsCardImage />} url="/customers" text="Clientes" />
           <IconHome icon={<BsCardImage />} url="/zones" text="Zonas" />

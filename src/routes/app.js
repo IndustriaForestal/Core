@@ -83,6 +83,7 @@ import StockSuppliersHistory from '../pages/Stock/StockSuppliersHistory'
 import PurchaseOrder from '../pages/PurchaseOrder'
 
 import Schedule from '../pages/Schedule'
+import Colors from '../pages/Colors'
 
 const App = ({ loggedIn }) => {
   if (loggedIn) {
@@ -91,6 +92,7 @@ const App = ({ loggedIn }) => {
         <Layout>
           <Switch>
             <Route exact path="/" component={Home} />
+            <Route exact path="/colors" component={Colors} />
             <Route exact path="/schedule" component={Schedule} />
             <Route exact path="/dashboard" component={Dashboard} />
             <Route

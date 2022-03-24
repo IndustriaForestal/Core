@@ -76,6 +76,7 @@ const Customers = props => {
         <MaterialTable
           columns={[
             { title: 'Cliente', field: 'customer_id', lookup: lookupCustomers },
+            { title: 'Dirección', field: 'address' },
             { title: 'Planta', field: 'plant_id', lookup: lookupItemsType },
             { title: 'Horas del viaje', field: 'hours' },
           ]}

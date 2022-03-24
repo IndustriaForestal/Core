@@ -46,10 +46,48 @@ const Orders = props => {
       title: '¿Estás seguro?',
       text: 'Este proceso no se puede revertir',
       icon: 'warning',
-      input: 'text',
-      inputAttributes: {
-        autocapitalize: 'off',
+      input: 'select',
+      inputOptions: {
+        Cancelar: 'Cancelar',
       },
+      inputPlaceholder: 'Seleccione un motivo',
+      showCancelButton: true,
+      confirmButtonText: 'Si, cancelar',
+      showLoaderOnConfirm: true,
+      confirmButtonColor: '#3085d6',
+      cancelButtonColor: '#d33',
+      inputValidator: value => {
+        if (!value) {
+          return 'La descripción es requerida'
+        }
+      },
+      allowOutsideClick: () => !Swal.isLoading(),
+    }).then(result => {
+      if (result.isConfirmed) {
+        const desc = result.value
+        props
+          .create(`orders/cancel/${id}`, 'CANCEL', {
+            id,
+            desc,
+            status: 'Cancelada',
+          })
+          .then(() => {
+            props.getAll('orders', 'GET_ORDERS_CUSTOMERS')
+          })
+          .then(() => {
+            props.getAll('orders/customers', 'GET_ORDERS_CUSTOMERS')
+          })
+      }
+    })
+  }
+
+  const handleDate = id => {
+    Swal.fire({
+      title: '¿Estás seguro?',
+      text: 'Este proceso no se puede revertir',
+      icon: 'warning',
+      input: 'text',
+      inputPlaceholder: 'AAAA-MM-DD HH:MM:SS',
       showCancelButton: true,
       confirmButtonText: 'Si, cancelar',
       showLoaderOnConfirm: true,
@@ -169,14 +207,24 @@ const Orders = props => {
                                     Completar
                                   </Button>
                                 ) : (
-                                  <Button
-                                    className="btn --danger"
-                                    onClick={() => {
-                                      handleCancel(o.id)
-                                    }}
-                                  >
-                                    Cancelar
-                                  </Button>
+                                  <>
+                                    <Button
+                                      className="btn --danger"
+                                      onClick={() => {
+                                        handleCancel(o.id)
+                                      }}
+                                    >
+                                      Cancelar
+                                    </Button>
+                                    <Button
+                                      className="btn --info"
+                                      onClick={() => {
+                                        handleDate(o.id)
+                                      }}
+                                    >
+                                      Reprogramar
+                                    </Button>
+                                  </>
                                 )
                               ) : (
                                 o.description

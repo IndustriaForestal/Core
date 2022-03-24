@@ -1,13 +1,11 @@
-import React, { useEffect, useState, memo } from 'react'
+import React, { useEffect } from 'react'
 import { connect } from 'react-redux'
 import { getAll, create, update, setTitle, deleted } from '../../actions/app'
-import { SketchPicker } from 'react-color'
 
 import MaterialTable from 'material-table'
 
 const CreateCustomer = props => {
-  const { material, suppliers, user } = props
-  const [color, setColor] = useState('#ffffff')
+  const { material, suppliers, user, colors } = props
   const userId = user.id
   useEffect(() => {
     const topbar = {
@@ -17,21 +15,23 @@ const CreateCustomer = props => {
       },
     }
     props.setTitle(topbar)
-    props.getAll('suppliers', 'GET_SUPPLIERS').then(() => {
-      props.getAll('material', 'GET_MATERIAL')
-    })
+    props
+      .getAll('suppliers', 'GET_SUPPLIERS')
+      .then(() => {
+        props.getAll('material', 'GET_MATERIAL')
+      })
+      .then(() => {
+        props.getAll('colors', 'GET_COLORS')
+      })
 
     // eslint-disable-next-line
   }, [])
-
-  console.log(color)
 
   const editable = {
     onRowAdd: newData =>
       new Promise((resolve, reject) => {
         setTimeout(() => {
           newData.user_id = userId
-          newData.color = color.hex
           props
             .create(`suppliers`, 'CREATE_SUPPLIER', newData)
             .then(() => props.getAll('suppliers', 'GET_SUPPLIERS'))
@@ -43,7 +43,6 @@ const CreateCustomer = props => {
         setTimeout(() => {
           delete newData.id
           newData.user_id = userId
-          newData.color = color.hex
           props
             .update(`suppliers/${oldData.id}`, 'UPDATE_SUPPLIER', newData)
             .then(() => props.getAll('suppliers', 'GET_SUPPLIERS'))
@@ -61,18 +60,12 @@ const CreateCustomer = props => {
       }),
   }
 
-  const handleChangeColor = color => {
-    setColor(color)
-  }
-
-  if (material && suppliers) {
+  if (material && suppliers && colors) {
     const lookupItemsType = {}
+    const lookupColors = {}
 
     material.map(item => (lookupItemsType[item.id] = item.name))
-
-    const Item = memo(() => (
-      <SketchPicker color={color} onChangeComplete={handleChangeColor} />
-    ))
+    colors.map(item => (lookupColors[item.id] = item.name))
 
     return (
       <>
@@ -86,20 +79,7 @@ const CreateCustomer = props => {
             {
               title: 'Color',
               field: 'color',
-              editComponent: rowData => (
-                <div>
-                  <Item />
-                </div>
-              ),
-              render: rowData => (
-                <div
-                  style={{
-                    backgroundColor: `${rowData.color}`,
-                    height: '20px',
-                    width: '20px',
-                  }}
-                ></div>
-              ),
+              lookup: lookupColors,
             },
             { title: 'Tiempo de entrega hrs.', field: 'delivery_time' },
             {
@@ -161,6 +141,7 @@ const mapDispatchToProps = {
 const mapStateToProps = state => {
   return {
     material: state.reducerMaterial.material,
+    colors: state.reducerColors.colors,
     suppliers: state.reducerSuppliers.suppliers,
     user: state.reducerApp.user,
   }

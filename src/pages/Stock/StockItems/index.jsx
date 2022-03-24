@@ -1,4 +1,4 @@
-import React, { useEffect } from 'react'
+import React, { useEffect, useState } from 'react'
 import { useLocation } from 'react-router-dom'
 import { connect } from 'react-redux'
 import { setTitle, getAll, deleted, cleanStock } from '../../../actions/app'
@@ -7,8 +7,10 @@ import MaterialTable from 'material-table'
 import { cmToIn } from '../../../utils'
 
 const Nails = props => {
-  const { stock, setTitle, units, user } = props
-
+  const { stock, setTitle, units, user, workstations, zones, plants } = props
+  const [workstation, setWorkstation] = useState(0)
+  const [plant, setPlant] = useState(0)
+  const [zone, setZone] = useState(0)
   useEffect(() => {
     if (user.role === 'Administrador') {
       const topbar = {
@@ -26,7 +28,17 @@ const Nails = props => {
       setTitle(topbar)
     }
 
-    props.getAll('stock/items', 'GET_STOCK')
+    props
+      .getAll('stock/items', 'GET_STOCK')
+      .then(() => {
+        props.getAll('zones/workstations', 'GET_WORKSTATIONS')
+      })
+      .then(() => {
+        props.getAll('zones/plants', 'GET_PLANTS')
+      })
+      .then(() => {
+        props.getAll('zones/zones', 'GET_ZONES')
+      })
 
     // eslint-disable-next-line
   }, [])
@@ -38,7 +50,7 @@ const Nails = props => {
       undefined ||
     user.role === 'Administrador'
   ) {
-    if (stock) {
+    if (stock && workstations && zones && plants) {
       const stockItems = stock
         .filter(item => item.item_type_id !== 4)
         .map(item => {
@@ -60,6 +72,63 @@ const Nails = props => {
         })
       return (
         <>
+          <div>
+            <label htmlFor="filter">
+              Filtrar Planta
+              <select
+                name="filter"
+                onChange={e => setPlant(parseInt(e.target.value))}
+              >
+                <option value="0">Todas</option>
+                {plants.map(o => (
+                  <option key={o.id} value={o.id}>
+                    {o.name}
+                  </option>
+                ))}
+              </select>
+            </label>
+            <label htmlFor="filter">
+              Filtrar Zona
+              <select
+                name="filter"
+                onChange={e => setZone(parseInt(e.target.value))}
+              >
+                <option value="0">Todas</option>
+                {zones
+                  .filter(o =>
+                    plant !== 0 ? parseInt(o.plant_id) === parseInt(plant) : o
+                  )
+                  .map(o => (
+                    <option key={o.id} value={o.id}>
+                      {
+                        plants.find(
+                          p => parseInt(p.id) === parseInt(o.plant_id)
+                        ).name
+                      }{' '}
+                      {o.name}
+                    </option>
+                  ))}
+              </select>
+            </label>
+            <label htmlFor="filter">
+              Filtrar Zona de trabajo
+              <select
+                name="filter"
+                onChange={e => setWorkstation(parseInt(e.target.value))}
+              >
+                <option value="0">Todas</option>
+                {workstations
+                  .filter(o =>
+                    zone !== 0 ? parseInt(o.zone_id) === parseInt(zone) : o
+                  )
+                  .map(o => (
+                    <option key={o.id} value={o.id}>
+                      {o.workstation}
+                    </option>
+                  ))}
+              </select>
+            </label>
+          </div>
           <MaterialTable
             columns={[
               { title: 'id', field: 'id' },
@@ -106,8 +175,12 @@ const Nails = props => {
     } else {
       return <h1>Cargando</h1>
     }
-  }else{
-    return <h1>Error 401, No tiene acceso a esta pantalla, contacte a su supervisor</h1>
+  } else {
+    return (
+      <h1>
+        Error 401, No tiene acceso a esta pantalla, contacte a su supervisor
+      </h1>
+    )
   }
 }
 
@@ -117,6 +190,9 @@ const mapStateToProps = state => {
     role: state.reducerApp.role,
     units: state.reducerApp.units,
     user: state.reducerApp.user,
+    workstations: state.reducerZones.workstations,
+    zones: state.reducerZones.zones,
+    plants: state.reducerZones.plants,
   }
 }
 
