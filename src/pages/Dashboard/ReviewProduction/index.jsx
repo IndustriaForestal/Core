@@ -13,7 +13,6 @@ import { useForm } from 'react-hook-form'
 import { useParams } from 'react-router-dom'
 import Button from '../../../components/Button/Button'
 import Card from '../../../components/Card/Card'
-import './styles.scss'
 
 const Review = props => {
   const {
@@ -73,9 +72,11 @@ const Review = props => {
   }, [])
 
   const onSubmit = data => {
-    props.create('orders/history', 'CREATE_HISTORY', data).then(() => {
-      props.history.goBack()
-    })
+    props
+      .create('orders/history/production', 'CREATE_HISTORY', data)
+      .then(() => {
+        props.history.goBack()
+      })
   }
 
   if (
@@ -114,7 +115,7 @@ const Review = props => {
     const supplier = suppliers.find(s => s.id === purchaseOrder?.supplier_id)
 
     return (
-      <Card title="Revisión de calidad">
+      <Card title="Producción">
         <form onSubmit={handleSubmit(onSubmit)} className="review">
           <div className="review__section">
             <h1>
@@ -132,65 +133,146 @@ const Review = props => {
             </h1>
             <h1>Revisión: {process.name}</h1>
             <h3>Tarima: {order.model}</h3>
-
-            {process.id === 36 ? null : (
+            {process.id === 36 ? null : order.item_id !== null ? (
               <div className="review__elFelin">
+                {itemsRequerimient
+                  .filter(i => i.item.id === order.item_id)
+                  .map(item => (
+                    <div className="review__box">
+                      <div key={item.item.id}>
+                        {item.item.length} x {item.item.width} x{' '}
+                        {item.item.height} - Cantidad requerida: {item.amount}
+                      </div>
+                      <input
+                        type="number"
+                        name={`items-${item.item.id}`}
+                        ref={register}
+                      />
+                      {processesReject.find(
+                        pr => pr.id === process.reject_1
+                      ) !== undefined ? (
+                        <div>
+                          <div>
+                            {
+                              processesReject.find(
+                                pr => pr.id === process.reject_1
+                              ).name
+                            }
+                          </div>
+                          <input
+                            type="number"
+                            name={`reject-1-items-${item.item.id}`}
+                            ref={register}
+                          />
+                        </div>
+                      ) : null}
+                      {processesReject.find(
+                        pr => pr.id === process.reject_2
+                      ) !== undefined ? (
+                        <div>
+                          <div>
+                            {' '}
+                            {
+                              processesReject.find(
+                                pr => pr.id === process.reject_2
+                              ).name
+                            }
+                          </div>
+                          <input
+                            type="number"
+                            name={`reject-2-items-${item.item.id}`}
+                            ref={register}
+                          />
+                        </div>
+                      ) : null}
+                      {processesReject.find(
+                        pr => pr.id === process.reject_3
+                      ) !== undefined ? (
+                        <div>
+                          <div>
+                            {' '}
+                            {
+                              processesReject.find(
+                                pr => pr.id === process.reject_3
+                              ).name
+                            }
+                          </div>
+                          <input
+                            type="number"
+                            name={`reject-3-items-${item.item.id}`}
+                            ref={register}
+                          />
+                          <input
+                            type="hidden"
+                            value={item.amount}
+                            name={`amount-items-${item.item.id}-requirement`}
+                            ref={register}
+                          />
+                        </div>
+                      ) : null}
+                    </div>
+                  ))}
+              </div>
+            ) : (
+              <div className="review__box">
+                <div>{order.amount}</div>
                 <input
-                  type="text"
-                  placeholder="Humedad Entrada"
+                  type="number"
+                  name={`pallet-${order.pallet_id}`}
                   ref={register}
-                  name="damp_start"
                 />
-                <input
-                  type="text"
-                  placeholder="Humedad Salida"
-                  ref={register}
-                  name="damp_end"
-                />
-                <input
-                  type="text"
-                  placeholder="Cant. Muestreo"
-                  ref={register}
-                  name="test"
-                />
+                {processesReject.find(pr => pr.id === process.reject_1) !==
+                undefined ? (
+                  <div>
+                    {
+                      processesReject.find(pr => pr.id === process.reject_1)
+                        .name
+                    }
+                    <input
+                      type="number"
+                      name={`reject-1-pallet-${order.pallet_id}`}
+                      ref={register}
+                    />
+                  </div>
+                ) : null}
+                {processesReject.find(pr => pr.id === process.reject_2) !==
+                undefined ? (
+                  <div>
+                    {
+                      processesReject.find(pr => pr.id === process.reject_2)
+                        .name
+                    }
+                    <input
+                      type="number"
+                      name={`reject-2-pallet-${order.pallet_id}`}
+                      ref={register}
+                    />
+                  </div>
+                ) : null}
+                {processesReject.find(pr => pr.id === process.reject_3) !==
+                undefined ? (
+                  <div>
+                    {
+                      processesReject.find(pr => pr.id === process.reject_3)
+                        .name
+                    }
+                    <input
+                      type="number"
+                      name={`reject-3-pallet-${order.pallet_id}`}
+                      ref={register}
+                    />
+                    <input
+                      type="hidden"
+                      value={order.amount}
+                      name={`amount-pallet-${order.pallet_id}-requirement`}
+                      ref={register}
+                    />
+                  </div>
+                ) : null}
               </div>
             )}
           </div>
           <div className="review__section">
-            {process.id === 36 ? null : (
-              <ul>
-                {qualityRequest
-                  .filter(qr => qr.id === order.pallet_id)
-                  .map(qr => (
-                    <li>
-                      {specialProcesses.find(
-                        sp =>
-                          parseInt(sp.id) === parseInt(qr.special_process_id)
-                      ) !== undefined
-                        ? `${
-                            specialProcesses.find(
-                              sp =>
-                                parseInt(sp.id) ===
-                                parseInt(qr.special_process_id)
-                            ).name
-                          }`
-                        : 'Error'}
-                      <input
-                        type="number"
-                        name={`${
-                          specialProcesses.find(
-                            sp =>
-                              parseInt(sp.id) ===
-                              parseInt(qr.special_process_id)
-                          ).id
-                        }+quality`}
-                        ref={register}
-                        defaultValue="0"
-                      />
-                    </li>
-                  ))}
-              </ul>
-            )}
             {/*  <div>
               <select
                 name="next"

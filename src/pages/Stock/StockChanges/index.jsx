@@ -52,6 +52,7 @@ const Nails = props => {
   const [diameters, setDiameters] = useState([])
   const [d1, setD1] = useState(0)
   const [d2, setD2] = useState(0)
+  const [palletSelected, setPallet] = useState(0)
 
   const addDiameter = id => {
     setDiameters([...diameters, { id, d1, d2 }])
@@ -165,6 +166,9 @@ const Nails = props => {
 
     const itemsOptions = items
       .filter(item => item.item_type_id !== 4)
+      .filter(item =>
+        palletSelected !== 0 ? item.id_pallet === palletSelected : true
+      )
       .map(item => {
         return {
           value: item.id,
@@ -687,6 +691,22 @@ const Nails = props => {
         {type === 3 ? (
           inOut === 0 ? (
             <Card title="Madera Habilitada">
+              <div className="inputGroup">
+                <label htmlFor="processId">
+                  <span>Filtro Modelo:</span>
+                  <select
+                    name="filter"
+                    onChange={e => setPallet(parseInt(e.target.value))}
+                  >
+                    <option value="0">Todas</option>
+                    {pallets.map(o => (
+                      <option key={o.id} value={o.id}>
+                        {o.model}
+                      </option>
+                    ))}
+                  </select>
+                </label>
+              </div>
               <div className="inputGroup">
                 <label htmlFor="processId">
                   <span>Inventario:</span>

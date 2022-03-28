@@ -7,8 +7,9 @@ import MaterialTable from 'material-table'
 import { cmToIn } from '../../../utils'
 
 const Nails = props => {
-  const { stock, setTitle, units, user, workstations, zones, plants } = props
-  const [workstation, setWorkstation] = useState(0)
+  const { stock, setTitle, units, user, workstations, zones, plants, pallets } =
+    props
+  const [palletSelected, setPallet] = useState(0)
   const [plant, setPlant] = useState(0)
   const [zone, setZone] = useState(0)
   useEffect(() => {
@@ -39,6 +40,9 @@ const Nails = props => {
       .then(() => {
         props.getAll('zones/zones', 'GET_ZONES')
       })
+      .then(() => {
+        props.getAll('pallets', 'GET_PALLETS')
+      })
 
     // eslint-disable-next-line
   }, [])
@@ -50,9 +54,12 @@ const Nails = props => {
       undefined ||
     user.role === 'Administrador'
   ) {
-    if (stock && workstations && zones && plants) {
+    if (stock && workstations && zones && plants && pallets) {
       const stockItems = stock
         .filter(item => item.item_type_id !== 4)
+        .filter(item =>
+          palletSelected !== 0 ? item.pallet_id === palletSelected : true
+        )
         .map(item => {
           if (units) {
             return {
@@ -110,22 +117,20 @@ const Nails = props => {
                   ))}
               </select>
             </label>
+          </div>
+          <div>
             <label htmlFor="filter">
-              Filtrar Zona de trabajo
+              Filtrar Modelo
               <select
                 name="filter"
-                onChange={e => setWorkstation(parseInt(e.target.value))}
+                onChange={e => setPallet(parseInt(e.target.value))}
               >
                 <option value="0">Todas</option>
-                {workstations
-                  .filter(o =>
-                    zone !== 0 ? parseInt(o.zone_id) === parseInt(zone) : o
-                  )
-                  .map(o => (
-                    <option key={o.id} value={o.id}>
-                      {o.workstation}
-                    </option>
-                  ))}
+                {pallets.map(o => (
+                  <option key={o.id} value={o.id}>
+                    {o.model}
+                  </option>
+                ))}
               </select>
             </label>
           </div>
@@ -186,6 +191,7 @@ const Nails = props => {
 
 const mapStateToProps = state => {
   return {
+    pallets: state.reducerPallets.pallets,
     stock: state.reducerStock.stock,
     role: state.reducerApp.role,
     units: state.reducerApp.units,

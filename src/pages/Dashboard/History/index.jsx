@@ -36,12 +36,12 @@ const Nails = props => {
             { title: 'Cantidad Requerida', field: 'amount' },
             { title: 'Cantidad', field: 'amount_final' },
             { title: 'Proceso', field: 'proname' },
-            { title: 'Humedad Entrada', field: 'damp_start' },
+           /*  { title: 'Humedad Entrada', field: 'damp_start' },
             { title: 'Humedad Salida', field: 'damp_end' },
             { title: 'Muestra', field: 'sample' },
             { title: 'Rechazo 1', field: 'r1' },
             { title: 'Rechazo 2', field: 'r2' },
-            { title: 'Rechazo 3', field: 'r3' },
+            { title: 'Rechazo 3', field: 'r3' }, */
             { title: 'Inicio', field: 'start' },
             { title: 'Terminado', field: 'end' },
           ]}

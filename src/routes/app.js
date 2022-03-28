@@ -72,6 +72,7 @@ import DashboardStockDetaills from '../pages/Dashboard/StockDetaills'
 import DashboardStockReview from '../pages/Dashboard/StockReview'
 import DashboardReject from '../pages/Dashboard/Reject'
 import DashboardReview from '../pages/Dashboard/Review'
+import DashboardReviewProduction from '../pages/Dashboard/ReviewProduction'
 import DashboardHistory from '../pages/Dashboard/History'
 import DashboardKanban from '../pages/Dashboard/Kanban'
 import DashboardReviewHome from '../pages/Dashboard/DashboardReview'
@@ -104,6 +105,11 @@ const App = ({ loggedIn }) => {
               exact
               path="/dashboard/processes/:id"
               component={DashboardReview}
+            />
+            <Route
+              exact
+              path="/dashboard/production/:id"
+              component={DashboardReviewProduction}
             />
             <Route exact path="/dashboard/stock" component={DashboardStock} />
             <Route

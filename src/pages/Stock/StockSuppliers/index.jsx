@@ -38,7 +38,7 @@ const Nails = props => {
     suppliers,
     purchaseOrdersSuppliers,
   } = props
-  const [type, setType] = useState(5)
+  const [type, setType] = useState(0)
   const [plantSelected, setPlant] = useState(null)
   const [zoneSelected, setZone] = useState(null)
   const [orderSupplier, setSupplier] = useState(null)
@@ -47,6 +47,7 @@ const Nails = props => {
   const [d1, setD1] = useState(0)
   const [d2, setD2] = useState(0)
   const { register, handleSubmit, errors } = useForm()
+  const [palletSelected, setPallet] = useState(0)
 
   const addDiameter = id => {
     setDiameters([...diameters, { id, d1, d2 }])
@@ -151,6 +152,9 @@ const Nails = props => {
 
     const itemsOptions = items
       .filter(item => item.item_type_id !== 4)
+      .filter(item =>
+        palletSelected !== 0 ? item.id_pallet === palletSelected : true
+      )
       .map(item => {
         return {
           value: item.id,
@@ -566,6 +570,20 @@ const Nails = props => {
                 title={`Archivo Forestal`}
               />
               <div className="inputGroup">
+                <label htmlFor="processId">
+                  <span>Filtro Modelo:</span>
+                  <select
+                    name="filter"
+                    onChange={e => setPallet(parseInt(e.target.value))}
+                  >
+                    <option value="0">Todas</option>
+                    {pallets.map(o => (
+                      <option key={o.id} value={o.id}>
+                        {o.model}
+                      </option>
+                    ))}
+                  </select>
+                </label>
                 <label htmlFor="itemId">
                   <span>Inventario:</span>
                   <select name="productId" ref={register}>

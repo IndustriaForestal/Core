@@ -106,7 +106,6 @@ const Dashbaord = props => {
     orders &&
     items
   ) {
-    console.log(ordersWorkstations)
 
     const ordersProductionFiltered =
       orderSelected !== 0

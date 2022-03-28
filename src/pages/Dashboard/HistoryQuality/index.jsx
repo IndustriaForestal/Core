@@ -36,6 +36,9 @@ const Nails = props => {
             { title: 'Requerimiento', field: 'requeriment' },
             { title: 'Inicio', field: 'start' },
             { title: 'Terminado', field: 'end' },
+            { title: 'Humedad Entrada', field: 'damp_start' },
+            { title: 'Humedad Salida', field: 'damp_end' },
+            { title: 'Muestra', field: 'sample' },
           ]}
           localization={{
             pagination: {

@@ -100,9 +100,13 @@ const Dashbaord = props => {
   }, [workstations])
 
   const handleEnd = orderId => {
-    props.update(`orders/end/${orderId}`, 'START_ORDER', {}).then(() => {
+    props.history.push(
+      `/dashboard/production/${orderId}`
+    )
+
+    /* props.update(`orders/end/${orderId}`, 'START_ORDER', {}).then(() => {
       props.getAll('orders/production', 'GET_ORDERS_PRODUCTION')
-    })
+    }) */
   }
 
   if (

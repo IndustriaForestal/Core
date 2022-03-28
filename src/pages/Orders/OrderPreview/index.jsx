@@ -188,6 +188,7 @@ const CreateOrder = props => {
 
     const getTimeProductionSuppliers = () => {
       let bestMaterialSuppliers = []
+      console.log(suppliers)
       material.map(m => {
         const suppliersPerMaterial = suppliers
           .filter(supplier => supplier.material_id === m.id)
@@ -218,10 +219,34 @@ const CreateOrder = props => {
 
       const timeSliced = timeProduction.slice(0, indexForSlice + 1)
 
-      const delivery_time = parseInt(
-        suppliersPerStage.find(supplier => supplier.id === materialStage)
-          .supplier.delivery_time
+      console.log(suppliersPerStage, 'suppliersPerStage')
+      console.log(materialStage, 'materialStage')
+
+      console.log(
+        suppliersPerStage.find(s => s.id === materialStage),
+        'algo'
       )
+
+      const delivery_time = parseInt(
+        suppliersPerStage.find(s => s.id === materialStage).supplier !==
+          undefined
+          ? suppliersPerStage.find(s => s.id === materialStage).supplier
+              .delivery_time
+          : 0
+      )
+
+      if (delivery_time === 0) {
+        const time = moment(timeSliced[indexForSlice].time).subtract(0, 'hours')
+
+        const onTime = false
+
+        timeSliced.push({
+          time: time.format('YYYY-MMM-DD HH:mm:ss'),
+          onTime,
+        })
+
+        return timeSliced
+      }
 
       const time = moment(timeSliced[indexForSlice].time).subtract(
         delivery_time,
