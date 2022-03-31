@@ -27,6 +27,7 @@ const Dashbaord = props => {
     qualities,
     ordersWorkstations,
     items,
+    ordersStoves,
   } = props
   const [processSelected, setProcess] = useState('')
   const [orderSelected, setOrderSelected] = useState(0)
@@ -81,6 +82,9 @@ const Dashbaord = props => {
       .then(() => {
         props.getAll('orders', 'GET_ORDERS')
       })
+      .then(() => {
+        props.getAll('orders/stoves', 'GET_ORDERS_STOVES')
+      })
   }, [])
 
   useEffect(() => {
@@ -116,7 +120,8 @@ const Dashbaord = props => {
     qualities &&
     ordersWorkstations &&
     orders &&
-    items
+    items &&
+    ordersStoves
   ) {
     const ordersProductionFiltered =
       orderSelected !== 0
@@ -253,6 +258,7 @@ const mapStateToProps = state => {
     items: state.reducerItems.items,
     pallets: state.reducerPallets.pallets,
     orders: state.reducerOrders.orders,
+    ordersStoves: state.reducerOrders.ordersStoves,
     qualities: state.reducerQualities.qualities,
   }
 }

@@ -6,7 +6,8 @@ import Loading from '../../components/Loading/Loading'
 import MaterialTable from 'material-table'
 
 const Nails = props => {
-  const { stock, setTitle, workstations, zones, plants } = props
+  const { stock, setTitle, workstations, zones, plants, stockZone, subzones } =
+    props
   const [workstation, setWorkstation] = useState(0)
   const [plant, setPlant] = useState(0)
   const [zone, setZone] = useState(0)
@@ -30,6 +31,9 @@ const Nails = props => {
     props
       .getAll('stock', 'GET_STOCK')
       .then(() => {
+        props.getAll('stock/stock_zones', 'GET_SZ')
+      })
+      .then(() => {
         props.getAll('zones/workstations', 'GET_WORKSTATIONS')
       })
       .then(() => {
@@ -38,9 +42,22 @@ const Nails = props => {
       .then(() => {
         props.getAll('zones/zones', 'GET_ZONES')
       })
+      .then(() => {
+        props.getAll('zones/subzones', 'GET_SUBZONES')
+      })
     // eslint-disable-next-line
   }, [])
-  if (stock && workstations && zones && plants) {
+  if (stock && workstations && zones && plants && stockZone && subzones) {
+    const stockZonesFull = stockZone.map(item => {
+      const zoneId = subzones.find(z => z.id === item.zone_id).zone_id
+      const zone = zones.find(z => z.id === zoneId)
+      const plant = plants.find(p => p.id === parseInt(zone.plant_id))
+      return {
+        ...item,
+        zone: zone.name,
+        plant: plant.name,
+      }
+    })
     return (
       <>
         <div>
@@ -76,24 +93,6 @@ const Nails = props => {
                         .name
                     }{' '}
                     {o.name}
-                  </option>
-                ))}
-            </select>
-          </label>
-          <label htmlFor="filter">
-            Filtrar Zona de trabajo
-            <select
-              name="filter"
-              onChange={e => setWorkstation(parseInt(e.target.value))}
-            >
-              <option value="0">Todas</option>
-              {workstations
-                .filter(o =>
-                  zone !== 0 ? parseInt(o.zone_id) === parseInt(zone) : o
-                )
-                .map(o => (
-                  <option key={o.id} value={o.id}>
-                    {o.workstation}
                   </option>
                 ))}
             </select>
@@ -135,6 +134,53 @@ const Nails = props => {
           options={{ exportButton: true, exportAllData: true }}
           data={stock}
           title="Inventario Tarimas"
+          detailPanel={rowData => {
+            return (
+              <div
+                style={{
+                  display: 'flex',
+                  flexDirection: 'column',
+                  justifyContent: 'center',
+                  alignItems: 'center',
+                }}
+              >
+                <table>
+                  <thead>
+                    <tr>
+                      <th>Planta</th>
+                      <th>Zona</th>
+                      <th>Sub zona</th>
+                      <th>Cantidad</th>
+                      <th>Estado</th>
+                    </tr>
+                  </thead>
+                  <tbody>
+                    {stockZone.filter(
+                      o => parseInt(o.pallet_id) === parseInt(rowData.id)
+                    ).length > 0 ? (
+                      stockZonesFull
+                        .filter(
+                          o => parseInt(o.pallet_id) === parseInt(rowData.id)
+                        )
+                        .map(o => (
+                          <tr>
+                            <td>{o.plant}</td>
+                            <td>{o.zone}</td>
+                            <td>{o.zone_id}</td>
+                            <td>{o.amount}</td>
+                            <td>{o.state}</td>
+                          </tr>
+                        ))
+                    ) : (
+                      <div>
+                        <h3>Sin Existencias</h3>
+                      </div>
+                    )}
+                  </tbody>
+                </table>
+              </div>
+            )
+          }}
         />
       </>
     )
@@ -147,8 +193,10 @@ const mapStateToProps = state => {
   return {
     stock: state.reducerStock.stock,
     role: state.reducerStock.role,
+    stockZone: state.reducerStock.stockZone,
     workstations: state.reducerZones.workstations,
     zones: state.reducerZones.zones,
+    subzones: state.reducerZones.subzones,
     plants: state.reducerZones.plants,
   }
 }

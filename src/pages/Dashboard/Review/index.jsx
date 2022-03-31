@@ -27,6 +27,7 @@ const Review = props => {
     processesReject,
     purchaseOrdersSuppliers,
     suppliers,
+    ordersHistory,
   } = props
   const { register, handleSubmit } = useForm()
 
@@ -70,6 +71,9 @@ const Review = props => {
       .then(() => {
         props.getAll('suppliers', 'GET_SUPPLIERS')
       })
+      .then(() => {
+        props.getAll('orders/history', 'GET_ORDERS_HISTORY')
+      })
   }, [])
 
   const onSubmit = data => {
@@ -88,12 +92,17 @@ const Review = props => {
     specialProcesses &&
     processesReject &&
     purchaseOrdersSuppliers &&
-    suppliers
+    suppliers &&
+    ordersHistory
   ) {
     const order =
       ordersProduction.find(o => o.id === parseInt(id)) !== undefined
         ? ordersProduction.find(o => o.id === parseInt(id))
         : 0
+
+    const orderHistory = ordersHistory.find(
+      o => o.order_production_id === parseInt(id)
+    )
 
     const itemsRequerimient = ordersRequeriment
       .filter(requeriment => requeriment.order_id === order.order_id)
@@ -132,7 +141,152 @@ const Review = props => {
             </h1>
             <h1>Revisión: {process.name}</h1>
             <h3>Tarima: {order.model}</h3>
-
+            {process.id === 36 ? null : order.item_id !== null ? (
+              <div className="review__elFelin">
+                {itemsRequerimient
+                  .filter(i => i.item.id === order.item_id)
+                  .map(item => (
+                    <div className="review__box">
+                      <div key={item.item.id}>
+                        {item.item.length} x {item.item.width} x{' '}
+                        {item.item.height} - Cantidad requerida: {item.amount}
+                      </div>
+                      <input
+                        type="number"
+                        name={`items-${item.item.id}`}
+                        ref={register}
+                        defaultValue={orderHistory.amount_final}
+                      />
+                      {processesReject.find(
+                        pr => pr.id === process.reject_1
+                      ) !== undefined ? (
+                        <div>
+                          <div>
+                            {
+                              processesReject.find(
+                                pr => pr.id === process.reject_1
+                              ).name
+                            }
+                          </div>
+                          <input
+                            type="number"
+                            name={`reject-1-items-${item.item.id}`}
+                            ref={register}
+                            defaultValue={orderHistory.r1}
+                          />
+                        </div>
+                      ) : null}
+                      {processesReject.find(
+                        pr => pr.id === process.reject_2
+                      ) !== undefined ? (
+                        <div>
+                          <div>
+                            {' '}
+                            {
+                              processesReject.find(
+                                pr => pr.id === process.reject_2
+                              ).name
+                            }
+                          </div>
+                          <input
+                            type="number"
+                            name={`reject-2-items-${item.item.id}`}
+                            ref={register}
+                            defaultValue={orderHistory.r2}
+                          />
+                        </div>
+                      ) : null}
+                      {processesReject.find(
+                        pr => pr.id === process.reject_3
+                      ) !== undefined ? (
+                        <div>
+                          <div>
+                            {' '}
+                            {
+                              processesReject.find(
+                                pr => pr.id === process.reject_3
+                              ).name
+                            }
+                          </div>
+                          <input
+                            type="number"
+                            name={`reject-3-items-${item.item.id}`}
+                            ref={register}
+                            defaultValue={orderHistory.r3}
+                          />
+                          <input
+                            type="hidden"
+                            value={item.amount}
+                            name={`amount-items-${item.item.id}-requirement`}
+                            ref={register}
+                          />
+                        </div>
+                      ) : null}
+                    </div>
+                  ))}
+              </div>
+            ) : (
+              <div className="review__box">
+                <div>{order.amount}</div>
+                <input
+                  type="number"
+                  name={`pallet-${order.pallet_id}`}
+                  ref={register}
+                  defaultValue={orderHistory.amount_final}
+                />
+                {processesReject.find(pr => pr.id === process.reject_1) !==
+                undefined ? (
+                  <div>
+                    {
+                      processesReject.find(pr => pr.id === process.reject_1)
+                        .name
+                    }
+                    <input
+                      type="number"
+                      name={`reject-1-pallet-${order.pallet_id}`}
+                      ref={register}
+                      defaultValue={orderHistory.r1}
+                    />
+                  </div>
+                ) : null}
+                {processesReject.find(pr => pr.id === process.reject_2) !==
+                undefined ? (
+                  <div>
+                    {
+                      processesReject.find(pr => pr.id === process.reject_2)
+                        .name
+                    }
+                    <input
+                      type="number"
+                      name={`reject-2-pallet-${order.pallet_id}`}
+                      ref={register}
+                      defaultValue={orderHistory.r2}
+                    />
+                  </div>
+                ) : null}
+                {processesReject.find(pr => pr.id === process.reject_3) !==
+                undefined ? (
+                  <div>
+                    {
+                      processesReject.find(pr => pr.id === process.reject_3)
+                        .name
+                    }
+                    <input
+                      type="number"
+                      name={`reject-3-pallet-${order.pallet_id}`}
+                      ref={register}
+                    />
+                    <input
+                      type="hidden"
+                      value={order.amount}
+                      name={`amount-pallet-${order.pallet_id}-requirement`}
+                      ref={register}
+                      defaultValue={orderHistory.r3}
+                    />
+                  </div>
+                ) : null}
+              </div>
+            )}
             {process.id === 36 ? null : (
               <div className="review__elFelin">
                 <input
@@ -311,6 +465,7 @@ const mapStateToProps = state => {
     purchaseOrdersSuppliers:
       state.reducerPurchaseOrders.purchaseOrdersSuppliers,
     suppliers: state.reducerSuppliers.suppliers,
+    ordersHistory: state.reducerOrders.ordersHistory,
   }
 }
 

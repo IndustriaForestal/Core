@@ -39,6 +39,11 @@ const Home = props => {
             url="/dashboard/review-home"
             text="Pizarron Calidad"
           />
+       {/*    <IconHome
+            icon={<RiDashboardLine />}
+            url="/dashboard/stoves"
+            text="Pizarron Estufado"
+          /> */}
           <IconHome
             icon={<RiDashboardLine />}
             url="/dashboard/stock"

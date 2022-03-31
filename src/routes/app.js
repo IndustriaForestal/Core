@@ -77,6 +77,9 @@ import DashboardHistory from '../pages/Dashboard/History'
 import DashboardKanban from '../pages/Dashboard/Kanban'
 import DashboardReviewHome from '../pages/Dashboard/DashboardReview'
 import DashboardReviewHomeHistory from '../pages/Dashboard/HistoryQuality'
+import DashboardHistoryQualityProduction from '../pages/Dashboard/HistoryQualityProduction'
+
+import DashboardStoves from '../pages/Dashboard/DashboardStove'
 
 import StockSuppliers from '../pages/Stock/StockSuppliers'
 import StockSuppliersHistory from '../pages/Stock/StockSuppliersHistory'
@@ -100,6 +103,11 @@ const App = ({ loggedIn }) => {
               exact
               path="/dashboard/processes"
               component={DashboardProcess}
+            />
+            <Route
+              exact
+              path="/dashboard/stoves"
+              component={DashboardStoves}
             />
             <Route
               exact
@@ -127,6 +135,11 @@ const App = ({ loggedIn }) => {
               exact
               path="/dashboard/history"
               component={DashboardHistory}
+            />
+            <Route
+              exact
+              path="/dashboard/history/production"
+              component={DashboardHistoryQualityProduction}
             />
             <Route exact path="/dashboard/kanban" component={DashboardKanban} />
             <Route
