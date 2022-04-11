@@ -3,7 +3,13 @@ import { Link } from 'react-router-dom'
 import { connect } from 'react-redux'
 import { updatePalletsStock, completeOrder } from './actions'
 import { BsPlus } from 'react-icons/bs'
-import { setTitle, getAll, deleted, create, update } from '../../actions/app'
+import {
+  setTitle,
+  getAll,
+  deleted,
+  create,
+  update,
+} from '../../actions/app'
 import AddButton from '../../components/AddButton/AddButton'
 import Loading from '../../components/Loading/Loading'
 import Button from '../../components/Button/Button'
@@ -13,8 +19,13 @@ import Swal from 'sweetalert2'
 import './styles.scss'
 
 const Orders = props => {
-  const { setTitle, ordersCustomers, customers, orders, ordersProduction } =
-    props
+  const {
+    setTitle,
+    ordersCustomers,
+    customers,
+    orders,
+    ordersProduction,
+  } = props
   useEffect(() => {
     const topbar = {
       title: 'Pedidos de Clientes',
@@ -95,7 +106,7 @@ const Orders = props => {
       cancelButtonColor: '#d33',
       inputValidator: value => {
         if (!value) {
-          return 'La descripción es requerida'
+          return 'Nueva fecha es requerida'
         }
       },
       allowOutsideClick: () => !Swal.isLoading(),
@@ -103,13 +114,16 @@ const Orders = props => {
       if (result.isConfirmed) {
         const desc = result.value
         props
-          .create(`orders/cancel/${id}`, 'CANCEL', {
+          .update(`orders/reschedule/${id}`, 'RESCHEDULE', {
             id,
-            desc,
-            status: 'Cancelada',
+            delivery: desc,
+            state: 'Reprogramada',
           })
           .then(() => {
             props.getAll('orders', 'GET_ORDERS_CUSTOMERS')
+          })
+          .then(() => {
+            props.getAll('orders', 'GET_ORDERS')
           })
           .then(() => {
             props.getAll('orders/customers', 'GET_ORDERS_CUSTOMERS')
@@ -145,7 +159,11 @@ const Orders = props => {
             { title: 'ID', field: 'id' },
             { title: 'Orden Compra', field: 'op' },
             { title: 'Estado', field: 'state' },
-            { title: 'Cliente', field: 'customer_id', lookup: lookupCustomers },
+            {
+              title: 'Cliente',
+              field: 'customer_id',
+              lookup: lookupCustomers,
+            },
             { title: 'Fecha Limite', field: 'delivery' },
             {
               title: 'Acciones',
@@ -180,11 +198,14 @@ const Orders = props => {
                   </thead>
                   <tbody>
                     {orders.filter(
-                      o => parseInt(o.order_id) === parseInt(rowData.id)
+                      o =>
+                        parseInt(o.order_id) === parseInt(rowData.id)
                     ).length > 0 ? (
                       orders
                         .filter(
-                          o => parseInt(o.order_id) === parseInt(rowData.id)
+                          o =>
+                            parseInt(o.order_id) ===
+                            parseInt(rowData.id)
                         )
                         .map(o => (
                           <tr>
@@ -199,10 +220,13 @@ const Orders = props => {
                                 undefined ? (
                                 ordersProduction
                                   .filter(p => p.order_id === o.id)
-                                  .find(x => x.order_number === 0).ready > 2 ? (
+                                  .find(x => x.order_number === 0)
+                                  .ready > 2 ? (
                                   <Button
                                     className="btn --success"
-                                    onClick={() => handleComplete(o.id)}
+                                    onClick={() =>
+                                      handleComplete(o.id)
+                                    }
                                   >
                                     Completar
                                   </Button>
@@ -276,7 +300,9 @@ const Orders = props => {
           data={ordersCustomers.map(o => {
             return {
               ...o,
-              delivery: moment(o.delivery).format('DD-MM-YYYY HH:mm:SS'),
+              delivery: moment(o.delivery).format(
+                'DD-MM-YYYY HH:mm:SS'
+              ),
             }
           })}
           title="Pedidos"

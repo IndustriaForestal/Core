@@ -28,6 +28,7 @@ const Review = props => {
     purchaseOrdersSuppliers,
     suppliers,
     ordersHistory,
+    ordersWork,
   } = props
   const { register, handleSubmit } = useForm()
 
@@ -40,6 +41,9 @@ const Review = props => {
       .getAll('processes', 'GET_PROCESSES')
       .then(() => {
         props.getAll('orders/production', 'GET_ORDERS_PRODUCTION')
+      })
+      .then(() => {
+        props.getAll('orders/work', 'GET_ORDERS_WORK')
       })
       .then(() => {
         props.getAll('orders/requeriment', 'GET_ORDERS_REQUERIMENT')
@@ -77,9 +81,11 @@ const Review = props => {
   }, [])
 
   const onSubmit = data => {
-    props.create('orders/history', 'CREATE_HISTORY', data).then(() => {
-      props.history.goBack()
-    })
+    props
+      .create('orders/history', 'CREATE_HISTORY', data)
+      .then(() => {
+        props.history.goBack()
+      })
   }
 
   if (
@@ -93,11 +99,12 @@ const Review = props => {
     processesReject &&
     purchaseOrdersSuppliers &&
     suppliers &&
-    ordersHistory
+    ordersHistory &&
+    ordersWork
   ) {
     const order =
-      ordersProduction.find(o => o.id === parseInt(id)) !== undefined
-        ? ordersProduction.find(o => o.id === parseInt(id))
+      ordersWork.find(o => o.id === parseInt(id)) !== undefined
+        ? ordersWork.find(o => o.id === parseInt(id))
         : 0
 
     const orderHistory = ordersHistory.find(
@@ -120,7 +127,9 @@ const Review = props => {
       po => po.order_id === order.order_id
     )
 
-    const supplier = suppliers.find(s => s.id === purchaseOrder?.supplier_id)
+    const supplier = suppliers.find(
+      s => s.id === purchaseOrder?.supplier_id
+    )
 
     return (
       <Card title="Revisión de calidad">
@@ -128,7 +137,9 @@ const Review = props => {
           <div className="review__section">
             <h1>
               Proveedor:{' '}
-              {supplier !== undefined ? supplier.name : 'Sin Proveedor'}
+              {supplier !== undefined
+                ? supplier.name
+                : 'Sin Proveedor'}
               {supplier !== undefined ? (
                 <div
                   style={{
@@ -149,7 +160,8 @@ const Review = props => {
                     <div className="review__box">
                       <div key={item.item.id}>
                         {item.item.length} x {item.item.width} x{' '}
-                        {item.item.height} - Cantidad requerida: {item.amount}
+                        {item.item.height} - Cantidad requerida:{' '}
+                        {item.amount}
                       </div>
                       <input
                         type="number"
@@ -234,12 +246,14 @@ const Review = props => {
                   ref={register}
                   defaultValue={orderHistory.amount_final}
                 />
-                {processesReject.find(pr => pr.id === process.reject_1) !==
-                undefined ? (
+                {processesReject.find(
+                  pr => pr.id === process.reject_1
+                ) !== undefined ? (
                   <div>
                     {
-                      processesReject.find(pr => pr.id === process.reject_1)
-                        .name
+                      processesReject.find(
+                        pr => pr.id === process.reject_1
+                      ).name
                     }
                     <input
                       type="number"
@@ -249,12 +263,14 @@ const Review = props => {
                     />
                   </div>
                 ) : null}
-                {processesReject.find(pr => pr.id === process.reject_2) !==
-                undefined ? (
+                {processesReject.find(
+                  pr => pr.id === process.reject_2
+                ) !== undefined ? (
                   <div>
                     {
-                      processesReject.find(pr => pr.id === process.reject_2)
-                        .name
+                      processesReject.find(
+                        pr => pr.id === process.reject_2
+                      ).name
                     }
                     <input
                       type="number"
@@ -264,12 +280,14 @@ const Review = props => {
                     />
                   </div>
                 ) : null}
-                {processesReject.find(pr => pr.id === process.reject_3) !==
-                undefined ? (
+                {processesReject.find(
+                  pr => pr.id === process.reject_3
+                ) !== undefined ? (
                   <div>
                     {
-                      processesReject.find(pr => pr.id === process.reject_3)
-                        .name
+                      processesReject.find(
+                        pr => pr.id === process.reject_3
+                      ).name
                     }
                     <input
                       type="number"
@@ -319,7 +337,8 @@ const Review = props => {
                     <li>
                       {specialProcesses.find(
                         sp =>
-                          parseInt(sp.id) === parseInt(qr.special_process_id)
+                          parseInt(sp.id) ===
+                          parseInt(qr.special_process_id)
                       ) !== undefined
                         ? `${
                             specialProcesses.find(
@@ -404,7 +423,8 @@ const Review = props => {
               <input
                 type="hidden"
                 value={
-                  process.material_in === 4 || process.material_in === 3
+                  process.material_in === 4 ||
+                  process.material_in === 3
                     ? 'items'
                     : 'pallet'
                 }
@@ -456,10 +476,12 @@ const mapStateToProps = state => {
     modalReview: state.reducerApp.modalReview,
     processes: state.reducerProcesses.processes,
     ordersProduction: state.reducerOrders.ordersProduction,
+    ordersWork: state.reducerOrders.ordersWork,
     ordersRequeriment: state.reducerOrders.ordersRequeriment,
     workstations: state.reducerZones.workstations,
     items: state.reducerItems.items,
-    qualityRequest: state.reducerSpecialProcesses.specialProcessesPallets,
+    qualityRequest:
+      state.reducerSpecialProcesses.specialProcessesPallets,
     specialProcesses: state.reducerSpecialProcesses.specialProcesses,
     processesReject: state.reducerProcesses.processesReject,
     purchaseOrdersSuppliers:

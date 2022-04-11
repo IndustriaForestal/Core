@@ -9,9 +9,10 @@ import {
   deleted,
   create,
   update,
+  createFile,
 } from '../../../actions/app'
 import moment from 'moment'
-
+import Swal from 'sweetalert2'
 import Loading from '../../../components/Loading/Loading'
 import Production from '../DashboardProduction'
 
@@ -35,11 +36,9 @@ const Dashbaord = props => {
 
   useEffect(() => {
     const topbar = {
-      title: 'Pizarron de calidad',
+      title: 'Pizarron de estufado',
       menu: {
-        'Pizarron de calidad': '/dashboard/review-home',
-        'Historial orden de producción': '/dashboard/history/production',
-        'Historial de calidad': '/dashboard/review-home/history',
+        'Pizarron de estufado': '/dashboard/stoves',
       },
     }
     props.setTitle(topbar)
@@ -99,15 +98,23 @@ const Dashbaord = props => {
     }
   }, [workstations])
 
-  const handleEndReview = (id, processId) => {
-    if (processId === 36) {
+  const handleFile = async id => {
+    const { value: file } = await Swal.fire({
+      title: 'Select image',
+      input: 'file',
+      inputAttributes: {
+        'aria-label': 'Upload your profile picture',
+      },
+    })
+
+    if (file) {
       props
-        .create(`orders/history/${id}`, 'CREATE_HISTORY', { id })
-        .then(() => {
-          props.history.goBack()
+        .createFile('orders/stoves/' + id, 'CREATE_ORDER_STOVES', {
+          pdf: [file],
         })
-    } else {
-      props.history.push(`/dashboard/processes/${id}`)
+        .then(() => {
+          props.getAll('orders/stoves', 'GET_ORDERS_STOVES')
+        })
     }
   }
 
@@ -125,8 +132,8 @@ const Dashbaord = props => {
   ) {
     const ordersProductionFiltered =
       orderSelected !== 0
-        ? ordersProduction.filter(o => o.order_id === orderSelected)
-        : ordersProduction
+        ? ordersStoves.filter(o => o.order_id === orderSelected)
+        : ordersStoves
 
     const data =
       parseInt(user.workstation_id) === 0
@@ -134,20 +141,13 @@ const Dashbaord = props => {
         : ordersProductionFiltered.filter(
             o =>
               o.process_id ===
-              workstations.find(w => w.id === parseInt(user.workstation_id))
-                .process_id
+              workstations.find(
+                w => w.id === parseInt(user.workstation_id)
+              ).process_id
           )
 
     return (
       <div className="dashboard">
-        <select name="Process" onChange={e => setProcess(e.target.value)}>
-          <option value="">Seleccionar</option>
-          {processes.map(process => (
-            <option key={process.id} value={process.id}>
-              {process.name}
-            </option>
-          ))}
-        </select>
         <label htmlFor="filter">
           Filtrar por Orden
           <select
@@ -171,30 +171,23 @@ const Dashbaord = props => {
           }}
         >
           <div>
-            <div className="dashboard__name">Por revisar</div>
+            <div className="dashboard__name">Graficas</div>
             <div className="dashboard__production">
-              {data.filter(
-                order =>
-                  parseInt(order.process_id) === parseInt(processSelected) &&
-                  parseInt(order.ready) === 2
-              ).length > 0
+              {data.filter(order => order.file === null).length > 0
                 ? data
-                    .filter(
-                      order =>
-                        parseInt(order.process_id) ===
-                          parseInt(processSelected) &&
-                        parseInt(order.ready) === 2
+                    .filter(order => order.file === null)
+                    .sort(
+                      (a, b) => moment(a.created) - moment(b.created)
                     )
-                    .sort((a, b) => moment(a.time) - moment(b.time))
                     .map(order => {
-                      const item = items.find(i => i.id === order.item_id)
+                      const item = items.find(
+                        i => i.id === order.item_id
+                      )
                       return (
                         <div
                           className={`dashboard__item`}
                           key={order.id}
-                          onClick={() =>
-                            handleEndReview(order.id, order.process_id)
-                          }
+                          onClick={() => handleFile(order.id)}
                         >
                           <span>Pedido# {order.order_id}</span>
                           <span>Tarima: {order.model}</span>
@@ -208,17 +201,9 @@ const Dashbaord = props => {
                           ) : null}
                           <span>
                             Entrega:{' '}
-                            {moment(order.time).format('DD-MM-YYYY HH:mm')}
-                          </span>
-                          <span>
-                            Zona de trabajo:{' '}
-                            {ordersWorkstations.filter(
-                              o => o.id === order.id
-                            ) !== undefined
-                              ? ordersWorkstations
-                                  .filter(o => o.id === order.id)
-                                  .map(o => o.workstation)
-                              : 'N/A'}
+                            {moment(order.time).format(
+                              'DD-MM-YYYY HH:mm'
+                            )}
                           </span>
                         </div>
                       )
@@ -244,6 +229,7 @@ const mapDispatchToProps = {
   deleted,
   create,
   update,
+  createFile,
 }
 
 const mapStateToProps = state => {

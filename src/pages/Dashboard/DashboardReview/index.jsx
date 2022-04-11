@@ -27,6 +27,7 @@ const Dashbaord = props => {
     qualities,
     ordersWorkstations,
     items,
+    ordersWork,
   } = props
   const [processSelected, setProcess] = useState('')
   const [orderSelected, setOrderSelected] = useState(0)
@@ -37,7 +38,8 @@ const Dashbaord = props => {
       title: 'Pizarron de calidad',
       menu: {
         'Pizarron de calidad': '/dashboard/review-home',
-        'Historial orden de producción': '/dashboard/history/production',
+        'Historial orden de producción':
+          '/dashboard/history/production',
         'Historial de calidad': '/dashboard/review-home/history',
       },
     }
@@ -47,6 +49,9 @@ const Dashbaord = props => {
       .getAll('processes', 'GET_PROCESSES')
       .then(() => {
         props.getAll('orders/production', 'GET_ORDERS_PRODUCTION')
+      })
+      .then(() => {
+        props.getAll('orders/work', 'GET_ORDERS_WORK')
       })
       .then(() => {
         props.getAll('orders/workstations', 'GET_ORDERS_WORKSTATIONS')
@@ -116,12 +121,13 @@ const Dashbaord = props => {
     qualities &&
     ordersWorkstations &&
     orders &&
-    items
+    items &&
+    ordersWork
   ) {
     const ordersProductionFiltered =
       orderSelected !== 0
-        ? ordersProduction.filter(o => o.order_id === orderSelected)
-        : ordersProduction
+        ? ordersWork.filter(o => o.order_id === orderSelected)
+        : ordersWork
 
     const data =
       parseInt(user.workstation_id) === 0
@@ -129,13 +135,17 @@ const Dashbaord = props => {
         : ordersProductionFiltered.filter(
             o =>
               o.process_id ===
-              workstations.find(w => w.id === parseInt(user.workstation_id))
-                .process_id
+              workstations.find(
+                w => w.id === parseInt(user.workstation_id)
+              ).process_id
           )
 
     return (
       <div className="dashboard">
-        <select name="Process" onChange={e => setProcess(e.target.value)}>
+        <select
+          name="Process"
+          onChange={e => setProcess(e.target.value)}
+        >
           <option value="">Seleccionar</option>
           {processes.map(process => (
             <option key={process.id} value={process.id}>
@@ -170,7 +180,8 @@ const Dashbaord = props => {
             <div className="dashboard__production">
               {data.filter(
                 order =>
-                  parseInt(order.process_id) === parseInt(processSelected) &&
+                  parseInt(order.process_id) ===
+                    parseInt(processSelected) &&
                   parseInt(order.ready) === 2
               ).length > 0
                 ? data
@@ -182,13 +193,18 @@ const Dashbaord = props => {
                     )
                     .sort((a, b) => moment(a.time) - moment(b.time))
                     .map(order => {
-                      const item = items.find(i => i.id === order.item_id)
+                      const item = items.find(
+                        i => i.id === order.item_id
+                      )
                       return (
                         <div
                           className={`dashboard__item`}
                           key={order.id}
                           onClick={() =>
-                            handleEndReview(order.id, order.process_id)
+                            handleEndReview(
+                              order.id,
+                              order.process_id
+                            )
                           }
                         >
                           <span>Pedido# {order.order_id}</span>
@@ -203,7 +219,9 @@ const Dashbaord = props => {
                           ) : null}
                           <span>
                             Entrega:{' '}
-                            {moment(order.time).format('DD-MM-YYYY HH:mm')}
+                            {moment(order.time).format(
+                              'DD-MM-YYYY HH:mm'
+                            )}
                           </span>
                           <span>
                             Zona de trabajo:{' '}
@@ -247,6 +265,7 @@ const mapStateToProps = state => {
     modal: state.reducerApp.modal,
     processes: state.reducerProcesses.processes,
     ordersProduction: state.reducerOrders.ordersProduction,
+    ordersWork: state.reducerOrders.ordersWork,
     ordersWorkstations: state.reducerOrders.ordersWorkstations,
     ordersRequeriment: state.reducerOrders.ordersRequeriment,
     workstations: state.reducerZones.workstations,

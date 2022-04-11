@@ -26,6 +26,7 @@ const Dashbaord = props => {
     qualities,
     orders,
     ordersWorkstations,
+    ordersWork,
   } = props
   const [processSelected, setProcess] = useState('')
   const [orderSelected, setOrderSelected] = useState(0)
@@ -44,6 +45,9 @@ const Dashbaord = props => {
       .getAll('processes', 'GET_PROCESSES')
       .then(() => {
         props.getAll('orders/production', 'GET_ORDERS_PRODUCTION')
+      })
+      .then(() => {
+        props.getAll('orders/work', 'GET_ORDERS_WORK')
       })
       .then(() => {
         props.getAll('orders/workstations', 'GET_ORDERS_WORKSTATIONS')
@@ -100,20 +104,22 @@ const Dashbaord = props => {
     pallets &&
     qualities &&
     ordersWorkstations &&
-    orders
+    orders &&
+    ordersWork
   ) {
     const ordersProductionFiltered =
       orderSelected !== 0
-        ? ordersProduction.filter(o => o.order_id === orderSelected)
-        : ordersProduction
+        ? ordersWork.filter(o => o.order_id === orderSelected)
+        : ordersWork
 
     const data =
       parseInt(user.workstation_id) > 0
         ? ordersProductionFiltered.filter(
             o =>
               o.process_id ===
-              workstations.find(w => w.id === parseInt(user.workstation_id))
-                .process_id
+              workstations.find(
+                w => w.id === parseInt(user.workstation_id)
+              ).process_id
           )
         : ordersProductionFiltered
 
@@ -130,9 +136,16 @@ const Dashbaord = props => {
       }).then(result => {
         if (result.isConfirmed) {
           props
-            .create(`orders/movement-stock/${id}`, 'CREATE_HISTORY', id)
+            .create(
+              `orders/movement-stock/${id}`,
+              'CREATE_HISTORY',
+              id
+            )
             .then(() => {
-              props.getAll('orders/production', 'GET_ORDERS_PRODUCTION')
+              props.getAll(
+                'orders/production',
+                'GET_ORDERS_WORK'
+              )
             })
         }
       })
@@ -189,7 +202,9 @@ const Dashbaord = props => {
                         <span>Tarima: {order.model}</span>
                         <span>
                           Entrega:{' '}
-                          {moment(order.time).format('DD-MM-YYYY HH:mm')}
+                          {moment(order.time).format(
+                            'DD-MM-YYYY HH:mm'
+                          )}
                         </span>
                         <span>
                           Mover de{' '}
@@ -213,8 +228,9 @@ const Dashbaord = props => {
                         </span>
                         <span>
                           Mover a{' '}
-                          {ordersWorkstations.filter(o => o.id === order.id) !==
-                          undefined
+                          {ordersWorkstations.filter(
+                            o => o.id === order.id
+                          ) !== undefined
                             ? ordersWorkstations
                                 .filter(o => o.id === order.id)
                                 .map(o => o.workstation)
@@ -230,7 +246,8 @@ const Dashbaord = props => {
             <div className="dashboard__production">
               {data.filter(
                 order =>
-                  parseInt(order.ready) === 3 && parseInt(order.next) === 1
+                  parseInt(order.ready) === 3 &&
+                  parseInt(order.next) === 1
               ).length > 0
                 ? data
                     .filter(
@@ -254,7 +271,9 @@ const Dashbaord = props => {
                         <span>Tarima: {order.model}</span>
                         <span>
                           Entrega:{' '}
-                          {moment(order.time).format('DD-MM-YYYY HH:mm')}
+                          {moment(order.time).format(
+                            'DD-MM-YYYY HH:mm'
+                          )}
                         </span>
                       </div>
                     ))
@@ -287,6 +306,7 @@ const mapStateToProps = state => {
     modal: state.reducerApp.modal,
     processes: state.reducerProcesses.processes,
     ordersProduction: state.reducerOrders.ordersProduction,
+    ordersWork: state.reducerOrders.ordersWork,
     ordersWorkstations: state.reducerOrders.ordersWorkstations,
     ordersRequeriment: state.reducerOrders.ordersRequeriment,
     workstations: state.reducerZones.workstations,

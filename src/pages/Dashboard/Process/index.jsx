@@ -28,8 +28,9 @@ const Dashbaord = props => {
     ordersWorkstations,
     items,
     itemsType,
+    ordersWork,
   } = props
-  const [processSelected, setProcess] = useState('')
+  const [processSelected, setProcess] = useState(43)
   const [orderSelected, setOrderSelected] = useState(0)
   const role = user.role
 
@@ -54,6 +55,9 @@ const Dashbaord = props => {
       })
       .then(() => {
         props.getAll('orders/requeriment', 'GET_ORDERS_REQUERIMENT')
+      })
+      .then(() => {
+        props.getAll('orders/work', 'GET_ORDERS_WORK')
       })
       .then(() => {
         props.getAll('items', 'GET_ITEMS')
@@ -100,12 +104,16 @@ const Dashbaord = props => {
   }, [workstations])
 
   const handleEnd = orderId => {
-    const orderProcess = ordersProduction.find(o => o.id === orderId).process_id
+    const orderProcess = ordersProduction.find(
+      o => o.id === orderId
+    ).process_id
 
     orderProcess === 36
-      ? props.update(`orders/end/${orderId}`, 'START_ORDER', {}).then(() => {
-          props.getAll('orders/production', 'GET_ORDERS_PRODUCTION')
-        })
+      ? props
+          .update(`orders/end/${orderId}`, 'START_ORDER', {})
+          .then(() => {
+            props.getAll('orders/production', 'GET_ORDERS_PRODUCTION')
+          })
       : props.history.push(`/dashboard/production/${orderId}`)
   }
 
@@ -119,7 +127,8 @@ const Dashbaord = props => {
     ordersWorkstations &&
     orders &&
     items &&
-    itemsType
+    itemsType &&
+    ordersWork
   ) {
     const ordersProductionFiltered =
       orderSelected !== 0
@@ -131,15 +140,45 @@ const Dashbaord = props => {
         ? ordersProductionFiltered.filter(
             o =>
               o.process_id ===
-              workstations.find(w => w.id === parseInt(user.workstation_id))
-                .process_id
+              workstations.find(
+                w => w.id === parseInt(user.workstation_id)
+              ).process_id
           )
         : ordersProductionFiltered
+
+    const ordersWorkFiltered =
+      orderSelected !== 0
+        ? ordersWork.filter(o => o.order_id === orderSelected)
+        : ordersWork
+
+    const dataWork =
+      parseInt(user.workstation_id) > 0
+        ? ordersWorkFiltered.filter(
+            o =>
+              o.process_id ===
+              workstations.find(
+                w => w.id === parseInt(user.workstation_id)
+              ).process_id
+          )
+        : ordersWorkFiltered
+
+    const amountRequired = id => {
+      const op = ordersProduction.find(o => o.id === id)
+
+      const ow = ordersWork
+        .filter(o => o.op_id === id)
+        .reduce((acc, o) => acc + o.amount, 0)
+
+      return op.amount - ow
+    }
 
     return (
       <div className="dashboard">
         {role === 'Administrador' ? (
-          <select name="Process" onChange={e => setProcess(e.target.value)}>
+          <select
+            name="Process"
+            onChange={e => setProcess(e.target.value)}
+          >
             <option value="">Seleccionar</option>
             {processes.map(process => (
               <option key={process.id} value={process.id}>
@@ -190,15 +229,16 @@ const Dashbaord = props => {
             <div className="dashboard__production">
               {data.filter(
                 order =>
-                  parseInt(order.process_id) === parseInt(processSelected) &&
-                  parseInt(order.ready) === 0
+                  parseInt(order.process_id) ===
+                    parseInt(processSelected) &&
+                  amountRequired(order.id) > 0
               ).length > 0
                 ? data
                     .filter(
                       order =>
                         parseInt(order.process_id) ===
                           parseInt(processSelected) &&
-                        parseInt(order.ready) === 0
+                        amountRequired(order.id) > 0
                     )
                     .sort((a, b) => moment(a.time) - moment(b.time))
                     .map(order => {
@@ -208,7 +248,8 @@ const Dashbaord = props => {
                         .filter(o => o.order_id === id)
                         .sort(
                           (a, b) =>
-                            moment(a.order_number) - moment(b.order_number)
+                            moment(a.order_number) -
+                            moment(b.order_number)
                         )
 
                       function removeDuplicates(originalArray, prop) {
@@ -250,7 +291,9 @@ const Dashbaord = props => {
                           : (validation = false)
                       }
 
-                      const item = items.find(i => i.id === order.item_id)
+                      const item = items.find(
+                        i => i.id === order.item_id
+                      )
 
                       if (validation === true) {
                         return (
@@ -271,8 +314,9 @@ const Dashbaord = props => {
                               {qualities.find(
                                 c =>
                                   c.id ===
-                                  pallets.find(o => o.id === order.pallet_id)
-                                    .quality_id
+                                  pallets.find(
+                                    o => o.id === order.pallet_id
+                                  ).quality_id
                               ) !== undefined
                                 ? qualities.find(
                                     c =>
@@ -293,7 +337,7 @@ const Dashbaord = props => {
                               </span>
                             ) : null}
                             <span>
-                              Cantidad: {order.amount}{' '}
+                              Cantidad: {amountRequired(order.id)}{' '}
                               {order.item_id !== null
                                 ? itemsType.find(
                                     i => i.id === item.item_type_id
@@ -306,7 +350,9 @@ const Dashbaord = props => {
                             </span>
                             <span>
                               Entrega:{' '}
-                              {moment(order.time).format('DD-MM-YYYY HH:mm')}
+                              {moment(order.time).format(
+                                'DD-MM-YYYY HH:mm'
+                              )}
                             </span>
                           </div>
                         )
@@ -317,7 +363,9 @@ const Dashbaord = props => {
                               moment(order.time).isBefore(moment())
                                 ? '--danger'
                                 : null
-                            } ${validation === true ? '' : '--disabled'}`}
+                            } ${
+                              validation === true ? '' : '--disabled'
+                            }`}
                             key={order.id}
                           >
                             <span>Pedido# {order.order_id}</span>
@@ -332,7 +380,9 @@ const Dashbaord = props => {
                             ) : null}
                             <span>
                               Entrega:{' '}
-                              {moment(order.time).format('DD-MM-YYYY HH:mm')}
+                              {moment(order.time).format(
+                                'DD-MM-YYYY HH:mm'
+                              )}
                             </span>
                           </div>
                         )
@@ -344,12 +394,13 @@ const Dashbaord = props => {
           <div>
             <div className="dashboard__name">En Proceso</div>
             <div className="dashboard__production">
-              {data.filter(
+              {dataWork.filter(
                 order =>
-                  parseInt(order.process_id) === parseInt(processSelected) &&
+                  parseInt(order.process_id) ===
+                    parseInt(processSelected) &&
                   parseInt(order.ready) === 1
               ).length > 0
-                ? data
+                ? dataWork
                     .filter(
                       order =>
                         parseInt(order.process_id) ===
@@ -358,7 +409,9 @@ const Dashbaord = props => {
                     )
                     .sort((a, b) => moment(a.time) - moment(b.time))
                     .map(order => {
-                      const item = items.find(i => i.id === order.item_id)
+                      const item = items.find(
+                        i => i.id === order.item_id
+                      )
                       return (
                         <div
                           className={`dashboard__item ${
@@ -374,7 +427,6 @@ const Dashbaord = props => {
                           }
                         >
                           <span>
-                            {console.log(order)}
                             {order.require_stock === 1
                               ? 'Esperar madera de inventario'
                               : null}
@@ -390,14 +442,16 @@ const Dashbaord = props => {
                             {qualities.find(
                               c =>
                                 c.id ===
-                                pallets.find(o => o.id === order.pallet_id)
-                                  .quality_id
+                                pallets.find(
+                                  o => o.id === order.pallet_id
+                                ).quality_id
                             ) !== undefined
                               ? qualities.find(
                                   c =>
                                     c.id ===
-                                    pallets.find(o => o.id === order.pallet_id)
-                                      .quality_id
+                                    pallets.find(
+                                      o => o.id === order.pallet_id
+                                    ).quality_id
                                 ).name
                               : 'N/A'}
                           </span>
@@ -434,7 +488,9 @@ const Dashbaord = props => {
                           </span>
                           <span>
                             Entrega:{' '}
-                            {moment(order.time).format('DD-MM-YYYY HH:mm')}
+                            {moment(order.time).format(
+                              'DD-MM-YYYY HH:mm'
+                            )}
                           </span>
                         </div>
                       )
@@ -445,12 +501,13 @@ const Dashbaord = props => {
           <div>
             <div className="dashboard__name">En Revisión</div>
             <div className="dashboard__production">
-              {data.filter(
+              {dataWork.filter(
                 order =>
-                  parseInt(order.process_id) === parseInt(processSelected) &&
+                  parseInt(order.process_id) ===
+                    parseInt(processSelected) &&
                   parseInt(order.ready) === 2
               ).length > 0
-                ? data
+                ? dataWork
                     .filter(
                       order =>
                         parseInt(order.process_id) ===
@@ -459,7 +516,9 @@ const Dashbaord = props => {
                     )
                     .sort((a, b) => moment(a.time) - moment(b.time))
                     .map(order => {
-                      const item = items.find(i => i.id === order.item_id)
+                      const item = items.find(
+                        i => i.id === order.item_id
+                      )
                       return (
                         <div
                           className={`dashboard__item`}
@@ -480,7 +539,9 @@ const Dashbaord = props => {
                           ) : null}
                           <span>
                             Entrega:{' '}
-                            {moment(order.time).format('DD-MM-YYYY HH:mm')}
+                            {moment(order.time).format(
+                              'DD-MM-YYYY HH:mm'
+                            )}
                           </span>
                         </div>
                       )
@@ -517,6 +578,7 @@ const mapStateToProps = state => {
     ordersProduction: state.reducerOrders.ordersProduction,
     ordersWorkstations: state.reducerOrders.ordersWorkstations,
     ordersRequeriment: state.reducerOrders.ordersRequeriment,
+    ordersWork: state.reducerOrders.ordersWork,
     workstations: state.reducerZones.workstations,
     items: state.reducerItems.items,
     pallets: state.reducerPallets.pallets,

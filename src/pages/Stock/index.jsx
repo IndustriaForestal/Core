@@ -1,13 +1,26 @@
 import React, { useEffect, useState } from 'react'
 import { connect } from 'react-redux'
-import { setTitle, setWraper, getAll, deleted } from '../../actions/app'
+import {
+  setTitle,
+  setWraper,
+  getAll,
+  deleted,
+} from '../../actions/app'
 import './styles.scss'
 import Loading from '../../components/Loading/Loading'
 import MaterialTable from 'material-table'
 
 const Nails = props => {
-  const { stock, setTitle, workstations, zones, plants, stockZone, subzones } =
-    props
+  const {
+    stock,
+    setTitle,
+    workstations,
+    zones,
+    plants,
+    stockZone,
+    subzones,
+    stockHistory,
+  } = props
   const [workstation, setWorkstation] = useState(0)
   const [plant, setPlant] = useState(0)
   const [zone, setZone] = useState(0)
@@ -34,6 +47,9 @@ const Nails = props => {
         props.getAll('stock/stock_zones', 'GET_SZ')
       })
       .then(() => {
+        props.getAll('stock/stock_history/pallets', 'GET_SH')
+      })
+      .then(() => {
         props.getAll('zones/workstations', 'GET_WORKSTATIONS')
       })
       .then(() => {
@@ -47,7 +63,15 @@ const Nails = props => {
       })
     // eslint-disable-next-line
   }, [])
-  if (stock && workstations && zones && plants && stockZone && subzones) {
+  if (
+    stock &&
+    workstations &&
+    zones &&
+    plants &&
+    stockZone &&
+    subzones &&
+    stockHistory
+  ) {
     const stockZonesFull = stockZone.map(item => {
       const zoneId = subzones.find(z => z.id === item.zone_id).zone_id
       const zone = zones.find(z => z.id === zoneId)
@@ -56,6 +80,12 @@ const Nails = props => {
         ...item,
         zone: zone.name,
         plant: plant.name,
+        state:
+          item.state === 'dry'
+            ? 'Seca'
+            : item.state === 'damp'
+            ? 'Húmeda'
+            : '',
       }
     })
     return (
@@ -84,13 +114,16 @@ const Nails = props => {
               <option value="0">Todas</option>
               {zones
                 .filter(o =>
-                  plant !== 0 ? parseInt(o.plant_id) === parseInt(plant) : o
+                  plant !== 0
+                    ? parseInt(o.plant_id) === parseInt(plant)
+                    : o
                 )
                 .map(o => (
                   <option key={o.id} value={o.id}>
                     {
-                      plants.find(p => parseInt(p.id) === parseInt(o.plant_id))
-                        .name
+                      plants.find(
+                        p => parseInt(p.id) === parseInt(o.plant_id)
+                      ).name
                     }{' '}
                     {o.name}
                   </option>
@@ -110,7 +143,10 @@ const Nails = props => {
               title: 'Total',
               field: 'total',
               render: rowData =>
-                rowData.dry + rowData.damp + rowData.repair + rowData.stock,
+                rowData.dry +
+                rowData.damp +
+                rowData.repair +
+                rowData.stock,
             },
           ]}
           localization={{
@@ -156,11 +192,14 @@ const Nails = props => {
                   </thead>
                   <tbody>
                     {stockZone.filter(
-                      o => parseInt(o.pallet_id) === parseInt(rowData.id)
+                      o =>
+                        parseInt(o.pallet_id) === parseInt(rowData.id)
                     ).length > 0 ? (
                       stockZonesFull
                         .filter(
-                          o => parseInt(o.pallet_id) === parseInt(rowData.id)
+                          o =>
+                            parseInt(o.pallet_id) ===
+                            parseInt(rowData.id)
                         )
                         .map(o => (
                           <tr>
@@ -193,6 +232,7 @@ const mapStateToProps = state => {
   return {
     stock: state.reducerStock.stock,
     role: state.reducerStock.role,
+    stockHistory: state.reducerStock.stockHistory,
     stockZone: state.reducerStock.stockZone,
     workstations: state.reducerZones.workstations,
     zones: state.reducerZones.zones,
