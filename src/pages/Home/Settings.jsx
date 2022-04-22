@@ -52,7 +52,7 @@ const Settings = props => {
           <IconHome icon={<BsCardImage />} url="/customers" text="Clientes" />
           <IconHome icon={<BsCardImage />} url="/zones" text="Zonas" />
           <IconHome icon={<BsCardImage />} url="/schedule" text="Horarios" />
-
+          <IconHome icon={<FaPallet />} url="/samples-config" text="Muestreos" />
           <IconHome icon={<FaPallet />} url="/users" text="Usuarios" />
         </div>
       )

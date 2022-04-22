@@ -32,7 +32,9 @@ const DashboardProduction = props => {
     processes &&
     ordersRequeriment &&
     items &&
-    workstations && ordersProduction && ordersWork
+    workstations &&
+    ordersProduction &&
+    ordersWork
   ) {
     const itemsRequerimient = ordersRequeriment
       .filter(requeriment => requeriment.order_id === order.order_id)
@@ -46,12 +48,26 @@ const DashboardProduction = props => {
     const process =
       processes.find(process => process.id === order.process_id) || {}
 
+    const setWorkstationAmount = (workstation, amount) => {
+      const newArray = arrayWorkstation.map(item => {
+        if (item.id === workstation) {
+          return {
+            ...item,
+            amount: amount,
+          }
+        }
+        return item
+      })
+
+      setWorkstationID(newArray)
+    }
+
     const handleStart = () => {
       if (arrayWorkstation.length > 0) {
         props
           .update(`orders/start/${order.id}`, 'START_ORDER', {
             arrayWorkstation,
-            amount,
+            amount: process.id === 36 ? order.amount : amount,
           })
           .then(() => {
             props.getAll('orders/production', 'GET_ORDERS_PRODUCTION')
@@ -94,7 +110,9 @@ const DashboardProduction = props => {
           </h1>
           <h3>Tarima: {order.model}</h3>
           Cantidad Requerida:
-          {process.id === 36 ? null : order.item_id !== null ? (
+          {process.id === 36 ? (
+            order.amount
+          ) : order.item_id !== null ? (
             <div>
               {itemsRequerimient
                 .filter(i => i.item.id === order.item_id)
@@ -108,15 +126,17 @@ const DashboardProduction = props => {
           ) : (
             amountRequired(order.id)
           )}
-          <div>
-            <label htmlFor="">
-              Cantidad a producir:
-              <input
-                type="number"
-                onChange={e => setAmount(e.target.value)}
-              />
-            </label>
-          </div>
+          {process.id === 36 ? null : (
+            <div>
+              <label htmlFor="">
+                Cantidad a producir:
+                <input
+                  type="number"
+                  onChange={e => setAmount(e.target.value)}
+                />
+              </label>
+            </div>
+          )}
           <div>
             <select
               name="Process"
@@ -124,7 +144,7 @@ const DashboardProduction = props => {
                 e.target.value !== ''
                   ? setWorkstationID([
                       ...arrayWorkstation,
-                      e.target.value,
+                      { id: e.target.value },
                     ])
                   : null
               }
@@ -148,6 +168,9 @@ const DashboardProduction = props => {
             <thead>
               <tr>
                 <th>Estacion de trabajo asiganda</th>
+                {process.id === 36 ? null : order.item_id !== null ? (
+                  <th>Medida</th>
+                ) : null}
               </tr>
             </thead>
             <tbody>
@@ -156,14 +179,27 @@ const DashboardProduction = props => {
                   <td>
                     {
                       workstations.find(
-                        item => item.id === parseInt(w)
+                        item => item.id === parseInt(w.id)
                       ).workstation
                     }
                   </td>
+                  {process.id === 36 ? null : order.item_id !==
+                    null ? (
+                    <td>
+                      <input
+                        type="text"
+                        name=""
+                        id=""
+                        onChange={e =>
+                          setWorkstationAmount(w.id, e.target.value)
+                        }
+                      />
+                    </td>
+                  ) : null}
                   <td
                     onClick={() =>
                       setWorkstationID(
-                        arrayWorkstation.filter(ws => ws !== w)
+                        arrayWorkstation.filter(ws => ws.id !== w.id)
                       )
                     }
                   >

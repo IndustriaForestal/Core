@@ -88,6 +88,10 @@ import PurchaseOrder from '../pages/PurchaseOrder'
 
 import Schedule from '../pages/Schedule'
 import Colors from '../pages/Colors'
+import Samples from '../pages/Samples'
+import SamplesNew from '../pages/Samples/New'
+import CreateSamples from '../pages/Samples/Samples' 
+import ColumnsSamples from '../pages/Samples/Columns' 
 
 const App = ({ loggedIn }) => {
   if (loggedIn) {
@@ -275,6 +279,10 @@ const App = ({ loggedIn }) => {
               component={CreateWorkStation}
             />
             <Route exact path="/purchase-orders" component={PurchaseOrder} />
+            <Route exact path="/samples" component={Samples} />
+            <Route exact path="/samples/:id" component={SamplesNew} />
+            <Route exact path="/samples-config" component={CreateSamples} />
+            <Route exact path="/samples-columns" component={ColumnsSamples} />
 
             <Route exact path="/login" component={Login} />
             <Route component={NotFound} />

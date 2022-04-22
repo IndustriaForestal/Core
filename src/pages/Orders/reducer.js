@@ -70,6 +70,11 @@ export default function reducer(
         ...state,
         ordersWork: action.payload.data,
       }
+    case 'GET_ORDERS_SAWN':
+      return {
+        ...state,
+        ordersSawn: action.payload.data,
+      }
     case 'GET_ORDERS_STOVES':
       return {
         ...state,

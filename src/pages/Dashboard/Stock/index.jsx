@@ -123,6 +123,7 @@ const Dashbaord = props => {
           )
         : ordersProductionFiltered
 
+
     const delivered = id => {
       Swal.fire({
         title: 'Estas seguro?',
@@ -142,10 +143,7 @@ const Dashbaord = props => {
               id
             )
             .then(() => {
-              props.getAll(
-                'orders/production',
-                'GET_ORDERS_WORK'
-              )
+              props.getAll('orders/production', 'GET_ORDERS_WORK')
             })
         }
       })
@@ -181,14 +179,12 @@ const Dashbaord = props => {
               {data.filter(
                 order =>
                   parseInt(order.ready) === 1 &&
-                  parseInt(order.next) === 0 &&
                   parseInt(order.delivered) !== 1
               ).length > 0
                 ? data
                     .filter(
                       order =>
                         parseInt(order.ready) === 1 &&
-                        parseInt(order.next) === 0 &&
                         parseInt(order.delivered) !== 1
                     )
                     .sort((a, b) => moment(a.time) - moment(b.time))

@@ -29,8 +29,9 @@ const Dashbaord = props => {
     items,
     itemsType,
     ordersWork,
+    ordersSawn,
   } = props
-  const [processSelected, setProcess] = useState(43)
+  const [processSelected, setProcess] = useState(0)
   const [orderSelected, setOrderSelected] = useState(0)
   const role = user.role
 
@@ -58,6 +59,9 @@ const Dashbaord = props => {
       })
       .then(() => {
         props.getAll('orders/work', 'GET_ORDERS_WORK')
+      })
+      .then(() => {
+        props.getAll('orders/sawn', 'GET_ORDERS_SAWN')
       })
       .then(() => {
         props.getAll('items', 'GET_ITEMS')
@@ -114,6 +118,9 @@ const Dashbaord = props => {
           .then(() => {
             props.getAll('orders/production', 'GET_ORDERS_PRODUCTION')
           })
+          .then(() => {
+            props.getAll('orders/sawn', 'GET_ORDERS_SAWN')
+          })
       : props.history.push(`/dashboard/production/${orderId}`)
   }
 
@@ -128,8 +135,30 @@ const Dashbaord = props => {
     orders &&
     items &&
     itemsType &&
-    ordersWork
+    ordersWork &&
+    ordersSawn
   ) {
+    const handleEndSawn = (sawnId, orderId) => {
+      const sawns = ordersSawn.filter(
+        s => s.op_id === orderId && s.ready === 1
+      )
+
+      console.log(sawns)
+
+      if (sawns.length > 1) {
+        props
+          .update(`orders/sawn/end/${sawnId}`, 'START_ORDER', {})
+          .then(() => {
+            props.getAll('orders/production', 'GET_ORDERS_PRODUCTION')
+          })
+          .then(() => {
+            props.getAll('orders/production', 'GET_ORDERS_SAWN')
+          })
+      } else {
+        props.history.push(`/dashboard/production/${orderId}`)
+      }
+    }
+
     const ordersProductionFiltered =
       orderSelected !== 0
         ? ordersProduction.filter(o => o.order_id === orderSelected)
@@ -412,88 +441,202 @@ const Dashbaord = props => {
                       const item = items.find(
                         i => i.id === order.item_id
                       )
-                      return (
-                        <div
-                          className={`dashboard__item ${
-                            moment(order.time).isBefore(moment())
-                              ? '--danger'
-                              : null
-                          }`}
-                          key={order.id}
-                          onClick={
-                            order.delivered === 1
-                              ? () => handleEnd(order.id)
-                              : null
-                          }
-                        >
-                          <span>
-                            {order.require_stock === 1
-                              ? 'Esperar madera de inventario'
-                              : null}
-                          </span>
-                          <span>
-                            {order.delivered === 0
-                              ? 'Esperar entrega de madera'
-                              : null}
-                          </span>
-                          <span>Pedido# {order.order_id}</span>
-                          <span>
-                            Calidad:
-                            {qualities.find(
-                              c =>
-                                c.id ===
-                                pallets.find(
-                                  o => o.id === order.pallet_id
-                                ).quality_id
-                            ) !== undefined
-                              ? qualities.find(
-                                  c =>
-                                    c.id ===
-                                    pallets.find(
-                                      o => o.id === order.pallet_id
-                                    ).quality_id
-                                ).name
-                              : 'N/A'}
-                          </span>
-                          <span>Tarima: {order.model}</span>
-                          {order.item_id !== null ? (
+                      if (parseInt(processSelected) === 41) {
+                        console.log(
+                          ordersSawn.filter(
+                            o =>
+                              o.op_id === order.id &&
+                              parseInt(o.ready) === 1
+                          )
+                        )
+                        return ordersSawn
+                          .filter(
+                            o =>
+                              o.op_id === order.id &&
+                              parseInt(o.ready) === 1
+                          )
+                          .sort(
+                            (a, b) => moment(a.time) - moment(b.time)
+                          )
+                          .map(o => {
+                            return (
+                              <div
+                                className={`dashboard__item ${
+                                  moment(o.time).isBefore(moment())
+                                    ? '--danger'
+                                    : null
+                                }`}
+                                key={o.id}
+                                onClick={
+                                  order.delivered === 1
+                                    ? () =>
+                                        handleEndSawn(o.id, order.id)
+                                    : null
+                                }
+                              >
+                                <span>
+                                  {order.require_stock === 1
+                                    ? 'Esperar madera de inventario'
+                                    : null}
+                                </span>
+                                <span>
+                                  {order.delivered === 0
+                                    ? 'Esperar entrega de madera'
+                                    : null}
+                                </span>
+                                <span>Pedido# {order.order_id}</span>
+                                <span>
+                                  Calidad:
+                                  {qualities.find(
+                                    c =>
+                                      c.id ===
+                                      pallets.find(
+                                        o => o.id === order.pallet_id
+                                      ).quality_id
+                                  ) !== undefined
+                                    ? qualities.find(
+                                        c =>
+                                          c.id ===
+                                          pallets.find(
+                                            o =>
+                                              o.id === order.pallet_id
+                                          ).quality_id
+                                      ).name
+                                    : 'N/A'}
+                                </span>
+                                <span>Tarima: {order.model}</span>
+                                {order.item_id !== null ? (
+                                  <span>
+                                    Complemento:{' '}
+                                    {item !== undefined
+                                      ? `${item.length} x ${item.width} x ${item.height}`
+                                      : 'N/A'}
+                                  </span>
+                                ) : null}
+                                <span>
+                                  Cantidad: {order.amount}{' '}
+                                  {order.item_id !== null
+                                    ? itemsType.find(
+                                        i =>
+                                          i.id === item.item_type_id
+                                      ) !== undefined
+                                      ? itemsType.find(
+                                          i =>
+                                            i.id === item.item_type_id
+                                        ).name
+                                      : 'Error Material'
+                                    : null}
+                                </span>
+                                <span>
+                                  Actividad: {o.description}
+                                </span>
+                                <span>
+                                  Zona de trabajo:{' '}
+                                  {workstations.find(
+                                    x =>
+                                      parseInt(x.id) ===
+                                      parseInt(o.workstation_id)
+                                  ) !== undefined
+                                    ? workstations.find(
+                                        x =>
+                                          parseInt(x.id) ===
+                                          parseInt(o.workstation_id)
+                                      ).workstation
+                                    : 'N/A'}
+                                </span>
+                                <span>
+                                  Entrega:{' '}
+                                  {moment(order.time).format(
+                                    'DD-MM-YYYY HH:mm'
+                                  )}
+                                </span>
+                              </div>
+                            )
+                          })
+                      } else {
+                        return (
+                          <div
+                            className={`dashboard__item ${
+                              moment(order.time).isBefore(moment())
+                                ? '--danger'
+                                : null
+                            }`}
+                            key={order.id}
+                            onClick={
+                              order.delivered === 1
+                                ? () => handleEnd(order.id)
+                                : null
+                            }
+                          >
                             <span>
-                              Complemento:{' '}
-                              {item !== undefined
-                                ? `${item.length} x ${item.width} x ${item.height}`
+                              {order.require_stock === 1
+                                ? 'Esperar madera de inventario'
+                                : null}
+                            </span>
+                            <span>
+                              {order.delivered === 0
+                                ? 'Esperar entrega de madera'
+                                : null}
+                            </span>
+                            <span>Pedido# {order.order_id}</span>
+                            <span>
+                              Calidad:
+                              {qualities.find(
+                                c =>
+                                  c.id ===
+                                  pallets.find(
+                                    o => o.id === order.pallet_id
+                                  ).quality_id
+                              ) !== undefined
+                                ? qualities.find(
+                                    c =>
+                                      c.id ===
+                                      pallets.find(
+                                        o => o.id === order.pallet_id
+                                      ).quality_id
+                                  ).name
                                 : 'N/A'}
                             </span>
-                          ) : null}
-                          <span>
-                            Cantidad: {order.amount}{' '}
-                            {order.item_id !== null
-                              ? itemsType.find(
-                                  i => i.id === item.item_type_id
-                                ) !== undefined
+                            <span>Tarima: {order.model}</span>
+                            {order.item_id !== null ? (
+                              <span>
+                                Complemento:{' '}
+                                {item !== undefined
+                                  ? `${item.length} x ${item.width} x ${item.height}`
+                                  : 'N/A'}
+                              </span>
+                            ) : null}
+                            <span>
+                              Cantidad: {order.amount}{' '}
+                              {order.item_id !== null
                                 ? itemsType.find(
                                     i => i.id === item.item_type_id
-                                  ).name
-                                : 'Error Material'
-                              : null}
-                          </span>
-                          <span>
-                            Zona de trabajo:{' '}
-                            {ordersWorkstations.filter(
-                              o => o.id === order.id
-                            ) !== undefined
-                              ? ordersWorkstations
-                                  .filter(o => o.id === order.id)
-                                  .map(o => o.workstation)
-                              : 'N/A'}
-                          </span>
-                          <span>
-                            Entrega:{' '}
-                            {moment(order.time).format(
-                              'DD-MM-YYYY HH:mm'
-                            )}
-                          </span>
-                        </div>
-                      )
+                                  ) !== undefined
+                                  ? itemsType.find(
+                                      i => i.id === item.item_type_id
+                                    ).name
+                                  : 'Error Material'
+                                : null}
+                            </span>
+                            <span>
+                              Zona de trabajo:{' '}
+                              {ordersWorkstations.filter(
+                                o => o.id === order.id
+                              ) !== undefined
+                                ? ordersWorkstations
+                                    .filter(o => o.id === order.id)
+                                    .map(o => o.workstation)
+                                : 'N/A'}
+                            </span>
+                            <span>
+                              Entrega:{' '}
+                              {moment(order.time).format(
+                                'DD-MM-YYYY HH:mm'
+                              )}
+                            </span>
+                          </div>
+                        )
+                      }
                     })
                 : null}
             </div>
@@ -579,6 +722,7 @@ const mapStateToProps = state => {
     ordersWorkstations: state.reducerOrders.ordersWorkstations,
     ordersRequeriment: state.reducerOrders.ordersRequeriment,
     ordersWork: state.reducerOrders.ordersWork,
+    ordersSawn: state.reducerOrders.ordersSawn,
     workstations: state.reducerZones.workstations,
     items: state.reducerItems.items,
     pallets: state.reducerPallets.pallets,
