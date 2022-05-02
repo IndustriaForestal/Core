@@ -93,6 +93,9 @@ import SamplesNew from '../pages/Samples/New'
 import CreateSamples from '../pages/Samples/Samples' 
 import ColumnsSamples from '../pages/Samples/Columns' 
 
+import Warehouse from '../pages/Warehouse'
+import WarehouseAdd from '../pages/Warehouse/Add'
+
 const App = ({ loggedIn }) => {
   if (loggedIn) {
     return (
@@ -283,6 +286,8 @@ const App = ({ loggedIn }) => {
             <Route exact path="/samples/:id" component={SamplesNew} />
             <Route exact path="/samples-config" component={CreateSamples} />
             <Route exact path="/samples-columns" component={ColumnsSamples} />
+            <Route exact path="/warehouse" component={Warehouse} />
+            <Route exact path="/warehouse/add" component={WarehouseAdd} />
 
             <Route exact path="/login" component={Login} />
             <Route component={NotFound} />

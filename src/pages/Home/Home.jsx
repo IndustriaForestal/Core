@@ -77,6 +77,7 @@ const Home = props => {
           />
           <IconHome icon={<FaPallet />} url="/pallets" text="Tarimas" />
           <IconHome icon={<FaPallet />} url="/samples" text="Muestreos" />
+          <IconHome icon={<FaPallet />} url="/warehouse" text="Almacen" />
         </div>
       )
 

@@ -35,6 +35,8 @@ const Nails = props => {
     complements,
     units,
     user,
+    warehouseItems,
+    warehouseStockZone,
   } = props
   const [type, setType] = useState(0)
   const [idSelected, setIdSelected] = useState(0)
@@ -83,6 +85,9 @@ const Nails = props => {
         props.getAll('items', 'GET_ITEMS')
       })
       .then(() => {
+        props.getAll('warehouse', 'GET_WAREHOUSE_ITEMS')
+      })
+      .then(() => {
         props.getAll('complements', 'GET_COMPLEMENTS')
       })
       .then(() => {
@@ -107,13 +112,22 @@ const Nails = props => {
         props.getAll('stock/stock_zones/items', 'GET_SZ_ITEMS')
       })
       .then(() => {
-        props.getAll('stock/stock_zones/complements', 'GET_SZ_COMPLEMENTS')
+        props.getAll(
+          'stock/stock_zones/complements',
+          'GET_SZ_COMPLEMENTS'
+        )
       })
       .then(() => {
         props.getAll('stock/stock_zones/sawn', 'GET_SZ_SAWN')
       })
       .then(() => {
         props.getAll('stock/stock_zones/raws', 'GET_SZ_RAWS')
+      })
+      .then(() => {
+        props.getAll(
+          'warehouse/stock_zones',
+          'GET_WAREHOUSE_STOCK_ZONE'
+        )
       })
     // eslint-disable-next-line
   }, [])
@@ -155,7 +169,9 @@ const Nails = props => {
     stockZone &&
     stockZoneRaws &&
     stockZoneComplements &&
-    complements
+    complements &&
+    warehouseItems &&
+    warehouseStockZone
   ) {
     const palletsOptions = pallets.map(pallet => {
       return {
@@ -164,10 +180,19 @@ const Nails = props => {
       }
     })
 
+    const warehouseItemsOptions = warehouseItems.map(item => {
+      return {
+        value: item.id,
+        label: item.name,
+      }
+    })
+
     const itemsOptions = items
       .filter(item => item.item_type_id !== 4)
       .filter(item =>
-        palletSelected !== 0 ? item.id_pallet === palletSelected : true
+        palletSelected !== 0
+          ? item.id_pallet === palletSelected
+          : true
       )
       .map(item => {
         return {
@@ -234,7 +259,10 @@ const Nails = props => {
           setType(0)
         })
         .then(() => {
-          props.getAll('stock/stock_zones/complements', 'GET_SZ_COMPLEMENTS')
+          props.getAll(
+            'stock/stock_zones/complements',
+            'GET_SZ_COMPLEMENTS'
+          )
         })
     }
 
@@ -263,8 +291,6 @@ const Nails = props => {
       )
 
       const id = verification !== undefined ? verification.id : 0
-
-      console.log(id, heighConverted, lengthConverted, widthConverted)
 
       props
         .create(`stock/sawn/${id}`, 'PALLET_HISTORY', {
@@ -352,28 +378,36 @@ const Nails = props => {
         ? console.log('Mayor')
         : parseInt(stock.amount) - inputOut === 0
         ? props
-            .create(`stock/pallets/${stock.pallet_id}`, 'PALLET_HISTORY', {
-              amount: negativeInput,
-              user_id: user.id,
-              state: stock.state,
-              zone_id: stock.zone_id,
-              sz: stock.id,
-              delete: true,
-              date: moment().format('YYYY-MM-DD HH:mm:ss'),
-            })
+            .create(
+              `stock/pallets/${stock.pallet_id}`,
+              'PALLET_HISTORY',
+              {
+                amount: negativeInput,
+                user_id: user.id,
+                state: stock.state,
+                zone_id: stock.zone_id,
+                sz: stock.id,
+                delete: true,
+                date: moment().format('YYYY-MM-DD HH:mm:ss'),
+              }
+            )
             .then(() => {
               props.getAll('stock/stock_zones', 'GET_SZ')
             })
         : props
-            .create(`stock/pallets/${stock.pallet_id}`, 'PALLET_HISTORY', {
-              amount: negativeInput,
-              user_id: user.id,
-              state: stock.state,
-              zone_id: stock.zone_id,
-              sz: stock.id,
-              delete: false,
-              date: moment().format('YYYY-MM-DD HH:mm:ss'),
-            })
+            .create(
+              `stock/pallets/${stock.pallet_id}`,
+              'PALLET_HISTORY',
+              {
+                amount: negativeInput,
+                user_id: user.id,
+                state: stock.state,
+                zone_id: stock.zone_id,
+                sz: stock.id,
+                delete: false,
+                date: moment().format('YYYY-MM-DD HH:mm:ss'),
+              }
+            )
             .then(() => {
               props.getAll('stock/stock_zones', 'GET_SZ')
             })
@@ -385,15 +419,19 @@ const Nails = props => {
         ? console.log('Mayor')
         : parseInt(stock.amount) - inputOut === 0
         ? props
-            .create(`stock/nails/${stock.complement_id}`, 'PALLET_HISTORY', {
-              amount: negativeInput,
-              user_id: user.id,
-              state: 'stock',
-              zone_id: 1,
-              sz: stock.id,
-              delete: false,
-              date: moment().format('YYYY-MM-DD HH:mm:ss'),
-            })
+            .create(
+              `stock/nails/${stock.complement_id}`,
+              'PALLET_HISTORY',
+              {
+                amount: negativeInput,
+                user_id: user.id,
+                state: 'stock',
+                zone_id: 1,
+                sz: stock.id,
+                delete: false,
+                date: moment().format('YYYY-MM-DD HH:mm:ss'),
+              }
+            )
             .then(() => {
               props.getAll(
                 'stock/stock_zones/complements',
@@ -401,15 +439,19 @@ const Nails = props => {
               )
             })
         : props
-            .create(`stock/nails/${stock.complement_id}`, 'PALLET_HISTORY', {
-              amount: negativeInput,
-              user_id: user.id,
-              state: 'stock',
-              zone_id: 1,
-              sz: stock.id,
-              delete: false,
-              date: moment().format('YYYY-MM-DD HH:mm:ss'),
-            })
+            .create(
+              `stock/nails/${stock.complement_id}`,
+              'PALLET_HISTORY',
+              {
+                amount: negativeInput,
+                user_id: user.id,
+                state: 'stock',
+                zone_id: 1,
+                sz: stock.id,
+                delete: false,
+                date: moment().format('YYYY-MM-DD HH:mm:ss'),
+              }
+            )
             .then(() => {
               props.getAll(
                 'stock/stock_zones/complements',
@@ -424,28 +466,36 @@ const Nails = props => {
         ? console.log('Mayor')
         : parseInt(stock.amount) - inputOut === 0
         ? props
-            .create(`stock/items/${stock.item_id}`, 'PALLET_HISTORY', {
-              amount: negativeInput,
-              user_id: user.id,
-              state: stock.state,
-              zone_id: stock.zone_id,
-              sz: stock.id,
-              delete: true,
-              date: moment().format('YYYY-MM-DD HH:mm:ss'),
-            })
+            .create(
+              `stock/items/${stock.item_id}`,
+              'PALLET_HISTORY',
+              {
+                amount: negativeInput,
+                user_id: user.id,
+                state: stock.state,
+                zone_id: stock.zone_id,
+                sz: stock.id,
+                delete: true,
+                date: moment().format('YYYY-MM-DD HH:mm:ss'),
+              }
+            )
             .then(() => {
               props.getAll('stock/stock_zones/items', 'GET_SZ_ITEMS')
             })
         : props
-            .create(`stock/items/${stock.item_id}`, 'PALLET_HISTORY', {
-              amount: negativeInput,
-              user_id: user.id,
-              state: stock.state,
-              zone_id: stock.zone_id,
-              sz: stock.id,
-              delete: false,
-              date: moment().format('YYYY-MM-DD HH:mm:ss'),
-            })
+            .create(
+              `stock/items/${stock.item_id}`,
+              'PALLET_HISTORY',
+              {
+                amount: negativeInput,
+                user_id: user.id,
+                state: stock.state,
+                zone_id: stock.zone_id,
+                sz: stock.id,
+                delete: false,
+                date: moment().format('YYYY-MM-DD HH:mm:ss'),
+              }
+            )
             .then(() => {
               props.getAll('stock/stock_zones/items', 'GET_SZ_ITEMS')
             })
@@ -482,6 +532,78 @@ const Nails = props => {
             })
     }
 
+    const handleSaveStockWareHouse = () => {
+      props
+        .create(
+          `warehouse/stock/${idSelected}`,
+          'WAREHOUSE_HISTORY',
+          {
+            type,
+            amount,
+            inOut,
+            user_id: user.id,
+            zone_id: subzoneSelected,
+            date: moment().format('YYYY-MM-DD HH:mm:ss'),
+          }
+        )
+        .then(() => {
+          setType(0)
+        })
+        .then(() => {
+          props.getAll(
+            'warehouse/stock_zones',
+            'GET_WAREHOUSE_STOCK_ZONE'
+          )
+        })
+    }
+
+    const hanldeUpdateStockZoneWarehouse = stock => {
+      const negativeInput = parseInt(inputOut) * -1
+      inputOut > stock.amount
+        ? console.log('Mayor')
+        : parseInt(stock.amount) - inputOut === 0
+        ? props
+            .create(
+              `warehouse/stock/${stock.warehouse_id}`,
+              'PALLET_HISTORY',
+              {
+                amount: negativeInput,
+                user_id: user.id,
+                state: stock.state,
+                zone_id: stock.zone_id,
+                sz: stock.id,
+                delete: true,
+                date: moment().format('YYYY-MM-DD HH:mm:ss'),
+              }
+            )
+            .then(() => {
+              props.getAll(
+                'warehouse/stock_zones',
+                'GET_WAREHOUSE_STOCK_ZONE'
+              )
+            })
+        : props
+            .create(
+              `warehouse/stock/${stock.warehouse_id}`,
+              'PALLET_HISTORY',
+              {
+                amount: negativeInput,
+                user_id: user.id,
+                state: stock.state,
+                zone_id: stock.zone_id,
+                sz: stock.id,
+                delete: false,
+                date: moment().format('YYYY-MM-DD HH:mm:ss'),
+              }
+            )
+            .then(() => {
+              props.getAll(
+                'warehouse/stock_zones',
+                'GET_WAREHOUSE_STOCK_ZONE'
+              )
+            })
+    }
+
     const stockZoneNailsFiltered = stockZoneComplements
 
     const stockZoneItemsFiltered = stockZoneItems.filter(
@@ -507,13 +629,17 @@ const Nails = props => {
           <div className="inputGroup">
             <label htmlFor="processId">
               <span>Inventario:</span>
-              <select onChange={e => handleChangeStock(e)} name="processId">
+              <select
+                onChange={e => handleChangeStock(e)}
+                name="processId"
+              >
                 <option value="0">Seleccionar</option>
                 <option value="1">Tarima</option>
                 <option value="2">Complementos</option>
                 <option value="3">Madera Habilitada</option>
                 <option value="4">Madera Aserrada</option>
                 <option value="5">Madera Trozo</option>
+                <option value="6">Almacen</option>
               </select>
             </label>
           </div>
@@ -557,7 +683,9 @@ const Nails = props => {
                     >
                       <option value="">Seleccionar</option>
                       {zones
-                        .filter(zone => zone.plant_id === plantSelected)
+                        .filter(
+                          zone => zone.plant_id === plantSelected
+                        )
                         .map(zone => (
                           <option key={zone.id} value={zone.id}>
                             {zone.name}
@@ -580,7 +708,8 @@ const Nails = props => {
                       {subzones
                         .filter(
                           subzone =>
-                            parseInt(subzone.zone_id) === parseInt(zoneSelected)
+                            parseInt(subzone.zone_id) ===
+                            parseInt(zoneSelected)
                         )
                         .map(subzone => (
                           <option key={subzone.id} value={subzone.id}>
@@ -628,9 +757,13 @@ const Nails = props => {
                     <>
                       <input
                         type="text"
-                        onInput={e => setAmountInputOut(e.target.value)}
+                        onInput={e =>
+                          setAmountInputOut(e.target.value)
+                        }
                       />
-                      <Button onClick={() => hanldeUpdateStockZone(rowData)}>
+                      <Button
+                        onClick={() => hanldeUpdateStockZone(rowData)}
+                      >
                         Guardar
                       </Button>
                     </>
@@ -674,10 +807,14 @@ const Nails = props => {
                     <>
                       <input
                         type="text"
-                        onInput={e => setAmountInputOut(e.target.value)}
+                        onInput={e =>
+                          setAmountInputOut(e.target.value)
+                        }
                       />
                       <Button
-                        onClick={() => hanldeUpdateStockZoneNails(rowData)}
+                        onClick={() =>
+                          hanldeUpdateStockZoneNails(rowData)
+                        }
                       >
                         Guardar
                       </Button>
@@ -696,7 +833,9 @@ const Nails = props => {
                   <span>Filtro Modelo:</span>
                   <select
                     name="filter"
-                    onChange={e => setPallet(parseInt(e.target.value))}
+                    onChange={e =>
+                      setPallet(parseInt(e.target.value))
+                    }
                   >
                     <option value="0">Todas</option>
                     {pallets.map(o => (
@@ -743,7 +882,9 @@ const Nails = props => {
                     >
                       <option value="">Seleccionar</option>
                       {zones
-                        .filter(zone => zone.plant_id === plantSelected)
+                        .filter(
+                          zone => zone.plant_id === plantSelected
+                        )
                         .map(zone => (
                           <option key={zone.id} value={zone.id}>
                             {zone.name}
@@ -766,7 +907,8 @@ const Nails = props => {
                       {subzones
                         .filter(
                           subzone =>
-                            parseInt(subzone.zone_id) === parseInt(zoneSelected)
+                            parseInt(subzone.zone_id) ===
+                            parseInt(zoneSelected)
                         )
                         .map(subzone => (
                           <option key={subzone.id} value={subzone.id}>
@@ -819,10 +961,14 @@ const Nails = props => {
                     <>
                       <input
                         type="text"
-                        onInput={e => setAmountInputOut(e.target.value)}
+                        onInput={e =>
+                          setAmountInputOut(e.target.value)
+                        }
                       />
                       <Button
-                        onClick={() => hanldeUpdateStockZoneItems(rowData)}
+                        onClick={() =>
+                          hanldeUpdateStockZoneItems(rowData)
+                        }
                       >
                         Guardar
                       </Button>
@@ -883,7 +1029,9 @@ const Nails = props => {
                     >
                       <option value="">Seleccionar</option>
                       {zones
-                        .filter(zone => zone.plant_id === plantSelected)
+                        .filter(
+                          zone => zone.plant_id === plantSelected
+                        )
                         .map(zone => (
                           <option key={zone.id} value={zone.id}>
                             {zone.name}
@@ -906,7 +1054,8 @@ const Nails = props => {
                       {subzones
                         .filter(
                           subzone =>
-                            parseInt(subzone.zone_id) === parseInt(zoneSelected)
+                            parseInt(subzone.zone_id) ===
+                            parseInt(zoneSelected)
                         )
                         .map(subzone => (
                           <option key={subzone.id} value={subzone.id}>
@@ -975,10 +1124,14 @@ const Nails = props => {
                     <>
                       <input
                         type="text"
-                        onInput={e => setAmountInputOut(e.target.value)}
+                        onInput={e =>
+                          setAmountInputOut(e.target.value)
+                        }
                       />
                       <Button
-                        onClick={() => hanldeUpdateStockZoneSawn(rowData)}
+                        onClick={() =>
+                          hanldeUpdateStockZoneSawn(rowData)
+                        }
                       >
                         Guardar
                       </Button>
@@ -1008,7 +1161,9 @@ const Nails = props => {
                         <td>
                           <Button
                             className="btn --danger"
-                            onClick={() => removeDiameter(diameter.id)}
+                            onClick={() =>
+                              removeDiameter(diameter.id)
+                            }
                           >
                             X
                           </Button>
@@ -1041,7 +1196,9 @@ const Nails = props => {
                   step="any"
                   title="Diametro 2 cm"
                 />
-                <Button onClick={() => addDiameter(diameters.length + 1)}>
+                <Button
+                  onClick={() => addDiameter(diameters.length + 1)}
+                >
                   +
                 </Button>
               </div>
@@ -1079,7 +1236,9 @@ const Nails = props => {
                     >
                       <option value="">Seleccionar</option>
                       {zones
-                        .filter(zone => zone.plant_id === plantSelected)
+                        .filter(
+                          zone => zone.plant_id === plantSelected
+                        )
                         .map(zone => (
                           <option key={zone.id} value={zone.id}>
                             {zone.name}
@@ -1102,7 +1261,8 @@ const Nails = props => {
                       {subzones
                         .filter(
                           subzone =>
-                            parseInt(subzone.zone_id) === parseInt(zoneSelected)
+                            parseInt(subzone.zone_id) ===
+                            parseInt(zoneSelected)
                         )
                         .map(subzone => (
                           <option key={subzone.id} value={subzone.id}>
@@ -1149,14 +1309,17 @@ const Nails = props => {
           ) : inOut === 1 ? (
             <MaterialTable
               localization={localization}
-              data={stockZoneRaws.filter(i => i.item_type_id !== 4 && i.m3 > 0)}
+              data={stockZoneRaws.filter(
+                i => i.item_type_id !== 4 && i.m3 > 0
+              )}
               title="Disponible"
               columns={[
                 { title: 'SubZona', field: 'zone_id' },
                 {
                   title: 'Pieza',
                   field: 'm3',
-                  render: rowData => `${rowData.m3} - ${rowData.name}`,
+                  render: rowData =>
+                    `${rowData.m3} - ${rowData.name}`,
                 },
                 {
                   title: 'Cantidad a retirar',
@@ -1165,10 +1328,133 @@ const Nails = props => {
                     <>
                       <input
                         type="text"
-                        onInput={e => setAmountInputOut(e.target.value)}
+                        onInput={e =>
+                          setAmountInputOut(e.target.value)
+                        }
                       />
                       <Button
-                        onClick={() => hanldeUpdateStockZoneRaws(rowData)}
+                        onClick={() =>
+                          hanldeUpdateStockZoneRaws(rowData)
+                        }
+                      >
+                        Guardar
+                      </Button>
+                    </>
+                  ),
+                },
+              ]}
+            />
+          ) : null
+        ) : null}
+        {type === 6 ? (
+          inOut === 0 ? (
+            <Card title="Almacen">
+              <div className="inputGroup">
+                <label htmlFor="processId">
+                  <span>Inventario:</span>
+                  <Select
+                    onChange={e => setIdSelected(e.value)}
+                    options={warehouseItemsOptions}
+                  />
+                </label>
+              </div>
+
+              <div className="inputGroup">
+                <label htmlFor="processId">
+                  <span>Planta:</span>
+                  <select
+                    name="processId"
+                    onChange={e => setPlant(e.target.value)}
+                  >
+                    <option value="">Seleccionar</option>
+                    {plants.map(plant => (
+                      <option key={plant.id} value={plant.id}>
+                        {plant.name}
+                      </option>
+                    ))}
+                  </select>
+                </label>
+              </div>
+              {plantSelected !== null ? (
+                <div className="inputGroup">
+                  <label htmlFor="processId">
+                    <span>Zona:</span>
+                    <select
+                      name="processId"
+                      onChange={e => setZone(e.target.value)}
+                    >
+                      <option value="">Seleccionar</option>
+                      {zones
+                        .filter(
+                          zone => zone.plant_id === plantSelected
+                        )
+                        .map(zone => (
+                          <option key={zone.id} value={zone.id}>
+                            {zone.name}
+                          </option>
+                        ))}
+                    </select>
+                  </label>
+                </div>
+              ) : null}
+
+              {zoneSelected !== null ? (
+                <div className="inputGroup">
+                  <label htmlFor="processId">
+                    <span>SubZona:</span>
+                    <select
+                      name="processId"
+                      onChange={e => setSubzone(e.target.value)}
+                    >
+                      <option value="">Seleccionar</option>
+                      {subzones
+                        .filter(
+                          subzone =>
+                            parseInt(subzone.zone_id) ===
+                            parseInt(zoneSelected)
+                        )
+                        .map(subzone => (
+                          <option key={subzone.id} value={subzone.id}>
+                            {subzone.id}
+                          </option>
+                        ))}
+                    </select>
+                  </label>
+                </div>
+              ) : null}
+
+              <Input
+                title="Cantidad"
+                onChange={e => setAmount(parseInt(e.target.value))}
+              />
+              <Button onClick={handleSaveStockWareHouse}>
+                Guardar
+              </Button>
+            </Card>
+          ) : inOut === 1 ? (
+            <MaterialTable
+              localization={localization}
+              data={warehouseStockZone}
+              title="Disponible"
+              columns={[
+                { title: 'Subzona', field: 'zone_id' },
+                { title: 'Producto', field: 'name' },
+                { title: 'Disponible', field: 'amount' },
+                {
+                  title: 'Cantidad a retirar',
+                  field: 'amount',
+                  render: rowData => (
+                    <>
+                      <input
+                        type="text"
+                        onInput={e =>
+                          setAmountInputOut(e.target.value)
+                        }
+                      />
+                      <Button
+                        onClick={() =>
+                          hanldeUpdateStockZoneWarehouse(rowData)
+                        }
                       >
                         Guardar
                       </Button>
@@ -1203,6 +1489,8 @@ const mapStateToProps = state => {
     stockZoneComplements: state.reducerStock.stockZoneComplements,
     units: state.reducerApp.units,
     user: state.reducerApp.user,
+    warehouseItems: state.reducerWarehouse.warehouseItems,
+    warehouseStockZone: state.reducerWarehouse.warehouseStockZone,
   }
 }
 

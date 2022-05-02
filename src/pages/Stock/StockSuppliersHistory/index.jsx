@@ -34,6 +34,8 @@ const Nails = props => {
             ? item.cname
             : item.type === 'sawns'
             ? `${item.slength} x ${item.swidth} x ${item.sheight} cm`
+            : item.type === 'warehouse'
+            ? `Almacen: ${item.wname}`
             : `${item.m3} m3`
         return {
           ...item,

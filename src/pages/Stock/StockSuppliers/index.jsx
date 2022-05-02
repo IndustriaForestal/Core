@@ -37,6 +37,8 @@ const Nails = props => {
     qualities,
     suppliers,
     purchaseOrdersSuppliers,
+    warehouseItems,
+    warehouseStockZone,
   } = props
   const [type, setType] = useState(0)
   const [plantSelected, setPlant] = useState(null)
@@ -100,7 +102,10 @@ const Nails = props => {
         props.getAll('stock/stock_zones/items', 'GET_SZ_ITEMS')
       })
       .then(() => {
-        props.getAll('stock/stock_zones/complements', 'GET_SZ_COMPLEMENTS')
+        props.getAll(
+          'stock/stock_zones/complements',
+          'GET_SZ_COMPLEMENTS'
+        )
       })
       .then(() => {
         props.getAll('stock/stock_zones/sawn', 'GET_SZ_SAWN')
@@ -115,6 +120,15 @@ const Nails = props => {
         props.getAll(
           'purchaseOrders/suppliers',
           'GET_PURCHASE_ORDERS_SUPPLIERS'
+        )
+      })
+      .then(() => {
+        props.getAll('warehouse', 'GET_WAREHOUSE_ITEMS')
+      })
+      .then(() => {
+        props.getAll(
+          'warehouse/stock_zones',
+          'GET_WAREHOUSE_STOCK_ZONE'
         )
       })
 
@@ -141,7 +155,9 @@ const Nails = props => {
     complements &&
     suppliers &&
     qualities &&
-    purchaseOrdersSuppliers
+    purchaseOrdersSuppliers &&
+    warehouseItems &&
+    warehouseStockZone
   ) {
     const palletsOptions = pallets.map(pallet => {
       return {
@@ -150,10 +166,19 @@ const Nails = props => {
       }
     })
 
+    const warehouseItemsOptions = warehouseItems.map(item => {
+      return {
+        value: item.id,
+        label: item.name,
+      }
+    })
+
     const itemsOptions = items
       .filter(item => item.item_type_id !== 4)
       .filter(item =>
-        palletSelected !== 0 ? item.id_pallet === palletSelected : true
+        palletSelected !== 0
+          ? item.id_pallet === palletSelected
+          : true
       )
       .map(item => {
         return {
@@ -178,7 +203,11 @@ const Nails = props => {
         ? (data.orderPurchase = orderPurchase)
         : (data.orderPurchase = null)
       props
-        .createFile(`stock/supplier/pallets/${1}`, 'PALLET_HISTORY', data)
+        .createFile(
+          `stock/supplier/pallets/${1}`,
+          'PALLET_HISTORY',
+          data
+        )
         .then(() => {
           props.getAll(
             'purchaseOrders/suppliers',
@@ -188,7 +217,9 @@ const Nails = props => {
     }
 
     const handleOrderSupplier = id => {
-      const order = purchaseOrdersSuppliers.find(item => item.id === id)
+      const order = purchaseOrdersSuppliers.find(
+        item => item.id === id
+      )
       handleChangeStock(
         order.pallet_id !== null
           ? 1
@@ -240,7 +271,9 @@ const Nails = props => {
               title: 'Acciones',
               field: 'amount',
               render: rowData => (
-                <Button onClick={() => handleOrderSupplier(rowData.id)}>
+                <Button
+                  onClick={() => handleOrderSupplier(rowData.id)}
+                >
                   Seleccionar
                 </Button>
               ),
@@ -281,6 +314,7 @@ const Nails = props => {
                 <option value="3">Madera Habilitada</option>
                 <option value="4">Madera Aserrada</option>
                 <option value="5">Madera Trozo</option>
+                <option value="6">Almacen</option>
               </select>
             </label>
           </div>
@@ -294,12 +328,15 @@ const Nails = props => {
                   <select name="supplierId" ref={register}>
                     <option value="0">Seleccionar</option>
                     {suppliers.map(supplier =>
-                      parseInt(orderSupplier) === parseInt(supplier.id) ? (
+                      parseInt(orderSupplier) ===
+                      parseInt(supplier.id) ? (
                         <option selected value={supplier.id}>
                           {supplier.name}
                         </option>
                       ) : (
-                        <option value={supplier.id}>{supplier.name}</option>
+                        <option value={supplier.id}>
+                          {supplier.name}
+                        </option>
                       )
                     )}
                   </select>
@@ -363,7 +400,9 @@ const Nails = props => {
                     >
                       <option value="">Seleccionar</option>
                       {zones
-                        .filter(zone => zone.plant_id === plantSelected)
+                        .filter(
+                          zone => zone.plant_id === plantSelected
+                        )
                         .map(zone => (
                           <option key={zone.id} value={zone.id}>
                             {zone.name}
@@ -383,7 +422,8 @@ const Nails = props => {
                       {subzones
                         .filter(
                           subzone =>
-                            parseInt(subzone.zone_id) === parseInt(zoneSelected)
+                            parseInt(subzone.zone_id) ===
+                            parseInt(zoneSelected)
                         )
                         .map(subzone => (
                           <option key={subzone.id} value={subzone.id}>
@@ -406,7 +446,11 @@ const Nails = props => {
                   </select>
                 </label>
               </div>
-              <Input title="Cantidad" name="amount" passRef={register} />
+              <Input
+                title="Cantidad"
+                name="amount"
+                passRef={register}
+              />
               <input
                 type="hidden"
                 value="pallets"
@@ -427,12 +471,15 @@ const Nails = props => {
                   <select name="supplierId" ref={register}>
                     <option value="0">Seleccionar</option>
                     {suppliers.map(supplier =>
-                      parseInt(orderSupplier) === parseInt(supplier.id) ? (
+                      parseInt(orderSupplier) ===
+                      parseInt(supplier.id) ? (
                         <option selected value={supplier.id}>
                           {supplier.name}
                         </option>
                       ) : (
-                        <option value={supplier.id}>{supplier.name}</option>
+                        <option value={supplier.id}>
+                          {supplier.name}
+                        </option>
                       )
                     )}
                   </select>
@@ -488,7 +535,9 @@ const Nails = props => {
                     >
                       <option value="">Seleccionar</option>
                       {zones
-                        .filter(zone => zone.plant_id === plantSelected)
+                        .filter(
+                          zone => zone.plant_id === plantSelected
+                        )
                         .map(zone => (
                           <option key={zone.id} value={zone.id}>
                             {zone.name}
@@ -508,7 +557,8 @@ const Nails = props => {
                       {subzones
                         .filter(
                           subzone =>
-                            parseInt(subzone.zone_id) === parseInt(zoneSelected)
+                            parseInt(subzone.zone_id) ===
+                            parseInt(zoneSelected)
                         )
                         .map(subzone => (
                           <option key={subzone.id} value={subzone.id}>
@@ -520,7 +570,11 @@ const Nails = props => {
                 </div>
               ) : null}
 
-              <Input title="Cantidad" name="amount" passRef={register} />
+              <Input
+                title="Cantidad"
+                name="amount"
+                passRef={register}
+              />
               <input
                 type="hidden"
                 value="complements"
@@ -540,12 +594,15 @@ const Nails = props => {
                   <select name="supplierId" ref={register}>
                     <option value="0">Seleccionar</option>
                     {suppliers.map(supplier =>
-                      parseInt(orderSupplier) === parseInt(supplier.id) ? (
+                      parseInt(orderSupplier) ===
+                      parseInt(supplier.id) ? (
                         <option selected value={supplier.id}>
                           {supplier.name}
                         </option>
                       ) : (
-                        <option value={supplier.id}>{supplier.name}</option>
+                        <option value={supplier.id}>
+                          {supplier.name}
+                        </option>
                       )
                     )}
                   </select>
@@ -574,7 +631,9 @@ const Nails = props => {
                   <span>Filtro Modelo:</span>
                   <select
                     name="filter"
-                    onChange={e => setPallet(parseInt(e.target.value))}
+                    onChange={e =>
+                      setPallet(parseInt(e.target.value))
+                    }
                   >
                     <option value="0">Todas</option>
                     {pallets.map(o => (
@@ -623,7 +682,9 @@ const Nails = props => {
                     >
                       <option value="">Seleccionar</option>
                       {zones
-                        .filter(zone => zone.plant_id === plantSelected)
+                        .filter(
+                          zone => zone.plant_id === plantSelected
+                        )
                         .map(zone => (
                           <option key={zone.id} value={zone.id}>
                             {zone.name}
@@ -643,7 +704,8 @@ const Nails = props => {
                       {subzones
                         .filter(
                           subzone =>
-                            parseInt(subzone.zone_id) === parseInt(zoneSelected)
+                            parseInt(subzone.zone_id) ===
+                            parseInt(zoneSelected)
                         )
                         .map(subzone => (
                           <option key={subzone.id} value={subzone.id}>
@@ -666,7 +728,11 @@ const Nails = props => {
                   </select>
                 </label>
               </div>
-              <Input title="Cantidad" name="amount" passRef={register} />
+              <Input
+                title="Cantidad"
+                name="amount"
+                passRef={register}
+              />
               <input
                 type="hidden"
                 value="items"
@@ -686,12 +752,15 @@ const Nails = props => {
                   <select name="supplierId" ref={register}>
                     <option value="0">Seleccionar</option>
                     {suppliers.map(supplier =>
-                      parseInt(orderSupplier) === parseInt(supplier.id) ? (
+                      parseInt(orderSupplier) ===
+                      parseInt(supplier.id) ? (
                         <option selected value={supplier.id}>
                           {supplier.name}
                         </option>
                       ) : (
-                        <option value={supplier.id}>{supplier.name}</option>
+                        <option value={supplier.id}>
+                          {supplier.name}
+                        </option>
                       )
                     )}
                   </select>
@@ -705,7 +774,10 @@ const Nails = props => {
                     {wood.map(w => (
                       <option key={w.id} value={w.id}>
                         {w.name} Calidad{' '}
-                        {qualities.find(q => q.id === w.quality_id).name}
+                        {
+                          qualities.find(q => q.id === w.quality_id)
+                            .name
+                        }
                       </option>
                     ))}
                   </select>
@@ -776,7 +848,9 @@ const Nails = props => {
                     >
                       <option value="">Seleccionar</option>
                       {zones
-                        .filter(zone => zone.plant_id === plantSelected)
+                        .filter(
+                          zone => zone.plant_id === plantSelected
+                        )
                         .map(zone => (
                           <option key={zone.id} value={zone.id}>
                             {zone.name}
@@ -796,7 +870,8 @@ const Nails = props => {
                       {subzones
                         .filter(
                           subzone =>
-                            parseInt(subzone.zone_id) === parseInt(zoneSelected)
+                            parseInt(subzone.zone_id) ===
+                            parseInt(zoneSelected)
                         )
                         .map(subzone => (
                           <option key={subzone.id} value={subzone.id}>
@@ -819,7 +894,11 @@ const Nails = props => {
                   </select>
                 </label>
               </div>
-              <Input title="Cantidad" name="amount" passRef={register} />
+              <Input
+                title="Cantidad"
+                name="amount"
+                passRef={register}
+              />
               <input
                 type="hidden"
                 value="sawns"
@@ -839,12 +918,15 @@ const Nails = props => {
                   <select name="supplierId" ref={register}>
                     <option value="0">Seleccionar</option>
                     {suppliers.map(supplier =>
-                      parseInt(orderSupplier) === parseInt(supplier.id) ? (
+                      parseInt(orderSupplier) ===
+                      parseInt(supplier.id) ? (
                         <option selected value={supplier.id}>
                           {supplier.name}
                         </option>
                       ) : (
-                        <option value={supplier.id}>{supplier.name}</option>
+                        <option value={supplier.id}>
+                          {supplier.name}
+                        </option>
                       )
                     )}
                   </select>
@@ -858,7 +940,10 @@ const Nails = props => {
                     {wood.map(w => (
                       <option key={w.id} value={w.id}>
                         {w.name} Calidad{' '}
-                        {qualities.find(q => q.id === w.quality_id).name}
+                        {
+                          qualities.find(q => q.id === w.quality_id)
+                            .name
+                        }
                       </option>
                     ))}
                   </select>
@@ -907,7 +992,9 @@ const Nails = props => {
                         <td>
                           <Button
                             className="btn --danger"
-                            onClick={() => removeDiameter(diameter.id)}
+                            onClick={() =>
+                              removeDiameter(diameter.id)
+                            }
                           >
                             X
                           </Button>
@@ -940,7 +1027,9 @@ const Nails = props => {
                   step="any"
                   title="Diametro 2 cm"
                 />
-                <Button onClick={() => addDiameter(diameters.length + 1)}>
+                <Button
+                  onClick={() => addDiameter(diameters.length + 1)}
+                >
                   +
                 </Button>
               </div>
@@ -970,7 +1059,9 @@ const Nails = props => {
                     >
                       <option value="">Seleccionar</option>
                       {zones
-                        .filter(zone => zone.plant_id === plantSelected)
+                        .filter(
+                          zone => zone.plant_id === plantSelected
+                        )
                         .map(zone => (
                           <option key={zone.id} value={zone.id}>
                             {zone.name}
@@ -990,7 +1081,8 @@ const Nails = props => {
                       {subzones
                         .filter(
                           subzone =>
-                            parseInt(subzone.zone_id) === parseInt(zoneSelected)
+                            parseInt(subzone.zone_id) ===
+                            parseInt(zoneSelected)
                         )
                         .map(subzone => (
                           <option key={subzone.id} value={subzone.id}>
@@ -1024,6 +1116,120 @@ const Nails = props => {
             </Card>
           </form>
         ) : null}
+        {type === 6 ? (
+          <form onSubmit={handleSubmit(onSubmit)}>
+            <Card title="Almacen">
+              <div className="inputGroup">
+                <label htmlFor="supplierId">
+                  <span>Proveedor:</span>
+                  <select name="supplierId" ref={register}>
+                    <option value="0">Seleccionar</option>
+                    {suppliers.map(supplier =>
+                      parseInt(orderSupplier) ===
+                      parseInt(supplier.id) ? (
+                        <option selected value={supplier.id}>
+                          {supplier.name}
+                        </option>
+                      ) : (
+                        <option value={supplier.id}>
+                          {supplier.name}
+                        </option>
+                      )
+                    )}
+                  </select>
+                </label>
+              </div>
+
+              <div className="inputGroup">
+                <label htmlFor="processId">
+                  <span>Inventario:</span>
+                  <select name="productId" ref={register}>
+                    <option value="">Seleccionar</option>
+                    {warehouseItemsOptions.map(pallet => (
+                      <option key={pallet.value} value={pallet.value}>
+                        {pallet.label}
+                      </option>
+                    ))}
+                  </select>
+                </label>
+              </div>
+
+              <div className="inputGroup">
+                <label htmlFor="processId">
+                  <span>Planta:</span>
+                  <select
+                    name="processId"
+                    onChange={e => setPlant(e.target.value)}
+                  >
+                    <option value="">Seleccionar</option>
+                    {plants.map(plant => (
+                      <option key={plant.id} value={plant.id}>
+                        {plant.name}
+                      </option>
+                    ))}
+                  </select>
+                </label>
+              </div>
+              {plantSelected !== null ? (
+                <div className="inputGroup">
+                  <label htmlFor="processId">
+                    <span>Zona:</span>
+                    <select
+                      name="processId"
+                      onChange={e => setZone(e.target.value)}
+                    >
+                      <option value="">Seleccionar</option>
+                      {zones
+                        .filter(
+                          zone => zone.plant_id === plantSelected
+                        )
+                        .map(zone => (
+                          <option key={zone.id} value={zone.id}>
+                            {zone.name}
+                          </option>
+                        ))}
+                    </select>
+                  </label>
+                </div>
+              ) : null}
+
+              {zoneSelected !== null ? (
+                <div className="inputGroup">
+                  <label htmlFor="zoneId">
+                    <span>SubZona:</span>
+                    <select name="zoneId" ref={register}>
+                      <option value="">Seleccionar</option>
+                      {subzones
+                        .filter(
+                          subzone =>
+                            parseInt(subzone.zone_id) ===
+                            parseInt(zoneSelected)
+                        )
+                        .map(subzone => (
+                          <option key={subzone.id} value={subzone.id}>
+                            {subzone.id}
+                          </option>
+                        ))}
+                    </select>
+                  </label>
+                </div>
+              ) : null}
+
+              <Input
+                title="Cantidad"
+                name="amount"
+                passRef={register}
+              />
+              <input
+                type="hidden"
+                value="warehouse"
+                name="type_product"
+                ref={register}
+              />
+              <Button type="submit">Guardar</Button>
+            </Card>
+          </form>
+        ) : null}
       </>
     )
   } else {
@@ -1052,6 +1258,8 @@ const mapStateToProps = state => {
     qualities: state.reducerQualities.qualities,
     purchaseOrdersSuppliers:
       state.reducerPurchaseOrders.purchaseOrdersSuppliers,
+    warehouseItems: state.reducerWarehouse.warehouseItems,
+    warehouseStockZone: state.reducerWarehouse.warehouseStockZone,
   }
 }
 
