@@ -80,6 +80,11 @@ export default function reducer(
         ...state,
         ordersStoves: action.payload.data,
       }
+    case 'GET_ORDERS_STOVES_HISTORY':
+      return {
+        ...state,
+        ordersStovesHistory: action.payload.data,
+      }
     case 'GET_ORDERS_REQUERIMENT':
       return {
         ...state,
@@ -111,7 +116,9 @@ export default function reducer(
     case 'DELETE_ORDER':
       return {
         ...state,
-        orders: state.orders.filter(order => order.id !== action.payload),
+        orders: state.orders.filter(
+          order => order.id !== action.payload
+        ),
       }
     case 'ORDER_SAVE_PALLETS':
       return {

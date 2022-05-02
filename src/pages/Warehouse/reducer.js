@@ -10,6 +10,11 @@ export default function reducer(state = {}, action) {
         ...state,
         warehouseStock: action.payload.data,
       }
+    case 'GET_WAREHOUSE_HISTORY':
+      return {
+        ...state,
+        warehouseHistory: action.payload.data,
+      }
     case 'GET_WAREHOUSE_STOCK_ZONE':
       return {
         ...state,

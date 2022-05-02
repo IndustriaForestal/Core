@@ -39,6 +39,7 @@ const Dashbaord = props => {
       title: 'Pizarron de estufado',
       menu: {
         'Pizarron de estufado': '/dashboard/stoves',
+        'Historial de estufado': '/dashboard/stoves/history',
       },
     }
     props.setTitle(topbar)

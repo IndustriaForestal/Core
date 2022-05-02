@@ -16,7 +16,10 @@ const TypeMaterial = props => {
   useEffect(() => {
     const topbar = {
       title: 'Almacen',
-      menu: { Almacen: '/warehouse' },
+      menu: {
+        Almacen: '/warehouse',
+        'Historial Almacen': '/warehouse/history',
+      },
     }
     setTitle(topbar)
     props

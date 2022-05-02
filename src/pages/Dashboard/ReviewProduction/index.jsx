@@ -13,6 +13,7 @@ import { useForm } from 'react-hook-form'
 import { useParams } from 'react-router-dom'
 import Button from '../../../components/Button/Button'
 import Card from '../../../components/Card/Card'
+import moment from 'moment'
 
 const Review = props => {
   const {
@@ -27,11 +28,15 @@ const Review = props => {
     purchaseOrdersSuppliers,
     suppliers,
     ordersWork,
+    warehouseItems,
+    warehouseStockZone,
+    user,
   } = props
   const { register, handleSubmit } = useForm()
 
   const { id } = useParams()
   const [next, setNext] = useState(true)
+  const [inputOut, setAmountInputOut] = useState(0)
 
   useEffect(() => {
     props.setWraper(true)
@@ -73,11 +78,70 @@ const Review = props => {
       .then(() => {
         props.getAll('suppliers', 'GET_SUPPLIERS')
       })
+      .then(() => {
+        props.getAll('warehouse', 'GET_WAREHOUSE_ITEMS')
+      })
+      .then(() => {
+        props.getAll(
+          'warehouse/stock_zones',
+          'GET_WAREHOUSE_STOCK_ZONE'
+        )
+      })
   }, [])
+
+  console.log(inputOut)
+
+  const hanldeUpdateStockZoneWarehouse = () => {
+    const negativeInput = parseInt(inputOut.amount) * -1
+    inputOut.amount > inputOut.stock
+      ? console.log('Mayor')
+      : parseInt(inputOut.stock) - inputOut.amount === 0
+      ? props
+          .create(
+            `warehouse/stock/${inputOut.warehouse_id}`,
+            'PALLET_HISTORY',
+            {
+              amount: negativeInput,
+              user_id: user.id,
+              zone_id: inputOut.zone_id,
+              sz: inputOut.sz,
+              delete: true,
+              date: moment().format('YYYY-MM-DD HH:mm:ss'),
+            }
+          )
+          .then(() => {
+            props.getAll(
+              'warehouse/stock_zones',
+              'GET_WAREHOUSE_STOCK_ZONE'
+            )
+          })
+      : props
+          .create(
+            `warehouse/stock/${inputOut.warehouse_id}`,
+            'PALLET_HISTORY',
+            {
+              amount: negativeInput,
+              user_id: user.id,
+              zone_id: inputOut.zone_id,
+              sz: inputOut.sz,
+              delete: false,
+              date: moment().format('YYYY-MM-DD HH:mm:ss'),
+            }
+          )
+          .then(() => {
+            props.getAll(
+              'warehouse/stock_zones',
+              'GET_WAREHOUSE_STOCK_ZONE'
+            )
+          })
+  }
 
   const onSubmit = data => {
     props
       .create('orders/history/production', 'CREATE_HISTORY', data)
+      .then(() => {
+        hanldeUpdateStockZoneWarehouse()
+      })
       .then(() => {
         props.history.goBack()
       })
@@ -94,7 +158,9 @@ const Review = props => {
     processesReject &&
     purchaseOrdersSuppliers &&
     suppliers &&
-    ordersWork
+    ordersWork &&
+    warehouseItems &&
+    warehouseStockZone
   ) {
     const order =
       ordersWork.find(o => o.id === parseInt(id)) !== undefined
@@ -374,6 +440,82 @@ const Review = props => {
                 name="processId"
                 ref={register}
               />
+
+              {warehouseItems.find(
+                item => item.process_id === process.id
+              ) !== undefined
+                ? warehouseItems
+                    .filter(item => item.process_id === process.id)
+                    .map(item => {
+                      return (
+                        <div key={item.id}>
+                          <hr />
+                          <h3>{item.name}</h3>
+
+                          <div
+                            style={{
+                              display: 'flex',
+                              flexDirection: 'column',
+                              justifyContent: 'center',
+                              alignItems: 'center',
+                            }}
+                          >
+                            <table
+                              style={{
+                                width: '100%',
+                                textAlign: 'center',
+                              }}
+                            >
+                              <thead>
+                                <tr>
+                                  <th>Zona</th>
+                                  <th>Disponible</th>
+                                  <th>Cantidad</th>
+                                </tr>
+                              </thead>
+                              <tbody>
+                                {warehouseStockZone.filter(
+                                  wh => wh.warehouse_id === item.id
+                                ).length > 0 ? (
+                                  warehouseStockZone
+                                    .filter(
+                                      wh =>
+                                        wh.warehouse_id === item.id
+                                    )
+                                    .map(o => (
+                                      <tr key={o.id}>
+                                        <td>{o.zone_id}</td>
+                                        <td>{o.amount}</td>
+                                        <td>
+                                          <input
+                                            type="text"
+                                            onInput={e =>
+                                              setAmountInputOut({
+                                                amount:
+                                                  e.target.value,
+                                                zone_id: o.zone_id,
+                                                sz: o.id,
+                                                stock: o.amount,
+                                                warehouse_id: item.id,
+                                              })
+                                            }
+                                          />
+                                        </td>
+                                      </tr>
+                                    ))
+                                ) : (
+                                  <div>
+                                    <h3>Sin Existencias</h3>
+                                  </div>
+                                )}
+                              </tbody>
+                            </table>
+                          </div>
+                        </div>
+                      )
+                    })
+                : null}
+
               <Button type="submit">Enviar</Button>
             </div>
           </div>
@@ -412,6 +554,8 @@ const mapStateToProps = state => {
     purchaseOrdersSuppliers:
       state.reducerPurchaseOrders.purchaseOrdersSuppliers,
     suppliers: state.reducerSuppliers.suppliers,
+    warehouseStockZone: state.reducerWarehouse.warehouseStockZone,
+    warehouseItems: state.reducerWarehouse.warehouseItems,
   }
 }
 

@@ -80,6 +80,7 @@ import DashboardReviewHomeHistory from '../pages/Dashboard/HistoryQuality'
 import DashboardHistoryQualityProduction from '../pages/Dashboard/HistoryQualityProduction'
 
 import DashboardStoves from '../pages/Dashboard/DashboardStove'
+import DashboardStovesHistory from '../pages/Dashboard/DashboardStoveHistory'
 
 import StockSuppliers from '../pages/Stock/StockSuppliers'
 import StockSuppliersHistory from '../pages/Stock/StockSuppliersHistory'
@@ -95,6 +96,7 @@ import ColumnsSamples from '../pages/Samples/Columns'
 
 import Warehouse from '../pages/Warehouse'
 import WarehouseAdd from '../pages/Warehouse/Add'
+import WarehouseHistory from '../pages/Warehouse/History'
 
 const App = ({ loggedIn }) => {
   if (loggedIn) {
@@ -115,6 +117,11 @@ const App = ({ loggedIn }) => {
               exact
               path="/dashboard/stoves"
               component={DashboardStoves}
+            />
+            <Route
+              exact
+              path="/dashboard/stoves/history"
+              component={DashboardStovesHistory}
             />
             <Route
               exact
@@ -288,6 +295,7 @@ const App = ({ loggedIn }) => {
             <Route exact path="/samples-columns" component={ColumnsSamples} />
             <Route exact path="/warehouse" component={Warehouse} />
             <Route exact path="/warehouse/add" component={WarehouseAdd} />
+            <Route exact path="/warehouse/history" component={WarehouseHistory} />
 
             <Route exact path="/login" component={Login} />
             <Route component={NotFound} />
