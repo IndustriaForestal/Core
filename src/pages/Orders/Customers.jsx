@@ -248,6 +248,16 @@ const Orders = props => {
                                     >
                                       Reprogramar
                                     </Button>
+                                    <Button
+                                      className="btn --info"
+                                      onClick={() => {
+                                        props.history.push(
+                                          '/orders-details/' + o.id
+                                        )
+                                      }}
+                                    >
+                                      Detalles
+                                    </Button>
                                   </>
                                 )
                               ) : (

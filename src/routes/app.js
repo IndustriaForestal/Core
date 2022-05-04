@@ -41,6 +41,7 @@ import OrdersStockItems from '../pages/Orders/OrderStockItems'
 import OrdersStockSawn from '../pages/Orders/OrderStockSawn'
 import OrderEstimated from '../pages/Orders/OrderEstimated'
 import OrderPreview from '../pages/Orders/OrderPreview'
+import OrderDetails from '../pages/Orders/OrderDetails'
 
 import CreateOrder from '../pages/Orders/CreateOrder'
 import CreateOrderNew from '../pages/Orders/CreateOrderNew'
@@ -246,6 +247,7 @@ const App = ({ loggedIn }) => {
             />
             <Route exact path="/orders/estimated" component={OrderEstimated} />
             <Route exact path="/orders/preview" component={OrderPreview} />
+            <Route exact path="/orders-details/:id" component={OrderDetails} />
 
             <Route exact path="/raws" component={Raws} />
             <Route exact path="/raws/create" component={CreateRaw} />
