@@ -98,6 +98,7 @@ import ColumnsSamples from '../pages/Samples/Columns'
 import Warehouse from '../pages/Warehouse'
 import WarehouseAdd from '../pages/Warehouse/Add'
 import WarehouseHistory from '../pages/Warehouse/History'
+import WarehouseChanges from '../pages/Warehouse/Changes'
 
 const App = ({ loggedIn }) => {
   if (loggedIn) {
@@ -298,6 +299,7 @@ const App = ({ loggedIn }) => {
             <Route exact path="/warehouse" component={Warehouse} />
             <Route exact path="/warehouse/add" component={WarehouseAdd} />
             <Route exact path="/warehouse/history" component={WarehouseHistory} />
+            <Route exact path="/warehouse/changes" component={WarehouseChanges} />
 
             <Route exact path="/login" component={Login} />
             <Route component={NotFound} />

@@ -730,7 +730,8 @@ const Nails = props => {
                     <option value="">Seleccionar</option>
                     <option value="dry">Secas</option>
                     <option value="damp">Verdes</option>
-                    <option value="repair">Reaparación</option>
+                    <option value="repair">Reparación</option>
+                    <option value="recovery">Recuperación</option>
                     <option value="stock">Stock de seguridad</option>
                   </select>
                 </label>
@@ -930,7 +931,8 @@ const Nails = props => {
                     <option value="">Seleccionar</option>
                     <option value="dry">Secas</option>
                     <option value="damp">Verdes</option>
-                    <option value="repair">Reaparación</option>
+                    <option value="repair">Reparación</option>
+                    <option value="recovery">Recuperación</option>
                   </select>
                 </label>
               </div>
@@ -1093,7 +1095,8 @@ const Nails = props => {
                     <option value="">Seleccionar</option>
                     <option value="dry">Secas</option>
                     <option value="damp">Verdes</option>
-                    <option value="repair">Reaparación</option>
+                    <option value="repair">Reparación</option>
+                    <option value="recovery">Recuperación</option>
                   </select>
                 </label>
               </div>
@@ -1300,7 +1303,8 @@ const Nails = props => {
                     <option value="">Seleccionar</option>
                     <option value="dry">Secas</option>
                     <option value="damp">Verdes</option>
-                    <option value="repair">Reaparación</option>
+                    <option value="repair">Reparación</option>
+                    <option value="recovery">Recuperación</option>
                   </select>
                 </label>
               </div>

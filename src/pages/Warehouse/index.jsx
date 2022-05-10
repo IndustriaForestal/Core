@@ -19,6 +19,7 @@ const TypeMaterial = props => {
       menu: {
         Almacen: '/warehouse',
         'Historial Almacen': '/warehouse/history',
+        'Entradas Almacen': '/warehouse/changes',
       },
     }
     setTitle(topbar)

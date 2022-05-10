@@ -1,11 +1,17 @@
 import React, { useEffect, useState } from 'react'
 import { cmToFbm } from '../../../utils'
 import { connect } from 'react-redux'
-import { setTitle, getAll, deleted, cleanStock } from '../../../actions/app'
+import {
+  setTitle,
+  getAll,
+  deleted,
+  cleanStock,
+} from '../../../actions/app'
 import MaterialTable from 'material-table'
 
 const StockSwan = props => {
-  const { stock, setTitle, units, workstations, zones, plants } = props
+  const { stock, setTitle, units, workstations, zones, plants } =
+    props
   const [workstation, setWorkstation] = useState(0)
   const [plant, setPlant] = useState(0)
   const [zone, setZone] = useState(0)
@@ -46,12 +52,12 @@ const StockSwan = props => {
         if (units) {
           return {
             ...item,
-            m3: `${cmToFbm(item.m3).toFixed(3)} fbm`,
+            m3: `${cmToFbm(item.m3)} fbm`,
           }
         } else {
           return {
             ...item,
-            m3: `${item.m3.toFixed(3)} cm3`,
+            m3: `${(item.m3 * 10).toFixed(2)} m3`,
           }
         }
       })

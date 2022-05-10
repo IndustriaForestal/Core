@@ -8,14 +8,14 @@ import {
   deleted,
   update,
   createFile,
-} from '../../../actions/app'
-import { inToCm } from '../../../utils'
+} from '../../actions/app'
+import { inToCm } from '../../utils'
 import moment from 'moment'
 import MaterialTable from 'material-table'
-import Card from '../../../components/Card/Card'
-import Input from '../../../components/Input/Input'
-import Button from '../../../components/Button/Button'
-import Loading from '../../../components/Loading/Loading'
+import Card from '../../components/Card/Card'
+import Input from '../../components/Input/Input'
+import Button from '../../components/Button/Button'
+import Loading from '../../components/Loading/Loading'
 
 const Nails = props => {
   const {
@@ -61,10 +61,11 @@ const Nails = props => {
 
   useEffect(() => {
     const topbar = {
-      title: 'Entrada Proveedores',
+      title: 'Almacen',
       menu: {
-        'Entrada Proveedores': '/stockSuppliers',
-        'Historial Entrada Proveedores': '/stockSuppliersHistory',
+        Almacen: '/warehouse',
+        'Historial Almacen': '/warehouse/history',
+        'Entradas Almacen': '/warehouse/changes',
       },
     }
     setTitle(topbar)
@@ -260,46 +261,6 @@ const Nails = props => {
 
     return (
       <>
-        <MaterialTable
-          columns={[
-            { title: 'Orden de compra #', field: 'id' },
-            { title: 'Proveedor', field: 'name' },
-            { title: 'Producto', field: 'product' },
-            { title: 'Cantidad', field: 'amount' },
-            { title: 'Fecha', field: 'delivery' },
-            {
-              title: 'Acciones',
-              field: 'amount',
-              render: rowData => (
-                <Button
-                  onClick={() => handleOrderSupplier(rowData.id)}
-                >
-                  Seleccionar
-                </Button>
-              ),
-            },
-          ]}
-          localization={{
-            pagination: {
-              labelDisplayedRows: '{from}-{to} de {count}',
-              labelRowsSelect: 'Filas',
-              firstAriaLabel: 'Primera',
-              firstTooltip: 'Primera',
-              previousAriaLabel: 'Anterior',
-              previousTooltip: 'Anterior',
-              nextAriaLabel: 'Siguiente',
-              nextTooltip: 'Siguiente',
-              lastAriaLabel: 'Ultimo',
-              lastTooltip: 'Ultimo',
-            },
-            toolbar: {
-              searchTooltip: 'Buscar',
-              searchPlaceholder: 'Buscar',
-            },
-          }}
-          data={dataTableOrder}
-          title="Ordenes de compra"
-        />
         <Card title="Entrada Proveedor">
           <div className="inputGroup">
             <label htmlFor="processId">
@@ -309,11 +270,7 @@ const Nails = props => {
                 name="processId"
               >
                 <option value="0">Seleccionar</option>
-                <option value="1">Tarima</option>
-                <option value="2">Complementos</option>
-                <option value="3">Madera Habilitada</option>
-                <option value="4">Madera Aserrada</option>
-                <option value="5">Madera Trozo</option>
+                <option value="6">Almacen</option>
               </select>
             </label>
           </div>
@@ -440,6 +397,7 @@ const Nails = props => {
                     <option value="">Seleccionar</option>
                     <option value="dry">Secas</option>
                     <option value="damp">Verdes</option>
+                    <option value="repair">Reaparación</option>
                     <option value="stock">Stock de seguridad</option>
                   </select>
                 </label>
@@ -721,6 +679,7 @@ const Nails = props => {
                     <option value="">Seleccionar</option>
                     <option value="dry">Secas</option>
                     <option value="damp">Verdes</option>
+                    <option value="repair">Reaparación</option>
                     <option value="stock">Stock de seguridad</option>
                   </select>
                 </label>
@@ -886,6 +845,7 @@ const Nails = props => {
                     <option value="">Seleccionar</option>
                     <option value="dry">Secas</option>
                     <option value="damp">Verdes</option>
+                    <option value="repair">Reaparación</option>
                     <option value="stock">Stock de seguridad</option>
                   </select>
                 </label>
@@ -1096,6 +1056,7 @@ const Nails = props => {
                     <option value="">Seleccionar</option>
                     <option value="dry">Secas</option>
                     <option value="damp">Verdes</option>
+                    <option value="repair">Reaparación</option>
                     <option value="stock">Stock de seguridad</option>
                   </select>
                 </label>
