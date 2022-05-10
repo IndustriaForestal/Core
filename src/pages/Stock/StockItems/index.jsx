@@ -1,14 +1,27 @@
 import React, { useEffect, useState } from 'react'
 import { useLocation } from 'react-router-dom'
 import { connect } from 'react-redux'
-import { setTitle, getAll, deleted, cleanStock } from '../../../actions/app'
+import {
+  setTitle,
+  getAll,
+  deleted,
+  cleanStock,
+} from '../../../actions/app'
 import './styles.scss'
 import MaterialTable from 'material-table'
 import { cmToIn } from '../../../utils'
 
 const Nails = props => {
-  const { stock, setTitle, units, user, workstations, zones, plants, pallets } =
-    props
+  const {
+    stock,
+    setTitle,
+    units,
+    user,
+    workstations,
+    zones,
+    plants,
+    pallets,
+  } = props
   const [palletSelected, setPallet] = useState(0)
   const [plant, setPlant] = useState(0)
   const [zone, setZone] = useState(0)
@@ -50,15 +63,18 @@ const Nails = props => {
   const location = useLocation()
 
   if (
-    user.accessScreen.find(s => `/${s.pathname}` === location.pathname) !==
-      undefined ||
+    user.accessScreen.find(
+      s => `/${s.pathname}` === location.pathname
+    ) !== undefined ||
     user.role === 'Administrador'
   ) {
     if (stock && workstations && zones && plants && pallets) {
       const stockItems = stock
         .filter(item => item.item_type_id !== 4)
         .filter(item =>
-          palletSelected !== 0 ? item.pallet_id === palletSelected : true
+          palletSelected !== 0
+            ? item.pallet_id === palletSelected
+            : true
         )
         .map(item => {
           if (units) {
@@ -103,7 +119,9 @@ const Nails = props => {
                 <option value="0">Todas</option>
                 {zones
                   .filter(o =>
-                    plant !== 0 ? parseInt(o.plant_id) === parseInt(plant) : o
+                    plant !== 0
+                      ? parseInt(o.plant_id) === parseInt(plant)
+                      : o
                   )
                   .map(o => (
                     <option key={o.id} value={o.id}>
@@ -144,11 +162,17 @@ const Nails = props => {
               { title: 'Ancho', field: 'width' },
               { title: 'Seco', field: 'dry' },
               { title: 'Humeda', field: 'damp' },
+              { title: 'Reparación', field: 'repair' },
+              { title: 'Recuperación', field: 'recovery' },
 
               {
                 title: 'Total',
                 field: 'total',
-                render: rowData => rowData.dry + rowData.damp + rowData.repair,
+                render: rowData =>
+                  rowData.dry +
+                  rowData.damp +
+                  rowData.recovery +
+                  rowData.repair,
               },
             ]}
             localization={{
@@ -183,7 +207,8 @@ const Nails = props => {
   } else {
     return (
       <h1>
-        Error 401, No tiene acceso a esta pantalla, contacte a su supervisor
+        Error 401, No tiene acceso a esta pantalla, contacte a su
+        supervisor
       </h1>
     )
   }

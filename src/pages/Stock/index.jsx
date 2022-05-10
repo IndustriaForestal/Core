@@ -137,7 +137,8 @@ const Nails = props => {
             { title: 'Model', field: 'model' },
             { title: 'Seco', field: 'dry' },
             { title: 'Humeda', field: 'damp' },
-            { title: 'Reaparación', field: 'repair' },
+            { title: 'Reparación', field: 'repair' },
+            { title: 'Recuperación', field: 'recovery' },
             { title: 'Stock de Seguridad', field: 'stock' },
             {
               title: 'Total',
@@ -146,6 +147,7 @@ const Nails = props => {
                 rowData.dry +
                 rowData.damp +
                 rowData.repair +
+                rowData.recovery +
                 rowData.stock,
             },
           ]}
