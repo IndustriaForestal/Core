@@ -13,7 +13,7 @@ import { cmToIn } from '../../../utils'
 
 const Nails = props => {
   const {
-    stock,
+    stockItems,
     setTitle,
     units,
     user,
@@ -21,6 +21,8 @@ const Nails = props => {
     zones,
     plants,
     pallets,
+    stockZoneItems,
+    subzones,
   } = props
   const [palletSelected, setPallet] = useState(0)
   const [plant, setPlant] = useState(0)
@@ -43,9 +45,12 @@ const Nails = props => {
     }
 
     props
-      .getAll('stock/items', 'GET_STOCK')
+      .getAll('stock/items', 'GET_STOCK_ITEMS')
       .then(() => {
         props.getAll('zones/workstations', 'GET_WORKSTATIONS')
+      })
+      .then(() => {
+        props.getAll('stock/stock_zones/items', 'GET_SZ_ITEMS')
       })
       .then(() => {
         props.getAll('zones/plants', 'GET_PLANTS')
@@ -55,6 +60,9 @@ const Nails = props => {
       })
       .then(() => {
         props.getAll('pallets', 'GET_PALLETS')
+      })
+      .then(() => {
+        props.getAll('zones/subzones', 'GET_SUBZONES')
       })
 
     // eslint-disable-next-line
@@ -68,8 +76,16 @@ const Nails = props => {
     ) !== undefined ||
     user.role === 'Administrador'
   ) {
-    if (stock && workstations && zones && plants && pallets) {
-      const stockItems = stock
+    if (
+      stockItems &&
+      stockZoneItems &&
+      workstations &&
+      zones &&
+      plants &&
+      pallets &&
+      subzones
+    ) {
+      const stockItemsD = stockItems
         .filter(item => item.item_type_id !== 4)
         .filter(item =>
           palletSelected !== 0
@@ -93,6 +109,67 @@ const Nails = props => {
             }
           }
         })
+
+      const stockZonesFull = stockZoneItems.map(item => {
+        const zoneId = subzones.find(
+          z => z.id === item.zone_id
+        ).zone_id
+        const zone = zones.find(z => z.id === zoneId)
+        const plant = plants.find(
+          p => p.id === parseInt(zone.plant_id)
+        )
+        return {
+          ...item,
+          zone: zone.name,
+          plant: plant.name,
+          plant_id: plant.id,
+          zone_ID: zone.id,
+          state:
+            item.state === 'dry'
+              ? 'Seca'
+              : item.state === 'damp'
+              ? 'Húmeda'
+              : '',
+        }
+      })
+
+      const data = stockItemsD
+        .filter(item => {
+          const existence = stockZonesFull.filter(
+            o =>
+              parseInt(o.item_id) === parseInt(item.id) &&
+              parseInt(o.plant_id) === plant
+          )
+          if (plant !== 0) {
+            return existence.length > 0
+          } else {
+            return item
+          }
+        })
+        .filter(item => {
+          const existence = stockZonesFull.filter(
+            o =>
+              parseInt(o.item_id) === parseInt(item.id) &&
+              parseInt(o.zone_ID) === zone
+          )
+          if (zone !== 0) {
+            return existence.length > 0
+          } else {
+            return item
+          }
+        })
+        .map(item => {
+          const existence = stockZonesFull.filter(
+            o => parseInt(o.item_id) === parseInt(item.id)
+          )
+
+          const totalStock = existence.reduce((a, b) => {
+            return a + b.amount
+          }, 0)
+
+          return { ...item, existence, totalStock }
+        })
+
       return (
         <>
           <div>
@@ -193,10 +270,55 @@ const Nails = props => {
                 searchPlaceholder: 'Buscar',
               },
             }}
-            data={stockItems}
+            data={data}
             title="Madera Habilitada"
             options={{
               exportButton: true,
+              exportAllData: true,
+              pageSize: 50,
+              pageSizeOptions: [50, 100, 150],
+              emptyRowsWhenPaging: false,
+            }}
+            detailPanel={rowData => {
+              return (
+                <div
+                  style={{
+                    display: 'flex',
+                    flexDirection: 'column',
+                    justifyContent: 'center',
+                    alignItems: 'center',
+                  }}
+                >
+                  <table>
+                    <thead>
+                      <tr>
+                        <th>Planta</th>
+                        <th>Zona</th>
+                        <th>Sub zona</th>
+                        <th>Cantidad</th>
+                        <th>Estado</th>
+                      </tr>
+                    </thead>
+                    <tbody>
+                      {rowData.existence.length > 0 ? (
+                        rowData.existence.map(o => (
+                          <tr>
+                            <td>{o.plant}</td>
+                            <td>{o.zone}</td>
+                            <td>{o.zone_id}</td>
+                            <td>{o.amount}</td>
+                            <td>{o.state}</td>
+                          </tr>
+                        ))
+                      ) : (
+                        <div>
+                          <h3>Sin Existencias</h3>
+                        </div>
+                      )}
+                    </tbody>
+                  </table>
+                </div>
+              )
             }}
           />
         </>
@@ -217,13 +339,15 @@ const Nails = props => {
 const mapStateToProps = state => {
   return {
     pallets: state.reducerPallets.pallets,
-    stock: state.reducerStock.stock,
+    stockItems: state.reducerStock.stockItems,
+    stockZoneItems: state.reducerStock.stockZoneItems,
     role: state.reducerApp.role,
     units: state.reducerApp.units,
     user: state.reducerApp.user,
     workstations: state.reducerZones.workstations,
     zones: state.reducerZones.zones,
     plants: state.reducerZones.plants,
+    subzones: state.reducerZones.subzones,
   }
 }
 

@@ -80,6 +80,8 @@ const Nails = props => {
         ...item,
         zone: zone.name,
         plant: plant.name,
+        plant_id: plant.id,
+        zone_ID: zone.id,
         state:
           item.state === 'dry'
             ? 'Seca'
@@ -88,6 +90,44 @@ const Nails = props => {
             : '',
       }
     })
+
+    const data = stock
+      .filter(item => {
+        const existence = stockZonesFull.filter(
+          o =>
+            parseInt(o.pallet_id) === parseInt(item.id) &&
+            parseInt(o.plant_id) === plant
+        )
+        if (plant !== 0) {
+          return existence.length > 0
+        } else {
+          return item
+        }
+      })
+      .filter(item => {
+        const existence = stockZonesFull.filter(
+          o =>
+            parseInt(o.pallet_id) === parseInt(item.id) &&
+            parseInt(o.zone_ID) === zone
+        )
+        if (zone !== 0) {
+          return existence.length > 0
+        } else {
+          return item
+        }
+      })
+      .map(item => {
+        const existence = stockZonesFull.filter(
+          o => parseInt(o.pallet_id) === parseInt(item.id)
+        )
+
+        const totalStock = existence.reduce((a, b) => {
+          return a + b.amount
+        }, 0)
+
+        return { ...item, existence, totalStock }
+      })
+
     return (
       <>
         <div>
@@ -150,6 +190,10 @@ const Nails = props => {
                 rowData.recovery +
                 rowData.stock,
             },
+            {
+              title: 'Total Filtro',
+              field: 'totalStock',
+            },
           ]}
           localization={{
             pagination: {
@@ -169,8 +213,14 @@ const Nails = props => {
               searchPlaceholder: 'Buscar',
             },
           }}
-          options={{ exportButton: true, exportAllData: true }}
-          data={stock}
+          options={{
+            exportButton: true,
+            exportAllData: true,
+            pageSize: 50,
+            pageSizeOptions: [50, 100, 150],
+            emptyRowsWhenPaging: false,
+          }}
+          data={data}
           title="Inventario Tarimas"
           detailPanel={rowData => {
             return (
@@ -193,25 +243,16 @@ const Nails = props => {
                     </tr>
                   </thead>
                   <tbody>
-                    {stockZone.filter(
-                      o =>
-                        parseInt(o.pallet_id) === parseInt(rowData.id)
-                    ).length > 0 ? (
-                      stockZonesFull
-                        .filter(
-                          o =>
-                            parseInt(o.pallet_id) ===
-                            parseInt(rowData.id)
-                        )
-                        .map(o => (
-                          <tr>
-                            <td>{o.plant}</td>
-                            <td>{o.zone}</td>
-                            <td>{o.zone_id}</td>
-                            <td>{o.amount}</td>
-                            <td>{o.state}</td>
-                          </tr>
-                        ))
+                    {rowData.existence.length > 0 ? (
+                      rowData.existence.map(o => (
+                        <tr>
+                          <td>{o.plant}</td>
+                          <td>{o.zone}</td>
+                          <td>{o.zone_id}</td>
+                          <td>{o.amount}</td>
+                          <td>{o.state}</td>
+                        </tr>
+                      ))
                     ) : (
                       <div>
                         <h3>Sin Existencias</h3>
