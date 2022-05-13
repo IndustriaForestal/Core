@@ -832,7 +832,11 @@ const Nails = props => {
               <div className="inputGroup">
                 <label htmlFor="processId">
                   <span>Filtro Modelo:</span>
-                  <select
+                  <Select
+                    onChange={e => setPallet(e.value)}
+                    options={palletsOptions}
+                  />
+                 {/*  <select
                     name="filter"
                     onChange={e =>
                       setPallet(parseInt(e.target.value))
@@ -844,7 +848,7 @@ const Nails = props => {
                         {o.model}
                       </option>
                     ))}
-                  </select>
+                  </select> */}
                 </label>
               </div>
               <div className="inputGroup">
