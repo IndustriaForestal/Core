@@ -836,19 +836,6 @@ const Nails = props => {
                     onChange={e => setPallet(e.value)}
                     options={palletsOptions}
                   />
-                 {/*  <select
-                    name="filter"
-                    onChange={e =>
-                      setPallet(parseInt(e.target.value))
-                    }
-                  >
-                    <option value="0">Todas</option>
-                    {pallets.map(o => (
-                      <option key={o.id} value={o.id}>
-                        {o.model}
-                      </option>
-                    ))}
-                  </select> */}
                 </label>
               </div>
               <div className="inputGroup">

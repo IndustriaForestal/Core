@@ -234,6 +234,21 @@ const Review = props => {
                           />
                         </div>
                       ) : null}
+                      <div>
+                        <div>Reproceso</div>
+                        <input
+                          type="number"
+                          name={`reject-4-items-${item.item.id}`}
+                          ref={register}
+                          defaultValue="0"
+                        />
+                        <input
+                          type="hidden"
+                          value={order.amount}
+                          name={`amount-items-${item.item.id}-requirement`}
+                          ref={register}
+                        />
+                      </div>
                     </div>
                   ))}
               </div>
@@ -303,6 +318,21 @@ const Review = props => {
                     />
                   </div>
                 ) : null}
+                <div>
+                  <div>Reproceso</div>
+                  <input
+                    type="number"
+                    name={`reject-4-pallet-${order.pallet_id}`}
+                    ref={register}
+                    defaultValue="0"
+                  />
+                  <input
+                    type="hidden"
+                    value={order.amount}
+                    name={`amount-pallet-${order.pallet_id}-requirement`}
+                    ref={register}
+                  />
+                </div>
               </div>
             )}
             {process.id === 36 ? null : (

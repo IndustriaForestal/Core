@@ -19,6 +19,7 @@ import reducerPurchaseOrders from '../pages/PurchaseOrder/reducer'
 import reducerColors from '../pages/Colors/reducer'
 import reducerSamples from '../pages/Samples/reducer'
 import reducerWarehouse from '../pages/Warehouse/reducer'
+import reducerReports from '../pages/Reports/reducer'
 
 const reducer = combineReducers({
   reducerApp,
@@ -41,6 +42,7 @@ const reducer = combineReducers({
   reducerColors,
   reducerSamples,
   reducerWarehouse,
+  reducerReports,
 })
 
 export default reducer

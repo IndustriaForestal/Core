@@ -14,8 +14,14 @@ import './styles.scss'
 import Loading from '../../../components/Loading/Loading'
 
 const Dashbaord = props => {
-  const { user, processes, ordersReject, ordersRequeriment, processesReject } =
-    props
+  const {
+    user,
+    items,
+    pallets,
+    processes,
+    ordersReject,
+    processesReject,
+  } = props
   const [visible, setVisible] = useState(false)
   const role = user.role
 
@@ -41,9 +47,18 @@ const Dashbaord = props => {
       .then(() => {
         props.getAll('items', 'GET_ITEMS')
       })
+      .then(() => {
+        props.getAll('pallets', 'GET_PALLETS')
+      })
   }, [])
 
-  if (processes && ordersReject && ordersRequeriment && processesReject) {
+  if (
+    processes &&
+    ordersReject &&
+    processesReject &&
+    items &&
+    pallets
+  ) {
     switch (role) {
       case 'Administrador':
         return (
@@ -56,36 +71,73 @@ const Dashbaord = props => {
             >
               {processesReject.map(process => (
                 <div key={process.id}>
-                  <div className="dashboard__name">{process.name}</div>
+                  <div className="dashboard__name">
+                    {process.name}
+                  </div>
                   <div className="dashboard__production">
                     {ordersReject.filter(
                       order =>
-                        order.ready === 0 && order.reject_id === process.id
+                        order.ready === 0 &&
+                        order.type_process === process.id
                     ).length > 0
                       ? ordersReject
                           .filter(
                             order =>
                               order.ready === 0 &&
-                              order.reject_id === process.id
+                              order.type_process === process.id
                           )
-                          .sort((a, b) => moment(a.time) - moment(b.time))
                           .map(order => (
                             <div
-                              className={`dashboard__item ${
-                                moment(order.time).isBefore(moment())
-                                  ? '--danger'
-                                  : null
-                              }`}
+                              className={`dashboard__item`}
                               key={order.id}
-                              onClick={() =>
-                                props.setModal({ state: true, order, stage: 0 })
+                              onClick={
+                                order.delivered === 0
+                                  ? null
+                                  : () => {
+                                      props.history.push(
+                                        `/dashboard/reject/${order.id}`
+                                      )
+                                    }
                               }
                             >
-                              <span>Pedido# {order.order_id}</span>
-                              <span>Tarima: {order.model}</span>
                               <span>
-                                Entrega:{' '}
-                                {moment(order.time).format('DD-MM-YYYY HH:mm')}
+                                Orden de trabajo #
+                                {order.order_work_id}
+                              </span>
+                              <span>
+                                {order.delivered === 0
+                                  ? 'Pendiente de entrega'
+                                  : 'Entregado'}
+                              </span>
+                              <span>
+                                {order.type === 'pallets'
+                                  ? 'Tarima'
+                                  : 'Complemento'}
+                                :{' '}
+                                {order.type === 'pallets'
+                                  ? pallets.find(
+                                      p => p.id === order.product_id
+                                    ).model
+                                  : `${
+                                      items.find(
+                                        i => i.id === order.product_id
+                                      ).length
+                                    } x ${
+                                      items.find(
+                                        i => i.id === order.product_id
+                                      ).width
+                                    } x ${
+                                      items.find(
+                                        i => i.id === order.product_id
+                                      ).height
+                                    }`}
+                              </span>
+                              <span>Cantidad: {order.amount}</span>
+                              <span>
+                                Creado:{' '}
+                                {moment(order.created).format(
+                                  'DD-MM-YYYY HH:mm'
+                                )}
                               </span>
                             </div>
                           ))
@@ -124,6 +176,7 @@ const mapStateToProps = state => {
     ordersRequeriment: state.reducerOrders.ordersRequeriment,
     processesReject: state.reducerProcesses.processesReject,
     items: state.reducerItems.items,
+    pallets: state.reducerPallets.pallets,
   }
 }
 

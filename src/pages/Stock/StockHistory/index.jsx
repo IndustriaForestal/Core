@@ -216,6 +216,10 @@ const StockHistory = props => {
           title="Historial Inventario"
           options={{
             exportButton: true,
+            exportAllData: true,
+            pageSize: 50,
+            pageSizeOptions: [50, 100, 150],
+            emptyRowsWhenPaging: false,
           }}
         />
       </>
