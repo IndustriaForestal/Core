@@ -107,6 +107,14 @@ import WarehouseAdd from '../pages/Warehouse/Add'
 import WarehouseHistory from '../pages/Warehouse/History'
 import WarehouseChanges from '../pages/Warehouse/Changes'
 
+import Traffic from '../pages/Traffic'
+import TrafficBoxes from '../pages/Traffic/Boxes'
+import TrafficDrivers from '../pages/Traffic/Drivers'
+import TrafficFuel from '../pages/Traffic/Fuel'
+import TrafficTrucks from '../pages/Traffic/Trucks'
+import TrafficTrucksBoxes from '../pages/Traffic/TrucksBoxes'
+import TrafficTypes from '../pages/Traffic/Types'
+
 const App = ({ loggedIn }) => {
   if (loggedIn) {
     return (
@@ -114,6 +122,16 @@ const App = ({ loggedIn }) => {
         <Layout>
           <Switch>
             <Route exact path="/" component={Home} />
+
+
+            <Route exact path="/traffic" component={Traffic} />
+            <Route exact path="/traffic-boxes" component={TrafficBoxes} />
+            <Route exact path="/traffic-drivers" component={TrafficDrivers} />
+            <Route exact path="/traffic-fuel" component={TrafficFuel} />
+            <Route exact path="/traffic-trucks" component={TrafficTrucks} />
+            <Route exact path="/traffic-trucks-boxes" component={TrafficTrucksBoxes} />
+            <Route exact path="/traffic-types" component={TrafficTypes} />
+            
             <Route exact path="/colors" component={Colors} />
             <Route exact path="/schedule" component={Schedule} />
             <Route exact path="/dashboard" component={Dashboard} />

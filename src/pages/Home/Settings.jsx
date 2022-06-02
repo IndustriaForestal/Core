@@ -55,6 +55,7 @@ const Settings = props => {
           <IconHome icon={<FaPallet />} url="/reports-config" text="Reportes" />
           <IconHome icon={<FaPallet />} url="/samples-config" text="Muestreos" />
           <IconHome icon={<FaPallet />} url="/warehouse/add" text="Almacen" />
+          <IconHome icon={<FaPallet />} url="/traffic" text="Trafico" />
           <IconHome icon={<FaPallet />} url="/users" text="Usuarios" />
         </div>
       )
