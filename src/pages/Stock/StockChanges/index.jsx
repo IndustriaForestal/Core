@@ -37,6 +37,7 @@ const Nails = props => {
     user,
     warehouseItems,
     warehouseStockZone,
+    materialState,
   } = props
   const [type, setType] = useState(0)
   const [idSelected, setIdSelected] = useState(0)
@@ -129,6 +130,9 @@ const Nails = props => {
           'GET_WAREHOUSE_STOCK_ZONE'
         )
       })
+      .then(() => {
+        props.getAll('material/state', 'GET_MATERIAL_STATE')
+      })
     // eslint-disable-next-line
   }, [])
 
@@ -171,7 +175,8 @@ const Nails = props => {
     stockZoneComplements &&
     complements &&
     warehouseItems &&
-    warehouseStockZone
+    warehouseStockZone &&
+    materialState
   ) {
     const palletsOptions = pallets.map(pallet => {
       return {
@@ -728,11 +733,14 @@ const Nails = props => {
                     onChange={e => setGreenDryRepair(e.target.value)}
                   >
                     <option value="">Seleccionar</option>
-                    <option value="dry">Secas</option>
-                    <option value="damp">Verdes</option>
-                    <option value="repair">Reparación</option>
-                    <option value="recovery">Recuperación</option>
-                    <option value="stock">Stock de seguridad</option>
+                    {materialState.map(material => (
+                      <option
+                        key={material.id}
+                        value={material.state}
+                      >
+                        {material.name}
+                      </option>
+                    ))}
                   </select>
                 </label>
               </div>
@@ -920,10 +928,14 @@ const Nails = props => {
                     onChange={e => setGreenDryRepair(e.target.value)}
                   >
                     <option value="">Seleccionar</option>
-                    <option value="dry">Secas</option>
-                    <option value="damp">Verdes</option>
-                    <option value="repair">Reparación</option>
-                    <option value="recovery">Recuperación</option>
+                    {materialState.map(material => (
+                      <option
+                        key={material.id}
+                        value={material.state}
+                      >
+                        {material.name}
+                      </option>
+                    ))}
                   </select>
                 </label>
               </div>
@@ -1084,10 +1096,14 @@ const Nails = props => {
                     onChange={e => setGreenDryRepair(e.target.value)}
                   >
                     <option value="">Seleccionar</option>
-                    <option value="dry">Secas</option>
-                    <option value="damp">Verdes</option>
-                    <option value="repair">Reparación</option>
-                    <option value="recovery">Recuperación</option>
+                    {materialState.map(material => (
+                      <option
+                        key={material.id}
+                        value={material.state}
+                      >
+                        {material.name}
+                      </option>
+                    ))}
                   </select>
                 </label>
               </div>
@@ -1292,10 +1308,14 @@ const Nails = props => {
                     onChange={e => setGreenDryRepair(e.target.value)}
                   >
                     <option value="">Seleccionar</option>
-                    <option value="dry">Secas</option>
-                    <option value="damp">Verdes</option>
-                    <option value="repair">Reparación</option>
-                    <option value="recovery">Recuperación</option>
+                    {materialState.map(material => (
+                      <option
+                        key={material.id}
+                        value={material.state}
+                      >
+                        {material.name}
+                      </option>
+                    ))}
                   </select>
                 </label>
               </div>
@@ -1486,6 +1506,7 @@ const mapStateToProps = state => {
     user: state.reducerApp.user,
     warehouseItems: state.reducerWarehouse.warehouseItems,
     warehouseStockZone: state.reducerWarehouse.warehouseStockZone,
+    materialState: state.reducerMaterial.materialState,
   }
 }
 

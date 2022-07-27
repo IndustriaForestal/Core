@@ -19,6 +19,7 @@ const StockSwan = props => {
     zones,
     plants,
     subzones,
+    materialState,
   } = props
   const [workstation, setWorkstation] = useState(0)
   const [plant, setPlant] = useState(0)
@@ -55,6 +56,9 @@ const StockSwan = props => {
       .then(() => {
         props.getAll('zones/subzones', 'GET_SUBZONES')
       })
+      .then(() => {
+        props.getAll('material/state', 'GET_MATERIAL_STATE')
+      })
     // eslint-disable-next-line
   }, [])
 
@@ -64,7 +68,8 @@ const StockSwan = props => {
     workstations &&
     zones &&
     plants &&
-    subzones
+    subzones &&
+    materialState
   ) {
     const stockItems = stockSawn
       .filter(item => item.item_type_id !== 4)
@@ -142,6 +147,9 @@ const StockSwan = props => {
         return { ...item, existence, totalStock }
       })
 
+    const lookupMaterialState = {}
+    materialState.map(item => (lookupMaterialState[item.state] = item.name))
+
     return (
       <>
         <div>
@@ -212,7 +220,7 @@ const StockSwan = props => {
             { title: 'Alto', field: 'height' },
             { title: 'Largo', field: 'length' },
             { title: 'Ancho', field: 'width' },
-            { title: 'Estado', field: 'state' },
+            { title: 'Estado', field: 'state', lookup: lookupMaterialState },
             { title: 'Cantidad', field: 'stock' },
           ]}
           localization={{
@@ -301,6 +309,7 @@ const mapStateToProps = state => {
     zones: state.reducerZones.zones,
     plants: state.reducerZones.plants,
     subzones: state.reducerZones.subzones,
+    materialState: state.reducerMaterial.materialState,
   }
 }
 
