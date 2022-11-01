@@ -148,7 +148,9 @@ const StockSwan = props => {
       })
 
     const lookupMaterialState = {}
-    materialState.map(item => (lookupMaterialState[item.state] = item.name))
+    materialState.map(
+      item => (lookupMaterialState[item.state] = item.name)
+    )
 
     return (
       <>
@@ -220,7 +222,11 @@ const StockSwan = props => {
             { title: 'Alto', field: 'height' },
             { title: 'Largo', field: 'length' },
             { title: 'Ancho', field: 'width' },
-            { title: 'Estado', field: 'state', lookup: lookupMaterialState },
+            {
+              title: 'Estado',
+              field: 'state',
+              lookup: lookupMaterialState,
+            },
             { title: 'Cantidad', field: 'stock' },
           ]}
           localization={{
