@@ -224,6 +224,7 @@ const Nails = props => {
           user_id: user.id,
           state: greenDryRepair,
           zone_id: subzoneSelected,
+          wood_id: woodSelected,
           date: moment().format('YYYY-MM-DD HH:mm:ss'),
         })
         .then(() => {
@@ -241,6 +242,7 @@ const Nails = props => {
           user_id: user.id,
           state: greenDryRepair,
           zone_id: subzoneSelected,
+          wood_id: woodSelected,
           date: moment().format('YYYY-MM-DD HH:mm:ss'),
         })
         .then(() => {
@@ -727,6 +729,22 @@ const Nails = props => {
               ) : null}
               <div className="inputGroup">
                 <label htmlFor="processId">
+                  <span>Especie Madera:</span>
+                  <select
+                    name="processId"
+                    onChange={e => setWood(parseInt(e.target.value))}
+                  >
+                    <option value="">Seleccionar</option>
+                    {wood.map(w => (
+                      <>
+                        <option value={w.id}>{w.name}</option>
+                      </>
+                    ))}
+                  </select>
+                </label>
+              </div>
+              <div className="inputGroup">
+                <label htmlFor="processId">
                   <span>Estado de la madera:</span>
                   <select
                     name="processId"
@@ -919,7 +937,22 @@ const Nails = props => {
                   </label>
                 </div>
               ) : null}
-
+              <div className="inputGroup">
+                <label htmlFor="processId">
+                  <span>Especie Madera:</span>
+                  <select
+                    name="processId"
+                    onChange={e => setWood(parseInt(e.target.value))}
+                  >
+                    <option value="">Seleccionar</option>
+                    {wood.map(w => (
+                      <>
+                        <option value={w.id}>{w.name}</option>
+                      </>
+                    ))}
+                  </select>
+                </label>
+              </div>
               <div className="inputGroup">
                 <label htmlFor="processId">
                   <span>Estado de la madera:</span>
