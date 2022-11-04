@@ -115,6 +115,9 @@ import TrafficTrucks from '../pages/Traffic/Trucks'
 import TrafficTrucksBoxes from '../pages/Traffic/TrucksBoxes'
 import TrafficTypes from '../pages/Traffic/Types'
 
+
+import StockReport from '../pages/Stock/StockReports'
+
 const App = ({ loggedIn }) => {
   if (loggedIn) {
     return (
@@ -273,6 +276,7 @@ const App = ({ loggedIn }) => {
             <Route exact path="/pallets" component={Pallets} />
 
             <Route exact path="/stock" component={Stock} />
+            <Route exact path="/stock/report" component={StockReport} />
             <Route exact path="/stockNails" component={StockNails} />
             <Route exact path="/stockItems" component={StockItems} />
             <Route
