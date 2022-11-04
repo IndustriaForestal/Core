@@ -44,6 +44,9 @@ const Nails = props => {
         <div className="stock_report_grid">
           <div className="stock_report_title">IFISA 1</div>
           <Table head={tableHeader}>
+            <tr>
+              <td colSpan="7">Tarima</td>
+            </tr>
             {stockReport.pallets.filter(
               p => p.plant_id === 1 || p.plant_id === null
             ).length > 0 ? (
@@ -72,6 +75,9 @@ const Nails = props => {
             </tr>
           </Table>
           <Table head={tableHeader}>
+            <tr>
+              <td colSpan="7">Madera Habilitada</td>
+            </tr>
             {stockReport.items.filter(
               p => p.plant_id === 1 || p.plant_id === null
             ).length > 0 ? (
@@ -100,6 +106,9 @@ const Nails = props => {
             </tr>
           </Table>
           <Table head={tableHeaderRaw}>
+            <tr>
+              <td colSpan="7">Trozo</td>
+            </tr>
             {stockReport.raws.filter(
               p => p.plant_id === 1 || p.plant_id === null
             ).length > 0 ? (
@@ -129,6 +138,9 @@ const Nails = props => {
             </tr>
           </Table>
           <Table head={tableHeader}>
+            <tr>
+              <td colSpan="7">Leña</td>
+            </tr>
             {stockReport.firewood.filter(
               p => p.plant_id === 1 || p.plant_id === null
             ).length > 0 ? (
@@ -160,6 +172,9 @@ const Nails = props => {
         <div className="stock_report_grid">
           <div className="stock_report_title">IFISA 2</div>
           <Table head={tableHeader}>
+            <tr>
+              <td colSpan="7">Tarima</td>
+            </tr>
             {stockReport.pallets.filter(
               p => p.plant_id === 2 || p.plant_id === null
             ).length > 0 ? (
@@ -188,6 +203,9 @@ const Nails = props => {
             </tr>
           </Table>
           <Table head={tableHeader}>
+            <tr>
+              <td colSpan="7">Madera Habilitada</td>
+            </tr>
             {stockReport.items.filter(
               p => p.plant_id === 2 || p.plant_id === null
             ).length > 0 ? (
@@ -216,6 +234,9 @@ const Nails = props => {
             </tr>
           </Table>
           <Table head={tableHeaderRaw}>
+            <tr>
+              <td colSpan="7">Trozo</td>
+            </tr>
             {stockReport.raws.filter(
               p => p.plant_id === 2 || p.plant_id === null
             ).length > 0 ? (
@@ -245,6 +266,9 @@ const Nails = props => {
             </tr>
           </Table>
           <Table head={tableHeader}>
+            <tr>
+              <td colSpan="7">Leña</td>
+            </tr>
             {stockReport.firewood.filter(
               p => p.plant_id === 2 || p.plant_id === null
             ).length > 0 ? (
