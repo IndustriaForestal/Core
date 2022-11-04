@@ -10,7 +10,6 @@ import {
   create,
 } from '../../../actions/app'
 import Loading from '../../../components/Loading/Loading'
-import Card from '../../../components/Card/Card'
 import Table from '../../../components/Table/Table'
 
 const Nails = props => {
@@ -27,6 +26,7 @@ const Nails = props => {
         'Materia Prima': '/stockMaterial',
         'Entradas y salidas': '/stockChanges',
         Historial: '/stockHistory',
+        Reporte: '/stock/report',
       },
     }
     setTitle(topbar)

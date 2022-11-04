@@ -33,6 +33,7 @@ const StockEdit = props => {
         'Materia Prima': '/stockMaterial',
         'Entradas y salidas': '/stockChanges',
         Historial: '/stockHistory',
+        Reporte: '/stock/report',
       },
     }
     setTitle(topbar)
@@ -51,11 +52,18 @@ const StockEdit = props => {
           green: parseInt(data.stock01),
           dry: parseInt(data.stock02),
         },
-        1: { green: parseInt(data.stock11), dry: parseInt(data.stock12) },
-        secutiryStock: parseInt(data.securityStock)
+        1: {
+          green: parseInt(data.stock11),
+          dry: parseInt(data.stock12),
+        },
+        secutiryStock: parseInt(data.securityStock),
       }
       props
-        .update(`pallets/stock/${id}`, 'UPDATE_PALLET_STOCK', newPallet)
+        .update(
+          `pallets/stock/${id}`,
+          'UPDATE_PALLET_STOCK',
+          newPallet
+        )
         .then(() => {
           const Toast = Swal.mixin({
             toast: true,
@@ -187,12 +195,19 @@ const StockEdit = props => {
                 type="number"
                 title="Stock Seguridad"
                 name="securityStock"
-                value={pallet[0].stock.securityStock ? pallet[0].stock.securityStock : 0}
+                value={
+                  pallet[0].stock.securityStock
+                    ? pallet[0].stock.securityStock
+                    : 0
+                }
                 passRef={register({ required: true })}
               />
               <label htmlFor="" className="inputGroup">
                 <span>Inventario</span>
-                <select name="option" ref={register({ required: true })}>
+                <select
+                  name="option"
+                  ref={register({ required: true })}
+                >
                   <option value="0">No descontar</option>
                   {/* <option value="1">Descontar</option> */}
                 </select>

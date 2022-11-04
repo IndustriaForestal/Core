@@ -20,6 +20,7 @@ const Nails = props => {
         'Materia Prima': '/stockMaterial',
         'Entradas y salidas': '/stockChanges',
         Historial: '/stockHistory',
+        Reporte: '/stock/report',
       },
     }
 
