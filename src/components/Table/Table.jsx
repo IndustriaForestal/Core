@@ -1,7 +1,13 @@
 import React from 'react'
 import './Table.scss'
 
-const Table = ({ children, head = ['Default'], id }) => {
+const Table = ({
+  children,
+  head = ['Default'],
+  id,
+  footer = false,
+  footerChildren,
+}) => {
   return (
     <table className="table" id={id}>
       <thead className="table__head">
@@ -12,6 +18,9 @@ const Table = ({ children, head = ['Default'], id }) => {
         </tr>
       </thead>
       <tbody className="table__body">{children}</tbody>
+      {footer ? (
+        <tfoot className="table__head">{footerChildren}</tfoot>
+      ) : null}
     </table>
   )
 }

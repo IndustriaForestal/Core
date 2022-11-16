@@ -26,7 +26,9 @@ const Nails = props => {
         'Materia Prima': '/stockMaterial',
         'Entradas y salidas': '/stockChanges',
         Historial: '/stockHistory',
-        Reporte: '/stock/report',
+        'Reporte General': '/stock/report',
+        'Reporte Tarimas': '/stock/report',
+        'Reporte Madera Habilitada': '/stock/report',
       },
     }
     setTitle(topbar)
