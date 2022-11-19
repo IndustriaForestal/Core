@@ -100,6 +100,16 @@ export default function reducer(state = {}, action) {
         ...state,
         stockReportItems: action.payload.data,
       }
+    case 'GET_STOCK_REPORT_RAWS':
+      return {
+        ...state,
+        stockReportRaws: action.payload.data,
+      }
+    case 'GET_STOCK_REPORT_FIREWOOD':
+      return {
+        ...state,
+        stockReportFirewood: action.payload.data,
+      }
     default:
       return state
   }

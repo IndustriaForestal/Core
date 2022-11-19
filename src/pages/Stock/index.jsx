@@ -39,6 +39,8 @@ const Nails = props => {
         'Reporte General': '/stock/report',
         'Reporte Tarimas': '/stock/report/pallets',
         'Reporte Madera Habilitada': '/stock/report/items',
+        'Reporte Trozo': '/stock/report/raws',
+        'Reporte Leña ': '/stock/report/firewood',
       },
     }
 

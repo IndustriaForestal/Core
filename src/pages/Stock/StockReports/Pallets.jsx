@@ -11,12 +11,14 @@ import {
 } from '../../../actions/app'
 import Loading from '../../../components/Loading/Loading'
 import Table from '../../../components/Table/Table'
+import Button from '../../../components/Button/Button'
+import { CSVLink } from 'react-csv'
 
 const Nails = props => {
   const { stockReportPallets } = props
 
   useEffect(() => {
-    const topbar = {
+     const topbar = {
       title: 'Inventarios Generales',
       menu: {
         Tarimas: '/stock',
@@ -26,7 +28,11 @@ const Nails = props => {
         'Materia Prima': '/stockMaterial',
         'Entradas y salidas': '/stockChanges',
         Historial: '/stockHistory',
-        Reporte: '/stock/report',
+        'Reporte General': '/stock/report',
+        'Reporte Tarimas': '/stock/report/pallets',
+        'Reporte Madera Habilitada': '/stock/report/items',
+        'Reporte Trozo': '/stock/report/raws',
+        'Reporte Leña ': '/stock/report/firewood',
       },
     }
     setTitle(topbar)
@@ -44,6 +50,25 @@ const Nails = props => {
   ]
 
   if (stockReportPallets) {
+    const dataIfisa1 = stockReportPallets
+      .filter(item => item.plant_id === 1)
+      .map(item => ({
+        'Existencia Total': item.total,
+        Modelo: item.model,
+        'Cub x Pieza': item.pt,
+        'Cub Tarimas': item.ptTotal,
+        Especie: item.wood_name,
+      }))
+    const dataIfisa2 = stockReportPallets
+      .filter(item => item.plant_id === 2)
+      .map(item => ({
+        'Existencia Total': item.total,
+        Modelo: item.model,
+        'Cub x Pieza': item.pt,
+        'Cub Tarimas': item.ptTotal,
+        Especie: item.wood_name,
+      }))
+
     return (
       <>
         <div>
@@ -115,6 +140,14 @@ const Nails = props => {
                 </>
               ))}
           </Table>
+        </div>
+        <div>
+          <CSVLink data={dataIfisa1} filename={'ifisa1_tarimas.csv'}>
+            <Button>Reporte IFISA 1</Button>
+          </CSVLink>
+          <CSVLink data={dataIfisa2} filename={'ifisa2_tarimas.csv'}>
+            <Button>Reporte IFISA 2</Button>
+          </CSVLink>
         </div>
       </>
     )

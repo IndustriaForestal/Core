@@ -23,7 +23,7 @@ const StockEdit = props => {
   const { register, handleSubmit } = useForm()
 
   useEffect(() => {
-    const topbar = {
+     const topbar = {
       title: 'Inventarios Generales',
       menu: {
         Tarimas: '/stock',
@@ -33,7 +33,11 @@ const StockEdit = props => {
         'Materia Prima': '/stockMaterial',
         'Entradas y salidas': '/stockChanges',
         Historial: '/stockHistory',
-        Reporte: '/stock/report',
+        'Reporte General': '/stock/report',
+        'Reporte Tarimas': '/stock/report/pallets',
+        'Reporte Madera Habilitada': '/stock/report/items',
+        'Reporte Trozo': '/stock/report/raws',
+        'Reporte Leña ': '/stock/report/firewood',
       },
     }
     setTitle(topbar)

@@ -29,19 +29,23 @@ const Nails = props => {
   const [zone, setZone] = useState(0)
   useEffect(() => {
     if (user.role === 'Administrador') {
-      const topbar = {
-        title: 'Inventarios Generales',
-        menu: {
-          Tarimas: '/stock',
-          Complementos: '/stockNails',
-          'Madera Habilitada': '/stockItems',
-          'Madera Aserrada': '/stockSawn',
-          'Materia Prima': '/stockMaterial',
-          'Entradas y salidas': '/stockChanges',
-          Historial: '/stockHistory',
-          Reporte: '/stock/report',
-        },
-      }
+       const topbar = {
+      title: 'Inventarios Generales',
+      menu: {
+        Tarimas: '/stock',
+        Complementos: '/stockNails',
+        'Madera Habilitada': '/stockItems',
+        'Madera Aserrada': '/stockSawn',
+        'Materia Prima': '/stockMaterial',
+        'Entradas y salidas': '/stockChanges',
+        Historial: '/stockHistory',
+        'Reporte General': '/stock/report',
+        'Reporte Tarimas': '/stock/report/pallets',
+        'Reporte Madera Habilitada': '/stock/report/items',
+        'Reporte Trozo': '/stock/report/raws',
+        'Reporte Leña ': '/stock/report/firewood',
+      },
+    }
       setTitle(topbar)
     }
 

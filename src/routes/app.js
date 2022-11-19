@@ -119,6 +119,8 @@ import TrafficTypes from '../pages/Traffic/Types'
 import StockReport from '../pages/Stock/StockReports'
 import StockReportItems from '../pages/Stock/StockReports/Items'
 import StockReportPallets from '../pages/Stock/StockReports/Pallets'
+import StockReportRaws from '../pages/Stock/StockReports/Raws'
+import StockReportFirewood from '../pages/Stock/StockReports/Firewood'
 
 const App = ({ loggedIn }) => {
   if (loggedIn) {
@@ -281,6 +283,8 @@ const App = ({ loggedIn }) => {
             <Route exact path="/stock/report" component={StockReport} />
             <Route exact path="/stock/report/items" component={StockReportItems} />
             <Route exact path="/stock/report/pallets" component={StockReportPallets} />
+            <Route exact path="/stock/report/raws" component={StockReportRaws} />
+            <Route exact path="/stock/report/firewood" component={StockReportFirewood} />
             <Route exact path="/stockNails" component={StockNails} />
             <Route exact path="/stockItems" component={StockItems} />
             <Route

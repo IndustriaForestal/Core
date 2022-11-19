@@ -11,6 +11,8 @@ import {
 } from '../../../actions/app'
 import Loading from '../../../components/Loading/Loading'
 import Table from '../../../components/Table/Table'
+import Button from '../../../components/Button/Button'
+import { CSVLink } from 'react-csv'
 
 const Nails = props => {
   const { stockReport } = props
@@ -41,6 +43,124 @@ const Nails = props => {
   let tableHeaderRaw = ['Especie de madera', 'Longitud', 'Cubicación']
 
   if (stockReport) {
+    const dataIfisa1 = [
+      {
+        'Especie de madera': 'Tarima',
+        Longitud: '',
+        Cubicación: '',
+      },
+      ...stockReport.pallets
+        .filter(p => p.plant_id === 1 || p.plant_id === null)
+        .map(p => {
+          return {
+            'Especie de madera': p.wood_name,
+            Longitud: '',
+            Cubicación: p.m3.toFixed(3),
+          }
+        }),
+      {
+        'Especie de madera': 'Madera Habilitada',
+        Longitud: '',
+        Cubicación: '',
+      },
+      ...stockReport.items
+        .filter(p => p.plant_id === 1 || p.plant_id === null)
+        .map(p => {
+          return {
+            'Especie de madera': p.wood_name,
+            Longitud: '',
+            Cubicación: p.m3.toFixed(3),
+          }
+        }),
+      {
+        'Especie de madera': 'Trozo',
+        Longitud: '',
+        Cubicación: '',
+      },
+      ...stockReport.raws
+        .filter(p => p.plant_id === 1 || p.plant_id === null)
+        .map(p => {
+          return {
+            'Especie de madera': p.wood_name,
+            Longitud: p.length,
+            Cubicación: p.m3.toFixed(3),
+          }
+        }),
+      {
+        'Especie de madera': 'Leña',
+        Longitud: '',
+        Cubicación: '',
+      },
+      ...stockReport.firewood
+        .filter(p => p.plant_id === 1 || p.plant_id === null)
+        .map(p => {
+          return {
+            'Especie de madera': p.wood_name,
+            Longitud: '',
+            Cubicación: p.m3.toFixed(3),
+          }
+        }),
+    ]
+
+    const dataIfisa2 = [
+      {
+        'Especie de madera': 'Tarima',
+        Longitud: '',
+        Cubicación: '',
+      },
+      ...stockReport.pallets
+        .filter(p => p.plant_id === 2 || p.plant_id === null)
+        .map(p => {
+          return {
+            'Especie de madera': p.wood_name,
+            Longitud: '',
+            Cubicación: p.m3.toFixed(3),
+          }
+        }),
+      {
+        'Especie de madera': 'Madera Habilitada',
+        Longitud: '',
+        Cubicación: '',
+      },
+      ...stockReport.items
+        .filter(p => p.plant_id === 2 || p.plant_id === null)
+        .map(p => {
+          return {
+            'Especie de madera': p.wood_name,
+            Longitud: '',
+            Cubicación: p.m3.toFixed(3),
+          }
+        }),
+      {
+        'Especie de madera': 'Trozo',
+        Longitud: '',
+        Cubicación: '',
+      },
+      ...stockReport.raws
+        .filter(p => p.plant_id === 2 || p.plant_id === null)
+        .map(p => {
+          return {
+            'Especie de madera': p.wood_name,
+            Longitud: p.length,
+            Cubicación: p.m3.toFixed(3),
+          }
+        }),
+      {
+        'Especie de madera': 'Leña',
+        Longitud: '',
+        Cubicación: '',
+      },
+      ...stockReport.firewood
+        .filter(p => p.plant_id === 2 || p.plant_id === null)
+        .map(p => {
+          return {
+            'Especie de madera': p.wood_name,
+            Longitud: '',
+            Cubicación: p.m3.toFixed(3),
+          }
+        }),
+    ]
+
     return (
       <>
         <div className="stock_report_grid">
@@ -318,6 +438,14 @@ const Nails = props => {
             ).toFixed(3)}{' '}
             m3
           </div>
+        </div>
+        <div>
+          <CSVLink data={dataIfisa1} filename={'ifisa1_general.csv'}>
+            <Button>Reporte IFISA 1</Button>
+          </CSVLink>
+          <CSVLink data={dataIfisa2} filename={'ifisa2_general.csv'}>
+            <Button>Reporte IFISA 2</Button>
+          </CSVLink>
         </div>
       </>
     )

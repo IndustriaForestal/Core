@@ -11,12 +11,14 @@ import {
 } from '../../../actions/app'
 import Loading from '../../../components/Loading/Loading'
 import Table from '../../../components/Table/Table'
+import Button from '../../../components/Button/Button'
+import { CSVLink } from 'react-csv'
 
 const Nails = props => {
   const { stockReportItems } = props
 
   useEffect(() => {
-    const topbar = {
+     const topbar = {
       title: 'Inventarios Generales',
       menu: {
         Tarimas: '/stock',
@@ -26,7 +28,11 @@ const Nails = props => {
         'Materia Prima': '/stockMaterial',
         'Entradas y salidas': '/stockChanges',
         Historial: '/stockHistory',
-        Reporte: '/stock/report',
+        'Reporte General': '/stock/report',
+        'Reporte Tarimas': '/stock/report/pallets',
+        'Reporte Madera Habilitada': '/stock/report/items',
+        'Reporte Trozo': '/stock/report/raws',
+        'Reporte Leña ': '/stock/report/firewood',
       },
     }
     setTitle(topbar)
@@ -45,6 +51,61 @@ const Nails = props => {
   ]
 
   if (stockReportItems) {
+    const dataIfisa1 = []
+    const dataIfisa2 = []
+
+    stockReportItems
+      .filter(item => item.items.filter(i => i.id === 1).length > 0)
+      .map(pallet => {
+        dataIfisa1.push({
+          PZAS: '',
+          'Modelo, Descripción y Medidas': pallet.model,
+          Saldo: '',
+          'Tar.Juegos': '',
+          PT: '',
+          Especie: '',
+        })
+
+        pallet.items
+          .filter(i => i.id === 1)
+          .map(item => {
+            dataIfisa1.push({
+              PZAS: item.amount,
+              'Modelo, Descripción y Medidas': `${item.length} x ${item.width} x ${item.height}`,
+              Saldo: item.total,
+              'Tar.Juegos': (item.total / item.amount).toFixed(0),
+              PT: item.pt,
+              Especie: item.name,
+            })
+          })
+      })
+
+    stockReportItems
+      .filter(item => item.items.filter(i => i.id === 2).length > 0)
+      .map(pallet => {
+        dataIfisa2.push({
+          PZAS: '',
+          'Modelo, Descripción y Medidas': pallet.model,
+          Saldo: '',
+          'Tar.Juegos': '',
+          PT: '',
+          Especie: '',
+        })
+
+        pallet.items
+          .filter(i => i.id === 2)
+          .map(item => {
+            dataIfisa2.push({
+              PZAS: item.amount,
+              'Modelo, Descripción y Medidas': `${item.length} x ${item.width} x ${item.height}`,
+              Saldo: item.total,
+              'Tar.Juegos': (item.total / item.amount).toFixed(0),
+              PT: item.pt,
+              Especie: item.name,
+            })
+          })
+      })
+
     return (
       <>
         <div>
@@ -167,27 +228,20 @@ const Nails = props => {
               ))}
           </Table>
         </div>
-
-        {/*   <div className="stock_report_grid">
-          <div className="stock_report_title">
-            Total global:{' '}
-            {(
-              stockReportItems.pallets
-                .filter(p => p.plant_id === 2)
-                .reduce((a, b) => a + b.m3, 0) +
-              stockReportItems.items
-                .filter(p => p.plant_id === 2)
-                .reduce((a, b) => a + b.m3, 0) +
-              stockReportItems.raws
-                .filter(p => p.plant_id === 2)
-                .reduce((a, b) => a + b.m3, 0) +
-              stockReportItems.firewood
-                .filter(p => p.plant_id === 2)
-                .reduce((a, b) => a + b.m3, 0)
-            ).toFixed(3)}{' '}
-            m3
-          </div>
-        </div> */}
+        <div>
+          <CSVLink
+            data={dataIfisa1}
+            filename={'ifisa1_madera_habilitada.csv'}
+          >
+            <Button>Reporte IFISA 1</Button>
+          </CSVLink>
+          <CSVLink
+            data={dataIfisa2}
+            filename={'ifisa2_madera_habilitada.csv'}
+          >
+            <Button>Reporte IFISA 2</Button>
+          </CSVLink>
+        </div>
       </>
     )
   } else {

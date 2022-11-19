@@ -10,7 +10,7 @@ const Nails = props => {
   const [plant, setPlant] = useState(0)
   const [zone, setZone] = useState(0)
   useEffect(() => {
-    const topbar = {
+     const topbar = {
       title: 'Inventarios Generales',
       menu: {
         Tarimas: '/stock',
@@ -20,7 +20,11 @@ const Nails = props => {
         'Materia Prima': '/stockMaterial',
         'Entradas y salidas': '/stockChanges',
         Historial: '/stockHistory',
-        Reporte: '/stock/report',
+        'Reporte General': '/stock/report',
+        'Reporte Tarimas': '/stock/report/pallets',
+        'Reporte Madera Habilitada': '/stock/report/items',
+        'Reporte Trozo': '/stock/report/raws',
+        'Reporte Leña ': '/stock/report/firewood',
       },
     }
 
