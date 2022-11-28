@@ -514,7 +514,8 @@ const Nails = props => {
     }
 
     const hanldeUpdateStockZoneRaws = stock => {
-      const negativeInput = parseInt(inputOut) * -1
+      const negativeInput = parseFloat(inputOut) * -1
+      
       inputOut > stock.m3
         ? console.log('Mayor')
         : parseInt(stock.amount) - inputOut === 0
