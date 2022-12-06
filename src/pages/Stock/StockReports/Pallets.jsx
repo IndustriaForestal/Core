@@ -18,7 +18,7 @@ const Nails = props => {
   const { stockReportPallets } = props
 
   useEffect(() => {
-     const topbar = {
+    const topbar = {
       title: 'Inventarios Generales',
       menu: {
         Tarimas: '/stock',
@@ -47,6 +47,8 @@ const Nails = props => {
     'Cub x Pieza',
     'Cub Tarimas',
     'Especie',
+    'Estado',
+    'Cliente',
   ]
 
   if (stockReportPallets) {
@@ -58,6 +60,8 @@ const Nails = props => {
         'Cub x Pieza': item.pt,
         'Cub Tarimas': item.ptTotal,
         Especie: item.wood_name,
+        Estado: item.state === 'damp' ? 'Humedo' : 'Seco',
+        Cliente: item.c_name,
       }))
     const dataIfisa2 = stockReportPallets
       .filter(item => item.plant_id === 2)
@@ -67,6 +71,8 @@ const Nails = props => {
         'Cub x Pieza': item.pt,
         'Cub Tarimas': item.ptTotal,
         Especie: item.wood_name,
+        Estado: item.state === 'damp' ? 'Humedo' : 'Seco',
+        Cliente: item.c_name,
       }))
 
     return (
@@ -88,6 +94,8 @@ const Nails = props => {
                     .toFixed(3)}
                 </td>
                 <td></td>
+                <td></td>
+                <td></td>
               </tr>
             }
           >
@@ -101,6 +109,10 @@ const Nails = props => {
                     <td>{pallet.pt}</td>
                     <td>{pallet.ptTotal}</td>
                     <td>{pallet.wood_name}</td>
+                    <td>
+                      {pallet.state === 'damp' ? 'Humedo' : 'Seco'}
+                    </td>
+                    <td>{pallet.c_name}</td>
                   </tr>
                 </>
               ))}
@@ -123,6 +135,8 @@ const Nails = props => {
                     .toFixed(3)}
                 </td>
                 <td></td>
+                <td></td>
+                <td></td>
               </tr>
             }
           >
@@ -136,6 +150,10 @@ const Nails = props => {
                     <td>{pallet.pt}</td>
                     <td>{pallet.ptTotal}</td>
                     <td>{pallet.wood_name}</td>
+                    <td>
+                      {pallet.state === 'damp' ? 'Humedo' : 'Seco'}
+                    </td>
+                    <td>{pallet.c_name}</td>
                   </tr>
                 </>
               ))}
