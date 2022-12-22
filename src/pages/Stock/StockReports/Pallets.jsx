@@ -45,9 +45,10 @@ const Nails = props => {
     'Exitencia Total',
     'Modelo, Descripción y Medidas',
     'Cub x Pieza',
+    'Cub Secas',
+    'Cub Humedas',
     'Cub Tarimas',
     'Especie',
-    'Estado',
     'Cliente',
   ]
 
@@ -58,9 +59,10 @@ const Nails = props => {
         'Existencia Total': item.total,
         Modelo: item.model,
         'Cub x Pieza': item.pt,
+        'Cub Secas': item.ptDry,
+        'Cub Humedas': item.ptDamp,
         'Cub Tarimas': item.ptTotal,
         Especie: item.wood_name,
-        Estado: item.state === 'damp' ? 'Humedo' : 'Seco',
         Cliente: item.c_name,
       }))
     const dataIfisa2 = stockReportPallets
@@ -69,9 +71,10 @@ const Nails = props => {
         'Existencia Total': item.total,
         Modelo: item.model,
         'Cub x Pieza': item.pt,
+        'Cub Secas': item.ptDry,
+        'Cub Humedas': item.ptDamp,
         'Cub Tarimas': item.ptTotal,
         Especie: item.wood_name,
-        Estado: item.state === 'damp' ? 'Humedo' : 'Seco',
         Cliente: item.c_name,
       }))
 
@@ -87,6 +90,20 @@ const Nails = props => {
                 <td></td>
                 <td>Total PT:</td>
                 <td></td>
+                <td>
+                  {' '}
+                  {stockReportPallets
+                    .filter(item => item.plant_id === 1)
+                    .reduce((a, b) => a + parseFloat(b.ptDry), 0)
+                    .toFixed(3)}
+                </td>
+                <td>
+                  {' '}
+                  {stockReportPallets
+                    .filter(item => item.plant_id === 1)
+                    .reduce((a, b) => a + parseFloat(b.ptDamp), 0)
+                    .toFixed(3)}
+                </td>
                 <td>
                   {stockReportPallets
                     .filter(item => item.plant_id === 1)
@@ -107,11 +124,10 @@ const Nails = props => {
                     <td>{pallet.total}</td>
                     <td>{pallet.model}</td>
                     <td>{pallet.pt}</td>
+                    <td>{pallet.ptDry}</td>
+                    <td>{pallet.ptDamp}</td>
                     <td>{pallet.ptTotal}</td>
                     <td>{pallet.wood_name}</td>
-                    <td>
-                      {pallet.state === 'damp' ? 'Humedo' : 'Seco'}
-                    </td>
                     <td>{pallet.c_name}</td>
                   </tr>
                 </>
@@ -128,6 +144,20 @@ const Nails = props => {
                 <td></td>
                 <td>Total PT:</td>
                 <td></td>
+                <td>
+                  {' '}
+                  {stockReportPallets
+                    .filter(item => item.plant_id === 2)
+                    .reduce((a, b) => a + parseFloat(b.ptDry), 0)
+                    .toFixed(3)}
+                </td>
+                <td>
+                  {' '}
+                  {stockReportPallets
+                    .filter(item => item.plant_id === 2)
+                    .reduce((a, b) => a + parseFloat(b.ptDamp), 0)
+                    .toFixed(3)}
+                </td>
                 <td>
                   {stockReportPallets
                     .filter(item => item.plant_id === 2)
@@ -148,11 +178,10 @@ const Nails = props => {
                     <td>{pallet.total}</td>
                     <td>{pallet.model}</td>
                     <td>{pallet.pt}</td>
+                    <td>{pallet.ptDry}</td>
+                    <td>{pallet.ptDamp}</td>
                     <td>{pallet.ptTotal}</td>
                     <td>{pallet.wood_name}</td>
-                    <td>
-                      {pallet.state === 'damp' ? 'Humedo' : 'Seco'}
-                    </td>
                     <td>{pallet.c_name}</td>
                   </tr>
                 </>

@@ -18,7 +18,7 @@ const Nails = props => {
   const { stockReportItems } = props
 
   useEffect(() => {
-     const topbar = {
+    const topbar = {
       title: 'Inventarios Generales',
       menu: {
         Tarimas: '/stock',
@@ -46,6 +46,8 @@ const Nails = props => {
     'Modelo, Descripción y Medidas',
     'Saldo',
     'Tar.Juegos',
+    'PT Secas',
+    'PT Humedas',
     'PT',
     'Especie',
   ]
@@ -62,6 +64,8 @@ const Nails = props => {
           'Modelo, Descripción y Medidas': pallet.model,
           Saldo: '',
           'Tar.Juegos': '',
+          'PT Secas': '',
+          'PT Humedas': '',
           PT: '',
           Especie: '',
         })
@@ -74,7 +78,9 @@ const Nails = props => {
               'Modelo, Descripción y Medidas': `${item.length} x ${item.width} x ${item.height}`,
               Saldo: item.total,
               'Tar.Juegos': (item.total / item.amount).toFixed(0),
-              PT: item.pt,
+              'PT Secas': item.ptDry,
+              'PT Humedas': item.ptDamp,
+              PT: item.ptTotal,
               Especie: item.name,
             })
           })
@@ -88,6 +94,8 @@ const Nails = props => {
           'Modelo, Descripción y Medidas': pallet.model,
           Saldo: '',
           'Tar.Juegos': '',
+          'PT Secas': '',
+          'PT Humedas': '',
           PT: '',
           Especie: '',
         })
@@ -100,7 +108,9 @@ const Nails = props => {
               'Modelo, Descripción y Medidas': `${item.length} x ${item.width} x ${item.height}`,
               Saldo: item.total,
               'Tar.Juegos': (item.total / item.amount).toFixed(0),
-              PT: item.pt,
+              'PT Secas': item.ptDry,
+              'PT Humedas': item.ptDamp,
+              PT: item.ptTotal,
               Especie: item.name,
             })
           })
@@ -130,9 +140,51 @@ const Nails = props => {
                         a +
                         b.items
                           .filter(i => i.id === 1)
-                          .reduce((a, b) => a + b.total, 0),
+                          .reduce(
+                            (a, b) => a + parseFloat(b.ptDry),
+                            0
+                          ),
                       0
-                    )}
+                    )
+                    .toFixed(3)}
+                </td>
+                <td>
+                  {stockReportItems
+                    .filter(
+                      item =>
+                        item.items.filter(i => i.id === 1).length > 0
+                    )
+                    .reduce(
+                      (a, b) =>
+                        a +
+                        b.items
+                          .filter(i => i.id === 1)
+                          .reduce(
+                            (a, b) => a + parseFloat(b.ptDamp),
+                            0
+                          ),
+                      0
+                    )
+                    .toFixed(3)}
+                </td>
+                <td>
+                  {stockReportItems
+                    .filter(
+                      item =>
+                        item.items.filter(i => i.id === 1).length > 0
+                    )
+                    .reduce(
+                      (a, b) =>
+                        a +
+                        b.items
+                          .filter(i => i.id === 1)
+                          .reduce(
+                            (a, b) => a + parseFloat(b.ptTotal),
+                            0
+                          ),
+                      0
+                    )
+                    .toFixed(3)}
                 </td>
                 <td></td>
               </tr>
@@ -160,7 +212,9 @@ const Nails = props => {
                         <td>
                           {(item.total / item.amount).toFixed(0)}
                         </td>
-                        <td>{item.pt}</td>
+                        <td>{item.ptDry}</td>
+                        <td>{item.ptDamp}</td>
+                        <td>{item.ptTotal}</td>
                         <td>{item.name}</td>
                       </tr>
                     ))}
@@ -190,9 +244,51 @@ const Nails = props => {
                         a +
                         b.items
                           .filter(i => i.id === 2)
-                          .reduce((a, b) => a + b.total, 0),
+                          .reduce(
+                            (a, b) => a + parseFloat(b.ptDry),
+                            0
+                          ),
                       0
-                    )}
+                    )
+                    .toFixed(3)}
+                </td>
+                <td>
+                  {stockReportItems
+                    .filter(
+                      item =>
+                        item.items.filter(i => i.id === 2).length > 0
+                    )
+                    .reduce(
+                      (a, b) =>
+                        a +
+                        b.items
+                          .filter(i => i.id === 2)
+                          .reduce(
+                            (a, b) => a + parseFloat(b.ptDamp),
+                            0
+                          ),
+                      0
+                    )
+                    .toFixed(3)}
+                </td>
+                <td>
+                  {stockReportItems
+                    .filter(
+                      item =>
+                        item.items.filter(i => i.id === 2).length > 0
+                    )
+                    .reduce(
+                      (a, b) =>
+                        a +
+                        b.items
+                          .filter(i => i.id === 2)
+                          .reduce(
+                            (a, b) => a + parseFloat(b.ptTotal),
+                            0
+                          ),
+                      0
+                    )
+                    .toFixed(3)}
                 </td>
                 <td></td>
               </tr>
@@ -220,7 +316,9 @@ const Nails = props => {
                         <td>
                           {(item.total / item.amount).toFixed(0)}
                         </td>
-                        <td>{item.pt}</td>
+                        <td>{item.ptDry}</td>
+                        <td>{item.ptDamp}</td>
+                        <td>{item.ptTotal}</td>
                         <td>{item.name}</td>
                       </tr>
                     ))}
